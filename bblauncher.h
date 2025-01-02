@@ -9,7 +9,8 @@ class BBLauncher;
 }
 QT_END_NAMESPACE
 
-const std::vector<std::string> BBSerialList = {"CUSA03173", "CUSA00900", "CUSA00299", "CUSA00207"};
+const std::vector<std::string> BBSerialList = {"CUSA03173", "CUSA00900", "CUSA00208",
+                                               "CUSA00207", "CUSA01363", "CUSA03023"};
 
 extern std::filesystem::path userPath;
 extern std::string game_serial;
@@ -29,6 +30,7 @@ public:
 
 public slots:
     void UpdateSettingsList();
+    void UpdateModList();
 
 private slots:
     void ExeSelectButton_isPressed();

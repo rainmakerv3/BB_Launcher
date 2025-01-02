@@ -17,14 +17,14 @@ std::string game_serial = "";
 BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLauncher) {
     ui->setupUi(this);
     this->setFixedSize(this->width(), this->height());
+    this->statusBar()->setSizeGripEnabled(false);
     QApplication::setStyle("Fusion");
 
     // this->installEventFilter(this); if needed
 
     LoadLauncherSettings();
     UpdateSettingsList();
-
-    // Update ModList();
+    UpdateModList();
 
     connect(ui->ExeSelectButton, &QPushButton::pressed, this,
             &BBLauncher::ExeSelectButton_isPressed);
@@ -34,12 +34,11 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
     connect(ui->LaunchButton, &QPushButton::pressed, this, &BBLauncher::LaunchButton_isPressed);
     connect(ui->TrophyButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
     connect(ui->SaveManagerButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
-    connect(ui->ModManagerButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
-    /* connect(ui->ModManagerButton, &QPushButton::pressed, this, [this]() {
+    connect(ui->ModManagerButton, &QPushButton::pressed, this, [this]() {
         ModManager* ModWindow = new ModManager(this);
         ModWindow->exec();
-        // UpdateModList();
-    }); */
+        UpdateModList();
+    });
     connect(ui->LauncherSettingsButton, &QPushButton::pressed, this, [this]() {
         LauncherSettings* LauncherSettingsWindow = new LauncherSettings(this);
         LauncherSettingsWindow->exec();
@@ -150,7 +149,7 @@ void StartBackupSave() {
                 try {
                     std::filesystem::rename(sourceDir, destDir);
                 } catch (std::exception& ex) {
-                    // handle
+                    // handle?;
                 }
             }
         }
@@ -160,7 +159,7 @@ void StartBackupSave() {
                                   std::filesystem::copy_options::overwrite_existing |
                                       std::filesystem::copy_options::recursive);
         } catch (std::exception& ex) {
-            // handle
+            // handle?;
         }
     }
 }
@@ -176,12 +175,13 @@ void BBLauncher::SaveInstallLoc() {
             ifs.open(SettingsFile, std::ios_base::binary);
             data = toml::parse(SettingsFile);
         } catch (const std::exception& ex) {
-            // handle
+            QMessageBox::critical(this, "Filesystem error", ex.what());
             return;
         }
     } else {
         if (error) {
-            // handle
+            QMessageBox::critical(this, "Filesystem error",
+                                  QString::fromStdString(error.message()));
         }
     }
 
@@ -214,6 +214,26 @@ void BBLauncher::UpdateSettingsList() {
 
     ui->SettingList->clear();
     ui->SettingList->addItems(SettingStrings);
+}
+
+void BBLauncher::UpdateModList() {
+    std::vector<std::string> ActiveModList;
+    std::string line;
+    int lineCount = 0;
+    std::ifstream ActiveFile(ModPath / "ActiveMods.txt", std::ios::binary);
+
+    ui->ModList->clear();
+
+    while (std::getline(ActiveFile, line)) {
+        lineCount++;
+        ActiveModList.push_back(line);
+    }
+    ActiveFile.close();
+
+    QStringList ActiveModStringList;
+    for_each(ActiveModList.begin(), ActiveModList.end(),
+             [&](std::string s) { ActiveModStringList.append(QString::fromStdString(s)); });
+    ui->ModList->addItems(ActiveModStringList);
 }
 
 // bool BBLauncher::eventFilter(QObject* obj, QEvent* event) {}

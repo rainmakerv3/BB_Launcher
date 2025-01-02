@@ -1,3 +1,4 @@
+#include <QMessageBox>
 #include <QPushButton>
 #include "../bblauncher.h"
 #include "LauncherSettings.h"
@@ -99,7 +100,7 @@ void LoadLauncherSettings() {
         ifs.open(SettingsFile, std::ios_base::binary);
         data = toml::parse(SettingsFile);
     } catch (std::exception& ex) {
-        // handle
+        QMessageBox::critical(nullptr, "Filesystem error", ex.what());
         return;
     }
 
@@ -129,12 +130,13 @@ void LauncherSettings::SaveLauncherSettings() {
             ifs.open(SettingsFile, std::ios_base::binary);
             data = toml::parse(SettingsFile);
         } catch (const std::exception& ex) {
-            // handle
+            QMessageBox::critical(this, "Filesystem error", ex.what());
             return;
         }
     } else {
         if (error) {
-            // handle
+            QMessageBox::critical(this, "Filesystem error",
+                                  QString::fromStdString(error.message()));
         }
     }
 
@@ -171,6 +173,14 @@ void LauncherSettings::SaveAndCloseLauncherSettings() {
 }
 
 void CreateSettingsFile() {
+    if (!std::filesystem::exists(SettingsPath / "Mods")) {
+        std::filesystem::create_directory(SettingsPath / "Mods");
+    }
+
+    if (!std::filesystem::exists(SettingsPath / "Mods-BACKUP")) {
+        std::filesystem::create_directory(SettingsPath / "Mods-BACKUP");
+    }
+
     toml::value data;
 
     data["Launcher"]["installPath"] = "";

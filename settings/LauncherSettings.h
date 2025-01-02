@@ -21,6 +21,8 @@ extern bool BackupSaveEnabled;
 extern int BackupInterval;
 extern int BackupNumber;
 
+// extern active modvector
+
 class LauncherSettings : public QDialog {
     Q_OBJECT
 
