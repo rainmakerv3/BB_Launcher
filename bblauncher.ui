@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>BBLauncher</class>
  <widget class="QMainWindow" name="BBLauncher">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -122,7 +125,7 @@
         <bool>true</bool>
        </property>
        <property name="editTriggers">
-        <set>QAbstractItemView::EditTrigger::CurrentChanged|QAbstractItemView::EditTrigger::EditKeyPressed</set>
+        <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
        </property>
        <property name="showDropIndicator" stdset="0">
         <bool>false</bool>
@@ -139,6 +142,12 @@
       <widget class="QListView" name="ModList">
        <property name="enabled">
         <bool>true</bool>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::EditTrigger::EditKeyPressed</set>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::SelectionMode::NoSelection</enum>
        </property>
       </widget>
      </item>
@@ -166,7 +175,7 @@
        <item>
         <widget class="QPushButton" name="ModManagerButton">
          <property name="text">
-          <string>Mod Manager Placeholder</string>
+          <string>Mod Manager</string>
          </property>
         </widget>
        </item>
