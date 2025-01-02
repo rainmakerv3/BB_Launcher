@@ -6,8 +6,10 @@ Installation:
 Current features:
   - Fixes the sound glitch when you crash at 60 fps
   - Creates backup saves after a configurable interval
+  - Mod manager (similar to the Generic Mod Manager on nexus, but automatically structures folders)
 
 Planned features:  
   - Trophy locking/unlocking
-  - Mod manager (similar to the Generic Mod Manager on nexus, but automatically structures folders)
-  - Change shadPS4 settings and patches from the launcher
+  - Change shadPS4 settings from the launcher
+  - Enable Bloodborne patches from the launcher
+  - View save info and restore backup saves with the GUI

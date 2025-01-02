@@ -5,10 +5,10 @@
 #include "bblauncher.h"
 #include "modules/ModManager.h"
 #include "settings/LauncherSettings.h"
+#include "settings/ShadSettings.h"
 #include "settings/toml.hpp"
 #include "ui_bblauncher.h"
 
-std::filesystem::path userPath = std::filesystem::current_path() / "user";
 std::string installPathString = "";
 std::filesystem::path installPath = "";
 std::filesystem::path PKGPath = "";
@@ -17,28 +17,36 @@ std::string game_serial = "";
 BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLauncher) {
     ui->setupUi(this);
     this->setFixedSize(this->width(), this->height());
+    this->statusBar()->setSizeGripEnabled(false);
     QApplication::setStyle("Fusion");
 
     // this->installEventFilter(this); if needed
 
     LoadLauncherSettings();
     UpdateSettingsList();
-
-    // Update ModList();
+    UpdateModList();
 
     connect(ui->ExeSelectButton, &QPushButton::pressed, this,
             &BBLauncher::ExeSelectButton_isPressed);
 
-    connect(ui->shadSettingsButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
     connect(ui->PatchesButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
     connect(ui->LaunchButton, &QPushButton::pressed, this, &BBLauncher::LaunchButton_isPressed);
     connect(ui->TrophyButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
+    connect(ui->shadSettingsButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
     connect(ui->SaveManagerButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
-    connect(ui->ModManagerButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
-    /* connect(ui->ModManagerButton, &QPushButton::pressed, this, [this]() {
+    connect(ui->ModManagerButton, &QPushButton::pressed, this, [this]() {
+        if (installPath == "") {
+            QMessageBox::warning(this, "No Bloodborne install path selected",
+                                 "Select Bloodborne Install Folder First before using Mod Manager");
+            return;
+        }
         ModManager* ModWindow = new ModManager(this);
         ModWindow->exec();
-        // UpdateModList();
+        UpdateModList();
+    });
+    /*connect(ui->shadSettingsButton, &QPushButton::pressed, this, [this]() {
+        ShadSettings* ShadSettingsWindow = new ShadSettings(this);
+        ShadSettingsWindow->exec();
     }); */
     connect(ui->LauncherSettingsButton, &QPushButton::pressed, this, [this]() {
         LauncherSettings* LauncherSettingsWindow = new LauncherSettings(this);
@@ -82,9 +90,10 @@ void BBLauncher::WIPButton_isPressed() {
 }
 
 void BBLauncher::LaunchButton_isPressed() {
-    if (game_serial != "") {
+    if (installPath != "") {
         if (SoundFixEnabled) {
-            std::filesystem::path savePath = userPath / "savedata" / "1" / game_serial / "SPRJ0005";
+            std::filesystem::path savePath =
+                GetShadUserDir() / "savedata" / "1" / game_serial / "SPRJ0005";
             if (std::filesystem::exists(savePath / "userdata0010.")) {
                 std::ofstream savefile1;
                 savefile1.open(savePath / "userdata0010.",
@@ -110,8 +119,27 @@ void BBLauncher::LaunchButton_isPressed() {
 
 void BBLauncher::startShad() {
     const std::string PKGLoc = (PKGPath).string();
-    const char* runBBshadPS4 = ("shadPS4.exe -g \"" + PKGLoc + "\"").c_str();
-    std::system(runBBshadPS4);
+
+#ifdef _WIN32
+    const char* runBBshadPS4win = ("shadPS4.exe -g \"" + PKGLoc + "\"").c_str();
+    std::system(runBBshadPS4win);
+#elif defined(__linux__)
+    if (std::filesystem::exists(std::filesystem::current_path() / "Shadps4-qt.AppImage")) {
+        std::system("chmod +x Shadps4-qt.AppImage");
+        const char* runBBshadPS4linux = ("./Shadps4-qt.AppImage -g \"" + PKGLoc + "\"").c_str();
+        std::system(runBBshadPS4linux);
+    } else if (std::filesystem::exists(std::filesystem::current_path() / "Shadps4-sdl.AppImage")) {
+        std::system("chmod +x Shadps4-sdl.AppImage");
+        const char* runBBshadPS4linux = ("./Shadps4-sdl.AppImage -g \"" + PKGLoc + "\"").c_str();
+        std::system(runBBshadPS4linux);
+    } else {
+        const char* runBBshadPS4linux = ("./Shadps4 -g \"" + PKGLoc + "\"").c_str();
+        std::system(runBBshadPS4linux);
+    }
+#elif defined(__APPLE__)
+    const char* runBBshadPS4apple = ("open shadPS4 -g \"" + PKGLoc + "\"").c_str();
+    std::system(runBBshadPS4apple);
+#endif
 
     QApplication::quit();
 }
@@ -132,7 +160,7 @@ void StartBackupSave() {
         }
     }
 
-    const auto save_dir = userPath / "savedata" / "1" / game_serial;
+    const auto save_dir = GetShadUserDir() / "savedata" / "1" / game_serial;
     const auto backup_dir = BackupPath / "BACKUP1";
 
     while (true) {
@@ -150,7 +178,7 @@ void StartBackupSave() {
                 try {
                     std::filesystem::rename(sourceDir, destDir);
                 } catch (std::exception& ex) {
-                    // handle
+                    // handle?;
                 }
             }
         }
@@ -160,7 +188,7 @@ void StartBackupSave() {
                                   std::filesystem::copy_options::overwrite_existing |
                                       std::filesystem::copy_options::recursive);
         } catch (std::exception& ex) {
-            // handle
+            // handle?;
         }
     }
 }
@@ -176,12 +204,13 @@ void BBLauncher::SaveInstallLoc() {
             ifs.open(SettingsFile, std::ios_base::binary);
             data = toml::parse(SettingsFile);
         } catch (const std::exception& ex) {
-            // handle
+            QMessageBox::critical(this, "Filesystem error", ex.what());
             return;
         }
     } else {
         if (error) {
-            // handle
+            QMessageBox::critical(this, "Filesystem error",
+                                  QString::fromStdString(error.message()));
         }
     }
 
@@ -216,7 +245,55 @@ void BBLauncher::UpdateSettingsList() {
     ui->SettingList->addItems(SettingStrings);
 }
 
+void BBLauncher::UpdateModList() {
+    std::vector<std::string> ActiveModList;
+    std::string line;
+    int lineCount = 0;
+    std::ifstream ActiveFile(ModPath / "ActiveMods.txt", std::ios::binary);
+
+    ui->ModList->clear();
+
+    while (std::getline(ActiveFile, line)) {
+        lineCount++;
+        ActiveModList.push_back(line);
+    }
+    ActiveFile.close();
+
+    QStringList ActiveModStringList;
+
+    if (ActiveModList.size() != 0) {
+        for_each(ActiveModList.begin(), ActiveModList.end(),
+                 [&](std::string s) { ActiveModStringList.append(QString::fromStdString(s)); });
+    } else {
+        const QString NoModMsg =
+            "No mods active.\n\nPlace mods in the (BB Launcher exe folder)/BBLauncher/Mods and "
+            "activate them using the Mod Manager button";
+        ActiveModStringList.append(NoModMsg);
+    }
+
+    ui->ModList->addItems(ActiveModStringList);
+}
+
 // bool BBLauncher::eventFilter(QObject* obj, QEvent* event) {}
+
+std::filesystem::path GetShadUserDir() {
+
+    auto user_dir = std::filesystem::current_path() / "user";
+    if (!std::filesystem::exists(user_dir)) {
+#ifdef __APPLE__
+        user_dir =
+            std::filesystem::path(getenv("HOME")) / "Library" / "Application Support" / "shadPS4";
+#elif defined(__linux__)
+        const char* xdg_data_home = getenv("XDG_DATA_HOME");
+        if (xdg_data_home != nullptr && strlen(xdg_data_home) > 0) {
+            user_dir = std::filesystem::path(xdg_data_home) / "shadPS4";
+        } else {
+            user_dir = std::filesystem::path(getenv("HOME")) / ".local" / "share" / "shadPS4";
+        }
+#endif
+    }
+    return user_dir;
+}
 
 BBLauncher::~BBLauncher() {
     delete ui;

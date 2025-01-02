@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=BB_Launcher
+Exec=BB_Launcher
+Terminal=false
+Type=Application
+Icon=BBIcon
+Comment=shadPS4 Launcher for Bloodborne
+Categories=Game;
+StartupWMClass=BB_Launcher;

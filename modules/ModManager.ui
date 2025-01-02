@@ -7,19 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>630</height>
+    <height>635</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>BBLauncher Mod Manager</string>
   </property>
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>30</y>
-     <width>641</width>
-     <height>531</height>
+     <width>651</width>
+     <height>501</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -39,12 +39,15 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QPushButton" name="pushButton">
+        <widget class="QPushButton" name="ActivateButton">
          <property name="font">
           <font>
            <pointsize>9</pointsize>
            <bold>false</bold>
           </font>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::NoFocus</enum>
          </property>
          <property name="text">
           <string>Activate Mod</string>
@@ -52,7 +55,41 @@
         </widget>
        </item>
        <item>
-        <widget class="QListWidget" name="listWidget"/>
+        <widget class="QListWidget" name="InactiveModList">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::EditTrigger::EditKeyPressed</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>false</bool>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+         </property>
+         <property name="movement">
+          <enum>QListView::Movement::Static</enum>
+         </property>
+         <property name="flow">
+          <enum>QListView::Flow::TopToBottom</enum>
+         </property>
+         <property name="isWrapping" stdset="0">
+          <bool>false</bool>
+         </property>
+         <property name="viewMode">
+          <enum>QListView::ViewMode::ListMode</enum>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="selectionRectVisible">
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -73,12 +110,15 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="DeactivateButton">
          <property name="font">
           <font>
            <pointsize>9</pointsize>
            <bold>false</bold>
           </font>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::FocusPolicy::NoFocus</enum>
          </property>
          <property name="text">
           <string>Deactivate Mod</string>
@@ -86,41 +126,130 @@
         </widget>
        </item>
        <item>
-        <widget class="QListWidget" name="listWidget_2"/>
+        <widget class="QListWidget" name="ActiveModList">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::EditTrigger::EditKeyPressed</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>false</bool>
+         </property>
+         <property name="selectionBehavior">
+          <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
+         </property>
+         <property name="movement">
+          <enum>QListView::Movement::Static</enum>
+         </property>
+         <property name="flow">
+          <enum>QListView::Flow::TopToBottom</enum>
+         </property>
+         <property name="isWrapping" stdset="0">
+          <bool>false</bool>
+         </property>
+         <property name="viewMode">
+          <enum>QListView::ViewMode::ListMode</enum>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="selectionRectVisible">
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="horizontalLayoutWidget_2">
+  <widget class="QGroupBox" name="groupBox_3">
    <property name="geometry">
     <rect>
-     <x>30</x>
-     <y>570</y>
-     <width>631</width>
-     <height>41</height>
+     <x>40</x>
+     <y>540</y>
+     <width>491</width>
+     <height>81</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_3">
+   <property name="title">
+    <string/>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
-     <widget class="QPushButton" name="pushButton_3">
+     <widget class="QLabel" name="FileTransferLabel">
       <property name="text">
-       <string>Deactivate All Mods</string>
+       <string>No Current File Transfers</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QDialogButtonBox" name="buttonBox">
-      <property name="orientation">
-       <enum>Qt::Orientation::Horizontal</enum>
-      </property>
-      <property name="standardButtons">
-       <set>QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::Ok</set>
+     <widget class="QProgressBar" name="progressBar">
+      <property name="value">
+       <number>24</number>
       </property>
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>580</x>
+     <y>560</y>
+     <width>81</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="palette">
+    <palette>
+     <active>
+      <colorrole role="Highlight">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>76</red>
+         <green>74</green>
+         <blue>72</blue>
+        </color>
+       </brush>
+      </colorrole>
+     </active>
+     <inactive>
+      <colorrole role="Highlight">
+       <brush brushstyle="SolidPattern">
+        <color alpha="255">
+         <red>76</red>
+         <green>74</green>
+         <blue>72</blue>
+        </color>
+       </brush>
+      </colorrole>
+     </inactive>
+     <disabled/>
+    </palette>
+   </property>
+   <property name="focusPolicy">
+    <enum>Qt::FocusPolicy::TabFocus</enum>
+   </property>
+   <property name="contextMenuPolicy">
+    <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Orientation::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::StandardButton::Close</set>
+   </property>
   </widget>
  </widget>
  <resources/>

@@ -9,9 +9,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>710</width>
-    <height>696</height>
+    <width>711</width>
+    <height>685</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Bloodborne shadPS4 Launcher</string>
@@ -124,6 +130,11 @@
        <property name="enabled">
         <bool>true</bool>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
        <property name="editTriggers">
         <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
        </property>
@@ -139,15 +150,23 @@
       </widget>
      </item>
      <item>
-      <widget class="QListView" name="ModList">
-       <property name="enabled">
-        <bool>true</bool>
+      <widget class="QListWidget" name="ModList">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
        </property>
        <property name="editTriggers">
         <set>QAbstractItemView::EditTrigger::EditKeyPressed</set>
        </property>
+       <property name="showDropIndicator" stdset="0">
+        <bool>false</bool>
+       </property>
        <property name="selectionMode">
         <enum>QAbstractItemView::SelectionMode::NoSelection</enum>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
