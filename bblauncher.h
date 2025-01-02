@@ -32,7 +32,7 @@ public slots:
 
 private slots:
     void ExeSelectButton_isPressed();
-    void ModManagerButton_isPressed();
+    void WIPButton_isPressed();
     void LaunchButton_isPressed();
     static void startShad();
     void SaveInstallLoc();

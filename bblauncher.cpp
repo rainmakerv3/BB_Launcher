@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include "bblauncher.h"
+#include "modules/ModManager.h"
 #include "settings/LauncherSettings.h"
 #include "settings/toml.hpp"
 #include "ui_bblauncher.h"
@@ -28,16 +29,17 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
     connect(ui->ExeSelectButton, &QPushButton::pressed, this,
             &BBLauncher::ExeSelectButton_isPressed);
 
-    connect(ui->shadSettingsButton, &QPushButton::pressed, this,
-            &BBLauncher::ModManagerButton_isPressed);
-    connect(ui->ModManagerButton, &QPushButton::pressed, this,
-            &BBLauncher::ModManagerButton_isPressed);
+    connect(ui->shadSettingsButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
+    connect(ui->PatchesButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
     connect(ui->LaunchButton, &QPushButton::pressed, this, &BBLauncher::LaunchButton_isPressed);
-    connect(ui->TrophyButton, &QPushButton::pressed, this, &BBLauncher::ModManagerButton_isPressed);
-    connect(ui->SaveManagerButton, &QPushButton::pressed, this,
-            &BBLauncher::ModManagerButton_isPressed);
-    connect(ui->PatchesButton, &QPushButton::pressed, this,
-            &BBLauncher::ModManagerButton_isPressed);
+    connect(ui->TrophyButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
+    connect(ui->SaveManagerButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
+    connect(ui->ModManagerButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
+    /* connect(ui->ModManagerButton, &QPushButton::pressed, this, [this]() {
+        ModManager* ModWindow = new ModManager(this);
+        ModWindow->exec();
+        // UpdateModList();
+    }); */
     connect(ui->LauncherSettingsButton, &QPushButton::pressed, this, [this]() {
         LauncherSettings* LauncherSettingsWindow = new LauncherSettings(this);
         LauncherSettingsWindow->exec();
@@ -74,7 +76,7 @@ void BBLauncher::ExeSelectButton_isPressed() {
     }
 }
 
-void BBLauncher::ModManagerButton_isPressed() {
+void BBLauncher::WIPButton_isPressed() {
     QMessageBox::warning(this, "WIP", "Still working on this :)");
     UpdateSettingsList();
 }
@@ -134,7 +136,7 @@ void StartBackupSave() {
     const auto backup_dir = BackupPath / "BACKUP1";
 
     while (true) {
-        std::this_thread::sleep_for(std::chrono::minutes(1)); // Interval
+        std::this_thread::sleep_for(std::chrono::minutes(BackupInterval));
 
         if (BackupNumber > 1) {
             const std::string lastDirstring = "BACKUP" + std::to_string(BackupNumber);

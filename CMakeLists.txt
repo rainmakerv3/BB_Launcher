@@ -21,6 +21,9 @@ set(PROJECT_SOURCES
     settings/LauncherSettings.h
     settings/LauncherSettings.cpp
 	settings/LauncherSettings.ui
+	modules/ModManager.h
+	modules/ModManager.cpp
+	modules/ModManager.ui
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -28,6 +31,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         settings/LauncherSettings.h settings/LauncherSettings.cpp settings/LauncherSettings.ui
+        modules/ModManager.h modules/ModManager.cpp modules/ModManager.ui
     )
 else()
     if(ANDROID)
