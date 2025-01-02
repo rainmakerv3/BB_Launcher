@@ -9,7 +9,8 @@ void LoadLauncherSettings();
 void CreateSettingsFile();
 void SetTheme(std::string theme);
 
-const std::vector<std::string> BBSerialList = {"CUSA03173", "CUSA00900", "CUSA00299", "CUSA00207"};
+const QStringList BackupNumList = {"1", "2", "3", "4", "5"};
+const QStringList BackupFreqList = {"5", "10", "15", "20", "25", "30"};
 
 extern std::filesystem::path SettingsPath;
 extern std::filesystem::path SettingsFile;
@@ -28,7 +29,7 @@ public:
     ~LauncherSettings();
 
 public slots:
-    void SetDefaultLauncherDefaults();
+    void SetLauncherDefaults();
     void SaveAndCloseLauncherSettings();
     void SaveLauncherSettings();
 

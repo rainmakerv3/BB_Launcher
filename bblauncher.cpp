@@ -2,7 +2,6 @@
 #include <thread>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QStringListModel>
 #include "bblauncher.h"
 #include "settings/LauncherSettings.h"
 #include "settings/toml.hpp"
@@ -16,25 +15,16 @@ std::string game_serial = "";
 
 BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLauncher) {
     ui->setupUi(this);
-
-    LoadLauncherSettings();
-
-    // put in function
-
+    this->setFixedSize(this->width(), this->height());
     QApplication::setStyle("Fusion");
 
-    // put in function
+    // this->installEventFilter(this); if needed
 
-    QStringListModel* SettingsModel = new QStringListModel(this);
-    QStringList SettingsList;
-    QString NewSetting = "60 FPS sound fix = enabled";
-    SettingsList.append(NewSetting);
-    SettingsModel->setStringList(SettingsList);
-    ui->SettingsList->setModel(SettingsModel);
+    LoadLauncherSettings();
+    UpdateSettingsList();
 
-    // load mod text
+    // Update ModList();
 
-    // put in function
     connect(ui->ExeSelectButton, &QPushButton::pressed, this,
             &BBLauncher::ExeSelectButton_isPressed);
 
@@ -51,9 +41,9 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
     connect(ui->LauncherSettingsButton, &QPushButton::pressed, this, [this]() {
         LauncherSettings* LauncherSettingsWindow = new LauncherSettings(this);
         LauncherSettingsWindow->exec();
+        UpdateSettingsList();
     });
     ;
-    this->setFixedSize(this->width(), this->height());
 
     if (installPathString == "") {
         const QString NoPathText = "no Bloodborne Folder selected (CUSA****)";
@@ -63,29 +53,30 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
     }
 }
 
-BBLauncher::~BBLauncher() {
-    delete ui;
-}
-
 void BBLauncher::ExeSelectButton_isPressed() {
-    QString QBBInstallLoc = QFileDialog::getExistingDirectory(
+    QString QBBInstallLoc = "";
+    QBBInstallLoc = QFileDialog::getExistingDirectory(
         this, "Select Bloodborne install location (ex. CUSA03173, CUSA00900", QDir::currentPath());
-    game_serial = QBBInstallLoc.last(9).toStdString();
-    if (std::find(BBSerialList.begin(), BBSerialList.end(), game_serial) != BBSerialList.end()) {
-        ui->ExeLabel->setText(QBBInstallLoc);
-        installPathString = QBBInstallLoc.toStdString();
-        installPath = installPathString;
-        PKGPath = installPath / "eboot.bin";
-        SaveInstallLoc();
-    } else {
-        QMessageBox::warning(
-            this, "Install Location not valid",
-            "Select valid BB Install folder starting with CUSA (ex: CUSA03173, CUSA00900)");
+    if (QBBInstallLoc != "") {
+        game_serial = QBBInstallLoc.last(9).toStdString();
+        if (std::find(BBSerialList.begin(), BBSerialList.end(), game_serial) !=
+            BBSerialList.end()) {
+            ui->ExeLabel->setText(QBBInstallLoc);
+            installPathString = QBBInstallLoc.toStdString();
+            installPath = installPathString;
+            PKGPath = installPath / "eboot.bin";
+            SaveInstallLoc();
+        } else {
+            QMessageBox::warning(
+                this, "Install Location not valid",
+                "Select valid BB Install folder starting with CUSA (ex: CUSA03173, CUSA00900)");
+        }
     }
 }
 
 void BBLauncher::ModManagerButton_isPressed() {
     QMessageBox::warning(this, "WIP", "Still working on this :)");
+    UpdateSettingsList();
 }
 
 void BBLauncher::LaunchButton_isPressed() {
@@ -197,4 +188,34 @@ void BBLauncher::SaveInstallLoc() {
     std::ofstream file(SettingsFile, std::ios::binary);
     file << data;
     file.close();
+}
+
+void BBLauncher::UpdateSettingsList() {
+    QString SoundhackSetting = "60 FPS sound fix = " + QVariant(SoundFixEnabled).toString();
+    QString ThemeSetting = "Selected Theme = " + QString::fromStdString(theme);
+    QString BackupEnableSetting =
+        "Back up saves enabled = " + QVariant(BackupSaveEnabled).toString();
+
+    QString BackupIntSetting;
+    QString BackupNumSetting;
+
+    if (BackupSaveEnabled) {
+        BackupIntSetting = "Backup Interval = " + QString::number(BackupInterval);
+        BackupNumSetting = "Backup Copies = " + QString::number(BackupNumber);
+    } else {
+        BackupIntSetting = "Backup Interval = disabled";
+        BackupNumSetting = "Backup Copies = disabled";
+    }
+
+    QStringList SettingStrings = {SoundhackSetting, ThemeSetting, BackupEnableSetting,
+                                  BackupIntSetting, BackupNumSetting};
+
+    ui->SettingList->clear();
+    ui->SettingList->addItems(SettingStrings);
+}
+
+// bool BBLauncher::eventFilter(QObject* obj, QEvent* event) {}
+
+BBLauncher::~BBLauncher() {
+    delete ui;
 }

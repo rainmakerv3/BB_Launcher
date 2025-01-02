@@ -9,6 +9,8 @@ class BBLauncher;
 }
 QT_END_NAMESPACE
 
+const std::vector<std::string> BBSerialList = {"CUSA03173", "CUSA00900", "CUSA00299", "CUSA00207"};
+
 extern std::filesystem::path userPath;
 extern std::string game_serial;
 extern std::filesystem::path installPath;
@@ -23,6 +25,10 @@ class BBLauncher : public QMainWindow {
 public:
     BBLauncher(QWidget* parent = nullptr);
     ~BBLauncher();
+    // bool eventFilter(QObject* obj, QEvent* event);
+
+public slots:
+    void UpdateSettingsList();
 
 private slots:
     void ExeSelectButton_isPressed();

@@ -117,10 +117,30 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QListView" name="SettingsList"/>
+      <widget class="QListWidget" name="SettingList">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::EditTrigger::CurrentChanged|QAbstractItemView::EditTrigger::EditKeyPressed</set>
+       </property>
+       <property name="showDropIndicator" stdset="0">
+        <bool>false</bool>
+       </property>
+       <property name="selectionMode">
+        <enum>QAbstractItemView::SelectionMode::NoSelection</enum>
+       </property>
+       <property name="selectionBehavior">
+        <enum>QAbstractItemView::SelectionBehavior::SelectColumns</enum>
+       </property>
+      </widget>
      </item>
      <item>
-      <widget class="QListView" name="ModList"/>
+      <widget class="QListView" name="ModList">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
     </layout>
    </widget>

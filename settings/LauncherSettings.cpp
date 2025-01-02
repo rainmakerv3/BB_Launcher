@@ -17,6 +17,9 @@ LauncherSettings::LauncherSettings(QWidget* parent)
     : QDialog(parent), ui(new Ui::LauncherSettings) {
     ui->setupUi(this);
 
+    ui->BackupIntervalComboBox->addItems(BackupFreqList);
+    ui->BackupNumberComboBox->addItems(BackupNumList);
+
     if (theme == "Dark") {
         ui->DarkThemeRadioButton->setChecked(true);
     } else {
@@ -24,21 +27,18 @@ LauncherSettings::LauncherSettings(QWidget* parent)
     }
 
     ui->SoundFixCheckBox->setChecked(SoundFixEnabled);
-
-    const QStringList BackupFreqList = {"5", "10", "15", "20", "25", "30"};
-    ui->BackupIntervalComboBox->addItems(BackupFreqList);
-
-    const QStringList BackupNumList = {"1", "2", "3", "4", "5"};
-    ui->BackupNumberComboBox->addItems(BackupNumList);
-
     ui->BackupSaveCheckBox->setChecked(BackupSaveEnabled);
     ui->BackupIntervalComboBox->setCurrentText(QString::number(BackupInterval));
     ui->BackupNumberComboBox->setCurrentText(QString::number(BackupNumber));
+    OnBackupStateChanged();
 
     connect(ui->buttonBox->button(QDialogButtonBox::Save), &QPushButton::pressed, this,
             &LauncherSettings::SaveAndCloseLauncherSettings);
     connect(ui->buttonBox->button(QDialogButtonBox::Apply), &QPushButton::pressed, this,
             &LauncherSettings::SaveLauncherSettings);
+    connect(ui->buttonBox->button(QDialogButtonBox::RestoreDefaults), &QPushButton::pressed, this,
+            &LauncherSettings::SetLauncherDefaults);
+
     connect(ui->BackupSaveCheckBox, &QCheckBox::checkStateChanged, this,
             &LauncherSettings::OnBackupStateChanged);
 }
@@ -76,9 +76,11 @@ void SetTheme(std::string theme) {
     qApp->setPalette(themePalette);
 }
 
-void LauncherSettings::SetDefaultLauncherDefaults() {
+void LauncherSettings::SetLauncherDefaults() {
     ui->DarkThemeRadioButton->setChecked(true);
     ui->SoundFixCheckBox->setChecked(true);
+    ui->BackupIntervalComboBox->setCurrentText("10");
+    ui->BackupNumberComboBox->setCurrentText("2");
 }
 
 void LoadLauncherSettings() {
@@ -102,16 +104,16 @@ void LoadLauncherSettings() {
     }
 
     installPathString = toml::find_or<std::string>(data, "Launcher", "installPath", "");
+    game_serial = QString::fromStdString(installPathString).last(9).toStdString();
+    installPath = installPathString;
+    PKGPath = installPath / "eboot.bin";
+
     theme = toml::find_or<std::string>(data, "Launcher", "Theme", "Dark");
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
 
     BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", false);
     BackupInterval = toml::find_or<int>(data, "Backups", "BackupInterval", 10);
     BackupNumber = toml::find_or<int>(data, "Backups", "BackupNumber", 2);
-
-    game_serial = QString::fromStdString(installPathString).last(9).toStdString();
-    installPath = installPathString;
-    PKGPath = installPath / "eboot.bin";
 
     SetTheme(theme);
 }
@@ -174,6 +176,7 @@ void CreateSettingsFile() {
     data["Launcher"]["installPath"] = "";
     data["Launcher"]["Theme"] = "Dark";
     data["Launcher"]["SoundFixEnabled"] = true;
+
     data["Backups"]["BackupSaveEnabled"] = false;
     data["Backups"]["BackupInterval"] = 10;
     data["Backups"]["BackupNumber"] = 2;
