@@ -1,9 +1,8 @@
-
 #include <filesystem>
-#include "bblauncher.h"
-#include "ui_bblauncher.h"
 #include <QApplication>
 #include <QMessageBox>
+#include "bblauncher.h"
+#include "src/ui_bblauncher.h"
 
 int main(int argc, char* argv[]) {
 
@@ -22,6 +21,7 @@ int main(int argc, char* argv[]) {
         return a.exec();
     }
 #elif defined(__linux__)
+/*
     if (!std::filesystem::exists(std::filesystem::current_path() / "Shadps4-qt.AppImage")) {
         QMessageBox::warning(
             nullptr, "No Shadps4 AppImage found",
@@ -34,6 +34,7 @@ int main(int argc, char* argv[]) {
     } else {
         return a.exec();
     }
+*/
 #elif defined(__APPLE__)
     if (!std::filesystem::exists(std::filesystem::current_path() / "shadps4.app")) {
         QMessageBox::warning(nullptr, "No shadps4 app found",

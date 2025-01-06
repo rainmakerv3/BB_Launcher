@@ -33,6 +33,4 @@ private:
     void ConflictAdd(std::string ModName);
     void ConflictRemove(std::string ModName);
     std::string PathToU8(const std::filesystem::path& path);
-    void PathToQString(QString& result, const std::filesystem::path& path);
-    std::filesystem::path PathFromQString(const QString& path);
 };

@@ -137,8 +137,8 @@ void BBLauncher::startShad() {
         std::system(runBBshadPS4linux.c_str());
     }
 #elif defined(__APPLE__)
-    const char* runBBshadPS4apple = ("open shadPS4 -g \"" + PKGLoc + "\"").c_str();
-    std::system(runBBshadPS4apple);
+    const auto runBBshadPS4apple = std::string("open shadPS4 -g \"" + PKGLoc + "\"");
+    std::system(runBBshadPS4apple.c_str());
 #endif
 
     QApplication::quit();

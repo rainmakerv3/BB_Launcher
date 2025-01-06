@@ -116,7 +116,7 @@ set_target_properties(BB_Launcher PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-set_source_files_properties(images/shadPS4.icns PROPERTIES
+set_source_files_properties(images/BBIcon.icns PROPERTIES
         MACOSX_PACKAGE_LOCATION Resources)
 
 if (WIN32)

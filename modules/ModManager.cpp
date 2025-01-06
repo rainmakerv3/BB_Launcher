@@ -36,25 +36,25 @@ void ModManager::ActivateButton_isPressed() {
         return;
     }
 
-    QByteArray utf8 = ui->InactiveModList->currentItem()->text().toUtf8();
-    const std::string ModName(utf8.data(), utf8.size());
-    const std::filesystem::path ModFolderPath = ModPath / ModName;
-    const std::filesystem::path ModBackupPath =
-        std::filesystem::current_path() / "BBLauncher" / "Mods-BACKUP" / ModName;
-    const bool has_dvdroot = std::filesystem::exists(ModFolderPath / "dvdroot_ps4");
+    const std::string ModName = ui->InactiveModList->currentItem()->text().toStdString();
+    const std::string ModFolderPathString = (ModPath / ModName).string();
+    const std::filesystem::path ModFolderPath = std::filesystem::u8path(ModFolderPathString);
+    const std::string ModBackupPathString =
+        (std::filesystem::current_path() / "BBLauncher" / "Mods-BACKUP" / ModName).string();
+    const std::filesystem::path ModBackupPath = std::filesystem::u8path(ModBackupPathString);
+
     std::vector<std::string> FileList;
     std::vector<std::string> ActiveModList;
     std::string line;
     int lineCount = 0;
 
+    const bool has_dvdroot = std::filesystem::exists(ModFolderPath / "dvdroot_ps4");
     std::filesystem::path ModSourcePath;
     if (!has_dvdroot) {
         ModSourcePath = ModFolderPath;
     } else {
         ModSourcePath = ModFolderPath / "dvdroot_ps4";
     }
-
-    std::string ModSourcePathString = PathToU8(ModSourcePath);
 
     for (const auto& entry : std::filesystem::directory_iterator(ModSourcePath)) {
         if (entry.is_directory()) {
@@ -98,13 +98,7 @@ void ModManager::ActivateButton_isPressed() {
             }
         }
     }
-    /*
-        QMessageBox::information(this, "Mod path",
-                                 "Mod path " +
-                                     QString::fromStdString(PathToU8(installPath / "dvdroot_ps4")),
-                                 QMessageBox::Ok);
-        return;
-    */
+
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModSourcePath)) {
         if (!entry.is_directory()) {
             auto relative_path = std::filesystem::relative(entry, ModSourcePath);
@@ -122,19 +116,16 @@ void ModManager::ActivateButton_isPressed() {
     ui->progressBar->setMaximum(getFileCount(ModSourcePath));
 
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModSourcePath)) {
-
         auto relative_path = std::filesystem::relative(entry, ModSourcePath);
-        std::string relative_path_string = PathToU8(relative_path);
         try {
             if (!entry.is_directory()) {
-                if (!std::filesystem::exists(
-                        (ModBackupPath / relative_path_string).parent_path())) {
+                if (!std::filesystem::exists((ModBackupPath / relative_path.parent_path()))) {
                     std::filesystem::create_directories(
-                        (ModBackupPath / relative_path_string).parent_path());
+                        (ModBackupPath / relative_path.parent_path()));
                 }
-                if (std::filesystem::exists(installPath / "dvdroot_ps4" / relative_path_string)) {
-                    std::filesystem::copy_file(installPath / "dvdroot_ps4" / relative_path_string,
-                                               (ModBackupPath / relative_path_string),
+                if (std::filesystem::exists(installPath / "dvdroot_ps4" / relative_path)) {
+                    std::filesystem::copy_file(installPath / "dvdroot_ps4" / relative_path,
+                                               (ModBackupPath / relative_path),
                                                std::filesystem::copy_options::overwrite_existing);
                 }
             }
@@ -152,15 +143,12 @@ void ModManager::ActivateButton_isPressed() {
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModSourcePath)) {
         const std::filesystem::path destDir = installPath / "dvdroot_ps4";
         auto relative_path = std::filesystem::relative(entry, ModSourcePath);
-        std::string relative_path_string = PathToU8(relative_path);
         if (!entry.is_directory()) {
             try {
-                if (!std::filesystem::exists((destDir / relative_path_string).parent_path())) {
-                    std::filesystem::create_directories(
-                        (destDir / relative_path_string).parent_path());
+                if (!std::filesystem::exists((destDir / relative_path).parent_path())) {
+                    std::filesystem::create_directories((destDir / relative_path).parent_path());
                 }
-                std::filesystem::copy_file(ModSourcePath / relative_path_string,
-                                           destDir / relative_path_string,
+                std::filesystem::copy_file(ModSourcePath / relative_path, destDir / relative_path,
                                            std::filesystem::copy_options::overwrite_existing);
             } catch (std::exception& ex) {
                 QMessageBox::warning(this, "Filesystem error copying mod files", ex.what());
@@ -207,16 +195,26 @@ void ModManager::DeactivateButton_isPressed() {
         return;
     }
 
-    QByteArray utf8 = ui->ActiveModList->currentItem()->text().toUtf8();
-    const std::string ModName(utf8.data(), utf8.size());
-    const std::filesystem::path ModFolderPath = ModPath / ModName;
-    const std::filesystem::path ModBackupPath =
-        std::filesystem::current_path() / "BBLauncher" / "Mods-BACKUP" / ModName;
+    const std::string ModName = ui->ActiveModList->currentItem()->text().toStdString();
+    const std::string ModFolderPathString = (ModPath / ModName).string();
+    const std::filesystem::path ModFolderPath = std::filesystem::u8path(ModFolderPathString);
+    const std::string ModBackupPathString =
+        (std::filesystem::current_path() / "BBLauncher" / "Mods-BACKUP" / ModName).string();
+    const std::filesystem::path ModBackupPath = std::filesystem::u8path(ModBackupPathString);
+
     std::vector<std::string> FileList;
     std::vector<std::string> ActiveModList;
     std::vector<std::string> ConflictMods;
     std::string line;
     int lineCount = 0;
+
+    const bool has_dvdroot = std::filesystem::exists(ModFolderPath / "dvdroot_ps4");
+    std::filesystem::path ModSourcePath;
+    if (!has_dvdroot) {
+        ModSourcePath = ModFolderPath;
+    } else {
+        ModSourcePath = ModFolderPath / "dvdroot_ps4";
+    }
 
     std::ifstream ConflictFile(ModPath / "ConflictMods.txt", std::ios::binary);
     while (std::getline(ConflictFile, line)) {
@@ -235,31 +233,15 @@ void ModManager::DeactivateButton_isPressed() {
         ConflictRemove(ModName);
     }
 
-    const bool has_dvdroot = std::filesystem::exists(ModFolderPath / "dvdroot_ps4");
-    std::filesystem::path ModSourcePath;
-    if (!has_dvdroot) {
-        ModSourcePath = ModFolderPath;
-    } else {
-        ModSourcePath = ModFolderPath / "dvdroot_ps4";
-    }
-
-    /*
-        QMessageBox::information(this, "path",
-                                 "path is\n\n" + QString::fromStdString(PathToU8(
-                                                     installPath / "dvdroot_ps4" / ModSourcePath)),
-                                 QMessageBox::Ok);
-        return;
-    */
     ui->FileTransferLabel->setText("Deleting Mod Files");
     ui->progressBar->setMaximum(getFileCount(ModSourcePath));
 
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModSourcePath)) {
         auto relative_path = std::filesystem::relative(entry, ModSourcePath);
-        std::string relative_path_string = PathToU8(relative_path);
         if (!entry.is_directory()) {
             try {
-                if (std::filesystem::exists(installPath / "dvdroot_ps4" / relative_path_string)) {
-                    std::filesystem::remove(installPath / "dvdroot_ps4" / relative_path_string);
+                if (std::filesystem::exists(installPath / "dvdroot_ps4" / relative_path)) {
+                    std::filesystem::remove(installPath / "dvdroot_ps4" / relative_path);
                 }
             } catch (std::exception& ex) {
                 QMessageBox::warning(this, "Filesystem error deleting mod files", ex.what());
@@ -276,11 +258,10 @@ void ModManager::DeactivateButton_isPressed() {
 
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModBackupPath)) {
         auto relative_path = std::filesystem::relative(entry, ModBackupPath);
-        std::string relative_path_string = PathToU8(relative_path);
         if (!entry.is_directory()) {
             try {
-                std::filesystem::rename(ModBackupPath / relative_path_string,
-                                        installPath / "dvdroot_ps4" / relative_path_string);
+                std::filesystem::rename(ModBackupPath / relative_path,
+                                        installPath / "dvdroot_ps4" / relative_path);
             } catch (std::exception& ex) {
                 QMessageBox::critical(nullptr, "Filesystem error reverting backup", ex.what());
                 break;
@@ -312,20 +293,31 @@ void ModManager::DeactivateButton_isPressed() {
 
     std::filesystem::remove(ModPath / "ModifiedFiles.txt");
     for_each(ActiveModList.begin(), ActiveModList.end(), [&](std::string& e) {
-        const std::filesystem::path ActiveModFolderPath = ModPath / e;
+        const std::string ActiveModSourcePathString = (ModPath / e).string();
+        const std::string ActiveModSourcePathStringDVD = (ModPath / e / "dvdroot_ps4").string();
+
+        std::filesystem::path ActiveModSourcePath;
+        if (!has_dvdroot) {
+            ActiveModSourcePath = std::filesystem::u8path(ActiveModSourcePathString);
+        } else {
+            ActiveModSourcePath = std::filesystem::u8path(ActiveModSourcePathStringDVD);
+        }
+
         ui->FileTransferLabel->setText("Generating Modified File list for " +
                                        QString::fromStdString(e));
-        ui->progressBar->setMaximum(getFileCount(ActiveModFolderPath));
+        ui->progressBar->setMaximum(getFileCount(ActiveModSourcePath));
+
         for (const auto& entry :
-             std::filesystem::recursive_directory_iterator(ActiveModFolderPath)) {
+             std::filesystem::recursive_directory_iterator(ActiveModSourcePath)) {
             if (!entry.is_directory()) {
-                auto relative_path = std::filesystem::relative(entry, ActiveModFolderPath);
+                auto relative_path = std::filesystem::relative(entry, ActiveModSourcePath);
                 std::string relative_path_string = PathToU8(relative_path);
                 FileList.push_back(relative_path_string);
             }
             ui->progressBar->setValue(ui->progressBar->value() + 1);
             emit progressChanged(ui->progressBar->value() + 1);
         }
+
         ui->progressBar->setValue(0);
     });
 
@@ -430,22 +422,6 @@ void ModManager::ConflictRemove(std::string ModName) {
 std::string ModManager::PathToU8(const std::filesystem::path& path) {
     const auto u8_string = path.u8string();
     return std::string{u8_string.begin(), u8_string.end()};
-}
-
-void ModManager::PathToQString(QString& result, const std::filesystem::path& path) {
-#ifdef _WIN32
-    result = QString::fromStdWString(path.wstring());
-#else
-    result = QString::fromStdString(path.string());
-#endif
-}
-
-std::filesystem::path ModManager::PathFromQString(const QString& path) {
-#ifdef _WIN32
-    return std::filesystem::path(path.toStdWString());
-#else
-    return std::filesystem::path(path.toStdString());
-#endif
 }
 
 ModManager::~ModManager() {

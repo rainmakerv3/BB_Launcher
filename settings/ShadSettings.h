@@ -10,7 +10,7 @@ public:
     explicit ShadSettings(QWidget* parent = nullptr);
     ~ShadSettings();
 
-    bool eventFilter(QObject* obj, QEvent* event) override;
+    // bool eventFilter(QObject* obj, QEvent* event) override;
     void updateNoteTextEdit(const QString& groupName);
 
 signals:

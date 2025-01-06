@@ -353,8 +353,9 @@ void ShadSettings::updateNoteTextEdit(const QString& elementName) {
     ui->descriptionText->setText(text.replace("\\n", "\n"));
 }
 
+/*
 bool ShadSettings::eventFilter(QObject* obj, QEvent* event) {
-    /*
+
     if (event->type() == QEvent::Enter || event->type() == QEvent::Leave) {
         if (qobject_cast<QWidget*>(obj)) {
             bool hovered = (event->type() == QEvent::Enter);
@@ -367,9 +368,10 @@ bool ShadSettings::eventFilter(QObject* obj, QEvent* event) {
             }
             return true;
         }
-    } */
+    }
     return ShadSettings::eventFilter(obj, event);
 }
+*/
 
 void ShadSettings::UpdateSettings() {
 
