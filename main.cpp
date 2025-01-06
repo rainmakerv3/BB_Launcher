@@ -21,20 +21,16 @@ int main(int argc, char* argv[]) {
         return a.exec();
     }
 #elif defined(__linux__)
-/*
-    if (!std::filesystem::exists(std::filesystem::current_path() / "Shadps4-qt.AppImage")) {
-        QMessageBox::warning(
-            nullptr, "No Shadps4 AppImage found",
-            "No Shadps4 AppImage found. Move BB_Launcher app next to shadPS4 install");
-    } else if (!std::filesystem::exists(std::filesystem::current_path() / "Shadps4-sdl.AppImage")) {
-        QMessageBox::warning(
-            nullptr, "No Shadps4 AppImage found",
-            "No Shadps4 AppImage found. Move BB_Launcher and all its files next to shadPS4 "
-            "install");
+    if (!std::filesystem::exists(std::filesystem::current_path() / "Shadps4-qt.AppImage") &&
+        !std::filesystem::exists(std::filesystem::current_path() / "Shadps4-sdl.AppImage") &&
+        !std::filesystem::exists(std::filesystem::current_path() / "Shadps4")) {
+        QMessageBox::warning(nullptr, "No Shadps4 App or AppImage found",
+                             "No Shadps4 App or AppImage found. Move BB_Launcher app next to "
+                             "shadPS4 App or AppImage");
     } else {
         return a.exec();
     }
-*/
+
 #elif defined(__APPLE__)
     if (!std::filesystem::exists(std::filesystem::current_path() / "shadps4.app")) {
         QMessageBox::warning(nullptr, "No shadps4 app found",
