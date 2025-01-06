@@ -94,9 +94,9 @@ void BBLauncher::LaunchButton_isPressed() {
         if (SoundFixEnabled) {
             std::filesystem::path savePath =
                 GetShadUserDir() / "savedata" / "1" / game_serial / "SPRJ0005";
-            if (std::filesystem::exists(savePath / "userdata0010.")) {
+            if (std::filesystem::exists(savePath / "userdata0010")) {
                 std::ofstream savefile1;
-                savefile1.open(savePath / "userdata0010.",
+                savefile1.open(savePath / "userdata0010",
                                std::ios::in | std::ios::out | std::ios::binary);
                 savefile1.seekp(0x204E);
                 savefile1.put(0x1);
@@ -126,15 +126,15 @@ void BBLauncher::startShad() {
 #elif defined(__linux__)
     if (std::filesystem::exists(std::filesystem::current_path() / "Shadps4-qt.AppImage")) {
         std::system("chmod +x Shadps4-qt.AppImage");
-        const char* runBBshadPS4linux = ("./Shadps4-qt.AppImage -g \"" + PKGLoc + "\"").c_str();
-        std::system(runBBshadPS4linux);
+        const auto runBBshadPS4linux = std::string("./Shadps4-qt.AppImage -g \"" + PKGLoc + "\"");
+        std::system(runBBshadPS4linux.c_str());
     } else if (std::filesystem::exists(std::filesystem::current_path() / "Shadps4-sdl.AppImage")) {
         std::system("chmod +x Shadps4-sdl.AppImage");
-        const char* runBBshadPS4linux = ("./Shadps4-sdl.AppImage -g \"" + PKGLoc + "\"").c_str();
-        std::system(runBBshadPS4linux);
+        const auto runBBshadPS4linux = std::string("./Shadps4-sdl.AppImage -g \"" + PKGLoc + "\"");
+        std::system(runBBshadPS4linux.c_str());
     } else {
-        const char* runBBshadPS4linux = ("./Shadps4 -g \"" + PKGLoc + "\"").c_str();
-        std::system(runBBshadPS4linux);
+        const auto runBBshadPS4linux = std::string("./Shadps4 -g \"" + PKGLoc + "\"");
+        std::system(runBBshadPS4linux.c_str());
     }
 #elif defined(__APPLE__)
     const char* runBBshadPS4apple = ("open shadPS4 -g \"" + PKGLoc + "\"").c_str();
