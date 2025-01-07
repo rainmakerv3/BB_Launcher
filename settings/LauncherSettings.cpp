@@ -1,7 +1,7 @@
 #include <QMessageBox>
 #include <QPushButton>
-#include "../bblauncher.h"
 #include "LauncherSettings.h"
+#include "modules/bblauncher.h"
 #include "settings/ui_LauncherSettings.h"
 #include "toml.hpp"
 

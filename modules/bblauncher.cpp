@@ -4,10 +4,10 @@
 #include <QMessageBox>
 #include "bblauncher.h"
 #include "modules/ModManager.h"
+#include "modules/ui_bblauncher.h"
 #include "settings/LauncherSettings.h"
 #include "settings/ShadSettings.h"
 #include "settings/toml.hpp"
-#include "ui_bblauncher.h"
 
 std::string installPathString = "";
 std::filesystem::path installPath = "";
@@ -32,22 +32,34 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
     connect(ui->PatchesButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
     connect(ui->LaunchButton, &QPushButton::pressed, this, &BBLauncher::LaunchButton_isPressed);
     connect(ui->TrophyButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
-    connect(ui->shadSettingsButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
+
     connect(ui->SaveManagerButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
     connect(ui->ModManagerButton, &QPushButton::pressed, this, [this]() {
         if (installPath == "") {
             QMessageBox::warning(this, "No Bloodborne install path selected",
-                                 "Select Bloodborne Install Folder First before using Mod Manager");
+                                 "Select Bloodborne install folder before using Mod Manager");
+            return;
+        } else if (!std::filesystem::exists(installPath) || installPath.empty()) {
+            QMessageBox::warning(this, "Bloodborne install folder empty or does not exist",
+                                 QString::fromStdString(installPath.string()) +
+                                     " is empty or does not exist");
             return;
         }
+
         ModManager* ModWindow = new ModManager(this);
         ModWindow->exec();
         UpdateModList();
     });
-    /*connect(ui->shadSettingsButton, &QPushButton::pressed, this, [this]() {
+    connect(ui->shadSettingsButton, &QPushButton::pressed, this, [this]() {
+        if (!std::filesystem::exists(GetShadUserDir() / "config.toml")) {
+            QMessageBox::warning(
+                this, "No shadPS4 config file found",
+                QString::fromStdString((GetShadUserDir() / "config.toml").string() + " not found"));
+            return;
+        }
         ShadSettings* ShadSettingsWindow = new ShadSettings(this);
         ShadSettingsWindow->exec();
-    }); */
+    });
     connect(ui->LauncherSettingsButton, &QPushButton::pressed, this, [this]() {
         LauncherSettings* LauncherSettingsWindow = new LauncherSettings(this);
         LauncherSettingsWindow->exec();
@@ -90,26 +102,32 @@ void BBLauncher::WIPButton_isPressed() {
 }
 
 void BBLauncher::LaunchButton_isPressed() {
-    if (installPath != "") {
-        if (SoundFixEnabled) {
-            std::filesystem::path savePath =
-                GetShadUserDir() / "savedata" / "1" / game_serial / "SPRJ0005";
-            if (std::filesystem::exists(savePath / "userdata0010")) {
-                std::ofstream savefile1;
-                savefile1.open(savePath / "userdata0010",
-                               std::ios::in | std::ios::out | std::ios::binary);
-                savefile1.seekp(0x204E);
-                savefile1.put(0x1);
-                savefile1.close();
-            }
-        }
-        QMainWindow::hide();
-        std::thread shadThread(startShad);
-        shadThread.detach();
-    } else {
+    if (installPath == "") {
         QMessageBox::warning(this, "No Bloodborne Install folder selected",
                              "Select valid Bloodborne Install folder first");
+        return;
+    } else if (!std::filesystem::exists(PKGPath)) {
+        QMessageBox::warning(nullptr, "Bloodborne eboot.PKG not found",
+                             QString::fromStdString(PKGPath.string()) + " not found");
+        return;
     }
+
+    if (SoundFixEnabled) {
+        std::filesystem::path savePath =
+            GetShadUserDir() / "savedata" / "1" / game_serial / "SPRJ0005";
+        if (std::filesystem::exists(savePath / "userdata0010")) {
+            std::ofstream savefile1;
+            savefile1.open(savePath / "userdata0010",
+                           std::ios::in | std::ios::out | std::ios::binary);
+            savefile1.seekp(0x204E);
+            savefile1.put(0x1);
+            savefile1.close();
+        }
+    }
+
+    QMainWindow::hide();
+    std::thread shadThread(startShad);
+    shadThread.detach();
 
     if (BackupSaveEnabled) {
         std::thread saveThread(StartBackupSave);

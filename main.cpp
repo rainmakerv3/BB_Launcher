@@ -1,8 +1,7 @@
 #include <filesystem>
 #include <QApplication>
 #include <QMessageBox>
-#include "bblauncher.h"
-#include "src/ui_bblauncher.h"
+#include "modules/bblauncher.h"
 
 int main(int argc, char* argv[]) {
 

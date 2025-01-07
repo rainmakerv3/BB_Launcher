@@ -10,28 +10,27 @@ public:
     explicit ShadSettings(QWidget* parent = nullptr);
     ~ShadSettings();
 
-    // bool eventFilter(QObject* obj, QEvent* event) override;
+    bool eventFilter(QObject* obj, QEvent* event) override;
     void updateNoteTextEdit(const QString& groupName);
-
-signals:
-    void LanguageChanged(const std::string& locale);
-    void CompatibilityChanged();
 
 private:
     void LoadValuesFromConfig();
-    void UpdateSettings();
-    void ResetInstallFolders();
-    void InitializeEmulatorLanguages();
     void OnCursorStateChanged(int index);
+    void SaveSettings();
+    void SetDefaults();
+    void UpdateShad();
+    void InstallUpdate();
+    void DownloadUpdate(const QString& downloadUrl);
+    void UpdateDialog();
 
     std::unique_ptr<Ui::ShadSettings> ui;
 
     std::map<std::string, int> languages;
-
     QString defaultTextEdit;
-
     int initialHeight;
 };
+
+void PathToQString(QString& result, const std::filesystem::path& path);
 
 const QVector<int> languageIndexes = {21, 23, 14, 6, 18, 1, 12, 22, 2, 4,  25, 24, 29, 5,  0, 9,
                                       15, 16, 17, 7, 26, 8, 11, 20, 3, 13, 27, 10, 19, 30, 28};
@@ -67,3 +66,5 @@ const QStringList languageNames = {"Arabic",
                                    "Turkish",
                                    "Ukrainian",
                                    "Vietnamese"};
+
+// TODO: map for settings descriptions

@@ -41,14 +41,14 @@ if(APPLE)
     set(CMAKE_OSX_DEPLOYMENT_TARGET 14)
 endif()
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Network)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
 
 set(PROJECT_SOURCES
     main.cpp
-    bblauncher.cpp
-    bblauncher.h
-    bblauncher.ui
+    modules/bblauncher.cpp
+    modules/bblauncher.h
+    modules/bblauncher.ui
     settings/toml.hpp
     settings/LauncherSettings.h
     settings/LauncherSettings.cpp
@@ -97,7 +97,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(BB_Launcher PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
@@ -120,7 +120,7 @@ set_source_files_properties(images/BBIcon.icns PROPERTIES
         MACOSX_PACKAGE_LOCATION Resources)
 
 if (WIN32)
-    target_sources(BB_Launcher PRIVATE bblauncher.rc)
+    target_sources(BB_Launcher PRIVATE dist/bblauncher.rc)
 endif()
 
 target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
