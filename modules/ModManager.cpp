@@ -201,14 +201,22 @@ void ModManager::DeactivateButton_isPressed() {
     const std::string ModBackupPathString =
         (std::filesystem::current_path() / "BBLauncher" / "Mods-BACKUP" / ModName).string();
     const std::filesystem::path ModBackupPath = std::filesystem::u8path(ModBackupPathString);
+    const bool has_dvdroot = std::filesystem::exists(ModFolderPath / "dvdroot_ps4");
 
-    std::vector<std::string> FileList;
-    std::vector<std::string> ActiveModList;
     std::vector<std::string> ConflictMods;
     std::string line;
     int lineCount = 0;
 
-    const bool has_dvdroot = std::filesystem::exists(ModFolderPath / "dvdroot_ps4");
+    if (!std::filesystem::exists(ModFolderPath)) {
+        QMessageBox::warning(this, "Unable to find Mod Folder " + QString::fromStdString(ModName),
+                             "Unable to find Mod Folder, it may have been renamed or deleted. "
+                             "Backup can be restored manually from BBLauncher/Mods-BACKUP folder");
+        ActiveModRemove(ModName);
+        RegenModFileTxt();
+        RefreshLists();
+        return;
+    }
+
     std::filesystem::path ModSourcePath;
     if (!has_dvdroot) {
         ModSourcePath = ModFolderPath;
@@ -274,58 +282,8 @@ void ModManager::DeactivateButton_isPressed() {
     std::filesystem::remove_all(ModBackupPath);
     ui->progressBar->setValue(0);
 
-    lineCount = 0;
-    std::ifstream ActiveFile(ModPath / "ActiveMods.txt", std::ios::binary);
-    while (std::getline(ActiveFile, line)) {
-        lineCount++;
-        ActiveModList.push_back(line);
-    }
-    ActiveFile.close();
-
-    auto itr = std::find(ActiveModList.begin(), ActiveModList.end(), ModName);
-    if (itr != ActiveModList.end())
-        ActiveModList.erase(itr);
-
-    std::ofstream ActiveFileSave(ModPath / "ActiveMods.txt", std::ios::binary);
-    for (const auto& l : ActiveModList)
-        ActiveFileSave << l << "\n";
-    ActiveFileSave.close();
-
-    std::filesystem::remove(ModPath / "ModifiedFiles.txt");
-    for_each(ActiveModList.begin(), ActiveModList.end(), [&](std::string& e) {
-        const std::string ActiveModSourcePathString = (ModPath / e).string();
-        const std::string ActiveModSourcePathStringDVD = (ModPath / e / "dvdroot_ps4").string();
-
-        std::filesystem::path ActiveModSourcePath;
-        if (!has_dvdroot) {
-            ActiveModSourcePath = std::filesystem::u8path(ActiveModSourcePathString);
-        } else {
-            ActiveModSourcePath = std::filesystem::u8path(ActiveModSourcePathStringDVD);
-        }
-
-        ui->FileTransferLabel->setText("Generating Modified File list for " +
-                                       QString::fromStdString(e));
-        ui->progressBar->setMaximum(getFileCount(ActiveModSourcePath));
-
-        for (const auto& entry :
-             std::filesystem::recursive_directory_iterator(ActiveModSourcePath)) {
-            if (!entry.is_directory()) {
-                auto relative_path = std::filesystem::relative(entry, ActiveModSourcePath);
-                std::string relative_path_string = PathToU8(relative_path);
-                FileList.push_back(relative_path_string);
-            }
-            ui->progressBar->setValue(ui->progressBar->value() + 1);
-            emit progressChanged(ui->progressBar->value() + 1);
-        }
-
-        ui->progressBar->setValue(0);
-    });
-
-    std::ofstream ModInfoFileSave(ModPath / "ModifiedFiles.txt", std::ios::binary);
-    for (const auto& i : FileList)
-        ModInfoFileSave << i << "\n";
-    ModInfoFileSave.close();
-
+    ActiveModRemove(ModName);
+    RegenModFileTxt();
     RefreshLists();
     ui->progressBar->setValue(0);
     ui->FileTransferLabel->setText("No Current File Transfers");
@@ -417,6 +375,76 @@ void ModManager::ConflictRemove(std::string ModName) {
     for (const auto& i : ConflictMods)
         ConflictFileSave << i << "\n";
     ConflictFileSave.close();
+}
+
+void ModManager::RegenModFileTxt() {
+    std::vector<std::string> FileList;
+    std::vector<std::string> ActiveModList;
+    std::string line;
+    int lineCount = 0;
+
+    std::ifstream ActiveFile(ModPath / "ActiveMods.txt", std::ios::binary);
+    while (std::getline(ActiveFile, line)) {
+        lineCount++;
+        ActiveModList.push_back(line);
+    }
+    ActiveFile.close();
+
+    std::filesystem::remove(ModPath / "ModifiedFiles.txt");
+    for_each(ActiveModList.begin(), ActiveModList.end(), [&](std::string& e) {
+        const std::string ActiveModSourcePathString = (ModPath / e).string();
+        const std::string ActiveModSourcePathStringDVD = (ModPath / e / "dvdroot_ps4").string();
+        std::filesystem::path ActiveModSourcePath;
+        if (!std::filesystem::exists(ModPath / e / "dvdroot_ps4")) {
+            ActiveModSourcePath = std::filesystem::u8path(ActiveModSourcePathString);
+        } else {
+            ActiveModSourcePath = std::filesystem::u8path(ActiveModSourcePathStringDVD);
+        }
+
+        ui->FileTransferLabel->setText("Generating Modified File list for " +
+                                       QString::fromStdString(e));
+        ui->progressBar->setMaximum(getFileCount(ActiveModSourcePath));
+
+        for (const auto& entry :
+             std::filesystem::recursive_directory_iterator(ActiveModSourcePath)) {
+            if (!entry.is_directory()) {
+                auto relative_path = std::filesystem::relative(entry, ActiveModSourcePath);
+                std::string relative_path_string = PathToU8(relative_path);
+                FileList.push_back(relative_path_string);
+            }
+            ui->progressBar->setValue(ui->progressBar->value() + 1);
+            emit progressChanged(ui->progressBar->value() + 1);
+        }
+
+        ui->progressBar->setValue(0);
+    });
+
+    std::ofstream ModInfoFileSave(ModPath / "ModifiedFiles.txt", std::ios::binary);
+    for (const auto& i : FileList)
+        ModInfoFileSave << i << "\n";
+    ModInfoFileSave.close();
+}
+
+void ModManager::ActiveModRemove(std::string ModName) {
+    std::vector<std::string> ActiveModList;
+    std::string line;
+    int lineCount = 0;
+
+    std::ifstream ActiveFile(ModPath / "ActiveMods.txt", std::ios::binary);
+    while (std::getline(ActiveFile, line)) {
+        lineCount++;
+        ActiveModList.push_back(line);
+    }
+    ActiveFile.close();
+
+    auto itr = std::find(ActiveModList.begin(), ActiveModList.end(), ModName);
+    if (itr != ActiveModList.end())
+        ActiveModList.erase(itr);
+
+    std::ofstream ActiveFileSave(ModPath / "ActiveMods.txt", std::ios::binary);
+    for (const auto& l : ActiveModList)
+        ActiveFileSave << l << "\n";
+    ActiveFileSave.close();
 }
 
 std::string ModManager::PathToU8(const std::filesystem::path& path) {

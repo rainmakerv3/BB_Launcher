@@ -30,7 +30,9 @@ private:
 
     void RefreshLists();
     int getFileCount(std::filesystem::path ModFolder);
+    void ActiveModRemove(std::string ModName);
     void ConflictAdd(std::string ModName);
     void ConflictRemove(std::string ModName);
+    void RegenModFileTxt();
     std::string PathToU8(const std::filesystem::path& path);
 };
