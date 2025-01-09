@@ -1,4 +1,3 @@
-#include <QCompleter>
 #include <QFileDialog>
 #include <QHoverEvent>
 #include <QJsonArray>
@@ -10,6 +9,7 @@
 #include <QNetworkRequest>
 #include <QProcess>
 #include <QStandardPaths>
+#include <Windows.h>
 
 #include "ShadSettings.h"
 #include "modules/bblauncher.h"
@@ -24,10 +24,6 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
     ui->buttonBox->button(QDialogButtonBox::StandardButton::Close)->setFocus();
 
     ui->consoleLanguageComboBox->addItems(languageNames);
-
-    QCompleter* completer = new QCompleter(languageNames, this);
-    completer->setCaseSensitivity(Qt::CaseInsensitive);
-    ui->consoleLanguageComboBox->setCompleter(completer);
 
     ui->fullscreenModeComboBox->addItem("Borderless");
     ui->fullscreenModeComboBox->addItem("True");
@@ -514,7 +510,7 @@ void ShadSettings::DownloadUpdate(const QString& downloadUrl) {
                 this, tr("Download Complete"),
                 tr("The update has been downloaded, press OK to install.\n\nBBLauncher will close "
                    "to allow copying of shared QT files. The update is finished when BBLauncher "
-                   "re-opens after about 10 to 15 seconds."));
+                   "re-opens."));
             ui->checkUpdateButton->setText("Update ShadPS4");
             ui->checkUpdateButton->setEnabled(true);
             InstallUpdate();
@@ -557,7 +553,6 @@ void ShadSettings::InstallUpdate() {
     scriptFileName = tempDirPath + "/update.ps1";
     scriptContent = QStringLiteral(
         "Set-ExecutionPolicy Bypass -Scope Process -Force\n"
-        "start powershell"
         "$binaryStartingUpdate = '%1'\n"
         "$chars = @()\n"
         "for ($i = 0; $i -lt $binaryStartingUpdate.Length; $i += 16) {\n"
@@ -702,8 +697,11 @@ void ShadSettings::InstallUpdate() {
         scriptFile.setPermissions(QFileDevice::ExeOwner | QFileDevice::ReadOwner |
                                   QFileDevice::WriteOwner);
 #endif
-        QProcess* process = new QProcess(this);
-        process->startDetached(processCommand, arguments);
+#ifdef _WIN32
+        SetConsoleOutputCP(CP_UTF8);
+#endif
+
+        QProcess::startDetached(processCommand, arguments);
         exit(EXIT_SUCCESS);
 
     } else {

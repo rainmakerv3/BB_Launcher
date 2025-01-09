@@ -1,9 +1,12 @@
 #include <filesystem>
+#include <iostream>
 #include <QApplication>
 #include <QMessageBox>
 #include "modules/bblauncher.h"
 
 int main(int argc, char* argv[]) {
+
+    std::cout << "SHADPS4 UPDATE WINDOW\n\n";
 
     QApplication a(argc, argv);
     BBLauncher w;
