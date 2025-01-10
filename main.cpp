@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
 #elif defined(__linux__)
     if (!std::filesystem::exists(std::filesystem::current_path() / "Shadps4-qt.AppImage") &&
         !std::filesystem::exists(std::filesystem::current_path() / "Shadps4-sdl.AppImage") &&
-        !std::filesystem::exists(std::filesystem::current_path() / "Shadps4")) {
+        !std::filesystem::exists(std::filesystem::current_path() / "shadps4")) {
         QMessageBox::warning(nullptr, "No Shadps4 App or AppImage found",
                              "No Shadps4 App or AppImage found. Move BB_Launcher app next to "
                              "shadPS4 App or AppImage");

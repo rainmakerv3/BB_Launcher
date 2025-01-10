@@ -177,9 +177,8 @@ void BBLauncher::startShad() {
                  << "Shadps4-sdl.AppImage";
         processCommand = "./Shadps4-sdl.AppImage";
     } else {
-        chmodArg << "+x"
-                 << "Shadps4";
-        processCommand = "./Shadps4";
+        chmodArg << "+x" << "shadps4";
+        processCommand = "./shadps4";
     }
 
     chmod->start("chmod", chmodArg);
