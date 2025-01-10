@@ -78,7 +78,6 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
         ui->showSplashCheckBox->installEventFilter(this);
         ui->discordRPCCheckbox->installEventFilter(this);
         ui->userName->installEventFilter(this);
-        ui->label_Trophy->installEventFilter(this);
         ui->trophyKeyLineEdit->installEventFilter(this);
         ui->logTypeGroupBox->installEventFilter(this);
         ui->logFilter->installEventFilter(this);
@@ -194,8 +193,6 @@ void ShadSettings::updateNoteTextEdit(const QString& elementName) {
         text = discordRPCCheckboxtext;
     } else if (elementName == "userName") {
         text = userNametext;
-    } else if (elementName == "label_Trophy") {
-        text = TrophyKeytext;
     } else if (elementName == "trophyKeyLineEdit") {
         text = TrophyKeytext;
     } else if (elementName == "logTypeGroupBox") {

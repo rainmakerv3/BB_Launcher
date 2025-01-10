@@ -147,7 +147,7 @@ jobs:
 
   pre-release:
     if: github.ref == 'refs/heads/master' && github.repository == 'rainmakerv3/BB_Launcher' && github.event_name == 'push'
-    needs: [get-info, build-windows, build-linux, build-macos]
+    needs: [get-info, build-windows, build-linux]
     runs-on: ubuntu-latest
     steps:
     - name: Download all artifacts

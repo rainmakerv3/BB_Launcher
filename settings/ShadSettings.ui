@@ -164,27 +164,38 @@
               </property>
               <layout class="QVBoxLayout" name="userNameLayout">
                <item>
-                <widget class="QCheckBox" name="disableTrophycheckBox">
-                 <property name="text">
-                  <string notr="true">Disable Trophy Pop-ups</string>
+                <widget class="QGroupBox" name="groupBox_3">
+                 <property name="title">
+                  <string>Trophy Settings</string>
                  </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_14">
+                  <item>
+                   <widget class="QCheckBox" name="disableTrophycheckBox">
+                    <property name="text">
+                     <string notr="true">Disable Trophy Pop-ups</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
                <item>
-                <widget class="QLabel" name="label_Trophy">
-                 <property name="text">
-                  <string notr="true">Trophy Key</string>
+                <widget class="QGroupBox" name="groupBox_4">
+                 <property name="title">
+                  <string>Input Trophy Key</string>
                  </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLineEdit" name="trophyKeyLineEdit">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>0</height>
-                  </size>
-                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_15">
+                  <item>
+                   <widget class="QLineEdit" name="trophyKeyLineEdit">
+                    <property name="minimumSize">
+                     <size>
+                      <width>0</width>
+                      <height>0</height>
+                     </size>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
               </layout>

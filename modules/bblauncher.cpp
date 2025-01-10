@@ -55,7 +55,7 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
     connect(ui->shadSettingsButton, &QPushButton::pressed, this, [this]() {
         if (!std::filesystem::exists(GetShadUserDir() / "config.toml")) {
             QMessageBox::warning(
-                this, "No shadPS4 config file found",
+                this, "No shadPS4 config file found. Run shadPS4 once to generate it.",
                 QString::fromStdString((GetShadUserDir() / "config.toml").string() + " not found"));
             return;
         }
