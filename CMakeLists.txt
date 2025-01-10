@@ -53,6 +53,8 @@ set(PROJECT_SOURCES
     settings/LauncherSettings.h
     settings/LauncherSettings.cpp
     settings/LauncherSettings.ui
+    settings/ShadCheatsPatches.cpp    
+    settings/ShadCheatsPatches.h    
     settings/ShadSettings.h
     settings/ShadSettings.cpp
     settings/ShadSettings.ui

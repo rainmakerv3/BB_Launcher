@@ -11,6 +11,7 @@
 #include "modules/ModManager.h"
 #include "modules/ui_bblauncher.h"
 #include "settings/LauncherSettings.h"
+#include "settings/ShadCheatsPatches.h"
 #include "settings/ShadSettings.h"
 #include "settings/toml.hpp"
 
@@ -34,11 +35,17 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
     connect(ui->ExeSelectButton, &QPushButton::pressed, this,
             &BBLauncher::ExeSelectButton_isPressed);
 
-    connect(ui->PatchesButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
     connect(ui->LaunchButton, &QPushButton::pressed, this, &BBLauncher::LaunchButton_isPressed);
     connect(ui->TrophyButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
-
     connect(ui->SaveManagerButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
+
+    connect(ui->PatchesButton, &QPushButton::pressed, this, [this]() {
+        CheatsPatches* cheatsPatches = new CheatsPatches(this);
+        cheatsPatches->show();
+        connect(this, &QWidget::destroyed, cheatsPatches,
+                [cheatsPatches]() { cheatsPatches->deleteLater(); });
+    });
+
     connect(ui->ModManagerButton, &QPushButton::pressed, this, [this]() {
         if (installPath == "") {
             QMessageBox::warning(this, "No Bloodborne install path selected",
@@ -55,6 +62,7 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
         ModWindow->exec();
         UpdateModList();
     });
+
     connect(ui->shadSettingsButton, &QPushButton::pressed, this, [this]() {
         if (!std::filesystem::exists(GetShadUserDir() / "config.toml")) {
             QMessageBox::warning(
@@ -65,12 +73,12 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
         ShadSettings* ShadSettingsWindow = new ShadSettings(this);
         ShadSettingsWindow->exec();
     });
+
     connect(ui->LauncherSettingsButton, &QPushButton::pressed, this, [this]() {
         LauncherSettings* LauncherSettingsWindow = new LauncherSettings(this);
         LauncherSettingsWindow->exec();
         UpdateSettingsList();
     });
-    ;
 
     if (installPathString == "") {
         const QString NoPathText = "no Bloodborne Folder selected (CUSA****)";
