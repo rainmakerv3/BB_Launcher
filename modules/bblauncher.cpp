@@ -2,6 +2,8 @@
 #include <thread>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QProcess>
+
 #include "bblauncher.h"
 #include "modules/ModManager.h"
 #include "modules/ui_bblauncher.h"
@@ -11,7 +13,7 @@
 
 std::string installPathString = "";
 std::filesystem::path installPath = "";
-std::filesystem::path PKGPath = "";
+std::filesystem::path EbootPath = "";
 std::string game_serial = "";
 
 BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLauncher) {
@@ -86,7 +88,7 @@ void BBLauncher::ExeSelectButton_isPressed() {
             ui->ExeLabel->setText(QBBInstallLoc);
             installPathString = QBBInstallLoc.toStdString();
             installPath = installPathString;
-            PKGPath = installPath / "eboot.bin";
+            EbootPath = installPath / "eboot.bin";
             SaveInstallLoc();
         } else {
             QMessageBox::warning(
@@ -106,9 +108,9 @@ void BBLauncher::LaunchButton_isPressed() {
         QMessageBox::warning(this, "No Bloodborne Install folder selected",
                              "Select valid Bloodborne Install folder first");
         return;
-    } else if (!std::filesystem::exists(PKGPath)) {
-        QMessageBox::warning(nullptr, "Bloodborne eboot.PKG not found",
-                             QString::fromStdString(PKGPath.string()) + " not found");
+    } else if (!std::filesystem::exists(EbootPath)) {
+        QMessageBox::warning(this, "Bloodborne eboot.PKG not found",
+                             QString::fromStdString(EbootPath.string()) + " not found");
         return;
     }
 
@@ -136,30 +138,47 @@ void BBLauncher::LaunchButton_isPressed() {
 }
 
 void BBLauncher::startShad() {
-    const std::string PKGLoc = (PKGPath).string();
-
+    QString PKGarg;
 #ifdef _WIN32
-    const char* runBBshadPS4win = ("shadPS4.exe -g \"" + PKGLoc + "\"").c_str();
-    std::system(runBBshadPS4win);
-#elif defined(__linux__)
-    if (std::filesystem::exists(std::filesystem::current_path() / "Shadps4-qt.AppImage")) {
-        std::system("chmod +x Shadps4-qt.AppImage");
-        const auto runBBshadPS4linux = std::string("./Shadps4-qt.AppImage -g \"" + PKGLoc + "\"");
-        std::system(runBBshadPS4linux.c_str());
-    } else if (std::filesystem::exists(std::filesystem::current_path() / "Shadps4-sdl.AppImage")) {
-        std::system("chmod +x Shadps4-sdl.AppImage");
-        const auto runBBshadPS4linux = std::string("./Shadps4-sdl.AppImage -g \"" + PKGLoc + "\"");
-        std::system(runBBshadPS4linux.c_str());
-    } else {
-        const auto runBBshadPS4linux = std::string("./Shadps4 -g \"" + PKGLoc + "\"");
-        std::system(runBBshadPS4linux.c_str());
-    }
-#elif defined(__APPLE__)
-    const auto runBBshadPS4apple = std::string("open shadPS4 -g \"" + PKGLoc + "\"");
-    std::system(runBBshadPS4apple.c_str());
+    PKGarg = QString::fromStdWString(EbootPath.wstring());
+#else
+    PKGarg = QString::fromStdString(EbootPath.string());
 #endif
 
-    QApplication::quit();
+    QProcess* process = new QProcess;
+    QString processCommand;
+    QStringList processArg;
+    processArg << "-g" << PKGarg;
+
+#ifdef _WIN32
+    processCommand = "shadps4.exe";
+#elif defined(__linux__)
+    QProcess* chmod = new QProcess;
+    QString chmodCommand = "chmod";
+    QStringList chmodArg;
+
+    if (std::filesystem::exists(std::filesystem::current_path() / "Shadps4-qt.AppImage")) {
+        chmodArg << "+x"
+                 << "Shadps4-qt.AppImage";
+        processCommand = "./Shadps4-qt.AppImage";
+    } else if (std::filesystem::exists(std::filesystem::current_path() / "Shadps4-sdl.AppImage")) {
+        chmodArg << "+x"
+                 << "Shadps4-sdl.AppImage";
+        processCommand = "./Shadps4-sdl.AppImage";
+    } else {
+        chmodArg << "+x"
+                 << "Shadps4";
+        processCommand = "./Shadps4";
+    }
+
+    chmod->start("chmod", chmodArg);
+#elif defined(__APPLE__)
+    processCommand = "open shadPS4";
+#endif
+
+    process->startDetached(processCommand, processArg);
+    connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
+            [=](int exitCode, QProcess::ExitStatus exitStatus) { QApplication::quit(); });
 }
 
 void StartBackupSave() {

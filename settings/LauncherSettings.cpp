@@ -100,14 +100,14 @@ void LoadLauncherSettings() {
         ifs.open(SettingsFile, std::ios_base::binary);
         data = toml::parse(SettingsFile);
     } catch (std::exception& ex) {
-        QMessageBox::critical(nullptr, "Filesystem error", ex.what());
+        QMessageBox::critical(NULL, "Filesystem error", ex.what());
         return;
     }
 
     installPathString = toml::find_or<std::string>(data, "Launcher", "installPath", "");
     game_serial = QString::fromStdString(installPathString).last(9).toStdString();
     installPath = installPathString;
-    PKGPath = installPath / "eboot.bin";
+    EbootPath = installPath / "eboot.bin";
 
     theme = toml::find_or<std::string>(data, "Launcher", "Theme", "Dark");
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);

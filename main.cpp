@@ -4,8 +4,10 @@
 #include <QMessageBox>
 #include "modules/bblauncher.h"
 
-int main(int argc, char* argv[]) {
+void customMessageHandler(QtMsgType, const QMessageLogContext&, const QString&) {}
 
+int main(int argc, char* argv[]) {
+    qInstallMessageHandler(customMessageHandler);
     std::cout << "SHADPS4 UPDATE WINDOW\n\n";
 
     QApplication a(argc, argv);

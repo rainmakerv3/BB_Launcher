@@ -16,7 +16,7 @@ extern std::filesystem::path userPath;
 extern std::string game_serial;
 extern std::filesystem::path installPath;
 extern std::string installPathString;
-extern std::filesystem::path PKGPath;
+extern std::filesystem::path EbootPath;
 
 void StartBackupSave();
 std::filesystem::path GetShadUserDir();

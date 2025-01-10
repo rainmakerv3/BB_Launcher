@@ -9,12 +9,15 @@
 #include <QNetworkRequest>
 #include <QProcess>
 #include <QStandardPaths>
-#include <Windows.h>
 
 #include "ShadSettings.h"
 #include "modules/bblauncher.h"
 #include "settings/ui_ShadSettings.h"
 #include "toml.hpp"
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSettings) {
     ui->setupUi(this);
