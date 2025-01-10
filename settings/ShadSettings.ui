@@ -673,7 +673,7 @@
                </font>
               </property>
               <property name="title">
-               <string>Update ShadPS4 (**not tested on Linux**)</string>
+               <string>Update ShadPS4</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_2">
                <item>

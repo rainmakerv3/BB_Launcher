@@ -15,10 +15,6 @@
 #include "settings/ui_ShadSettings.h"
 #include "toml.hpp"
 
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSettings) {
     ui->setupUi(this);
     ui->tabWidgetSettings->setUsesScrollButtons(false);
@@ -31,14 +27,14 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
     ui->fullscreenModeComboBox->addItem("Borderless");
     ui->fullscreenModeComboBox->addItem("True");
 
-    ui->hideCursorComboBox->addItem(tr("Never"));
-    ui->hideCursorComboBox->addItem(tr("Idle"));
-    ui->hideCursorComboBox->addItem(tr("Always"));
+    ui->hideCursorComboBox->addItem("Never");
+    ui->hideCursorComboBox->addItem("Idle");
+    ui->hideCursorComboBox->addItem("Always");
 
-    ui->backButtonBehaviorComboBox->addItem(tr("Touchpad Left"), "left");
-    ui->backButtonBehaviorComboBox->addItem(tr("Touchpad Center"), "center");
-    ui->backButtonBehaviorComboBox->addItem(tr("Touchpad Right"), "right");
-    ui->backButtonBehaviorComboBox->addItem(tr("None"), "none");
+    ui->backButtonBehaviorComboBox->addItem("Touchpad Left", "left");
+    ui->backButtonBehaviorComboBox->addItem("Touchpad Center", "center");
+    ui->backButtonBehaviorComboBox->addItem("Touchpad Right", "right");
+    ui->backButtonBehaviorComboBox->addItem("None", "none");
     LoadValuesFromConfig();
 
     defaultTextEdit = "Point your mouse at an option to display its description.";
@@ -77,6 +73,7 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
         // General
         ui->consoleLanguageGroupBox->installEventFilter(this);
         ui->fullscreenCheckBox->installEventFilter(this);
+        ui->FullscreenModeGroupBox->installEventFilter(this);
         ui->separateUpdatesCheckBox->installEventFilter(this);
         ui->showSplashCheckBox->installEventFilter(this);
         ui->discordRPCCheckbox->installEventFilter(this);
@@ -85,7 +82,8 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
         ui->trophyKeyLineEdit->installEventFilter(this);
         ui->logTypeGroupBox->installEventFilter(this);
         ui->logFilter->installEventFilter(this);
-        ui->updaterGroupBox->installEventFilter(this);
+        ui->updaterComboBox->installEventFilter(this);
+        ui->checkUpdateButton->installEventFilter(this);
         ui->disableTrophycheckBox->installEventFilter(this);
 
         // Input
@@ -183,81 +181,59 @@ void ShadSettings::updateNoteTextEdit(const QString& elementName) {
 
     // General
     if (elementName == "consoleLanguageGroupBox") {
-        text = "consoleLanguageGroupBox";
-    } else if (elementName == "emulatorLanguageGroupBox") {
-        text = tr("emulatorLanguageGroupBox");
+        text = consoleLanguageGroupBoxtext;
     } else if (elementName == "fullscreenCheckBox") {
-        text = tr("fullscreenCheckBox");
+        text = fullscreenCheckBoxtext;
+    } else if (elementName == "FullscreenModeGroupBox") {
+        text = fullscreenModeGroupBoxtext;
     } else if (elementName == "separateUpdatesCheckBox") {
-        text = tr("separateUpdatesCheckBox");
+        text = separateUpdatesCheckBoxtext;
     } else if (elementName == "showSplashCheckBox") {
-        text = tr("showSplashCheckBox");
+        text = showSplashCheckBoxtext;
     } else if (elementName == "discordRPCCheckbox") {
-        text = tr("discordRPCCheckbox");
+        text = discordRPCCheckboxtext;
     } else if (elementName == "userName") {
-        text = tr("userName");
+        text = userNametext;
     } else if (elementName == "label_Trophy") {
-        text = tr("TrophyKey");
+        text = TrophyKeytext;
     } else if (elementName == "trophyKeyLineEdit") {
-        text = tr("TrophyKey");
+        text = TrophyKeytext;
     } else if (elementName == "logTypeGroupBox") {
-        text = tr("logTypeGroupBox");
+        text = logTypeGroupBoxtext;
     } else if (elementName == "logFilter") {
-        text = tr("logFilter");
-    } else if (elementName == "updaterGroupBox") {
-        text = tr("updaterGroupBox");
-    } else if (elementName == "GUIgroupBox") {
-        text = tr("GUIgroupBox");
+        text = logFiltertext;
+    } else if (elementName == "updaterComboBox") {
+        text = updaterComboBoxtext;
+    } else if (elementName == "checkUpdateButton") {
+        text = checkUpdateButtontext;
     } else if (elementName == "disableTrophycheckBox") {
-        text = tr("disableTrophycheckBox");
-    } else if (elementName == "enableCompatibilityCheckBox") {
-        text = tr("enableCompatibilityCheckBox");
-    } else if (elementName == "checkCompatibilityOnStartupCheckBox") {
-        text = tr("checkCompatibilityOnStartupCheckBox");
-    } else if (elementName == "updateCompatibilityButton") {
-        text = tr("updateCompatibilityButton");
+        text = disableTrophycheckBoxtext;
     } else if (elementName == "motionControlsCheckBox") {
-        text = tr("motionControlsCheckBox");
+        text = motionControlsCheckBoxtext;
     }
 
     // Input
     if (elementName == "hideCursorGroupBox") {
-        text = tr("hideCursorGroupBox");
+        text = hideCursorGroupBoxtext;
     } else if (elementName == "idleTimeoutGroupBox") {
-        text = tr("idleTimeoutGroupBox");
+        text = idleTimeoutGroupBoxtext;
     } else if (elementName == "backButtonBehaviorGroupBox") {
-        text = tr("backButtonBehaviorGroupBox");
+        text = backButtonBehaviorGroupBoxtext;
     }
 
     // Graphics
-    if (elementName == "graphicsAdapterGroupBox") {
-        text = tr("graphicsAdapterGroupBox");
-    } else if (elementName == "widthGroupBox") {
-        text = tr("resolutionLayout");
+    if (elementName == "widthGroupBox") {
+        text = resolutionLayouttext;
     } else if (elementName == "heightGroupBox") {
-        text = tr("resolutionLayout");
+        text = resolutionLayouttext;
     } else if (elementName == "heightDivider") {
-        text = tr("heightDivider");
-    } else if (elementName == "dumpShadersCheckBox") {
-        text = tr("dumpShadersCheckBox");
-    } else if (elementName == "nullGpuCheckBox") {
-        text = tr("nullGpuCheckBox");
-    }
-
-    // Path
-    if (elementName == "gameFoldersGroupBox" || elementName == "gameFoldersListWidget") {
-        text = tr("gameFoldersBox");
-    } else if (elementName == "addFolderButton") {
-        text = tr("addFolderButton");
-    } else if (elementName == "removeFolderButton") {
-        text = tr("removeFolderButton");
+        text = heightDividertext;
     }
 
     ui->descriptionText->setText(text.replace("\\n", "\n"));
 }
 
 bool ShadSettings::eventFilter(QObject* obj, QEvent* event) {
-
     if (event->type() == QEvent::Enter || event->type() == QEvent::Leave) {
         if (qobject_cast<QWidget*>(obj)) {
             bool hovered = (event->type() == QEvent::Enter);
@@ -371,8 +347,9 @@ void ShadSettings::UpdateShad() {
 
     connect(reply, &QNetworkReply::finished, this, [this, reply, updateChannel]() {
         if (reply->error() != QNetworkReply::NoError) {
-            QMessageBox::warning(this, tr("Error"),
-                                 QString(tr("Network error:") + "\n" + reply->errorString()));
+            QMessageBox::warning(this, "Error",
+                                 QString::fromStdString("Network error:") + "\n" +
+                                     reply->errorString());
             reply->deleteLater();
             ui->checkUpdateButton->setText("Update ShadPS4");
             ui->checkUpdateButton->setEnabled(true);
@@ -384,7 +361,7 @@ void ShadSettings::UpdateShad() {
         QJsonDocument jsonDoc(QJsonDocument::fromJson(response));
 
         if (jsonDoc.isNull()) {
-            QMessageBox::warning(this, tr("Error"), tr("Failed to parse update information."));
+            QMessageBox::warning(this, "Error", "Failed to parse update information.");
             reply->deleteLater();
             ui->checkUpdateButton->setText("Update ShadPS4");
             ui->checkUpdateButton->setEnabled(true);
@@ -417,7 +394,7 @@ void ShadSettings::UpdateShad() {
             if (!jsonObj.isEmpty()) {
                 latestVersion = jsonObj["tag_name"].toString();
             } else {
-                QMessageBox::warning(this, tr("Error"), tr("No pre-releases found."));
+                QMessageBox::warning(this, "Error", "No pre-releases found.");
                 reply->deleteLater();
                 ui->checkUpdateButton->setText("Update ShadPS4");
                 ui->checkUpdateButton->setEnabled(true);
@@ -429,7 +406,7 @@ void ShadSettings::UpdateShad() {
             if (jsonObj.contains("tag_name")) {
                 latestVersion = jsonObj["tag_name"].toString();
             } else {
-                QMessageBox::warning(this, tr("Error"), tr("Invalid release data."));
+                QMessageBox::warning(this, "Error", "Invalid release data.");
                 reply->deleteLater();
                 ui->checkUpdateButton->setText("Update ShadPS4");
                 ui->checkUpdateButton->setEnabled(true);
@@ -451,8 +428,7 @@ void ShadSettings::UpdateShad() {
         }
 
         if (!found) {
-            QMessageBox::warning(this, tr("Error"),
-                                 tr("No download URL found for the specified asset."));
+            QMessageBox::warning(this, "Error", "No download URL found for the specified asset.");
             reply->deleteLater();
             ui->checkUpdateButton->setText("Update ShadPS4");
             ui->checkUpdateButton->setEnabled(true);
@@ -466,7 +442,6 @@ void ShadSettings::UpdateShad() {
 
 void ShadSettings::DownloadUpdate(const QString& downloadUrl) {
     QNetworkAccessManager* networkManager = new QNetworkAccessManager(this);
-
     QNetworkRequest request(downloadUrl);
     QNetworkReply* reply = networkManager->get(request);
 
@@ -510,17 +485,17 @@ void ShadSettings::DownloadUpdate(const QString& downloadUrl) {
             file.write(reply->readAll());
             file.close();
             QMessageBox::information(
-                this, tr("Download Complete"),
-                tr("The update has been downloaded, press OK to install.\n\nBBLauncher will close "
-                   "to allow copying of shared QT files. The update is finished when BBLauncher "
-                   "re-opens."));
+                this, "Download Complete",
+                "The update has been downloaded, press OK to install.\n\nBBLauncher will close "
+                "to allow copying of shared QT files. The update is finished when BBLauncher "
+                "re-opens.");
             ui->checkUpdateButton->setText("Update ShadPS4");
             ui->checkUpdateButton->setEnabled(true);
             InstallUpdate();
         } else {
-            QMessageBox::warning(
-                this, tr("Error"),
-                QString(tr("Failed to save the update file at") + ":\n" + downloadPath));
+            QMessageBox::warning(this, "Error",
+                                 QString::fromStdString("Failed to save the update file at") +
+                                     ":\n" + downloadPath);
             ui->DownloadProgressBar->setValue(0);
             ui->checkUpdateButton->setText("Update ShadPS4");
             ui->checkUpdateButton->setEnabled(true);
@@ -538,7 +513,7 @@ void ShadSettings::InstallUpdate() {
     PathToQString(rootPath, std::filesystem::current_path());
 
     QString tempDirPath = userPath + "/temp_download_update";
-    QString startingUpdate = tr("Starting Update...");
+    QString startingUpdate = "Starting Update...";
 
     QString binaryStartingUpdate;
     for (QChar c : startingUpdate) {
@@ -679,7 +654,7 @@ void ShadSettings::InstallUpdate() {
     processCommand = "bash";
 
 #else
-    QMessageBox::warning(this, tr("Error"), "Unsupported operating system.");
+    QMessageBox::warning(this, "Error", "Unsupported operating system.");
     return;
 #endif
 
@@ -700,17 +675,14 @@ void ShadSettings::InstallUpdate() {
         scriptFile.setPermissions(QFileDevice::ExeOwner | QFileDevice::ReadOwner |
                                   QFileDevice::WriteOwner);
 #endif
-#ifdef _WIN32
-        SetConsoleOutputCP(CP_UTF8);
-#endif
 
         QProcess::startDetached(processCommand, arguments);
         exit(EXIT_SUCCESS);
 
     } else {
-        QMessageBox::warning(
-            this, tr("Error"),
-            QString(tr("Failed to create the update script file") + ":\n" + scriptFileName));
+        QMessageBox::warning(this, "Error",
+                             QString::fromStdString("Failed to create the update script file") +
+                                 ":\n" + scriptFileName);
     }
 }
 
