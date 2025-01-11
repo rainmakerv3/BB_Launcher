@@ -33,8 +33,6 @@ private:
     int initialHeight;
 };
 
-void PathToQString(QString& result, const std::filesystem::path& path);
-
 const QVector<int> languageIndexes = {21, 23, 14, 6, 18, 1, 12, 22, 2, 4,  25, 24, 29, 5,  0, 9,
                                       15, 16, 17, 7, 26, 8, 11, 20, 3, 13, 27, 10, 19, 30, 28};
 

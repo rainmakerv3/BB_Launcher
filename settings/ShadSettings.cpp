@@ -688,11 +688,3 @@ void ShadSettings::InstallUpdate() {
                                  ":\n" + scriptFileName);
     }
 }
-
-void PathToQString(QString& result, const std::filesystem::path& path) {
-#ifdef _WIN32
-    result = QString::fromStdWString(path.wstring());
-#else
-    result = QString::fromStdString(path.string());
-#endif
-}

@@ -185,7 +185,7 @@ jobs:
         tag: "Pre-release-BBLauncher-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}"
         draft: false
         prerelease: true
-        body: "- UPDATE: Linux version tested and out of beta now!\n- Mac builds are completely untested and probably do not properly work, do not use yet unless for testing\n- Full Changelog: https://github.com/rainmakerv3/BB_Launcher/commits/master/"
+        body: "- ***Patches/Cheats windows very WIP, do not use yet\n- ***Mac builds are completely untested and probably do not properly work, do not use yet unless for testing\n- Full Changelog: https://github.com/rainmakerv3/BB_Launcher/commits/master/"
         artifacts: ./artifacts/*.zip
 
     - name: Publish to Release Repository

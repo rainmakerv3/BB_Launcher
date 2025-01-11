@@ -6,6 +6,8 @@
 #include <filesystem>
 #include <QMainWindow>
 
+void PathToQString(QString& result, const std::filesystem::path& path);
+
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class BBLauncher;
@@ -42,6 +44,7 @@ private slots:
     void LaunchButton_isPressed();
     static void startShad();
     void SaveInstallLoc();
+    void CheckBBInstall();
 
 private:
     Ui::BBLauncher* ui;

@@ -237,15 +237,6 @@ void ModManager::DeactivateButton_isPressed() {
         return;
     }
 
-    if (!std::filesystem::exists(ModUniqueFolderPath)) {
-        QMessageBox::warning(this,
-                             "Unable to find Mod Backup " + QString::fromStdString(ModUniqueString),
-                             "Unable to find Backup Folder, it may have been renamed or deleted.");
-        ActiveModRemove(ModName);
-        RefreshLists();
-        return;
-    }
-
     std::ifstream ConflictFile(ModPath / "ConflictMods.txt", std::ios::binary);
     while (std::getline(ConflictFile, line)) {
         lineCount++;
@@ -283,20 +274,23 @@ void ModManager::DeactivateButton_isPressed() {
         emit progressChanged(ui->progressBar->value() + 1);
     }
 
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(ModUniqueFolderPath)) {
-        auto relative_path = std::filesystem::relative(entry, ModUniqueFolderPath);
-        if (!entry.is_directory()) {
-            try {
-                if (std::filesystem::exists(ModInstallPath / "dvdroot_ps4" / relative_path)) {
-                    std::filesystem::remove(ModInstallPath / "dvdroot_ps4" / relative_path);
+    if (std::filesystem::exists(ModUniqueFolderPath)) {
+        for (const auto& entry :
+             std::filesystem::recursive_directory_iterator(ModUniqueFolderPath)) {
+            auto relative_path = std::filesystem::relative(entry, ModUniqueFolderPath);
+            if (!entry.is_directory()) {
+                try {
+                    if (std::filesystem::exists(ModInstallPath / "dvdroot_ps4" / relative_path)) {
+                        std::filesystem::remove(ModInstallPath / "dvdroot_ps4" / relative_path);
+                    }
+                } catch (std::exception& ex) {
+                    QMessageBox::warning(this, "Filesystem error deleting mod files", ex.what());
+                    break;
                 }
-            } catch (std::exception& ex) {
-                QMessageBox::warning(this, "Filesystem error deleting mod files", ex.what());
-                break;
             }
+            ui->progressBar->setValue(ui->progressBar->value() + 1);
+            emit progressChanged(ui->progressBar->value() + 1);
         }
-        ui->progressBar->setValue(ui->progressBar->value() + 1);
-        emit progressChanged(ui->progressBar->value() + 1);
     }
 
     ui->progressBar->setValue(0);
@@ -310,7 +304,7 @@ void ModManager::DeactivateButton_isPressed() {
                 std::filesystem::rename(ModBackupFolderPath / relative_path,
                                         ModInstallPath / "dvdroot_ps4" / relative_path);
             } catch (std::exception& ex) {
-                QMessageBox::critical(nullptr, "Filesystem error reverting backup", ex.what());
+                QMessageBox::critical(this, "Filesystem error reverting backup", ex.what());
                 break;
             }
         }

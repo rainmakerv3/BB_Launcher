@@ -58,6 +58,7 @@ private:
 
     void uncheckAllCheatCheckBoxes();
     void updateNoteTextEdit(const QString& patchName);
+    void readGameInfo();
 
     // Network Manager
     QNetworkAccessManager* manager;
@@ -85,11 +86,6 @@ private:
     };
 
     // Members
-    QString m_gameName;
-    QString m_gameSerial;
-    QString m_gameVersion;
-    QString m_gameSize;
-    QPixmap m_gameImage;
     QString m_cheatFilePath;
     QMap<QString, Cheat> m_cheats;
     QMap<QString, PatchInfo> m_patchInfos;

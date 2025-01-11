@@ -1,6 +1,7 @@
 ﻿// SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <fstream>
 #include <QComboBox>
 #include <QDir>
 #include <QEvent>
@@ -28,26 +29,32 @@
 #include <QXmlStreamReader>
 
 #include "ShadCheatsPatches.h"
+#include "modules/bblauncher.h"
+
+QImage icon;
+QString gameVersion;
+QString qserial = QString::fromStdString(game_serial);
 
 CheatsPatches::CheatsPatches(QWidget* parent) {
     setupUI();
     resize(500, 400);
-    setWindowTitle(tr("Cheats / Patches for ") + m_gameName);
+    setWindowTitle("Cheats / Patches for Bloodborne");
 }
 
 CheatsPatches::~CheatsPatches() {}
 
 void CheatsPatches::setupUI() {
+    readGameInfo();
     defaultTextEdit = tr("defaultTextEdit_MSG");
     defaultTextEdit.replace("\\n", "\n");
 
     QString CHEATS_DIR_QString;
-    // Common::FS::PathToQString(CHEATS_DIR_QString,
-    //                         Common::FS::GetUserPath(Common::FS::PathType::CheatsDir));
+    PathToQString(CHEATS_DIR_QString, GetShadUserDir() / "cheats");
     QString PATCHS_DIR_QString;
-    // Common::FS::PathToQString(PATCHS_DIR_QString,
-    //                         Common::FS::GetUserPath(Common::FS::PathType::PatchesDir));
-    QString NameCheatJson = m_gameSerial + "_" + m_gameVersion + ".json";
+    PathToQString(PATCHS_DIR_QString, GetShadUserDir() / "patches");
+
+    // TODO: READ CORRECT SERIAL
+    QString NameCheatJson = qserial + "_" + gameVersion + ".json";
     m_cheatFilePath = CHEATS_DIR_QString + "/" + NameCheatJson;
 
     QHBoxLayout* mainLayout = new QHBoxLayout(this);
@@ -57,31 +64,28 @@ void CheatsPatches::setupUI() {
     QVBoxLayout* gameInfoLayout = new QVBoxLayout(gameInfoGroupBox);
     gameInfoLayout->setAlignment(Qt::AlignTop);
 
+    QPixmap gameImage = QPixmap::fromImage(icon);
     QLabel* gameImageLabel = new QLabel();
-    if (!m_gameImage.isNull()) {
-        gameImageLabel->setPixmap(m_gameImage.scaled(275, 275, Qt::KeepAspectRatio));
+    if (!gameImage.isNull()) {
+        gameImageLabel->setPixmap(gameImage.scaled(275, 275, Qt::KeepAspectRatio));
     } else {
         gameImageLabel->setText(tr("No Image Available"));
     }
     gameImageLabel->setAlignment(Qt::AlignCenter);
     gameInfoLayout->addWidget(gameImageLabel, 0, Qt::AlignCenter);
 
-    QLabel* gameNameLabel = new QLabel(m_gameName);
+    QLabel* gameNameLabel = new QLabel("Bloodborne");
     gameNameLabel->setAlignment(Qt::AlignLeft);
     gameNameLabel->setWordWrap(true);
     gameInfoLayout->addWidget(gameNameLabel);
 
-    QLabel* gameSerialLabel = new QLabel(tr("Serial: ") + m_gameSerial);
+    QLabel* gameSerialLabel = new QLabel(tr("Serial: ") + QString::fromStdString(game_serial));
     gameSerialLabel->setAlignment(Qt::AlignLeft);
     gameInfoLayout->addWidget(gameSerialLabel);
 
-    QLabel* gameVersionLabel = new QLabel(tr("Version: ") + m_gameVersion);
+    QLabel* gameVersionLabel = new QLabel(tr("Version: ") + gameVersion);
     gameVersionLabel->setAlignment(Qt::AlignLeft);
     gameInfoLayout->addWidget(gameVersionLabel);
-
-    QLabel* gameSizeLabel = new QLabel(tr("Size: ") + m_gameSize);
-    gameSizeLabel->setAlignment(Qt::AlignLeft);
-    gameInfoLayout->addWidget(gameSizeLabel);
 
     // Add a text area for instructions and 'Patch' descriptions
     instructionsTextEdit = new QTextEdit();
@@ -144,7 +148,7 @@ void CheatsPatches::setupUI() {
     QPushButton* downloadButton = new QPushButton(tr("Download Cheats"));
     connect(downloadButton, &QPushButton::clicked, [this, downloadComboBox]() {
         QString source = downloadComboBox->currentData().toString();
-        downloadCheats(source, m_gameSerial, m_gameVersion, true);
+        downloadCheats(source, qserial, gameVersion, true);
     });
 
     QPushButton* deleteCheatButton = new QPushButton(tr("Delete File"));
@@ -325,7 +329,7 @@ void CheatsPatches::onSaveButtonClicked() {
     QJsonObject jsonObject = jsonDoc.object();
 
     QString selectedFileName;
-    QString serial = m_gameSerial;
+    QString serial = QString::fromStdString(game_serial);
 
     for (auto it = jsonObject.constBegin(); it != jsonObject.constEnd(); ++it) {
         QString filePath = it.key();
@@ -1427,4 +1431,31 @@ void CheatsPatches::onPatchCheckBoxHovered(QCheckBox* checkBox, bool hovered) {
     } else {
         instructionsTextEdit->setText(defaultTextEdit);
     }
+}
+
+void CheatsPatches::readGameInfo() {
+    std::filesystem::path sce_folder_path = installPath / "sce_sys" / "param.sfo";
+    std::filesystem::path game_update_path = installPath;
+    game_update_path += "-UPDATE";
+
+    if (std::filesystem::exists(game_update_path / "sce_sys" / "param.sfo")) {
+        sce_folder_path = game_update_path / "sce_sys" / "param.sfo";
+    }
+
+    std::filesystem::path icon_path = installPath / "sce_sys" / "icon0.png";
+    QString iconpath;
+    PathToQString(iconpath, icon_path);
+    icon = QImage(iconpath);
+
+    std::ifstream file(game_update_path / "sce_sys" / "param - Copy.txt");
+    std::string search_str = "1.09";
+    std::string line;
+    int line_number = 0;
+    while (std::getline(file, line)) {
+        ++line_number;
+        if (line.find(search_str) != std::string::npos)
+            gameVersion = "1.09";
+    }
+    gameVersion = "1.09";
+    QMessageBox::warning(nullptr, "Version", gameVersion);
 }

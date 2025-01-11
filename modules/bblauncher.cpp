@@ -40,6 +40,11 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
     connect(ui->SaveManagerButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
 
     connect(ui->PatchesButton, &QPushButton::pressed, this, [this]() {
+        CheckBBInstall();
+        QMessageBox::warning(
+            this, "NOT FUNCTIONAL YET",
+            "Patches module is currently WIP, and should not be used. GUI is enabled "
+            "only for testing purposes.");
         CheatsPatches* cheatsPatches = new CheatsPatches(this);
         cheatsPatches->show();
         connect(this, &QWidget::destroyed, cheatsPatches,
@@ -47,17 +52,7 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
     });
 
     connect(ui->ModManagerButton, &QPushButton::pressed, this, [this]() {
-        if (installPath == "") {
-            QMessageBox::warning(this, "No Bloodborne install path selected",
-                                 "Select Bloodborne install folder before using Mod Manager");
-            return;
-        } else if (!std::filesystem::exists(installPath) || installPath.empty()) {
-            QMessageBox::warning(this, "Bloodborne install folder empty or does not exist",
-                                 QString::fromStdString(installPath.string()) +
-                                     " is empty or does not exist");
-            return;
-        }
-
+        CheckBBInstall();
         ModManager* ModWindow = new ModManager(this);
         ModWindow->exec();
         UpdateModList();
@@ -340,6 +335,27 @@ std::filesystem::path GetShadUserDir() {
 #endif
     }
     return user_dir;
+}
+
+void PathToQString(QString& result, const std::filesystem::path& path) {
+#ifdef _WIN32
+    result = QString::fromStdWString(path.wstring());
+#else
+    result = QString::fromStdString(path.string());
+#endif
+}
+
+void BBLauncher::CheckBBInstall() {
+    if (installPath == "") {
+        QMessageBox::warning(this, "No Bloodborne install path selected",
+                             "Select Bloodborne install folder before using Mod Manager");
+        return;
+    } else if (!std::filesystem::exists(installPath) || installPath.empty()) {
+        QMessageBox::warning(this, "Bloodborne install folder empty or does not exist",
+                             QString::fromStdString(installPath.string()) +
+                                 " is empty or does not exist");
+        return;
+    }
 }
 
 BBLauncher::~BBLauncher() {
