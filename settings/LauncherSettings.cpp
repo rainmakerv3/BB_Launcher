@@ -16,6 +16,7 @@ bool SoundFixEnabled = true;
 bool BackupSaveEnabled = false;
 int BackupInterval = 10;
 int BackupNumber = 2;
+bool SeparateUpdateEnabled = false;
 
 LauncherSettings::LauncherSettings(QWidget* parent)
     : QDialog(parent), ui(new Ui::LauncherSettings) {
@@ -96,7 +97,6 @@ void LoadLauncherSettings() {
     }
 
     toml::value data;
-
     try {
         std::ifstream ifs;
         ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -120,6 +120,21 @@ void LoadLauncherSettings() {
     BackupNumber = toml::find_or<int>(data, "Backups", "BackupNumber", 2);
 
     SetTheme(theme);
+
+    toml::value shadData;
+    if (std::filesystem::exists(GetShadUserDir() / "config.toml")) {
+        try {
+            std::ifstream ifs;
+            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+            ifs.open(GetShadUserDir() / "config.toml", std::ios_base::binary);
+            shadData = toml::parse(GetShadUserDir() / "config.toml");
+        } catch (std::exception& ex) {
+            QMessageBox::critical(NULL, "Filesystem error", ex.what());
+            return;
+        }
+    }
+    SeparateUpdateEnabled =
+        toml::find_or<bool>(shadData, "General", "separateUpdateEnabled", false);
 }
 
 void LauncherSettings::SaveLauncherSettings() {

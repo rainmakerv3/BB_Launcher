@@ -7,6 +7,9 @@
 #include "ModManager.h"
 #include "bblauncher.h"
 #include "modules/ui_ModManager.h"
+#include "settings/LauncherSettings.h"
+
+std::filesystem::path ModInstallPath;
 
 ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager) {
     ui->setupUi(this);
@@ -31,6 +34,13 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
     connect(ui->DeactivateButton, &QPushButton::pressed, this,
             &ModManager::DeactivateButton_isPressed);
     connect(this, &ModManager::progressChanged, ui->progressBar, &QProgressBar::setValue);
+
+    if (SeparateUpdateEnabled &&
+        std::filesystem::exists(installPath.parent_path() / (game_serial + "-UPDATE"))) {
+        ModInstallPath = installPath.parent_path() / (game_serial + "-UPDATE");
+    } else {
+        ModInstallPath = installPath;
+    }
 }
 
 void ModManager::ActivateButton_isPressed() {
@@ -133,8 +143,8 @@ void ModManager::ActivateButton_isPressed() {
                     std::filesystem::create_directories(
                         (ModUniqueFolderPath / relative_path.parent_path()));
                 }
-                if (std::filesystem::exists(installPath / "dvdroot_ps4" / relative_path)) {
-                    std::filesystem::copy_file(installPath / "dvdroot_ps4" / relative_path,
+                if (std::filesystem::exists(ModInstallPath / "dvdroot_ps4" / relative_path)) {
+                    std::filesystem::copy_file(ModInstallPath / "dvdroot_ps4" / relative_path,
                                                (ModBackupFolderPath / relative_path),
                                                std::filesystem::copy_options::overwrite_existing);
                 } else {
@@ -155,7 +165,7 @@ void ModManager::ActivateButton_isPressed() {
     ui->FileTransferLabel->setText("Copying mod files to Bloodborne Folder");
 
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModSourcePath)) {
-        const std::filesystem::path destDir = installPath / "dvdroot_ps4";
+        const std::filesystem::path destDir = ModInstallPath / "dvdroot_ps4";
         auto relative_path = std::filesystem::relative(entry, ModSourcePath);
         if (!entry.is_directory()) {
             try {
@@ -261,8 +271,8 @@ void ModManager::DeactivateButton_isPressed() {
         auto relative_path = std::filesystem::relative(entry, ModBackupFolderPath);
         if (!entry.is_directory()) {
             try {
-                if (std::filesystem::exists(installPath / "dvdroot_ps4" / relative_path)) {
-                    std::filesystem::remove(installPath / "dvdroot_ps4" / relative_path);
+                if (std::filesystem::exists(ModInstallPath / "dvdroot_ps4" / relative_path)) {
+                    std::filesystem::remove(ModInstallPath / "dvdroot_ps4" / relative_path);
                 }
             } catch (std::exception& ex) {
                 QMessageBox::warning(this, "Filesystem error deleting mod files", ex.what());
@@ -277,8 +287,8 @@ void ModManager::DeactivateButton_isPressed() {
         auto relative_path = std::filesystem::relative(entry, ModUniqueFolderPath);
         if (!entry.is_directory()) {
             try {
-                if (std::filesystem::exists(installPath / "dvdroot_ps4" / relative_path)) {
-                    std::filesystem::remove(installPath / "dvdroot_ps4" / relative_path);
+                if (std::filesystem::exists(ModInstallPath / "dvdroot_ps4" / relative_path)) {
+                    std::filesystem::remove(ModInstallPath / "dvdroot_ps4" / relative_path);
                 }
             } catch (std::exception& ex) {
                 QMessageBox::warning(this, "Filesystem error deleting mod files", ex.what());
@@ -298,7 +308,7 @@ void ModManager::DeactivateButton_isPressed() {
         if (!entry.is_directory()) {
             try {
                 std::filesystem::rename(ModBackupFolderPath / relative_path,
-                                        installPath / "dvdroot_ps4" / relative_path);
+                                        ModInstallPath / "dvdroot_ps4" / relative_path);
             } catch (std::exception& ex) {
                 QMessageBox::critical(nullptr, "Filesystem error reverting backup", ex.what());
                 break;

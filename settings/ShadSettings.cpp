@@ -15,6 +15,7 @@
 
 #include "ShadSettings.h"
 #include "modules/bblauncher.h"
+#include "settings/LauncherSettings.h"
 #include "settings/ui_ShadSettings.h"
 #include "toml.hpp"
 
@@ -296,6 +297,8 @@ void ShadSettings::SaveSettings() {
     std::ofstream file(GetShadUserDir() / "config.toml", std::ios::binary);
     file << data;
     file.close();
+
+    SeparateUpdateEnabled = ui->separateUpdatesCheckBox->isChecked();
 }
 
 void ShadSettings::SetDefaults() {
