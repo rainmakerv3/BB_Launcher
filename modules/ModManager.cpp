@@ -142,10 +142,12 @@ void ModManager::ActivateButton_isPressed() {
                         (ModUniqueFolderPath / relative_path.parent_path()));
                 }
                 if (std::filesystem::exists(ModInstallPath / "dvdroot_ps4" / relative_path)) {
+
                     std::filesystem::copy_file(ModInstallPath / "dvdroot_ps4" / relative_path,
                                                (ModBackupFolderPath / relative_path),
                                                std::filesystem::copy_options::overwrite_existing);
                 } else {
+
                     std::filesystem::copy_file(ModSourcePath / relative_path,
                                                (ModUniqueFolderPath / relative_path),
                                                std::filesystem::copy_options::overwrite_existing);
@@ -291,6 +293,22 @@ void ModManager::DeactivateButton_isPressed() {
         }
     }
 
+    std::filesystem::path dir_path;
+    std::vector<std::filesystem::path> directories;
+    for (auto& p : std::filesystem::recursive_directory_iterator(ModInstallPath / "dvdroot_ps4")) {
+        dir_path = p.path();
+        if (std::filesystem::is_directory(p)) {
+            directories.push_back(std::filesystem::canonical(dir_path));
+        }
+    }
+
+    for (std::vector<std::filesystem::path>::reverse_iterator rit = directories.rbegin();
+         rit != directories.rend(); ++rit) {
+        if (std::filesystem::is_empty(*rit)) {
+            std::filesystem::remove(*rit);
+        }
+    }
+
     ui->progressBar->setValue(0);
     ui->FileTransferLabel->setText("Moving backup to Install Folder");
     ui->progressBar->setMaximum(getFileCount(ModBackupFolderPath));
@@ -299,6 +317,11 @@ void ModManager::DeactivateButton_isPressed() {
         auto relative_path = std::filesystem::relative(entry, ModBackupFolderPath);
         if (!entry.is_directory()) {
             try {
+                if (!std::filesystem::exists(ModInstallPath / "dvdroot_ps4" /
+                                             relative_path.parent_path())) {
+                    std::filesystem::create_directories(ModInstallPath / "dvdroot_ps4" /
+                                                        relative_path.parent_path());
+                }
                 std::filesystem::rename(ModBackupFolderPath / relative_path,
                                         ModInstallPath / "dvdroot_ps4" / relative_path);
             } catch (std::exception& ex) {

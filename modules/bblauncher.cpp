@@ -25,6 +25,7 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
     this->setFixedSize(this->width(), this->height());
     this->statusBar()->setSizeGripEnabled(false);
     QApplication::setStyle("Fusion");
+    setWindowTitle("BB Launcher Release 3.5");
 
     // this->installEventFilter(this); if needed
 
@@ -189,7 +190,7 @@ void BBLauncher::startShad() {
             [=](int exitCode, QProcess::ExitStatus exitStatus) { QApplication::quit(); });
 }
 
-void StartBackupSave() {
+void BBLauncher::StartBackupSave() {
     const std::filesystem::path BackupPath =
         std::filesystem::current_path() / "BBLauncher" / "SaveBackups";
 
