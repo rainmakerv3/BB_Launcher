@@ -23,7 +23,6 @@ extern bool SoundFixEnabled;
 extern bool BackupSaveEnabled;
 extern int BackupInterval;
 extern int BackupNumber;
-extern bool SeparateUpdateEnabled;
 
 class LauncherSettings : public QDialog {
     Q_OBJECT

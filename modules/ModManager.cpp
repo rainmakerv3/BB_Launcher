@@ -7,7 +7,6 @@
 #include "ModManager.h"
 #include "bblauncher.h"
 #include "modules/ui_ModManager.h"
-#include "settings/LauncherSettings.h"
 
 std::filesystem::path ModInstallPath;
 
@@ -35,8 +34,7 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
             &ModManager::DeactivateButton_isPressed);
     connect(this, &ModManager::progressChanged, ui->progressBar, &QProgressBar::setValue);
 
-    if (SeparateUpdateEnabled &&
-        std::filesystem::exists(installPath.parent_path() / (game_serial + "-UPDATE"))) {
+    if (std::filesystem::exists(installPath.parent_path() / (game_serial + "-UPDATE"))) {
         ModInstallPath = installPath.parent_path() / (game_serial + "-UPDATE");
     } else {
         ModInstallPath = installPath;

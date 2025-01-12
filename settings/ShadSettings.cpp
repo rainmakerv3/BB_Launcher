@@ -297,8 +297,6 @@ void ShadSettings::SaveSettings() {
     std::ofstream file(GetShadUserDir() / "config.toml", std::ios::binary);
     file << data;
     file.close();
-
-    SeparateUpdateEnabled = ui->separateUpdatesCheckBox->isChecked();
 }
 
 void ShadSettings::SetDefaults() {

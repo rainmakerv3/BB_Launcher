@@ -16,7 +16,6 @@ bool SoundFixEnabled = true;
 bool BackupSaveEnabled = false;
 int BackupInterval = 10;
 int BackupNumber = 2;
-bool SeparateUpdateEnabled = false;
 
 LauncherSettings::LauncherSettings(QWidget* parent)
     : QDialog(parent), ui(new Ui::LauncherSettings) {
@@ -133,8 +132,6 @@ void LoadLauncherSettings() {
             return;
         }
     }
-    SeparateUpdateEnabled =
-        toml::find_or<bool>(shadData, "General", "separateUpdateEnabled", false);
 }
 
 void LauncherSettings::SaveLauncherSettings() {
