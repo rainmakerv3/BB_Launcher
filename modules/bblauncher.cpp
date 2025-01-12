@@ -38,7 +38,9 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
     connect(ui->LaunchButton, &QPushButton::pressed, this, &BBLauncher::LaunchButton_isPressed);
     connect(ui->TrophyButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
     connect(ui->SaveManagerButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
+    connect(ui->PatchesButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
 
+    /*
     connect(ui->PatchesButton, &QPushButton::pressed, this, [this]() {
         CheckBBInstall();
         QMessageBox::warning(
@@ -50,6 +52,7 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
         connect(this, &QWidget::destroyed, cheatsPatches,
                 [cheatsPatches]() { cheatsPatches->deleteLater(); });
     });
+    */
 
     connect(ui->ModManagerButton, &QPushButton::pressed, this, [this]() {
         CheckBBInstall();
