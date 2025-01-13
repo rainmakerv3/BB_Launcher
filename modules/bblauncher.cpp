@@ -9,6 +9,7 @@
 
 #include "bblauncher.h"
 #include "modules/ModManager.h"
+#include "modules/SaveManager.h"
 #include "modules/ui_bblauncher.h"
 #include "settings/LauncherSettings.h"
 #include "settings/ShadCheatsPatches.h"
@@ -25,7 +26,7 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
     this->setFixedSize(this->width(), this->height());
     this->statusBar()->setSizeGripEnabled(false);
     QApplication::setStyle("Fusion");
-    setWindowTitle("BB Launcher Release 3.5");
+    setWindowTitle("BB Launcher Release 4-WIP");
 
     // this->installEventFilter(this); if needed
 
@@ -35,25 +36,24 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
 
     connect(ui->ExeSelectButton, &QPushButton::pressed, this,
             &BBLauncher::ExeSelectButton_isPressed);
-
     connect(ui->LaunchButton, &QPushButton::pressed, this, &BBLauncher::LaunchButton_isPressed);
-    connect(ui->TrophyButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
-    connect(ui->SaveManagerButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
-    connect(ui->PatchesButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
 
+    connect(ui->TrophyButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
+
+    connect(ui->SaveManagerButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
     /*
+    connect(ui->SaveManagerButton, &QPushButton::pressed, this, [this]() {
+        SaveManager* SaveManagerWindow = new SaveManager(this);
+        SaveManagerWindow->exec();
+    }); */
+
     connect(ui->PatchesButton, &QPushButton::pressed, this, [this]() {
         CheckBBInstall();
-        QMessageBox::warning(
-            this, "NOT FUNCTIONAL YET",
-            "Patches module is currently WIP, and should not be used. GUI is enabled "
-            "only for testing purposes.");
         CheatsPatches* cheatsPatches = new CheatsPatches(this);
         cheatsPatches->show();
         connect(this, &QWidget::destroyed, cheatsPatches,
                 [cheatsPatches]() { cheatsPatches->deleteLater(); });
     });
-    */
 
     connect(ui->ModManagerButton, &QPushButton::pressed, this, [this]() {
         CheckBBInstall();

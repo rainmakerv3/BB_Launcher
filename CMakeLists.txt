@@ -49,6 +49,12 @@ set(PROJECT_SOURCES
     modules/bblauncher.cpp
     modules/bblauncher.h
     modules/bblauncher.ui
+    modules/ModManager.h
+    modules/ModManager.cpp
+    modules/ModManager.ui
+    modules/SaveManager.h
+    modules/SaveManager.cpp
+    modules/SaveManager.ui
     settings/toml.hpp
     settings/LauncherSettings.h
     settings/LauncherSettings.cpp
@@ -58,9 +64,6 @@ set(PROJECT_SOURCES
     settings/ShadSettings.h
     settings/ShadSettings.cpp
     settings/ShadSettings.ui
-    modules/ModManager.h
-    modules/ModManager.cpp
-    modules/ModManager.ui
 )
 
 # Setup a custom clang-format target (if clang-format can be found) that will run
@@ -84,7 +87,6 @@ endif()
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(BB_Launcher
-        MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
     )
 else()

@@ -28,11 +28,8 @@ public:
     CheatsPatches(QWidget* parent = nullptr);
     ~CheatsPatches();
 
-    void downloadCheats(const QString& source, const QString& m_gameSerial,
-                        const QString& m_gameVersion, bool showMessageBox);
     void downloadPatches(const QString repository, const bool showMessageBox);
     void createFilesJson(const QString& repository);
-    void clearListCheats();
     void compatibleVersionNotice(const QString repository);
 
 signals:
@@ -47,16 +44,11 @@ private:
     void onPatchCheckBoxHovered(QCheckBox* checkBox, bool hovered);
 
     // Cheat and Patch Management
-    void populateFileListCheats();
     void populateFileListPatches();
 
     void addCheatsToLayout(const QJsonArray& modsArray, const QJsonArray& creditsArray);
     void addPatchesToLayout(const QString& serial);
 
-    void applyCheat(const QString& modName, bool enabled);
-    void applyPatch(const QString& patchName, bool enabled);
-
-    void uncheckAllCheatCheckBoxes();
     void updateNoteTextEdit(const QString& patchName);
     void readGameInfo();
 
@@ -86,10 +78,7 @@ private:
     };
 
     // Members
-    QString m_cheatFilePath;
-    QMap<QString, Cheat> m_cheats;
     QMap<QString, PatchInfo> m_patchInfos;
-    QVector<QCheckBox*> m_cheatCheckBoxes;
 
     // UI Elements
     QVBoxLayout* rightLayout;
@@ -101,6 +90,11 @@ private:
     QItemSelectionModel* selectionModel;
     QComboBox* patchesComboBox;
     QListView* patchesListView;
-
     QString defaultTextEdit;
+    QString defaultTextEditMSG =
+        "Cheats/Patches are experimental.\nUse with caution.\n\nDownload cheats individually by "
+        "selecting the repository and clicking the download button.\nIn the Patches tab, you can "
+        "download all patches at once, choose which ones you want to use, and save your "
+        "selection.\n\nSince we do not develop the Cheats/Patches,\nplease report issues to the "
+        "cheat author.\n\nCreated a new cheat? Visit:\nhttps://github.com/shadps4-emu/ps4_cheats";
 };

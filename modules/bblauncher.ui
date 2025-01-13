@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
-     SPDX-License-Identifier: GPL-3.0-or-later -->
 <ui version="4.0">
  <class>BBLauncher</class>
  <widget class="QMainWindow" name="BBLauncher">
@@ -221,7 +219,7 @@
        <item>
         <widget class="QPushButton" name="SaveManagerButton">
          <property name="text">
-          <string>Backup Save Manager</string>
+          <string>Save Viewer and Backup Manager</string>
          </property>
         </widget>
        </item>
