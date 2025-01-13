@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.24)
 
 project(BB_Launcher VERSION 0.1 LANGUAGES CXX)
 
@@ -70,7 +70,7 @@ set(PROJECT_SOURCES
 # against all the src files. This should be used before making a pull request.
 
 if (CLANG_FORMAT)
-    set(SRCS ${PROJECT_SOURCE_DIR}/src)
+    set(SRCS ${PROJECT_SOURCE_DIR)
     set(CCOMMENT "Running clang format against all the .h and .cpp files in src/")
     if (WIN32)
         add_custom_target(clang-format
@@ -119,6 +119,11 @@ set_target_properties(BB_Launcher PROPERTIES
     MACOSX_BUNDLE_ICON_FILE "BBIcon.icns"
 #   WIN32_EXECUTABLE TRUE
 )
+
+if (UNIX AND NOT APPLE)
+    find_package(OpenSSL REQUIRED)
+    target_link_libraries(BB_Launcher PRIVATE ${OPENSSL_LIBRARIES})
+endif()
 
 set_source_files_properties(images/BBIcon.icns PROPERTIES
         MACOSX_PACKAGE_LOCATION Resources)

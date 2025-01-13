@@ -38,7 +38,7 @@ QString qserial;
 CheatsPatches::CheatsPatches(QWidget* parent) {
     setupUI();
     resize(500, 400);
-    setWindowTitle("Cheats / Patches for Bloodborne");
+    setWindowTitle("Enable/Disable Patches for Bloodborne");
 }
 
 CheatsPatches::~CheatsPatches() {}
@@ -78,8 +78,13 @@ void CheatsPatches::setupUI() {
     gameSerialLabel->setAlignment(Qt::AlignLeft);
     gameInfoLayout->addWidget(gameSerialLabel);
 
-    QLabel* gameVersionLabel = new QLabel(tr("Version: ") + gameVersion);
+    auto labelFont = font();
+    labelFont.setBold(true);
+    QLabel* gameVersionLabel =
+        new QLabel("IMPORTANT: Patches only work properly with\nversion 1.09, please "
+                   "update to version\n1.09 if you have not before using patches.");
     gameVersionLabel->setAlignment(Qt::AlignLeft);
+    gameVersionLabel->setFont(labelFont);
     gameInfoLayout->addWidget(gameVersionLabel);
 
     // Add a text area for instructions and 'Patch' descriptions
@@ -875,5 +880,6 @@ void CheatsPatches::readGameInfo() {
     sfofile.seekg(0x351);
     std::string version(4, '\0');
     sfofile.read(&version[0], 4);
-    gameVersion = "0" + QString::fromStdString(version);
+    // gameVersion = "0" + QString::fromStdString(version);
+    gameVersion = "01.09";
 }
