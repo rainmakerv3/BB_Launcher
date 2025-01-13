@@ -53,9 +53,6 @@ private:
     void addCheatsToLayout(const QJsonArray& modsArray, const QJsonArray& creditsArray);
     void addPatchesToLayout(const QString& serial);
 
-    void applyCheat(const QString& modName, bool enabled);
-    void applyPatch(const QString& patchName, bool enabled);
-
     void uncheckAllCheatCheckBoxes();
     void updateNoteTextEdit(const QString& patchName);
     void readGameInfo();
