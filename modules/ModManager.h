@@ -32,7 +32,6 @@ private:
     void ActiveModRemove(std::string ModName);
     void ConflictAdd(std::string ModName);
     void ConflictRemove(std::string ModName);
-    std::string PathToU8(const std::filesystem::path& path);
 
     const std::filesystem::path ModBackupPath =
         std::filesystem::current_path() / "BBLauncher" / "Mods-BACKUP";

@@ -11,6 +11,7 @@ class BBLauncher;
 }
 
 void PathToQString(QString& result, const std::filesystem::path& path);
+std::string PathToU8(const std::filesystem::path& path);
 std::filesystem::path GetShadUserDir();
 
 extern std::string game_serial;

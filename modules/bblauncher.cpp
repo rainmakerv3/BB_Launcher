@@ -26,7 +26,7 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
     this->setFixedSize(this->width(), this->height());
     this->statusBar()->setSizeGripEnabled(false);
     QApplication::setStyle("Fusion");
-    setWindowTitle("BB Launcher Release 4-WIP");
+    setWindowTitle("BB Launcher Release 4");
 
     // this->installEventFilter(this); if needed
 
@@ -40,12 +40,18 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
 
     connect(ui->TrophyButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
 
-    connect(ui->SaveManagerButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
-    /*
     connect(ui->SaveManagerButton, &QPushButton::pressed, this, [this]() {
+        CheckBBInstall();
+        if (!std::filesystem::exists(GetShadUserDir() / "savedata" / "1" / game_serial /
+                                     "SPRJ0005" / "userdata0010")) {
+            QMessageBox::warning(this, "No saves detected",
+                                 "Launch Bloodborne to generate saves before using Save Manager");
+            return;
+        }
+
         SaveManager* SaveManagerWindow = new SaveManager(this);
         SaveManagerWindow->exec();
-    }); */
+    });
 
     connect(ui->PatchesButton, &QPushButton::pressed, this, [this]() {
         CheckBBInstall();
@@ -109,7 +115,9 @@ void BBLauncher::ExeSelectButton_isPressed() {
 }
 
 void BBLauncher::WIPButton_isPressed() {
-    QMessageBox::warning(this, "WIP", "Still working on this :)");
+    QMessageBox::warning(
+        this, "On hold",
+        "Work on trophy manager will be put on-hold until it's easier to dump trophy keys");
     UpdateSettingsList();
 }
 
@@ -347,6 +355,11 @@ void PathToQString(QString& result, const std::filesystem::path& path) {
 #else
     result = QString::fromStdString(path.string());
 #endif
+}
+
+std::string PathToU8(const std::filesystem::path& path) {
+    const auto u8_string = path.u8string();
+    return std::string{u8_string.begin(), u8_string.end()};
 }
 
 void BBLauncher::CheckBBInstall() {
