@@ -49,6 +49,7 @@ void ModManager::ActivateButton_isPressed() {
         return;
     }
 
+    bool hasconflict = false;
     const std::string ModName = ui->InactiveModList->currentItem()->text().toStdString();
     const std::string ModFolderString = (ModPath / ModName).string();
     const std::filesystem::path ModFolderPath = std::filesystem::u8path(ModFolderString);
@@ -104,7 +105,7 @@ void ModManager::ActivateButton_isPressed() {
                         "This mod conflicts with an active mod. Some conflicting mods cannot"
                         " function properly together.\n\nProceed with activation?",
                         QMessageBox::Yes | QMessageBox::No)) {
-                    ConflictAdd(ModName);
+                    hasconflict = true;
                     break;
                 } else {
                     return;
@@ -200,6 +201,9 @@ void ModManager::ActivateButton_isPressed() {
     for (const auto& l : ActiveModList)
         ActiveFileSave << l << "\n";
     ActiveFileSave.close();
+
+    if (hasconflict)
+        ConflictAdd(ModName);
 
     RefreshLists();
     ui->progressBar->setValue(0);
