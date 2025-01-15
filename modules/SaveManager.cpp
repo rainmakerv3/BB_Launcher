@@ -38,6 +38,7 @@ SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveMana
         file.seekg(8);
         uint time;
         file.read(reinterpret_cast<char*>(&time), 4);
+        file.close();
 
         if (time != 0) {
             SaveSlotList.append(QString::fromStdString(slot));
@@ -241,7 +242,7 @@ void SaveManager::OnSelectSaveChanged() {
             file.seekg(8);
             uint time;
             file.read(reinterpret_cast<char*>(&time), 4);
-
+            file.close();
             if (time != 0) {
                 BackupSlotList.append(QString::fromStdString(slot));
             }
