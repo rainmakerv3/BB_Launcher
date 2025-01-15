@@ -519,11 +519,6 @@ void ModManager::ActiveModRemove(std::string ModName) {
     ModInfoFileSave.close();
 }
 
-std::string ModManager::PathToU8(const std::filesystem::path& path) {
-    const auto u8_string = path.u8string();
-    return std::string{u8_string.begin(), u8_string.end()};
-}
-
 ModManager::~ModManager() {
     delete ui;
 }
