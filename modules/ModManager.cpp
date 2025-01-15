@@ -15,6 +15,14 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
     ui->progressBar->setMinimum(0);
     ui->progressBar->setValue(0);
 
+    ui->RecModsLabel->setText("<a "
+                              "href=\"https://docs.google.com/document/d/"
+                              "1H5d-RrOE6q3lKTupkZxZRFKP2Q7zoWMTCL0hsPmYuAo\">Click here for a "
+                              "list of cool mods to try out!</a>");
+    ui->RecModsLabel->setTextFormat(Qt::RichText);
+    ui->RecModsLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
+    ui->RecModsLabel->setOpenExternalLinks(true);
+
     if (!std::filesystem::exists(ModPath)) {
         std::filesystem::create_directories(ModPath);
     }
