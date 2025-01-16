@@ -41,7 +41,8 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
     connect(ui->TrophyButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
 
     connect(ui->SaveManagerButton, &QPushButton::pressed, this, [this]() {
-        CheckBBInstall();
+        if (!CheckBBInstall())
+            return;
         if (!std::filesystem::exists(GetShadUserDir() / "savedata" / "1" / game_serial /
                                      "SPRJ0005" / "userdata0010")) {
             QMessageBox::warning(this, "No saves detected",
@@ -54,7 +55,8 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
     });
 
     connect(ui->PatchesButton, &QPushButton::pressed, this, [this]() {
-        CheckBBInstall();
+        if (!CheckBBInstall())
+            return;
         CheatsPatches* cheatsPatches = new CheatsPatches(this);
         cheatsPatches->show();
         connect(this, &QWidget::destroyed, cheatsPatches,
@@ -62,7 +64,8 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
     });
 
     connect(ui->ModManagerButton, &QPushButton::pressed, this, [this]() {
-        CheckBBInstall();
+        if (!CheckBBInstall())
+            return;
         ModManager* ModWindow = new ModManager(this);
         ModWindow->exec();
         UpdateModList();
@@ -362,16 +365,18 @@ std::string PathToU8(const std::filesystem::path& path) {
     return std::string{u8_string.begin(), u8_string.end()};
 }
 
-void BBLauncher::CheckBBInstall() {
+bool BBLauncher::CheckBBInstall() {
     if (installPath == "") {
         QMessageBox::warning(this, "No Bloodborne install path selected",
                              "Select Bloodborne install folder before using Mod Manager");
-        return;
+        return false;
     } else if (!std::filesystem::exists(installPath) || installPath.empty()) {
         QMessageBox::warning(this, "Bloodborne install folder empty or does not exist",
                              QString::fromStdString(installPath.string()) +
                                  " is empty or does not exist");
-        return;
+        return false;
+    } else {
+        return true;
     }
 }
 

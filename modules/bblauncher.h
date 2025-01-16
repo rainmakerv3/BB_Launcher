@@ -34,7 +34,7 @@ private slots:
     void WIPButton_isPressed();
     void LaunchButton_isPressed();
     void SaveInstallLoc();
-    void CheckBBInstall();
+    bool CheckBBInstall();
     void UpdateSettingsList();
     void UpdateModList();
     static void startShad();
