@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>754</width>
-    <height>320</height>
+    <height>423</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <property name="geometry">
     <rect>
      <x>630</x>
-     <y>50</y>
+     <y>380</y>
      <width>91</width>
      <height>31</height>
     </rect>
@@ -448,7 +448,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>290</y>
+     <y>390</y>
      <width>431</width>
      <height>20</height>
     </rect>
@@ -544,7 +544,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>250</y>
+     <y>340</y>
      <width>721</width>
      <height>31</height>
     </rect>
@@ -561,6 +561,27 @@
     <bool>true</bool>
    </property>
   </widget>
+  <widget class="QLabel" name="NoteLabel_2">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>270</y>
+     <width>721</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>IMPORTANT: The best way to fix corrupted saves is to restore an entire backup folder. Restoring single save slots may not be enough because other files in the folder may also be corrupted. For this reason, I recommend enabling automatic save backups in the Launcher settings.</string>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
   <zorder>verticalLayoutWidget</zorder>
   <zorder>horizontalLayoutWidget</zorder>
   <zorder>horizontalLayoutWidget_2</zorder>
@@ -569,6 +590,7 @@
   <zorder>LinkLabel</zorder>
   <zorder>verticalLayoutWidget_3</zorder>
   <zorder>NoteLabel</zorder>
+  <zorder>NoteLabel_2</zorder>
  </widget>
  <resources/>
  <connections>
