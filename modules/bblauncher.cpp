@@ -21,8 +21,10 @@ std::filesystem::path installPath = "";
 std::filesystem::path EbootPath = "";
 std::string game_serial = "";
 
-BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLauncher) {
+BBLauncher::BBLauncher(bool noGUI, QWidget* parent)
+    : QMainWindow(parent), noGUIset(noGUI), ui(new Ui::BBLauncher) {
     ui->setupUi(this);
+
     this->setFixedSize(this->width(), this->height());
     this->statusBar()->setSizeGripEnabled(false);
     QApplication::setStyle("Fusion");
@@ -36,7 +38,8 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
 
     connect(ui->ExeSelectButton, &QPushButton::pressed, this,
             &BBLauncher::ExeSelectButton_isPressed);
-    connect(ui->LaunchButton, &QPushButton::pressed, this, &BBLauncher::LaunchButton_isPressed);
+    connect(ui->LaunchButton, &QPushButton::pressed, this,
+            [this]() { BBLauncher::LaunchButton_isPressed(noGUIset); });
 
     connect(ui->TrophyButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
 
@@ -94,6 +97,9 @@ BBLauncher::BBLauncher(QWidget* parent) : QMainWindow(parent), ui(new Ui::BBLaun
     } else {
         ui->ExeLabel->setText(QString::fromStdString(installPathString));
     }
+
+    if (noGUI)
+        LaunchButton_isPressed(noGUI);
 }
 
 void BBLauncher::ExeSelectButton_isPressed() {
@@ -124,15 +130,23 @@ void BBLauncher::WIPButton_isPressed() {
     UpdateSettingsList();
 }
 
-void BBLauncher::LaunchButton_isPressed() {
+void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
     if (installPath == "") {
-        QMessageBox::warning(this, "No Bloodborne Install folder selected",
-                             "Select valid Bloodborne Install folder first");
-        return;
+        QMessageBox::warning(this, "No Bloodborne Install folder",
+                             "Set-up Bloodborne Install folder before launching");
+        if (noGUIset) {
+            QApplication::quit();
+        } else {
+            return;
+        }
     } else if (!std::filesystem::exists(EbootPath)) {
         QMessageBox::warning(this, "Bloodborne eboot.PKG not found",
                              QString::fromStdString(EbootPath.string()) + " not found");
-        return;
+        if (noGUIset) {
+            QApplication::quit();
+        } else {
+            return;
+        }
     }
 
     if (SoundFixEnabled) {
@@ -333,6 +347,21 @@ void BBLauncher::UpdateModList() {
 
 // bool BBLauncher::eventFilter(QObject* obj, QEvent* event) {}
 
+bool BBLauncher::CheckBBInstall() {
+    if (installPath == "") {
+        QMessageBox::warning(this, "No Bloodborne install path selected",
+                             "Select Bloodborne install folder before using Mod Manager");
+        return false;
+    } else if (!std::filesystem::exists(installPath) || installPath.empty()) {
+        QMessageBox::warning(this, "Bloodborne install folder empty or does not exist",
+                             QString::fromStdString(installPath.string()) +
+                                 " is empty or does not exist");
+        return false;
+    } else {
+        return true;
+    }
+}
+
 std::filesystem::path GetShadUserDir() {
 
     auto user_dir = std::filesystem::current_path() / "user";
@@ -363,21 +392,6 @@ void PathToQString(QString& result, const std::filesystem::path& path) {
 std::string PathToU8(const std::filesystem::path& path) {
     const auto u8_string = path.u8string();
     return std::string{u8_string.begin(), u8_string.end()};
-}
-
-bool BBLauncher::CheckBBInstall() {
-    if (installPath == "") {
-        QMessageBox::warning(this, "No Bloodborne install path selected",
-                             "Select Bloodborne install folder before using Mod Manager");
-        return false;
-    } else if (!std::filesystem::exists(installPath) || installPath.empty()) {
-        QMessageBox::warning(this, "Bloodborne install folder empty or does not exist",
-                             QString::fromStdString(installPath.string()) +
-                                 " is empty or does not exist");
-        return false;
-    } else {
-        return true;
-    }
 }
 
 BBLauncher::~BBLauncher() {

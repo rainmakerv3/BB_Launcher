@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <iostream>
 #include <QApplication>
+#include <QCommandLineParser>
 #include <QMessageBox>
 #include "modules/bblauncher.h"
 
@@ -12,10 +13,18 @@ void customMessageHandler(QtMsgType, const QMessageLogContext&, const QString&) 
 int main(int argc, char* argv[]) {
     qInstallMessageHandler(customMessageHandler);
     std::cout << "SHADPS4 UPDATE WINDOW\n\n";
-
     QApplication a(argc, argv);
-    BBLauncher w;
-    w.show();
+
+    QCommandLineParser parser;
+    QCommandLineOption noGui("n");
+    parser.addOption(noGui);
+    parser.process(a);
+    bool noGUIset = parser.isSet(noGui);
+
+    BBLauncher* main_window = new BBLauncher(noGUIset);
+
+    if (!noGUIset)
+        main_window->show();
 
 #ifdef _WIN32
     if (!std::filesystem::exists(std::filesystem::current_path() / "shadPS4.exe")) {

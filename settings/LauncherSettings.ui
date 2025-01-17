@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
-     SPDX-License-Identifier: GPL-3.0-or-later -->
 <ui version="4.0">
  <class>LauncherSettings</class>
  <widget class="QDialog" name="LauncherSettings">
@@ -65,7 +63,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
 &lt;p style=&quot; margin-top:6px; margin-bottom:6px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;60 FPS Sound Fix:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:6px; margin-bottom:6px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Fixes some sounds not working after a crash when the 60 FPS patch is enabled.&lt;/p&gt;
 &lt;p style=&quot; margin-top:6px; margin-bottom:6px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Backup Saves:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:6px; margin-bottom:6px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Automatically transfers Bloodborne saves to backup folders in the BBLauncher/Backups folder. Backup1 will always be the newest, then Backup 2 and so on.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:6px; margin-bottom:6px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Automatically transfers Bloodborne saves to backup folders in the BBLauncher/Backups folder. BACKUP1 will always be the newest, then BACKUP2 and so on.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="acceptRichText">
        <bool>false</bool>

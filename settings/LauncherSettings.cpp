@@ -119,19 +119,6 @@ void LoadLauncherSettings() {
     BackupNumber = toml::find_or<int>(data, "Backups", "BackupNumber", 2);
 
     SetTheme(theme);
-
-    toml::value shadData;
-    if (std::filesystem::exists(GetShadUserDir() / "config.toml")) {
-        try {
-            std::ifstream ifs;
-            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-            ifs.open(GetShadUserDir() / "config.toml", std::ios_base::binary);
-            shadData = toml::parse(GetShadUserDir() / "config.toml");
-        } catch (std::exception& ex) {
-            QMessageBox::critical(NULL, "Filesystem error", ex.what());
-            return;
-        }
-    }
 }
 
 void LauncherSettings::SaveLauncherSettings() {
@@ -162,7 +149,6 @@ void LauncherSettings::SaveLauncherSettings() {
     }
 
     SoundFixEnabled = ui->SoundFixCheckBox->isChecked();
-
     BackupSaveEnabled = ui->BackupSaveCheckBox->isChecked();
     BackupInterval = ui->BackupIntervalComboBox->currentText().toInt();
     BackupNumber = ui->BackupNumberComboBox->currentText().toInt();
