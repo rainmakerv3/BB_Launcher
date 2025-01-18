@@ -267,8 +267,13 @@ void ModManager::DeactivateButton_isPressed() {
     }
 
     ui->FileTransferLabel->setText("Deleting Mod Files");
-    ui->progressBar->setMaximum(getFileCount(ModBackupFolderPath) +
-                                getFileCount(ModUniqueFolderPath));
+
+    if (std::filesystem::exists(ModUniqueFolderPath)) {
+        ui->progressBar->setMaximum(getFileCount(ModBackupFolderPath) +
+                                    getFileCount(ModUniqueFolderPath));
+    } else {
+        ui->progressBar->setMaximum(getFileCount(ModBackupFolderPath));
+    }
 
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModBackupFolderPath)) {
         auto relative_path = std::filesystem::relative(entry, ModBackupFolderPath);

@@ -12,7 +12,7 @@ void customMessageHandler(QtMsgType, const QMessageLogContext&, const QString&) 
 
 int main(int argc, char* argv[]) {
     qInstallMessageHandler(customMessageHandler);
-    std::cout << "SHADPS4 UPDATE WINDOW\n\n";
+    std::cout << "SHADPS4 LOG WINDOW\n\n";
     QApplication a(argc, argv);
 
     QCommandLineParser parser;
