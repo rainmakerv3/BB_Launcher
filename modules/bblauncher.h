@@ -40,8 +40,7 @@ private:
     Ui::BBLauncher* ui;
     bool noGUIset;
     static void StartBackupSave();
-    static void startShad();
-    void SaveInstallLoc();
+    void SaveConfigOption(std::string configKey, std::string configValue);
     bool CheckBBInstall();
     void UpdateSettingsList();
     void UpdateModList();

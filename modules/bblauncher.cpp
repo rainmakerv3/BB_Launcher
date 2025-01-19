@@ -23,6 +23,21 @@ std::string game_serial = "";
 
 BBLauncher::BBLauncher(bool noGUI, QWidget* parent)
     : QMainWindow(parent), noGUIset(noGUI), ui(new Ui::BBLauncher) {
+
+    toml::value data;
+    try {
+        std::ifstream ifs;
+        ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        ifs.open(SettingsFile, std::ios_base::binary);
+        data = toml::parse(SettingsFile);
+    } catch (std::exception& ex) {
+        QMessageBox::critical(NULL, "Filesystem error", ex.what());
+        return;
+    }
+
+    shadPs4Executable = QString::fromStdString(
+        toml::find_or<std::string>(data, "Launcher", "shadPath", ""));
+
     ui->setupUi(this);
 
     this->setFixedSize(this->width(), this->height());
@@ -111,10 +126,9 @@ void BBLauncher::ExeSelectButton_isPressed() {
         if (std::find(BBSerialList.begin(), BBSerialList.end(), game_serial) !=
             BBSerialList.end()) {
             ui->ExeLabel->setText(QBBInstallLoc);
-            installPathString = QBBInstallLoc.toStdString();
-            installPath = installPathString;
+            installPath = QBBInstallLoc.toStdString();
             EbootPath = installPath / "eboot.bin";
-            SaveInstallLoc();
+            SaveConfigOption("installPath", installPath.c_str());
         } else {
             QMessageBox::warning(
                 this, "Install Location not valid",
@@ -264,7 +278,7 @@ void BBLauncher::StartBackupSave() {
     }
 }
 
-void BBLauncher::SaveInstallLoc() {
+void BBLauncher::SaveConfigOption(std::string configKey, std::string configValue) {
     toml::value data;
     std::error_code error;
 
@@ -285,8 +299,7 @@ void BBLauncher::SaveInstallLoc() {
         }
     }
 
-    data["Launcher"]["installPath"] = installPathString;
-
+    data["Launcher"][configKey] = configValue;
     std::ofstream file(SettingsFile, std::ios::binary);
     file << data;
     file.close();
