@@ -25,6 +25,8 @@ class BBLauncher : public QMainWindow {
 public:
     BBLauncher(bool noGUI, QWidget* parent = nullptr);
     ~BBLauncher();
+
+    bool canLaunch = true;
     // bool eventFilter(QObject* obj, QEvent* event);
 
 public slots:
