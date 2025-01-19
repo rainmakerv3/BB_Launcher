@@ -130,6 +130,7 @@ set_source_files_properties(images/BBIcon.icns PROPERTIES
 
 if (WIN32)
     target_sources(BB_Launcher PRIVATE dist/bblauncher.rc)
+    SET_TARGET_PROPERTIES(BB_Launcher PROPERTIES LINK_FLAGS "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\" ")
 endif()
 
 target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
