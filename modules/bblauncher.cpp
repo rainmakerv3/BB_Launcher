@@ -38,6 +38,10 @@ BBLauncher::BBLauncher(bool noGUI, QWidget* parent)
     shadPs4Executable = QString::fromStdString(
         toml::find_or<std::string>(data, "Launcher", "shadPath", ""));
 
+    if (shadPs4Executable == "") {
+        GetShadExecutable();
+    }
+
     ui->setupUi(this);
 
     this->setFixedSize(this->width(), this->height());
@@ -177,7 +181,7 @@ void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
     }
 
     QMainWindow::hide();
-    std::thread shadThread(startShad);
+    std::thread shadThread(startShad, this->shadPs4Executable);
     shadThread.detach();
 
     if (BackupSaveEnabled) {
@@ -186,7 +190,7 @@ void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
     }
 }
 
-void BBLauncher::startShad() {
+void BBLauncher::startShad(QString shadPs4Executable) {
     QString PKGarg;
 #ifdef _WIN32
     PKGarg = QString::fromStdWString(EbootPath.wstring());
@@ -195,36 +199,10 @@ void BBLauncher::startShad() {
 #endif
 
     QProcess* process = new QProcess;
-    QString processCommand;
     QStringList processArg;
     processArg << "-g" << PKGarg;
 
-#ifdef _WIN32
-    processCommand = "shadps4.exe";
-#elif defined(__linux__)
-    QProcess* chmod = new QProcess;
-    QString chmodCommand = "chmod";
-    QStringList chmodArg;
-
-    if (std::filesystem::exists(std::filesystem::current_path() / "Shadps4-qt.AppImage")) {
-        chmodArg << "+x"
-                 << "Shadps4-qt.AppImage";
-        processCommand = "./Shadps4-qt.AppImage";
-    } else if (std::filesystem::exists(std::filesystem::current_path() / "Shadps4-sdl.AppImage")) {
-        chmodArg << "+x"
-                 << "Shadps4-sdl.AppImage";
-        processCommand = "./Shadps4-sdl.AppImage";
-    } else {
-        chmodArg << "+x" << "shadps4";
-        processCommand = "./shadps4";
-    }
-
-    chmod->start("chmod", chmodArg);
-#elif defined(__APPLE__)
-    processCommand = "open shadPS4";
-#endif
-
-    process->startDetached(processCommand, processArg);
+    process->startDetached(shadPs4Executable, processArg);
     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             [=](int exitCode, QProcess::ExitStatus exitStatus) { QApplication::quit(); });
 }
@@ -356,6 +334,20 @@ void BBLauncher::UpdateModList() {
     }
 
     ui->ModList->addItems(ActiveModStringList);
+}
+
+void BBLauncher::GetShadExecutable() {
+    QMessageBox::warning(this, "No ShadPS4 executable path selected",
+                            "Select ShadPS4 executable before using BB Launcher.");
+    
+    shadPs4Executable = QFileDialog::getOpenFileName(this,
+        "Select ShadPS4 executable (ex. /usr/bin/shadps4, shadps4.exe, Shadps4-qt.AppImage, etc.", QDir::homePath());
+
+    if (shadPs4Executable == "") {
+        canLaunch = false;
+    }
+
+    SaveConfigOption("shadPath", shadPs4Executable.toStdString());
 }
 
 // bool BBLauncher::eventFilter(QObject* obj, QEvent* event) {}

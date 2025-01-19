@@ -27,6 +27,7 @@ public:
     ~BBLauncher();
 
     bool canLaunch = true;
+    QString shadPs4Executable;
     // bool eventFilter(QObject* obj, QEvent* event);
 
 public slots:
@@ -44,6 +45,8 @@ private:
     bool CheckBBInstall();
     void UpdateSettingsList();
     void UpdateModList();
+    static void startShad(QString shadPs4Executable);
+    void GetShadExecutable();
 
     const std::vector<std::string> BBSerialList = {"CUSA03173", "CUSA00900", "CUSA00208",
                                                    "CUSA00207", "CUSA01363", "CUSA03023"};
