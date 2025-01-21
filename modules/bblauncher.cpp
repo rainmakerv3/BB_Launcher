@@ -21,8 +21,9 @@ std::filesystem::path installPath = "";
 std::filesystem::path EbootPath = "";
 std::string game_serial = "";
 
-BBLauncher::BBLauncher(bool noGUI, QWidget* parent)
-    : QMainWindow(parent), noGUIset(noGUI), ui(new Ui::BBLauncher) {
+BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
+    : QMainWindow(parent), noGUIset(noGUI), noinstancerunning(noInstanceRunning),
+      ui(new Ui::BBLauncher) {
     ui->setupUi(this);
 
     this->setFixedSize(this->width(), this->height());
@@ -98,7 +99,7 @@ BBLauncher::BBLauncher(bool noGUI, QWidget* parent)
         ui->ExeLabel->setText(QString::fromStdString(installPathString));
     }
 
-    if (noGUI)
+    if (noGUI && noInstanceRunning)
         LaunchButton_isPressed(noGUI);
 }
 

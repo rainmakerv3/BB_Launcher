@@ -23,7 +23,7 @@ class BBLauncher : public QMainWindow {
     Q_OBJECT
 
 public:
-    BBLauncher(bool noGUI, QWidget* parent = nullptr);
+    BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent = nullptr);
     ~BBLauncher();
     // bool eventFilter(QObject* obj, QEvent* event);
 
@@ -37,6 +37,7 @@ private slots:
 private:
     Ui::BBLauncher* ui;
     bool noGUIset;
+    bool noinstancerunning;
     static void StartBackupSave();
     static void startShad();
     void SaveInstallLoc();

@@ -53,6 +53,8 @@ set(PROJECT_SOURCES
     modules/ModManager.cpp
     modules/ModManager.ui
     modules/SaveManager.h
+    modules/RunGuard.cpp
+    modules/RunGuard.h
     modules/SaveManager.cpp
     modules/SaveManager.ui
     settings/toml.hpp
