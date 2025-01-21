@@ -132,7 +132,11 @@ void BBLauncher::ExeSelectButton_isPressed() {
             ui->ExeLabel->setText(QBBInstallLoc);
             installPath = QBBInstallLoc.toStdString();
             EbootPath = installPath / "eboot.bin";
-            SaveConfigOption("installPath", installPath.c_str());
+            #ifdef _WIN32
+                SaveConfigOption("installPath", installPath.wstring());
+            #else
+                SaveConfigOption("installPath", installPath.c_str());
+            #endif
         } else {
             QMessageBox::warning(
                 this, "Install Location not valid",
