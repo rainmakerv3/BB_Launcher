@@ -27,7 +27,7 @@ public:
     ~BBLauncher();
 
     bool canLaunch = true;
-    QString shadPs4Executable;
+    std::filesystem::path shadPs4Executable;
     // bool eventFilter(QObject* obj, QEvent* event);
 
 public slots:

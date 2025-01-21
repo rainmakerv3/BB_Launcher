@@ -35,7 +35,7 @@ BBLauncher::BBLauncher(bool noGUI, QWidget* parent)
         return;
     }
 
-    shadPs4Executable = QString::fromStdString(
+    shadPs4Executable = std::filesystem::path(
         toml::find_or<std::string>(data, "Launcher", "shadPath", ""));
 
     if (shadPs4Executable == "") {
@@ -65,7 +65,7 @@ BBLauncher::BBLauncher(bool noGUI, QWidget* parent)
     connect(ui->SaveManagerButton, &QPushButton::pressed, this, [this]() {
         if (!CheckBBInstall())
             return;
-        if (!std::filesystem::exists(GetShadUserDir() / "savedata" / "1" / game_serial /
+        if (!std::filesystem::exists(GetShadUserDir(this->shadPs4Executable) / "savedata" / "1" / game_serial /
                                      "SPRJ0005" / "userdata0010")) {
             QMessageBox::warning(this, "No saves detected",
                                  "Launch Bloodborne to generate saves before using Save Manager");
@@ -343,15 +343,19 @@ void BBLauncher::UpdateModList() {
 void BBLauncher::GetShadExecutable() {
     QMessageBox::warning(this, "No ShadPS4 executable path selected",
                             "Select ShadPS4 executable before using BB Launcher.");
-    
-    shadPs4Executable = QFileDialog::getOpenFileName(this,
-        "Select ShadPS4 executable (ex. /usr/bin/shadps4, shadps4.exe, Shadps4-qt.AppImage, etc.", QDir::homePath());
-
     if (shadPs4Executable == "") {
         canLaunch = false;
     }
 
-    SaveConfigOption("shadPath", shadPs4Executable.toStdString());
+#ifdef _WIN32
+    shadPs4Executable = QFileDialog::getOpenFileName(this,
+        "Select ShadPS4 executable (ex. /usr/bin/shadps4, shadps4.exe, Shadps4-qt.AppImage, etc.", QDir::homePath()).toStdWString();
+    SaveConfigOption("shadPath", shadPs4Executable.wstring());
+#else
+    shadPs4Executable = QFileDialog::getOpenFileName(this,
+        "Select ShadPS4 executable (ex. /usr/bin/shadps4, shadps4.exe, Shadps4-qt.AppImage, etc.", QDir::homePath()).toStdString();
+    SaveConfigOption("shadPath", shadPs4Executable.c_str());
+#endif
 }
 
 // bool BBLauncher::eventFilter(QObject* obj, QEvent* event) {}
@@ -371,9 +375,9 @@ bool BBLauncher::CheckBBInstall() {
     }
 }
 
-std::filesystem::path GetShadUserDir() {
+std::filesystem::path GetShadUserDir(std::filesystem::path shadPs4Directory) {
 
-    auto user_dir = std::filesystem::current_path() / "user";
+    auto user_dir = shadPs4Directory.parent_path() / "user";
     if (!std::filesystem::exists(user_dir)) {
 #ifdef __APPLE__
         user_dir =
