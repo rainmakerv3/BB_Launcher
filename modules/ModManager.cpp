@@ -109,13 +109,13 @@ void ModManager::ActivateButton_isPressed() {
                 if (FileList[i].contains(relative_path_string)) {
                     hasconflict = true;
                     if (QMessageBox::Yes ==
-                        QMessageBox::question(this, "Mod conflict found",
-                                              QString::fromStdString(FileList[i]) +
-                                                  " conflicts with the same file in this mod."
-                                                  " Some conflicting mods cannot function properly "
-                                                  "together.\n\nProceed "
-                                                  "with activation?",
-                                              QMessageBox::Yes | QMessageBox::No)) {
+                        QMessageBox::question(
+                            this, "Mod conflict found",
+                            QString::fromStdString(FileList[i]) +
+                                "\n\nThis file conflicts with the same file in this mod."
+                                " Some conflicting mods cannot function properly "
+                                "together.\n\nProceed with activation?",
+                            QMessageBox::Yes | QMessageBox::No)) {
                         break;
                     } else {
                         return;

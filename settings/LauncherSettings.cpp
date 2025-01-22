@@ -17,6 +17,25 @@ bool BackupSaveEnabled = false;
 int BackupInterval = 10;
 int BackupNumber = 2;
 
+namespace toml {
+
+template <typename TC, typename K>
+std::filesystem::path find_fs_path_or(const basic_value<TC>& v, const K& ky,
+                                      std::filesystem::path opt) {
+    try {
+        auto str = find<std::string>(v, ky);
+        if (str.empty()) {
+            return opt;
+        }
+        std::u8string u8str{(char8_t*)&str.front(), (char8_t*)&str.back() + 1};
+        return std::filesystem::path{u8str};
+    } catch (...) {
+        return opt;
+    }
+}
+
+} // namespace toml
+
 LauncherSettings::LauncherSettings(QWidget* parent)
     : QDialog(parent), ui(new Ui::LauncherSettings) {
     ui->setupUi(this);
@@ -119,6 +138,25 @@ void LoadLauncherSettings() {
     BackupNumber = toml::find_or<int>(data, "Backups", "BackupNumber", 2);
 
     SetTheme(theme);
+
+    toml::value shadData;
+    try {
+        std::ifstream ifs;
+        ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        ifs.open(GetShadUserDir() / "config.toml", std::ios_base::binary);
+        shadData = toml::parse(GetShadUserDir() / "config.toml");
+    } catch (std::exception& ex) {
+        QMessageBox::critical(NULL, "Filesystem error", ex.what());
+        return;
+    }
+
+    if (shadData.contains("GUI")) {
+        const toml::value& GUI = shadData.at("GUI");
+        SaveDir = toml::find_fs_path_or(GUI, "saveDataPath", {});
+        if (SaveDir.empty()) {
+            SaveDir = GetShadUserDir() / "savedata";
+        }
+    }
 }
 
 void LauncherSettings::SaveLauncherSettings() {

@@ -20,6 +20,7 @@ std::string installPathString = "";
 std::filesystem::path installPath = "";
 std::filesystem::path EbootPath = "";
 std::string game_serial = "";
+std::filesystem::path SaveDir = "";
 
 BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     : QMainWindow(parent), noGUIset(noGUI), noinstancerunning(noInstanceRunning),
@@ -29,7 +30,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     this->setFixedSize(this->width(), this->height());
     this->statusBar()->setSizeGripEnabled(false);
     QApplication::setStyle("Fusion");
-    setWindowTitle("BB Launcher Release 4");
+    setWindowTitle("BB Launcher Release 4.2");
 
     // this->installEventFilter(this); if needed
 
@@ -47,8 +48,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     connect(ui->SaveManagerButton, &QPushButton::pressed, this, [this]() {
         if (!CheckBBInstall())
             return;
-        if (!std::filesystem::exists(GetShadUserDir() / "savedata" / "1" / game_serial /
-                                     "SPRJ0005" / "userdata0010")) {
+        if (!std::filesystem::exists(SaveDir / "1" / game_serial / "SPRJ0005" / "userdata0010")) {
             QMessageBox::warning(this, "No saves detected",
                                  "Launch Bloodborne to generate saves before using Save Manager");
             return;
@@ -151,8 +151,7 @@ void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
     }
 
     if (SoundFixEnabled) {
-        std::filesystem::path savePath =
-            GetShadUserDir() / "savedata" / "1" / game_serial / "SPRJ0005";
+        std::filesystem::path savePath = SaveDir / "1" / game_serial / "SPRJ0005";
         if (std::filesystem::exists(savePath / "userdata0010")) {
             std::ofstream savefile1;
             savefile1.open(savePath / "userdata0010",
@@ -232,7 +231,7 @@ void BBLauncher::StartBackupSave() {
         }
     }
 
-    const auto save_dir = GetShadUserDir() / "savedata" / "1" / game_serial;
+    const auto save_dir = SaveDir / "1" / game_serial;
     const auto backup_dir = BackupPath / "BACKUP1";
 
     while (true) {
@@ -364,7 +363,6 @@ bool BBLauncher::CheckBBInstall() {
 }
 
 std::filesystem::path GetShadUserDir() {
-
     auto user_dir = std::filesystem::current_path() / "user";
     if (!std::filesystem::exists(user_dir)) {
 #ifdef __APPLE__
@@ -387,6 +385,14 @@ void PathToQString(QString& result, const std::filesystem::path& path) {
     result = QString::fromStdWString(path.wstring());
 #else
     result = QString::fromStdString(path.string());
+#endif
+}
+
+std::filesystem::path PathFromQString(const QString& path) {
+#ifdef _WIN32
+    return std::filesystem::path(path.toStdWString());
+#else
+    return std::filesystem::path(path.toStdString());
 #endif
 }
 

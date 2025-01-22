@@ -5,16 +5,13 @@
 #include <QMessageBox>
 
 #include "SaveManager.h"
+#include "modules/bblauncher.h"
 #include "modules/ui_SaveManager.h"
-
-std::filesystem::path Savefile;
-std::string saveslot;
-QStringList SaveSlotList;
 
 SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveManager) {
     ui->setupUi(this);
-
     ui->SelectSaveComboBox->addItem("Current Save");
+    ExactSaveDir = SaveDir / "1" / game_serial / "SPRJ0005";
 
     if (!std::filesystem::exists(BackupsDir)) {
         std::filesystem::create_directories(BackupsDir);
@@ -32,7 +29,7 @@ SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveMana
     SaveSlotList.clear();
     for (int i = 0; i < 10; i++) {
         std::string slot = "userdata000" + std::to_string(i);
-        Savefile = SaveDir / slot;
+        Savefile = ExactSaveDir / slot;
         std::ifstream file(Savefile, std::ios::in | std::ios::binary);
 
         file.seekg(8);
@@ -68,7 +65,7 @@ SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveMana
 
     saveslot = "userdata0000";
     ui->SaveSlotComboBox->setCurrentText(QString::fromStdString(saveslot));
-    Savefile = SaveDir / saveslot;
+    Savefile = ExactSaveDir / saveslot;
 
     OnSelectSaveChanged();
 }
@@ -81,7 +78,7 @@ void SaveManager::UpdateValues() {
     }
 
     if (ui->SelectSaveComboBox->currentText() == "Current Save") {
-        Savefile = SaveDir / saveslot;
+        Savefile = ExactSaveDir / saveslot;
     } else if (ui->SelectSaveComboBox->currentText() == "MANUAL") {
         Savefile = BackupsDir / "MANUAL" / saveslot;
     } else {
@@ -266,7 +263,7 @@ void SaveManager::ManualBackupPressed() {
     }
 
     std::string savename = ui->ManualSaveLineEdit->text().toStdString();
-    Savefile = SaveDir / saveslot;
+    Savefile = ExactSaveDir / saveslot;
     std::filesystem::copy_file(Savefile, BackupsDir / "MANUAL" / savename);
     QMessageBox::information(this, "Save Successful",
                              "Backup save created: " + QString::fromStdString(savename));
@@ -306,7 +303,7 @@ void SaveManager::RestoreBackupPressed() {
             BackupFile = BackupsDir / selectedsave / "SPRJ0005" / saveslot;
         }
 
-        std::filesystem::copy(BackupFile, SaveDir / overwriteslot,
+        std::filesystem::copy(BackupFile, ExactSaveDir / overwriteslot,
                               std::filesystem::copy_options::overwrite_existing);
         QMessageBox::information(this, "Save Restored",
                                  "Backup save restored: " + QString::fromStdString(saveslot));
@@ -321,8 +318,9 @@ void SaveManager::RestoreBackupFolderPressed() {
                               QMessageBox::Yes | QMessageBox::No)) {
         std::string selectedsave = ui->SelectSaveComboBox->currentText().toStdString();
         std::filesystem::path BackupFolder = BackupsDir / selectedsave / "SPRJ0005";
-        std::filesystem::copy(BackupFolder, SaveDir,
-                              std::filesystem::copy_options::overwrite_existing);
+        std::filesystem::copy(BackupFolder, ExactSaveDir,
+                              std::filesystem::copy_options::overwrite_existing |
+                                  std::filesystem::copy_options::recursive);
         QMessageBox::information(this, "Backup Folder Restored",
                                  "Backup Folder restored: " + QString::fromStdString(selectedsave));
     }

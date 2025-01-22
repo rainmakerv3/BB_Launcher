@@ -26,9 +26,12 @@ private slots:
 private:
     void UpdateValues();
     void PopulateBackupSlots();
+    std::filesystem::path ExactSaveDir;
+    std::filesystem::path Savefile;
+    std::string saveslot;
+    QStringList SaveSlotList;
 
     Ui::SaveManager* ui;
-    std::filesystem::path SaveDir = GetShadUserDir() / "savedata" / "1" / game_serial / "SPRJ0005";
     std::filesystem::path BackupsDir =
         std::filesystem::current_path() / "BBLauncher" / "SaveBackups";
 };
