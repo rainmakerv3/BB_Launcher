@@ -15,12 +15,14 @@
 #include "settings/ShadCheatsPatches.h"
 #include "settings/ShadSettings.h"
 #include "settings/toml.hpp"
+#include "settings/updater/CheckUpdate.h"
 
 std::string installPathString = "";
 std::filesystem::path installPath = "";
 std::filesystem::path EbootPath = "";
 std::string game_serial = "";
 std::filesystem::path SaveDir = "";
+char VERSION[] = "Release4.3";
 
 BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     : QMainWindow(parent), noGUIset(noGUI), noinstancerunning(noInstanceRunning),
@@ -30,7 +32,9 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     this->setFixedSize(this->width(), this->height());
     this->statusBar()->setSizeGripEnabled(false);
     QApplication::setStyle("Fusion");
-    setWindowTitle("BB Launcher Release 4.2");
+
+    std::string versionstring(VERSION);
+    setWindowTitle(QString::fromStdString("BBLauncher" + versionstring));
 
     // this->installEventFilter(this); if needed
 
@@ -97,6 +101,11 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         ui->ExeLabel->setText(NoPathText);
     } else {
         ui->ExeLabel->setText(QString::fromStdString(installPathString));
+    }
+
+    if (AutoUpdateEnabled) {
+        auto checkUpdate = new CheckUpdate(false);
+        checkUpdate->exec();
     }
 
     if (noGUI && noInstanceRunning)
@@ -297,6 +306,8 @@ void BBLauncher::UpdateSettingsList() {
     QString ThemeSetting = "Selected Theme = " + QString::fromStdString(theme);
     QString BackupEnableSetting =
         "Back up saves enabled = " + QVariant(BackupSaveEnabled).toString();
+    QString AutoUpdateSetting =
+        "Check updates on startup enabled = " + QVariant(AutoUpdateEnabled).toString();
 
     QString BackupIntSetting;
     QString BackupNumSetting;
@@ -309,8 +320,8 @@ void BBLauncher::UpdateSettingsList() {
         BackupNumSetting = "Backup Copies = disabled";
     }
 
-    QStringList SettingStrings = {SoundhackSetting, ThemeSetting, BackupEnableSetting,
-                                  BackupIntSetting, BackupNumSetting};
+    QStringList SettingStrings = {SoundhackSetting, ThemeSetting,     BackupEnableSetting,
+                                  BackupIntSetting, BackupNumSetting, AutoUpdateSetting};
 
     ui->SettingList->clear();
     ui->SettingList->addItems(SettingStrings);

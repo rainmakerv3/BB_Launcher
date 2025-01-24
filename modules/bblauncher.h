@@ -20,6 +20,7 @@ extern std::filesystem::path installPath;
 extern std::string installPathString;
 extern std::filesystem::path EbootPath;
 extern std::filesystem::path SaveDir;
+extern char VERSION[];
 
 class BBLauncher : public QMainWindow {
     Q_OBJECT

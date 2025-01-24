@@ -6,6 +6,8 @@
 #include "LauncherSettings.h"
 #include "modules/bblauncher.h"
 #include "settings/ui_LauncherSettings.h"
+#include "settings/updater/BuildInfo.h"
+#include "settings/updater/CheckUpdate.h"
 #include "toml.hpp"
 
 std::filesystem::path SettingsPath = std::filesystem::current_path() / "BBLauncher";
@@ -16,6 +18,7 @@ bool SoundFixEnabled = true;
 bool BackupSaveEnabled = false;
 int BackupInterval = 10;
 int BackupNumber = 2;
+bool AutoUpdateEnabled = false;
 
 namespace toml {
 
@@ -49,11 +52,17 @@ LauncherSettings::LauncherSettings(QWidget* parent)
         ui->LightThemeRadioButton->setChecked(true);
     }
 
+    ui->UpdateCheckBox->setChecked(AutoUpdateEnabled);
     ui->SoundFixCheckBox->setChecked(SoundFixEnabled);
     ui->BackupSaveCheckBox->setChecked(BackupSaveEnabled);
     ui->BackupIntervalComboBox->setCurrentText(QString::number(BackupInterval));
     ui->BackupNumberComboBox->setCurrentText(QString::number(BackupNumber));
     OnBackupStateChanged();
+
+    connect(ui->UpdateButton, &QPushButton::clicked, this, []() {
+        auto checkUpdate = new CheckUpdate(true);
+        checkUpdate->exec();
+    });
 
     connect(ui->buttonBox->button(QDialogButtonBox::Save), &QPushButton::pressed, this,
             &LauncherSettings::SaveAndCloseLauncherSettings);
@@ -132,6 +141,7 @@ void LoadLauncherSettings() {
 
     theme = toml::find_or<std::string>(data, "Launcher", "Theme", "Dark");
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
+    AutoUpdateEnabled = toml::find_or<bool>(data, "Launcher", "AutoUpdateEnabled", false);
 
     BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", false);
     BackupInterval = toml::find_or<int>(data, "Backups", "BackupInterval", 10);
@@ -190,10 +200,12 @@ void LauncherSettings::SaveLauncherSettings() {
     BackupSaveEnabled = ui->BackupSaveCheckBox->isChecked();
     BackupInterval = ui->BackupIntervalComboBox->currentText().toInt();
     BackupNumber = ui->BackupNumberComboBox->currentText().toInt();
+    AutoUpdateEnabled = ui->UpdateCheckBox->isChecked();
 
     data["Launcher"]["installPath"] = installPathString;
     data["Launcher"]["Theme"] = theme;
     data["Launcher"]["SoundFixEnabled"] = SoundFixEnabled;
+    data["Launcher"]["AutoUpdateEnabled"] = AutoUpdateEnabled;
 
     data["Backups"]["BackupSaveEnabled"] = BackupSaveEnabled;
     data["Backups"]["BackupInterval"] = BackupInterval;
@@ -225,6 +237,7 @@ void CreateSettingsFile() {
     data["Launcher"]["installPath"] = "";
     data["Launcher"]["Theme"] = "Dark";
     data["Launcher"]["SoundFixEnabled"] = true;
+    data["Launcher"]["AutoUpdateEnabled"] = false;
 
     data["Backups"]["BackupSaveEnabled"] = false;
     data["Backups"]["BackupInterval"] = 10;
