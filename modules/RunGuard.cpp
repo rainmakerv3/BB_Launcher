@@ -1,6 +1,8 @@
-#include "RunGuard.h"
+// SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
+// SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <QCryptographicHash>
+#include "RunGuard.h"
 
 namespace {
 
