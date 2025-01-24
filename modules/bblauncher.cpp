@@ -22,7 +22,7 @@ std::filesystem::path installPath = "";
 std::filesystem::path EbootPath = "";
 std::string game_serial = "";
 std::filesystem::path SaveDir = "";
-char VERSION[] = "Release4.3";
+char VERSION[] = "Release4.4-WIP";
 
 BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     : QMainWindow(parent), noGUIset(noGUI), noinstancerunning(noInstanceRunning),
@@ -34,7 +34,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     QApplication::setStyle("Fusion");
 
     std::string versionstring(VERSION);
-    setWindowTitle(QString::fromStdString("BBLauncher" + versionstring));
+    setWindowTitle(QString::fromStdString("BBLauncher " + versionstring));
 
     // this->installEventFilter(this); if needed
 
