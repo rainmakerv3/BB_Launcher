@@ -46,6 +46,10 @@ endif()
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
 
+if (UNIX AND NOT APPLE)
+    find_package(OpenSSL REQUIRED)
+endif()
+
 qt_add_resources(RESOURCE_FILES dist/BBLauncher.qrc)
 
 set(PROJECT_SOURCES
@@ -122,6 +126,10 @@ else()
     endif()
 endif()
 
+if (UNIX AND NOT APPLE)
+    target_link_libraries(BB_Launcher PRIVATE ${OPENSSL_LIBRARIES})
+endif()
+
 target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -141,11 +149,6 @@ set_target_properties(BB_Launcher PROPERTIES
 #   WIN32_EXECUTABLE TRUE
 )
 
-if (UNIX AND NOT APPLE)
-    find_package(OpenSSL REQUIRED)
-    target_link_libraries(BB_Launcher PRIVATE ${OPENSSL_LIBRARIES})
-endif()
-
 set_source_files_properties(images/BBIcon.icns PROPERTIES
         MACOSX_PACKAGE_LOCATION Resources)
 
@@ -164,5 +167,6 @@ install(TARGETS BB_Launcher BUNDLE DESTINATION .)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     install(FILES "dist/BBLauncher.desktop" DESTINATION "share/applications")
+    install(FILES "dist/libssl.so.3" DESTINATION "usr/lib")
     install(FILES "dist/BBIcon.png" DESTINATION "share/icons/hicolor/512x512/apps")
 endif()

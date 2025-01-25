@@ -20,6 +20,6 @@ chmod a+x linuxdeploy-plugin-checkrt-x86_64.sh
 ./linuxdeploy-x86_64.AppImage --appdir AppDir
 ./linuxdeploy-plugin-checkrt-x86_64.sh --appdir AppDir
 
-./linuxdeploy-x86_64.AppImage --appdir AppDir -d "$GITHUB_WORKSPACE"/dist/BBLauncher.desktop  -e "$GITHUB_WORKSPACE"/build/BB_Launcher -i "$GITHUB_WORKSPACE"/dist/BBIcon.png --plugin qt
+./linuxdeploy-x86_64.AppImage --appdir AppDir -l "$GITHUB_WORKSPACE"/dist/libssl.so.3 -d "$GITHUB_WORKSPACE"/dist/BBLauncher.desktop  -e "$GITHUB_WORKSPACE"/build/BB_Launcher -i "$GITHUB_WORKSPACE"/dist/BBIcon.png --plugin qt
 ./linuxdeploy-x86_64.AppImage --appdir AppDir --output appimage
 mv BB_Launcher-x86_64.AppImage BB_Launcher-qt.AppImage
