@@ -3,6 +3,7 @@
 
 #include <QCheckBox>
 #include <QComboBox>
+#include <QDialog>
 #include <QGroupBox>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -21,11 +22,11 @@
 #include <QVector>
 #include <QWidget>
 
-class CheatsPatches : public QWidget {
+class CheatsPatches : public QDialog {
     Q_OBJECT
 
 public:
-    CheatsPatches(QWidget* parent = nullptr);
+    explicit CheatsPatches(QWidget* parent = nullptr);
     ~CheatsPatches();
 
     void downloadPatches(const QString repository, const bool showMessageBox);

@@ -35,7 +35,8 @@ QImage icon;
 QString gameVersion;
 QString qserial;
 
-CheatsPatches::CheatsPatches(QWidget* parent) {
+CheatsPatches::CheatsPatches(QWidget* parent) : QDialog(parent) {
+    this->setModal(true);
     setupUI();
     resize(500, 400);
     setWindowTitle("Enable/Disable Patches for Bloodborne");
