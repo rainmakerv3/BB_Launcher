@@ -171,17 +171,12 @@ void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
         }
     }
 
-    QMainWindow::hide();
-    std::thread shadThread(startShad);
-    shadThread.detach();
-
     if (BackupSaveEnabled) {
         std::thread saveThread(StartBackupSave);
         saveThread.detach();
     }
-}
 
-void BBLauncher::startShad() {
+    QMainWindow::hide();
     QString PKGarg;
 #ifdef _WIN32
     PKGarg = QString::fromStdWString(EbootPath.wstring());
@@ -219,7 +214,7 @@ void BBLauncher::startShad() {
     processCommand = "open shadPS4";
 #endif
 
-    process->startDetached(processCommand, processArg);
+    process->start(processCommand, processArg);
     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             [=](int exitCode, QProcess::ExitStatus exitStatus) { QApplication::quit(); });
 }
