@@ -361,6 +361,7 @@ void ModManager::DeactivateButton_isPressed() {
 
     ActiveModRemove(ModName);
     RefreshLists();
+    ui->progressBar->setMaximum(100);
     ui->progressBar->setValue(0);
     ui->FileTransferLabel->setText("No Current File Transfers");
 
