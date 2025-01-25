@@ -564,6 +564,9 @@ void ShadSettings::InstallUpdate() {
     QString rootPath;
     PathToQString(rootPath, std::filesystem::current_path());
 
+    QString shadPath;
+    PathToQString(shadPath, shadPs4Executable.parent_path());
+
     QString tempDirPath = userPath + "/temp_download_update";
     QString startingUpdate = "Starting Update...";
 
@@ -659,11 +662,11 @@ void ShadSettings::InstallUpdate() {
         "        pkill -f \"Shadps4-qt.AppImage\"\n"
         "        sleep 2\n"
         "    fi\n"
-        "    cp -r \"%2/\"* \"%3/\"\n"
+        "    cp -r \"%2/\"* \"%4/\"\n"
         "    sleep 2\n"
-        "    rm \"%3/update.sh\"\n"
-        "    rm \"%3/temp_download_update.zip\"\n"
-        "    chmod +x \"%3/BB_Launcher-qt.AppImage\"\n"
+        "    rm \"%4/update.sh\"\n"
+        "    rm \"%4/temp_download_update.zip\"\n"
+        "    chmod +x \"%4/Shadps4-qt.AppImage\"\n"
         "    rm -r \"%2\"\n"
         "    cd \"%3\" && ./BB_Launcher-qt.AppImage\n"
         "}\n"
@@ -718,7 +721,7 @@ void ShadSettings::InstallUpdate() {
         out << scriptContent.arg(binaryStartingUpdate).arg(tempDirPath).arg(rootPath);
 #endif
 #if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
-        out << scriptContent.arg(startingUpdate).arg(tempDirPath).arg(rootPath);
+        out << scriptContent.arg(startingUpdate).arg(tempDirPath).arg(rootPath).arg(shadPath);
 #endif
         scriptFile.close();
 

@@ -21,6 +21,7 @@ extern std::string installPathString;
 extern std::filesystem::path EbootPath;
 extern std::filesystem::path SaveDir;
 extern char VERSION[];
+extern std::filesystem::path shadPs4Executable;
 
 class BBLauncher : public QMainWindow {
     Q_OBJECT
@@ -30,7 +31,6 @@ public:
     ~BBLauncher();
 
     bool canLaunch = true;
-    std::filesystem::path shadPs4Executable;
     // bool eventFilter(QObject* obj, QEvent* event);
 
 public slots:
@@ -42,6 +42,7 @@ private slots:
 
 private:
     Ui::BBLauncher* ui;
+    std::filesystem::path shadPs4Directory;
     bool noGUIset;
     bool noinstancerunning;
     static void StartBackupSave();
@@ -49,7 +50,6 @@ private:
     bool CheckBBInstall();
     void UpdateSettingsList();
     void UpdateModList();
-    static void startShad(QString shadPs4Executable);
     void GetShadExecutable();
 
     const std::vector<std::string> BBSerialList = {"CUSA03173", "CUSA00900", "CUSA00208",

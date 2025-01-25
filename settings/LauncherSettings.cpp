@@ -146,6 +146,8 @@ void LoadLauncherSettings() {
     BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", false);
     BackupInterval = toml::find_or<int>(data, "Backups", "BackupInterval", 10);
     BackupNumber = toml::find_or<int>(data, "Backups", "BackupNumber", 2);
+    shadPs4Executable =
+        std::filesystem::path(toml::find_or<std::string>(data, "Launcher", "shadPath", ""));
 
     SetTheme(theme);
 
