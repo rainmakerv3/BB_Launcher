@@ -29,12 +29,27 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     : QMainWindow(parent), noGUIset(noGUI), noinstancerunning(noInstanceRunning),
       ui(new Ui::BBLauncher) {
 
+    ui->setupUi(this);
+
     LoadLauncherSettings();
     if (shadPs4Executable == "" || !std::filesystem::exists(shadPs4Executable)) {
         GetShadExecutable();
     }
 
-    ui->setupUi(this);
+    if (installPathString == "") {
+        const QString NoPathText = "no Bloodborne Folder selected (CUSA****)";
+        ui->ExeLabel->setText(NoPathText);
+    } else {
+        ui->ExeLabel->setText(QString::fromStdString(installPathString));
+    }
+
+    QString shadLabelString;
+    PathToQString(shadLabelString, shadPs4Executable);
+    ui->ShadLabel->setText(shadLabelString);
+
+#ifdef _WIN32
+    ui->ShadInstallGroupBox->hide();
+#endif
 
     this->setFixedSize(this->width(), this->height());
     this->statusBar()->setSizeGripEnabled(false);
@@ -50,6 +65,8 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
 
     connect(ui->ExeSelectButton, &QPushButton::pressed, this,
             &BBLauncher::ExeSelectButton_isPressed);
+    connect(ui->ShadSelectButton, &QPushButton::pressed, this,
+            &BBLauncher::ShadSelectButton_isPressed);
     connect(ui->LaunchButton, &QPushButton::pressed, this,
             [this]() { BBLauncher::LaunchButton_isPressed(noGUIset); });
 
@@ -104,13 +121,6 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         UpdateSettingsList();
     });
 
-    if (installPathString == "") {
-        const QString NoPathText = "no Bloodborne Folder selected (CUSA****)";
-        ui->ExeLabel->setText(NoPathText);
-    } else {
-        ui->ExeLabel->setText(QString::fromStdString(installPathString));
-    }
-
     if (AutoUpdateEnabled) {
         auto checkUpdate = new CheckUpdate(false);
         checkUpdate->exec();
@@ -145,6 +155,38 @@ void BBLauncher::WIPButton_isPressed() {
         this, "On hold",
         "Work on trophy manager will be put on-hold until it's easier to dump trophy keys");
     UpdateSettingsList();
+}
+
+void BBLauncher::ShadSelectButton_isPressed() {
+
+    std::string ShadLocString;
+#if defined(__linux__)
+    QString ShadLoc = QFileDialog::getOpenFileName(
+        this,
+        "Select ShadPS4 executable (ex. /usr/bin/shadps4, "
+        "Shadps4-qt.AppImage, etc.)",
+        QDir::homePath(),
+        "QT AppImage (Shadps4-qt.AppImage);;SDL AppImage (Shadps4-sdl.AppImage);;"
+        "non-AppImage (shadps4)",
+        0, QFileDialog::DontUseNativeDialog);
+    ShadLocString = ShadLoc.toStdString();
+    if (ShadLocString != "")
+        shadPs4Executable = std::filesystem::u8path(ShadLocString);
+#elif defined(__APPLE__)
+    QString ShadLoc =
+        QFileDialog::getOpenFileName(this, "Select ShadPS4 executable (ex. shadps4.app)",
+                                     QDir::homePath(), "App Bundle (shadps4.app)");
+    ShadLocString = ShadLoc.toStdString();
+    if (ShadLocString != "")
+        shadPs4Executable = std::filesystem::u8path(ShadLocString);
+#endif
+
+    if (ShadLocString != "") {
+        SaveConfigOption("shadPath", PathToU8(shadPs4Executable));
+        QString shadLabelString;
+        PathToQString(shadLabelString, shadPs4Executable);
+        ui->ShadLabel->setText(shadLabelString);
+    }
 }
 
 void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
@@ -336,6 +378,8 @@ void BBLauncher::UpdateModList() {
 
 void BBLauncher::GetShadExecutable() {
 
+    shadPs4Executable = "";
+
 #ifdef _WIN32
     if (std::filesystem::exists(std::filesystem::current_path() / "shadPS4.exe")) {
         shadPs4Executable = std::filesystem::current_path() / "shadPS4.exe";
@@ -345,7 +389,6 @@ void BBLauncher::GetShadExecutable() {
             "No shadPS4.exe found. Move BB_Launcher.exe next to shadPS4.exe.\n\nMove all other "
             "files/folders in BB_Launcher folder to shadPS4 folder only if you are using a non-QT "
             "(no GUI) version of shadPS4.");
-        shadPs4Executable = "";
     }
 #elif defined(__linux__)
     QMessageBox::warning(this, "No ShadPS4 executable path selected",
@@ -380,7 +423,7 @@ void BBLauncher::GetShadExecutable() {
 bool BBLauncher::CheckBBInstall() {
     if (installPath == "") {
         QMessageBox::warning(this, "No Bloodborne install path selected",
-                             "Select Bloodborne install folder before using Mod Manager");
+                             "Select Bloodborne install folder before using this feature");
         return false;
     } else if (!std::filesystem::exists(installPath) || installPath.empty()) {
         QMessageBox::warning(this, "Bloodborne install folder empty or does not exist",

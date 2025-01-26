@@ -37,6 +37,7 @@ public slots:
 
 private slots:
     void ExeSelectButton_isPressed();
+    void ShadSelectButton_isPressed();
     void WIPButton_isPressed();
     void LaunchButton_isPressed(bool noGUIset);
 
