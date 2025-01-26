@@ -27,6 +27,26 @@ char VERSION[] = "Release4.4-WIP";
 BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     : QMainWindow(parent), noGUIset(noGUI), noinstancerunning(noInstanceRunning),
       ui(new Ui::BBLauncher) {
+
+    
+    toml::value data;
+    try {
+        std::ifstream ifs;
+        ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        ifs.open(SettingsFile, std::ios_base::binary);
+        data = toml::parse(SettingsFile);
+    } catch (std::exception& ex) {
+        QMessageBox::critical(NULL, "Filesystem error", ex.what());
+        return;
+    }
+
+    shadPs4Executable = std::filesystem::path(
+        toml::find_or<std::string>(data, "Launcher", "shadPath", ""));
+
+    if (shadPs4Executable == "") {
+        GetShadExecutable();
+    }
+  
     ui->setupUi(this);
 
     this->setFixedSize(this->width(), this->height());
@@ -52,7 +72,9 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     connect(ui->SaveManagerButton, &QPushButton::pressed, this, [this]() {
         if (!CheckBBInstall())
             return;
-        if (!std::filesystem::exists(SaveDir / "1" / game_serial / "SPRJ0005" / "userdata0010")) {
+
+        if (!std::filesystem::exists(GetShadUserDir(this->shadPs4Executable) / "savedata" / "1" / game_serial /
+                                     "SPRJ0005" / "userdata0010")) {
             QMessageBox::warning(this, "No saves detected",
                                  "Launch Bloodborne to generate saves before using Save Manager");
             return;
@@ -121,10 +143,13 @@ void BBLauncher::ExeSelectButton_isPressed() {
         if (std::find(BBSerialList.begin(), BBSerialList.end(), game_serial) !=
             BBSerialList.end()) {
             ui->ExeLabel->setText(QBBInstallLoc);
-            installPathString = QBBInstallLoc.toStdString();
-            installPath = installPathString;
+            installPath = QBBInstallLoc.toStdString();
             EbootPath = installPath / "eboot.bin";
-            SaveInstallLoc();
+            #ifdef _WIN32
+                SaveConfigOption("installPath", installPath.wstring());
+            #else
+                SaveConfigOption("installPath", installPath.c_str());
+            #endif
         } else {
             QMessageBox::warning(
                 this, "Install Location not valid",
@@ -171,12 +196,15 @@ void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
         }
     }
 
+    QMainWindow::hide();
+    std::thread shadThread(startShad, this->shadPs4Executable);
+    shadThread.detach();
+
     if (BackupSaveEnabled) {
         std::thread saveThread(StartBackupSave);
         saveThread.detach();
     }
 
-    QMainWindow::hide();
     QString PKGarg;
 #ifdef _WIN32
     PKGarg = QString::fromStdWString(EbootPath.wstring());
@@ -185,36 +213,12 @@ void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
 #endif
 
     QProcess* process = new QProcess;
-    QString processCommand;
     QStringList processArg;
     processArg << "-g" << PKGarg;
 
-#ifdef _WIN32
-    processCommand = "shadps4.exe";
-#elif defined(__linux__)
-    QProcess* chmod = new QProcess;
-    QString chmodCommand = "chmod";
-    QStringList chmodArg;
 
-    if (std::filesystem::exists(std::filesystem::current_path() / "Shadps4-qt.AppImage")) {
-        chmodArg << "+x"
-                 << "Shadps4-qt.AppImage";
-        processCommand = "./Shadps4-qt.AppImage";
-    } else if (std::filesystem::exists(std::filesystem::current_path() / "Shadps4-sdl.AppImage")) {
-        chmodArg << "+x"
-                 << "Shadps4-sdl.AppImage";
-        processCommand = "./Shadps4-sdl.AppImage";
-    } else {
-        chmodArg << "+x" << "shadps4";
-        processCommand = "./shadps4";
-    }
+    process->startDetached(shadPs4Executable, processArg);
 
-    chmod->start("chmod", chmodArg);
-#elif defined(__APPLE__)
-    processCommand = "open shadPS4";
-#endif
-
-    process->start(processCommand, processArg);
     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             [=](int exitCode, QProcess::ExitStatus exitStatus) { QApplication::quit(); });
 }
@@ -268,7 +272,7 @@ void BBLauncher::StartBackupSave() {
     }
 }
 
-void BBLauncher::SaveInstallLoc() {
+void BBLauncher::SaveConfigOption(std::string configKey, std::string configValue) {
     toml::value data;
     std::error_code error;
 
@@ -289,8 +293,7 @@ void BBLauncher::SaveInstallLoc() {
         }
     }
 
-    data["Launcher"]["installPath"] = installPathString;
-
+    data["Launcher"][configKey] = configValue;
     std::ofstream file(SettingsFile, std::ios::binary);
     file << data;
     file.close();
@@ -351,6 +354,24 @@ void BBLauncher::UpdateModList() {
     ui->ModList->addItems(ActiveModStringList);
 }
 
+void BBLauncher::GetShadExecutable() {
+    QMessageBox::warning(this, "No ShadPS4 executable path selected",
+                            "Select ShadPS4 executable before using BB Launcher.");
+    if (shadPs4Executable == "") {
+        canLaunch = false;
+    }
+
+#ifdef _WIN32
+    shadPs4Executable = QFileDialog::getOpenFileName(this,
+        "Select ShadPS4 executable (ex. /usr/bin/shadps4, shadps4.exe, Shadps4-qt.AppImage, etc.", QDir::homePath()).toStdWString();
+    SaveConfigOption("shadPath", shadPs4Executable.wstring());
+#else
+    shadPs4Executable = QFileDialog::getOpenFileName(this,
+        "Select ShadPS4 executable (ex. /usr/bin/shadps4, shadps4.exe, Shadps4-qt.AppImage, etc.", QDir::homePath()).toStdString();
+    SaveConfigOption("shadPath", shadPs4Executable.c_str());
+#endif
+}
+
 // bool BBLauncher::eventFilter(QObject* obj, QEvent* event) {}
 
 bool BBLauncher::CheckBBInstall() {
@@ -368,8 +389,10 @@ bool BBLauncher::CheckBBInstall() {
     }
 }
 
-std::filesystem::path GetShadUserDir() {
-    auto user_dir = std::filesystem::current_path() / "user";
+std::filesystem::path GetShadUserDir(std::filesystem::path shadPs4Directory) {
+
+    auto user_dir = shadPs4Directory.parent_path() / "user";
+
     if (!std::filesystem::exists(user_dir)) {
 #ifdef __APPLE__
         user_dir =

@@ -28,6 +28,9 @@ class BBLauncher : public QMainWindow {
 public:
     BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent = nullptr);
     ~BBLauncher();
+
+    bool canLaunch = true;
+    std::filesystem::path shadPs4Executable;
     // bool eventFilter(QObject* obj, QEvent* event);
 
 public slots:
@@ -42,11 +45,12 @@ private:
     bool noGUIset;
     bool noinstancerunning;
     static void StartBackupSave();
-    static void startShad();
-    void SaveInstallLoc();
+    void SaveConfigOption(std::string configKey, std::string configValue);
     bool CheckBBInstall();
     void UpdateSettingsList();
     void UpdateModList();
+    static void startShad(QString shadPs4Executable);
+    void GetShadExecutable();
 
     const std::vector<std::string> BBSerialList = {"CUSA03173", "CUSA00900", "CUSA00208",
                                                    "CUSA00207", "CUSA01363", "CUSA03023"};
