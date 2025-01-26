@@ -134,10 +134,10 @@ void LoadLauncherSettings() {
         return;
     }
 
-    installPathString = toml::find_or<std::string>(data, "Launcher", "installPath", "");
-    game_serial = QString::fromStdString(installPathString).last(9).toStdString();
+    const std::string installPathString =
+        toml::find_or<std::string>(data, "Launcher", "installPath", "");
     installPath = installPathString;
-    EbootPath = installPath / "eboot.bin";
+    game_serial = QString::fromStdString(installPathString).last(9).toStdString();
 
     theme = toml::find_or<std::string>(data, "Launcher", "Theme", "Dark");
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
@@ -204,7 +204,6 @@ void LauncherSettings::SaveLauncherSettings() {
     BackupNumber = ui->BackupNumberComboBox->currentText().toInt();
     AutoUpdateEnabled = ui->UpdateCheckBox->isChecked();
 
-    data["Launcher"]["installPath"] = installPathString;
     data["Launcher"]["Theme"] = theme;
     data["Launcher"]["SoundFixEnabled"] = SoundFixEnabled;
     data["Launcher"]["AutoUpdateEnabled"] = AutoUpdateEnabled;
@@ -237,6 +236,7 @@ void CreateSettingsFile() {
     toml::value data;
 
     data["Launcher"]["installPath"] = "";
+    data["Launcher"]["shadPath"] = "";
     data["Launcher"]["Theme"] = "Dark";
     data["Launcher"]["SoundFixEnabled"] = true;
     data["Launcher"]["AutoUpdateEnabled"] = false;

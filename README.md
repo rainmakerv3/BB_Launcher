@@ -1,7 +1,10 @@
 Just a lightweight launcher for Bloodborne on shadPS4 (if I can get around to working on it)
 
 Installation:
-  Just place the exe next the shadPS4 exe. If you are using an SDL (no GUI) build for shadPS4, the other files in the BB Launcher folder have to be also transferred to the shadPS4 folder.
+
+  Windows: Just place the exe next the shadPS4 exe. If you are using an SDL (no GUI) build for shadPS4, the other files in the BB Launcher folder have to be also transferred to the shadPS4 folder.
+  
+  Linux: The Launcher will ask for the shadPS4 binary/AppImage on startup. BBLauncher would need executable permission to run (chmod +x)
 
   GUI can be skipped with command line argument -n, only once the install folder has been set-up in the GUI.
 

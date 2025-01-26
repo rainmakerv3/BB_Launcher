@@ -17,12 +17,10 @@
 #include "settings/toml.hpp"
 #include "settings/updater/CheckUpdate.h"
 
-std::string installPathString = "";
 std::filesystem::path installPath = "";
-std::filesystem::path EbootPath = "";
 std::string game_serial = "";
 std::filesystem::path SaveDir = "";
-char VERSION[] = "Release4.4";
+char VERSION[] = "Release4.5";
 std::filesystem::path shadPs4Executable;
 
 BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
@@ -36,11 +34,12 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         GetShadExecutable();
     }
 
-    if (installPathString == "") {
-        const QString NoPathText = "no Bloodborne Folder selected (CUSA****)";
-        ui->ExeLabel->setText(NoPathText);
+    if (installPath == "") {
+        ui->ExeLabel->setText("no Bloodborne Folder selected (CUSA****)");
     } else {
-        ui->ExeLabel->setText(QString::fromStdString(installPathString));
+        QString installQString;
+        PathToQString(installQString, installPath);
+        ui->ExeLabel->setText(installQString);
     }
 
     QString shadLabelString;
@@ -138,9 +137,8 @@ void BBLauncher::ExeSelectButton_isPressed() {
         game_serial = QBBInstallLoc.last(9).toStdString();
         if (std::find(BBSerialList.begin(), BBSerialList.end(), game_serial) !=
             BBSerialList.end()) {
-            ui->ExeLabel->setText(QBBInstallLoc);   
-            installPath = QBBInstallLoc.toStdString();
-            EbootPath = installPath / "eboot.bin";
+            ui->ExeLabel->setText(QBBInstallLoc);
+            installPath = PathFromQString(QBBInstallLoc);
             SaveConfigOption("installPath", PathToU8(installPath));
         } else {
             QMessageBox::warning(
@@ -190,6 +188,7 @@ void BBLauncher::ShadSelectButton_isPressed() {
 }
 
 void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
+    const std::filesystem::path EbootPath = installPath / "eboot.bin";
     if (installPath == "") {
         QMessageBox::warning(this, "No Bloodborne Install folder",
                              "Set-up Bloodborne Install folder before launching");
@@ -199,7 +198,7 @@ void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
             return;
         }
     } else if (!std::filesystem::exists(EbootPath)) {
-        QMessageBox::warning(this, "Bloodborne eboot.PKG not found",
+        QMessageBox::warning(this, "Bloodborne eboot.bin not found",
                              QString::fromStdString(EbootPath.string()) + " not found");
         if (noGUIset) {
             QApplication::quit();
@@ -226,12 +225,9 @@ void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
     }
 
     QMainWindow::hide();
+
     QString PKGarg;
-#ifdef _WIN32
-    PKGarg = QString::fromStdWString(EbootPath.wstring());
-#else
-    PKGarg = QString::fromStdString(EbootPath.string());
-#endif
+    PathToQString(PKGarg, EbootPath);
 
     QProcess* process = new QProcess;
     QStringList processArg;

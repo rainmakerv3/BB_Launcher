@@ -17,8 +17,6 @@ std::filesystem::path GetShadUserDir();
 
 extern std::string game_serial;
 extern std::filesystem::path installPath;
-extern std::string installPathString;
-extern std::filesystem::path EbootPath;
 extern std::filesystem::path SaveDir;
 extern char VERSION[];
 extern std::filesystem::path shadPs4Executable;
