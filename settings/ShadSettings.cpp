@@ -19,6 +19,25 @@
 #include "settings/ui_ShadSettings.h"
 #include "toml.hpp"
 
+namespace toml {
+
+template <typename TC, typename K>
+std::filesystem::path find_fs_path_or(const basic_value<TC>& v, const K& ky,
+                                      std::filesystem::path opt) {
+    try {
+        auto str = find<std::string>(v, ky);
+        if (str.empty()) {
+            return opt;
+        }
+        std::u8string u8str{(char8_t*)&str.front(), (char8_t*)&str.back() + 1};
+        return std::filesystem::path{u8str};
+    } catch (...) {
+        return opt;
+    }
+}
+
+} // namespace toml
+
 ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSettings) {
     ui->setupUi(this);
     ui->tabWidgetSettings->setUsesScrollButtons(false);
@@ -70,6 +89,34 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
     }
 
     connect(ui->checkUpdateButton, &QPushButton::pressed, this, &ShadSettings::UpdateShad);
+
+    connect(ui->SavePathButton, &QPushButton::clicked, this, [this]() {
+        QString initial_path;
+        PathToQString(initial_path, SaveDir);
+        QString save_data_path_string =
+            QFileDialog::getExistingDirectory(this, "Directory to save data", initial_path);
+        auto file_path = PathFromQString(save_data_path_string);
+        if (!file_path.empty()) {
+            SaveDir = file_path;
+            ui->SavePathLineEdit->setText(save_data_path_string);
+
+            toml::value shadData;
+            try {
+                std::ifstream ifs;
+                ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+                ifs.open(GetShadUserDir() / "config.toml", std::ios_base::binary);
+                shadData = toml::parse(GetShadUserDir() / "config.toml");
+            } catch (std::exception& ex) {
+                QMessageBox::critical(NULL, "Filesystem error", ex.what());
+                return;
+            }
+
+            shadData["GUI"]["saveDataPath"] = std::string{PathToU8(SaveDir)};
+            std::ofstream file(GetShadUserDir() / "config.toml", std::ios::binary);
+            file << shadData;
+            file.close();
+        }
+    });
 
     // Descriptions
     {
@@ -154,6 +201,10 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->trophyKeyLineEdit->setEchoMode(QLineEdit::Password);
     ui->updateComboBox->setCurrentText(
         QString::fromStdString(toml::find_or<std::string>(data, "General", "updateChannel", "")));
+
+    QString save_data_path_string;
+    PathToQString(save_data_path_string, SaveDir);
+    ui->SavePathLineEdit->setText(save_data_path_string);
 
     QString backButtonBehavior = QString::fromStdString(
         toml::find_or<std::string>(data, "Input", "backButtonBehavior", "left"));

@@ -6,6 +6,8 @@
 #include "LauncherSettings.h"
 #include "modules/bblauncher.h"
 #include "settings/ui_LauncherSettings.h"
+#include "settings/updater/BuildInfo.h"
+#include "settings/updater/CheckUpdate.h"
 #include "toml.hpp"
 
 std::filesystem::path SettingsPath = std::filesystem::current_path() / "BBLauncher";
@@ -16,6 +18,26 @@ bool SoundFixEnabled = true;
 bool BackupSaveEnabled = false;
 int BackupInterval = 10;
 int BackupNumber = 2;
+bool AutoUpdateEnabled = false;
+
+namespace toml {
+
+template <typename TC, typename K>
+std::filesystem::path find_fs_path_or(const basic_value<TC>& v, const K& ky,
+                                      std::filesystem::path opt) {
+    try {
+        auto str = find<std::string>(v, ky);
+        if (str.empty()) {
+            return opt;
+        }
+        std::u8string u8str{(char8_t*)&str.front(), (char8_t*)&str.back() + 1};
+        return std::filesystem::path{u8str};
+    } catch (...) {
+        return opt;
+    }
+}
+
+} // namespace toml
 
 LauncherSettings::LauncherSettings(QWidget* parent)
     : QDialog(parent), ui(new Ui::LauncherSettings) {
@@ -30,11 +52,17 @@ LauncherSettings::LauncherSettings(QWidget* parent)
         ui->LightThemeRadioButton->setChecked(true);
     }
 
+    ui->UpdateCheckBox->setChecked(AutoUpdateEnabled);
     ui->SoundFixCheckBox->setChecked(SoundFixEnabled);
     ui->BackupSaveCheckBox->setChecked(BackupSaveEnabled);
     ui->BackupIntervalComboBox->setCurrentText(QString::number(BackupInterval));
     ui->BackupNumberComboBox->setCurrentText(QString::number(BackupNumber));
     OnBackupStateChanged();
+
+    connect(ui->UpdateButton, &QPushButton::clicked, this, []() {
+        auto checkUpdate = new CheckUpdate(true);
+        checkUpdate->exec();
+    });
 
     connect(ui->buttonBox->button(QDialogButtonBox::Save), &QPushButton::pressed, this,
             &LauncherSettings::SaveAndCloseLauncherSettings);
@@ -113,12 +141,32 @@ void LoadLauncherSettings() {
 
     theme = toml::find_or<std::string>(data, "Launcher", "Theme", "Dark");
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
+    AutoUpdateEnabled = toml::find_or<bool>(data, "Launcher", "AutoUpdateEnabled", false);
 
     BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", false);
     BackupInterval = toml::find_or<int>(data, "Backups", "BackupInterval", 10);
     BackupNumber = toml::find_or<int>(data, "Backups", "BackupNumber", 2);
 
     SetTheme(theme);
+
+    toml::value shadData;
+    try {
+        std::ifstream ifs;
+        ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        ifs.open(GetShadUserDir() / "config.toml", std::ios_base::binary);
+        shadData = toml::parse(GetShadUserDir() / "config.toml");
+    } catch (std::exception& ex) {
+        QMessageBox::critical(NULL, "Filesystem error", ex.what());
+        return;
+    }
+
+    if (shadData.contains("GUI")) {
+        const toml::value& GUI = shadData.at("GUI");
+        SaveDir = toml::find_fs_path_or(GUI, "saveDataPath", {});
+        if (SaveDir.empty()) {
+            SaveDir = GetShadUserDir() / "savedata";
+        }
+    }
 }
 
 void LauncherSettings::SaveLauncherSettings() {
@@ -152,10 +200,12 @@ void LauncherSettings::SaveLauncherSettings() {
     BackupSaveEnabled = ui->BackupSaveCheckBox->isChecked();
     BackupInterval = ui->BackupIntervalComboBox->currentText().toInt();
     BackupNumber = ui->BackupNumberComboBox->currentText().toInt();
+    AutoUpdateEnabled = ui->UpdateCheckBox->isChecked();
 
     data["Launcher"]["installPath"] = installPathString;
     data["Launcher"]["Theme"] = theme;
     data["Launcher"]["SoundFixEnabled"] = SoundFixEnabled;
+    data["Launcher"]["AutoUpdateEnabled"] = AutoUpdateEnabled;
 
     data["Backups"]["BackupSaveEnabled"] = BackupSaveEnabled;
     data["Backups"]["BackupInterval"] = BackupInterval;
@@ -187,6 +237,7 @@ void CreateSettingsFile() {
     data["Launcher"]["installPath"] = "";
     data["Launcher"]["Theme"] = "Dark";
     data["Launcher"]["SoundFixEnabled"] = true;
+    data["Launcher"]["AutoUpdateEnabled"] = false;
 
     data["Backups"]["BackupSaveEnabled"] = false;
     data["Backups"]["BackupInterval"] = 10;

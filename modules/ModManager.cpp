@@ -105,19 +105,24 @@ void ModManager::ActivateButton_isPressed() {
         if (!entry.is_directory()) {
             auto relative_path = std::filesystem::relative(entry, ModSourcePath);
             std::string relative_path_string = PathToU8(relative_path);
-            if (std::find(FileList.begin(), FileList.end(), relative_path_string) !=
-                FileList.end()) {
-                if (QMessageBox::Yes ==
-                    QMessageBox::question(
-                        this, "Mod conflict found",
-                        "This mod conflicts with an active mod. Some conflicting mods cannot"
-                        " function properly together.\n\nProceed with activation?",
-                        QMessageBox::Yes | QMessageBox::No)) {
+            for (int i = 0; i < FileList.size(); i++) {
+                if (FileList[i].contains(relative_path_string)) {
                     hasconflict = true;
-                    break;
-                } else {
-                    return;
+                    if (QMessageBox::Yes ==
+                        QMessageBox::question(
+                            this, "Mod conflict found",
+                            QString::fromStdString(FileList[i]) +
+                                "\n\nThis file conflicts with the same file in this mod."
+                                " Some conflicting mods cannot function properly "
+                                "together.\n\nProceed with activation?",
+                            QMessageBox::Yes | QMessageBox::No)) {
+                        break;
+                    } else {
+                        return;
+                    }
                 }
+                if (hasconflict)
+                    break;
             }
         }
     }
@@ -125,7 +130,8 @@ void ModManager::ActivateButton_isPressed() {
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModSourcePath)) {
         if (!entry.is_directory()) {
             auto relative_path = std::filesystem::relative(entry, ModSourcePath);
-            std::string relative_path_string = PathToU8(relative_path);
+            const auto u8_string = PathToU8(relative_path) + ", " + ModName;
+            std::string relative_path_string{u8_string.begin(), u8_string.end()};
             FileList.push_back(relative_path_string);
         }
     }
@@ -267,8 +273,13 @@ void ModManager::DeactivateButton_isPressed() {
     }
 
     ui->FileTransferLabel->setText("Deleting Mod Files");
-    ui->progressBar->setMaximum(getFileCount(ModBackupFolderPath) +
-                                getFileCount(ModUniqueFolderPath));
+
+    if (std::filesystem::exists(ModUniqueFolderPath)) {
+        ui->progressBar->setMaximum(getFileCount(ModBackupFolderPath) +
+                                    getFileCount(ModUniqueFolderPath));
+    } else {
+        ui->progressBar->setMaximum(getFileCount(ModBackupFolderPath));
+    }
 
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModBackupFolderPath)) {
         auto relative_path = std::filesystem::relative(entry, ModBackupFolderPath);
@@ -350,6 +361,7 @@ void ModManager::DeactivateButton_isPressed() {
 
     ActiveModRemove(ModName);
     RefreshLists();
+    ui->progressBar->setMaximum(100);
     ui->progressBar->setValue(0);
     ui->FileTransferLabel->setText("No Current File Transfers");
 
@@ -487,7 +499,8 @@ void ModManager::ActiveModRemove(std::string ModName) {
                      std::filesystem::recursive_directory_iterator(BackupModPath)) {
                     if (!entry.is_directory()) {
                         auto relative_path = std::filesystem::relative(entry, BackupModPath);
-                        std::string relative_path_string = PathToU8(relative_path);
+                        const auto u8_string = PathToU8(relative_path) + ", " + Foldername;
+                        std::string relative_path_string{u8_string.begin(), u8_string.end()};
                         FileList.push_back(relative_path_string);
                     }
                     ui->progressBar->setValue(ui->progressBar->value() + 1);
@@ -511,7 +524,8 @@ void ModManager::ActiveModRemove(std::string ModName) {
             for (const auto& entry : std::filesystem::recursive_directory_iterator(UniqueModPath)) {
                 if (!entry.is_directory()) {
                     auto relative_path = std::filesystem::relative(entry, UniqueModPath);
-                    std::string relative_path_string = PathToU8(relative_path);
+                    const auto u8_string = PathToU8(relative_path) + ", " + Foldername;
+                    std::string relative_path_string{u8_string.begin(), u8_string.end()};
                     FileList.push_back(relative_path_string);
                 }
                 ui->progressBar->setValue(ui->progressBar->value() + 1);

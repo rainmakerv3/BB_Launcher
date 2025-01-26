@@ -11,6 +11,7 @@ class BBLauncher;
 }
 
 void PathToQString(QString& result, const std::filesystem::path& path);
+std::filesystem::path PathFromQString(const QString& path);
 std::string PathToU8(const std::filesystem::path& path);
 std::filesystem::path GetShadUserDir();
 
@@ -18,12 +19,14 @@ extern std::string game_serial;
 extern std::filesystem::path installPath;
 extern std::string installPathString;
 extern std::filesystem::path EbootPath;
+extern std::filesystem::path SaveDir;
+extern char VERSION[];
 
 class BBLauncher : public QMainWindow {
     Q_OBJECT
 
 public:
-    BBLauncher(bool noGUI, QWidget* parent = nullptr);
+    BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent = nullptr);
     ~BBLauncher();
 
     bool canLaunch = true;
@@ -40,6 +43,7 @@ private slots:
 private:
     Ui::BBLauncher* ui;
     bool noGUIset;
+    bool noinstancerunning;
     static void StartBackupSave();
     void SaveConfigOption(std::string configKey, std::string configValue);
     bool CheckBBInstall();

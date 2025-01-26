@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
-     SPDX-License-Identifier: GPL-3.0-or-later -->
 <ui version="4.0">
  <class>ShadSettings</class>
  <widget class="QDialog" name="ShadSettings">
@@ -802,13 +800,64 @@
        </layout>
       </widget>
      </widget>
-    </widget>
-   </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="standardButtons">
-      <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Close|QDialogButtonBox::StandardButton::RestoreDefaults|QDialogButtonBox::StandardButton::Save</set>
-     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Other</string>
+      </attribute>
+      <widget class="QWidget" name="horizontalLayoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>20</y>
+         <width>921</width>
+         <height>80</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QGroupBox" name="SavePathGB">
+          <property name="title">
+           <string>Save Path</string>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_2">
+           <item>
+            <widget class="QLineEdit" name="SavePathLineEdit"/>
+           </item>
+           <item>
+            <widget class="QPushButton" name="SavePathButton">
+             <property name="text">
+              <string>Choose New Path</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>110</y>
+         <width>881</width>
+         <height>61</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>IMPORTANT: shadPS4 must be updated to Nightly version 5.1 adbff40 (released on 22/01/2025) or newer  for the configured save path to work, otherwise it will just use the default save path</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </widget>
     </widget>
    </item>
    <item>
@@ -821,6 +870,13 @@
      </property>
      <property name="readOnly">
       <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Close|QDialogButtonBox::StandardButton::RestoreDefaults|QDialogButtonBox::StandardButton::Save</set>
      </property>
     </widget>
    </item>

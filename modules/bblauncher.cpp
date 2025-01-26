@@ -15,15 +15,20 @@
 #include "settings/ShadCheatsPatches.h"
 #include "settings/ShadSettings.h"
 #include "settings/toml.hpp"
+#include "settings/updater/CheckUpdate.h"
 
 std::string installPathString = "";
 std::filesystem::path installPath = "";
 std::filesystem::path EbootPath = "";
 std::string game_serial = "";
+std::filesystem::path SaveDir = "";
+char VERSION[] = "Release4.4-WIP";
 
-BBLauncher::BBLauncher(bool noGUI, QWidget* parent)
-    : QMainWindow(parent), noGUIset(noGUI), ui(new Ui::BBLauncher) {
+BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
+    : QMainWindow(parent), noGUIset(noGUI), noinstancerunning(noInstanceRunning),
+      ui(new Ui::BBLauncher) {
 
+    
     toml::value data;
     try {
         std::ifstream ifs;
@@ -41,13 +46,15 @@ BBLauncher::BBLauncher(bool noGUI, QWidget* parent)
     if (shadPs4Executable == "") {
         GetShadExecutable();
     }
-
+  
     ui->setupUi(this);
 
     this->setFixedSize(this->width(), this->height());
     this->statusBar()->setSizeGripEnabled(false);
     QApplication::setStyle("Fusion");
-    setWindowTitle("BB Launcher Release 4");
+
+    std::string versionstring(VERSION);
+    setWindowTitle(QString::fromStdString("BBLauncher " + versionstring));
 
     // this->installEventFilter(this); if needed
 
@@ -65,6 +72,7 @@ BBLauncher::BBLauncher(bool noGUI, QWidget* parent)
     connect(ui->SaveManagerButton, &QPushButton::pressed, this, [this]() {
         if (!CheckBBInstall())
             return;
+
         if (!std::filesystem::exists(GetShadUserDir(this->shadPs4Executable) / "savedata" / "1" / game_serial /
                                      "SPRJ0005" / "userdata0010")) {
             QMessageBox::warning(this, "No saves detected",
@@ -117,7 +125,12 @@ BBLauncher::BBLauncher(bool noGUI, QWidget* parent)
         ui->ExeLabel->setText(QString::fromStdString(installPathString));
     }
 
-    if (noGUI)
+    if (AutoUpdateEnabled) {
+        auto checkUpdate = new CheckUpdate(false);
+        checkUpdate->exec();
+    }
+
+    if (noGUI && noInstanceRunning)
         LaunchButton_isPressed(noGUI);
 }
 
@@ -172,8 +185,7 @@ void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
     }
 
     if (SoundFixEnabled) {
-        std::filesystem::path savePath =
-            GetShadUserDir() / "savedata" / "1" / game_serial / "SPRJ0005";
+        std::filesystem::path savePath = SaveDir / "1" / game_serial / "SPRJ0005";
         if (std::filesystem::exists(savePath / "userdata0010")) {
             std::ofstream savefile1;
             savefile1.open(savePath / "userdata0010",
@@ -192,9 +204,7 @@ void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
         std::thread saveThread(StartBackupSave);
         saveThread.detach();
     }
-}
 
-void BBLauncher::startShad(QString shadPs4Executable) {
     QString PKGarg;
 #ifdef _WIN32
     PKGarg = QString::fromStdWString(EbootPath.wstring());
@@ -206,7 +216,9 @@ void BBLauncher::startShad(QString shadPs4Executable) {
     QStringList processArg;
     processArg << "-g" << PKGarg;
 
+
     process->startDetached(shadPs4Executable, processArg);
+
     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             [=](int exitCode, QProcess::ExitStatus exitStatus) { QApplication::quit(); });
 }
@@ -227,7 +239,7 @@ void BBLauncher::StartBackupSave() {
         }
     }
 
-    const auto save_dir = GetShadUserDir() / "savedata" / "1" / game_serial;
+    const auto save_dir = SaveDir / "1" / game_serial;
     const auto backup_dir = BackupPath / "BACKUP1";
 
     while (true) {
@@ -292,6 +304,8 @@ void BBLauncher::UpdateSettingsList() {
     QString ThemeSetting = "Selected Theme = " + QString::fromStdString(theme);
     QString BackupEnableSetting =
         "Back up saves enabled = " + QVariant(BackupSaveEnabled).toString();
+    QString AutoUpdateSetting =
+        "Check updates on startup enabled = " + QVariant(AutoUpdateEnabled).toString();
 
     QString BackupIntSetting;
     QString BackupNumSetting;
@@ -304,8 +318,8 @@ void BBLauncher::UpdateSettingsList() {
         BackupNumSetting = "Backup Copies = disabled";
     }
 
-    QStringList SettingStrings = {SoundhackSetting, ThemeSetting, BackupEnableSetting,
-                                  BackupIntSetting, BackupNumSetting};
+    QStringList SettingStrings = {SoundhackSetting, ThemeSetting,     BackupEnableSetting,
+                                  BackupIntSetting, BackupNumSetting, AutoUpdateSetting};
 
     ui->SettingList->clear();
     ui->SettingList->addItems(SettingStrings);
@@ -378,6 +392,7 @@ bool BBLauncher::CheckBBInstall() {
 std::filesystem::path GetShadUserDir(std::filesystem::path shadPs4Directory) {
 
     auto user_dir = shadPs4Directory.parent_path() / "user";
+
     if (!std::filesystem::exists(user_dir)) {
 #ifdef __APPLE__
         user_dir =
@@ -399,6 +414,14 @@ void PathToQString(QString& result, const std::filesystem::path& path) {
     result = QString::fromStdWString(path.wstring());
 #else
     result = QString::fromStdString(path.string());
+#endif
+}
+
+std::filesystem::path PathFromQString(const QString& path) {
+#ifdef _WIN32
+    return std::filesystem::path(path.toStdWString());
+#else
+    return std::filesystem::path(path.toStdString());
 #endif
 }
 

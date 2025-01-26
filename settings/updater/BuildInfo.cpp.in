@@ -1,0 +1,21 @@
+// SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#include "settings/updater/BuildInfo.h"
+
+#define GIT_REV      "@GIT_REV@"
+#define GIT_BRANCH   "@GIT_BRANCH@"
+#define GIT_DESC     "@GIT_DESC@"
+#define BUILD_DATE   "@BUILD_DATE@"
+
+#ifdef FORCE_UAC
+const char BuildBranch[] = GIT_BRANCH;
+#elif _WIN32
+const char BuildBranch[] = "noUAC";
+#else
+const char BuildBranch[] = GIT_BRANCH;
+#endif
+
+const char BuildRev[]      = GIT_REV;
+const char BuildDesc[]     = GIT_DESC;
+const char BuildDate[]     = BUILD_DATE;

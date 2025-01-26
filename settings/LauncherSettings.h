@@ -20,6 +20,7 @@ extern bool SoundFixEnabled;
 extern bool BackupSaveEnabled;
 extern int BackupInterval;
 extern int BackupNumber;
+extern bool AutoUpdateEnabled;
 
 class LauncherSettings : public QDialog {
     Q_OBJECT
@@ -29,6 +30,8 @@ public:
     ~LauncherSettings();
 
 public slots:
+
+private slots:
     void SetLauncherDefaults();
     void SaveAndCloseLauncherSettings();
     void SaveLauncherSettings();

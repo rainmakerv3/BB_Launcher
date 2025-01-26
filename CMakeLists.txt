@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.24)
 
 project(BB_Launcher VERSION 0.1 LANGUAGES CXX)
 
+option(FORCE_UAC "Requires running as Admin on Windows" ON)
+
 # First, determine whether to use CMAKE_OSX_ARCHITECTURES or CMAKE_SYSTEM_PROCESSOR.
 if (APPLE AND CMAKE_OSX_ARCHITECTURES)
     set(BASE_ARCHITECTURE "${CMAKE_OSX_ARCHITECTURES}")
@@ -44,6 +46,12 @@ endif()
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
 
+if (UNIX AND NOT APPLE)
+    find_package(OpenSSL REQUIRED)
+endif()
+
+qt_add_resources(RESOURCE_FILES dist/BBLauncher.qrc)
+
 set(PROJECT_SOURCES
     main.cpp
     modules/bblauncher.cpp
@@ -53,6 +61,8 @@ set(PROJECT_SOURCES
     modules/ModManager.cpp
     modules/ModManager.ui
     modules/SaveManager.h
+    modules/RunGuard.cpp
+    modules/RunGuard.h
     modules/SaveManager.cpp
     modules/SaveManager.ui
     settings/toml.hpp
@@ -64,6 +74,11 @@ set(PROJECT_SOURCES
     settings/ShadSettings.h
     settings/ShadSettings.cpp
     settings/ShadSettings.ui
+    settings/updater/BuildInfo.h
+    ${CMAKE_CURRENT_BINARY_DIR}/settings/updater/BuildInfo.cpp
+    settings/updater/CheckUpdate.cpp
+    settings/updater/CheckUpdate.h
+    ${RESOURCE_FILES}
 )
 
 # Setup a custom clang-format target (if clang-format can be found) that will run
@@ -85,6 +100,16 @@ if (CLANG_FORMAT)
     unset(CCOMMENT)
 endif()
 
+# generate git revision information
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/settings/updater/cmake-modules/")
+include(GetGitRevisionDescription)
+get_git_head_revision(GIT_REF_SPEC GIT_REV)
+git_describe(GIT_DESC --always --long --dirty)
+git_branch_name(GIT_BRANCH)
+string(TIMESTAMP BUILD_DATE "%Y-%m-%d %H:%M:%S")
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/settings/updater/BuildInfo.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/settings/updater/BuildInfo.cpp" @ONLY)
+
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(BB_Launcher
         ${PROJECT_SOURCES}
@@ -99,6 +124,10 @@ else()
             ${PROJECT_SOURCES}
         )
     endif()
+endif()
+
+if (UNIX AND NOT APPLE)
+    target_link_libraries(BB_Launcher PRIVATE ${OPENSSL_LIBRARIES})
 endif()
 
 target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network)
@@ -120,16 +149,16 @@ set_target_properties(BB_Launcher PROPERTIES
 #   WIN32_EXECUTABLE TRUE
 )
 
-if (UNIX AND NOT APPLE)
-    find_package(OpenSSL REQUIRED)
-    target_link_libraries(BB_Launcher PRIVATE ${OPENSSL_LIBRARIES})
-endif()
-
 set_source_files_properties(images/BBIcon.icns PROPERTIES
         MACOSX_PACKAGE_LOCATION Resources)
 
 if (WIN32)
     target_sources(BB_Launcher PRIVATE dist/bblauncher.rc)
+endif()
+
+if (WIN32 AND FORCE_UAC) 
+    SET_TARGET_PROPERTIES(BB_Launcher PROPERTIES LINK_FLAGS "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\" ")
+    add_definitions(-DFORCE_UAC)
 endif()
 
 target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
@@ -138,5 +167,6 @@ install(TARGETS BB_Launcher BUNDLE DESTINATION .)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     install(FILES "dist/BBLauncher.desktop" DESTINATION "share/applications")
+    install(FILES "dist/libssl.so.3" DESTINATION "usr/lib")
     install(FILES "dist/BBIcon.png" DESTINATION "share/icons/hicolor/512x512/apps")
 endif()
