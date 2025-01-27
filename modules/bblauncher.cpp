@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <fstream>
+#include <iostream>
 #include <thread>
 #include <QFileDialog>
 #include <QMessageBox>
@@ -238,6 +239,16 @@ void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
     process->start(shadBinary, processArg);
     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
             [=](int exitCode, QProcess::ExitStatus exitStatus) { QApplication::quit(); });
+
+    connect(process, &QProcess::readyReadStandardOutput, [process, this]() {
+        QString output = process->readAllStandardOutput();
+        std::cout << output.toStdString();
+    });
+
+    connect(process, &QProcess::readyReadStandardError, [process]() {
+        QString err = process->readAllStandardError();
+        std::cout << err.toStdString();
+    });
 }
 
 void BBLauncher::StartBackupSave() {
