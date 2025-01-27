@@ -45,7 +45,6 @@ private:
     bool noGUIset;
     bool noinstancerunning;
     static void StartBackupSave();
-    void SaveConfigOption(std::string configKey, std::string configValue);
     bool CheckBBInstall();
     void UpdateSettingsList();
     void UpdateModList();

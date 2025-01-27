@@ -14,7 +14,6 @@
 #include "settings/LauncherSettings.h"
 #include "settings/ShadCheatsPatches.h"
 #include "settings/ShadSettings.h"
-#include "settings/toml.hpp"
 #include "settings/updater/CheckUpdate.h"
 
 std::filesystem::path installPath = "";
@@ -139,7 +138,7 @@ void BBLauncher::ExeSelectButton_isPressed() {
             BBSerialList.end()) {
             ui->ExeLabel->setText(QBBInstallLoc);
             installPath = PathFromQString(QBBInstallLoc);
-            SaveConfigOption("installPath", PathToU8(installPath));
+            SaveConfigPath("installPath", installPath);
         } else {
             QMessageBox::warning(
                 this, "Install Location not valid",
@@ -180,7 +179,7 @@ void BBLauncher::ShadSelectButton_isPressed() {
 #endif
 
     if (ShadLocString != "") {
-        SaveConfigOption("shadPath", PathToU8(shadPs4Executable));
+        SaveConfigPath("shadPath", PathToU8(shadPs4Executable));
         QString shadLabelString;
         PathToQString(shadLabelString, shadPs4Executable);
         ui->ShadLabel->setText(shadLabelString);
@@ -290,33 +289,6 @@ void BBLauncher::StartBackupSave() {
     }
 }
 
-void BBLauncher::SaveConfigOption(std::string configKey, std::string configValue) {
-    toml::value data;
-    std::error_code error;
-
-    if (std::filesystem::exists(SettingsFile, error)) {
-        try {
-            std::ifstream ifs;
-            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-            ifs.open(SettingsFile, std::ios_base::binary);
-            data = toml::parse(SettingsFile);
-        } catch (const std::exception& ex) {
-            QMessageBox::critical(this, "Filesystem error", ex.what());
-            return;
-        }
-    } else {
-        if (error) {
-            QMessageBox::critical(this, "Filesystem error",
-                                  QString::fromStdString(error.message()));
-        }
-    }
-
-    data["Launcher"][configKey] = configValue;
-    std::ofstream file(SettingsFile, std::ios::binary);
-    file << data;
-    file.close();
-}
-
 void BBLauncher::UpdateSettingsList() {
     QString SoundhackSetting = "60 FPS sound fix = " + QVariant(SoundFixEnabled).toString();
     QString ThemeSetting = "Selected Theme = " + QString::fromStdString(theme);
@@ -408,7 +380,7 @@ void BBLauncher::GetShadExecutable() {
     shadPs4Executable = std::filesystem::u8path(ShadLocString);
 #endif
 
-    SaveConfigOption("shadPath", PathToU8(shadPs4Executable));
+    SaveConfigPath("shadPath", shadPs4Executable);
 
     if (shadPs4Executable == "")
         canLaunch = false;

@@ -14,29 +14,9 @@
 #include <QStandardPaths>
 
 #include "ShadSettings.h"
+#include "formatting.h"
 #include "modules/bblauncher.h"
-#include "settings/LauncherSettings.h"
 #include "settings/ui_ShadSettings.h"
-#include "toml.hpp"
-
-namespace toml {
-
-template <typename TC, typename K>
-std::filesystem::path find_fs_path_or(const basic_value<TC>& v, const K& ky,
-                                      std::filesystem::path opt) {
-    try {
-        auto str = find<std::string>(v, ky);
-        if (str.empty()) {
-            return opt;
-        }
-        std::u8string u8str{(char8_t*)&str.front(), (char8_t*)&str.back() + 1};
-        return std::filesystem::path{u8str};
-    } catch (...) {
-        return opt;
-    }
-}
-
-} // namespace toml
 
 ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSettings) {
     ui->setupUi(this);
@@ -100,12 +80,14 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
             SaveDir = file_path;
             ui->SavePathLineEdit->setText(save_data_path_string);
 
+            std::filesystem::path shadConfigFile = GetShadUserDir() / "config.toml";
             toml::value shadData;
             try {
                 std::ifstream ifs;
                 ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-                ifs.open(GetShadUserDir() / "config.toml", std::ios_base::binary);
-                shadData = toml::parse(GetShadUserDir() / "config.toml");
+                ifs.open(shadConfigFile, std::ios_base::binary);
+                shadData = toml::parse(
+                    ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
             } catch (std::exception& ex) {
                 QMessageBox::critical(NULL, "Filesystem error", ex.what());
                 return;
@@ -151,23 +133,19 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
 
 void ShadSettings::LoadValuesFromConfig() {
 
-    std::filesystem::path userdir = GetShadUserDir();
-    std::error_code error;
-    if (!std::filesystem::exists(userdir / "config.toml", error)) {
-        // create config file;
-        return;
-    }
+    std::filesystem::path shadConfigFile = GetShadUserDir() / "config.toml";
+    toml::value data;
 
     try {
         std::ifstream ifs;
         ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-        const toml::value data = toml::parse(userdir / "config.toml");
+        ifs.open(shadConfigFile, std::ios_base::binary);
+        data = toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
     } catch (std::exception& ex) {
         // handle
         return;
     }
 
-    const toml::value data = toml::parse(userdir / "config.toml");
     const QVector<int> languageIndexes = {21, 23, 14, 6, 18, 1, 12, 22, 2, 4,  25, 24, 29, 5,  0, 9,
                                           15, 16, 17, 7, 26, 8, 11, 20, 3, 13, 27, 10, 19, 30, 28};
 
@@ -304,14 +282,16 @@ bool ShadSettings::eventFilter(QObject* obj, QEvent* event) {
 
 void ShadSettings::SaveSettings() {
     toml::value data;
+    std::filesystem::path shadConfigFile = GetShadUserDir() / "config.toml";
 
     std::error_code error;
-    if (std::filesystem::exists(GetShadUserDir() / "config.toml", error)) {
+    if (std::filesystem::exists(shadConfigFile, error)) {
         try {
             std::ifstream ifs;
             ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-            ifs.open(GetShadUserDir() / "config.toml", std::ios_base::binary);
-            data = toml::parse(GetShadUserDir() / "config.toml");
+            ifs.open(shadConfigFile, std::ios_base::binary);
+            data =
+                toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
         } catch (const std::exception& ex) {
             // handle
             return;

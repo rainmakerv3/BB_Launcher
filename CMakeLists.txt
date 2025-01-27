@@ -65,6 +65,7 @@ set(PROJECT_SOURCES
     modules/RunGuard.h
     modules/SaveManager.cpp
     modules/SaveManager.ui
+    settings/formatting.h
     settings/toml.hpp
     settings/LauncherSettings.h
     settings/LauncherSettings.cpp
@@ -131,6 +132,9 @@ if (UNIX AND NOT APPLE)
 endif()
 
 target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network)
+
+add_subdirectory(settings/fmt)
+target_link_libraries(BB_Launcher PRIVATE fmt::fmt)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

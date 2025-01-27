@@ -8,6 +8,7 @@ namespace Ui {
 class LauncherSettings;
 }
 
+void SaveConfigPath(std::string configKey, std::filesystem::path path);
 void LoadLauncherSettings();
 void CreateSettingsFile();
 void SetTheme(std::string theme);

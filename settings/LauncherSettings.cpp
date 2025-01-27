@@ -4,11 +4,10 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include "LauncherSettings.h"
+#include "formatting.h"
 #include "modules/bblauncher.h"
 #include "settings/ui_LauncherSettings.h"
-#include "settings/updater/BuildInfo.h"
 #include "settings/updater/CheckUpdate.h"
-#include "toml.hpp"
 
 std::filesystem::path SettingsPath = std::filesystem::current_path() / "BBLauncher";
 std::filesystem::path SettingsFile = SettingsPath / "LauncherSettings.toml";
@@ -19,25 +18,6 @@ bool BackupSaveEnabled = false;
 int BackupInterval = 10;
 int BackupNumber = 2;
 bool AutoUpdateEnabled = false;
-
-namespace toml {
-
-template <typename TC, typename K>
-std::filesystem::path find_fs_path_or(const basic_value<TC>& v, const K& ky,
-                                      std::filesystem::path opt) {
-    try {
-        auto str = find<std::string>(v, ky);
-        if (str.empty()) {
-            return opt;
-        }
-        std::u8string u8str{(char8_t*)&str.front(), (char8_t*)&str.back() + 1};
-        return std::filesystem::path{u8str};
-    } catch (...) {
-        return opt;
-    }
-}
-
-} // namespace toml
 
 LauncherSettings::LauncherSettings(QWidget* parent)
     : QDialog(parent), ui(new Ui::LauncherSettings) {
@@ -128,16 +108,11 @@ void LoadLauncherSettings() {
         std::ifstream ifs;
         ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
         ifs.open(SettingsFile, std::ios_base::binary);
-        data = toml::parse(SettingsFile);
+        data = toml::parse(ifs, std::string{fmt::UTF(SettingsFile.filename().u8string()).data});
     } catch (std::exception& ex) {
         QMessageBox::critical(NULL, "Filesystem error", ex.what());
         return;
     }
-
-    const std::string installPathString =
-        toml::find_or<std::string>(data, "Launcher", "installPath", "");
-    installPath = installPathString;
-    game_serial = QString::fromStdString(installPathString).last(9).toStdString();
 
     theme = toml::find_or<std::string>(data, "Launcher", "Theme", "Dark");
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
@@ -146,17 +121,27 @@ void LoadLauncherSettings() {
     BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", false);
     BackupInterval = toml::find_or<int>(data, "Backups", "BackupInterval", 10);
     BackupNumber = toml::find_or<int>(data, "Backups", "BackupNumber", 2);
-    shadPs4Executable =
-        std::filesystem::path(toml::find_or<std::string>(data, "Launcher", "shadPath", ""));
 
+    if (data.contains("Launcher")) {
+        const toml::value& launcher = data.at("Launcher");
+
+        installPath = toml::find_fs_path_or(launcher, "installPath", {});
+        shadPs4Executable = toml::find_fs_path_or(launcher, "shadPath", {});
+    }
+
+    QString installPathString;
+    PathToQString(installPathString, installPath);
+    game_serial = installPathString.last(9).toStdString();
     SetTheme(theme);
 
+    std::filesystem::path shadConfigFile = GetShadUserDir() / "config.toml";
     toml::value shadData;
     try {
         std::ifstream ifs;
         ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-        ifs.open(GetShadUserDir() / "config.toml", std::ios_base::binary);
-        shadData = toml::parse(GetShadUserDir() / "config.toml");
+        ifs.open(shadConfigFile, std::ios_base::binary);
+        shadData =
+            toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
     } catch (std::exception& ex) {
         QMessageBox::critical(NULL, "Filesystem error", ex.what());
         return;
@@ -180,7 +165,7 @@ void LauncherSettings::SaveLauncherSettings() {
             std::ifstream ifs;
             ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
             ifs.open(SettingsFile, std::ios_base::binary);
-            data = toml::parse(SettingsFile);
+            data = toml::parse(ifs, std::string{fmt::UTF(SettingsFile.filename().u8string()).data});
         } catch (const std::exception& ex) {
             QMessageBox::critical(this, "Filesystem error", ex.what());
             return;
@@ -262,6 +247,34 @@ void LauncherSettings::OnBackupStateChanged() {
         ui->BackupNumberLabel->hide();
         ui->BackupNumberComboBox->hide();
     }
+}
+
+void SaveConfigPath(std::string configKey, std::filesystem::path path) {
+    toml::value data;
+    std::error_code error;
+
+    if (std::filesystem::exists(SettingsFile, error)) {
+        try {
+            std::ifstream ifs;
+            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+            ifs.open(SettingsFile, std::ios_base::binary);
+            data = toml::parse(ifs, std::string{fmt::UTF(path.filename().u8string()).data});
+        } catch (const std::exception& ex) {
+            QMessageBox::critical(NULL, "Filesystem error", ex.what());
+            return;
+        }
+    } else {
+        if (error) {
+            QMessageBox::critical(NULL, "Filesystem error",
+                                  QString::fromStdString(error.message()));
+        }
+    }
+
+    data["Launcher"][configKey] = std::string{fmt::UTF(path.u8string()).data};
+
+    std::ofstream file(SettingsFile, std::ios::binary);
+    file << data;
+    file.close();
 }
 
 LauncherSettings::~LauncherSettings() {
