@@ -129,9 +129,14 @@ void LoadLauncherSettings() {
         shadPs4Executable = toml::find_fs_path_or(launcher, "shadPath", {});
     }
 
-    QString installPathString;
-    PathToQString(installPathString, installPath);
-    game_serial = installPathString.last(9).toStdString();
+    if (std::filesystem::exists(installPath)) {
+        QString installPathString;
+        PathToQString(installPathString, installPath);
+        game_serial = installPathString.last(9).toStdString();
+    } else {
+        installPath = "";
+    }
+
     SetTheme(theme);
 
     std::filesystem::path shadConfigFile = GetShadUserDir() / "config.toml";

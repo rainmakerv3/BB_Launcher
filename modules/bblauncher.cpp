@@ -28,8 +28,8 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
       ui(new Ui::BBLauncher) {
 
     ui->setupUi(this);
-
     LoadLauncherSettings();
+
     if (shadPs4Executable == "" || !std::filesystem::exists(shadPs4Executable)) {
         GetShadExecutable();
     }
