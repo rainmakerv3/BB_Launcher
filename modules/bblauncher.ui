@@ -191,9 +191,9 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>10</y>
+      <y>5</y>
       <width>521</width>
-      <height>151</height>
+      <height>161</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -250,24 +250,24 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="ExeLabel">
+           <widget class="QLineEdit" name="ExeLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="font">
              <font>
               <pointsize>8</pointsize>
               <bold>true</bold>
              </font>
             </property>
-            <property name="layoutDirection">
-             <enum>Qt::LeftToRight</enum>
+            <property name="cursor">
+             <cursorShape>IBeamCursor</cursorShape>
             </property>
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="text">
-             <string>no Bloodborne Folder selected (CUSA****)</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
+            <property name="readOnly">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -316,24 +316,21 @@
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="ShadLabel">
+           <widget class="QLineEdit" name="ShadLabel">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="font">
              <font>
               <pointsize>8</pointsize>
               <bold>true</bold>
              </font>
             </property>
-            <property name="layoutDirection">
-             <enum>Qt::LeftToRight</enum>
-            </property>
-            <property name="frameShape">
-             <enum>QFrame::NoFrame</enum>
-            </property>
-            <property name="text">
-             <string>no Bloodborne Folder selected (CUSA****)</string>
-            </property>
-            <property name="wordWrap">
-             <bool>false</bool>
+            <property name="readOnly">
+             <bool>true</bool>
             </property>
            </widget>
           </item>

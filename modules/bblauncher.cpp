@@ -48,6 +48,9 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
 
 #ifdef _WIN32
     ui->ShadInstallGroupBox->hide();
+#else
+    ui->verticalSpacer->changeSize(0,0);
+    ui->verticalSpacer_2->changeSize(0,0);
 #endif
 
     this->setFixedSize(this->width(), this->height());
