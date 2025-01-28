@@ -155,14 +155,13 @@ void BBLauncher::WIPButton_isPressed() {
     QMessageBox::warning(
         this, "On hold",
         "Work on trophy manager will be put on-hold until it's easier to dump trophy keys");
-    UpdateSettingsList();
 }
 
 void BBLauncher::ShadSelectButton_isPressed() {
 
-    std::string ShadLocString;
+    QString ShadLoc;
 #if defined(__linux__)
-    QString ShadLoc = QFileDialog::getOpenFileName(
+    ShadLoc = QFileDialog::getOpenFileName(
         this,
         "Select ShadPS4 executable (ex. /usr/bin/shadps4, "
         "Shadps4-qt.AppImage, etc.)",
@@ -170,23 +169,15 @@ void BBLauncher::ShadSelectButton_isPressed() {
         "QT AppImage (Shadps4-qt.AppImage);;SDL AppImage (Shadps4-sdl.AppImage);;"
         "non-AppImage (shadps4)",
         0, QFileDialog::DontUseNativeDialog);
-    ShadLocString = ShadLoc.toStdString();
-    if (ShadLocString != "")
-        shadPs4Executable = std::filesystem::u8path(ShadLocString);
 #elif defined(__APPLE__)
-    QString ShadLoc =
-        QFileDialog::getOpenFileName(this, "Select ShadPS4 executable (ex. shadps4.app)",
-                                     QDir::homePath(), "App Bundle (shadps4.app)");
-    ShadLocString = ShadLoc.toStdString();
-    if (ShadLocString != "")
-        shadPs4Executable = std::filesystem::u8path(ShadLocString);
+    ShadLoc = QFileDialog::getOpenFileName(this, "Select ShadPS4 executable (ex. shadps4.app)",
+                                           QDir::homePath(), "App Bundle (shadps4.app)");
 #endif
 
-    if (ShadLocString != "") {
-        SaveConfigPath("shadPath", PathToU8(shadPs4Executable));
-        QString shadLabelString;
-        PathToQString(shadLabelString, shadPs4Executable);
-        ui->ShadLabel->setText(shadLabelString);
+    if (ShadLoc != "") {
+        shadPs4Executable = PathFromQString(ShadLoc);
+        SaveConfigPath("shadPath", shadPs4Executable);
+        ui->ShadLabel->setText(ShadLoc);
     }
 }
 
