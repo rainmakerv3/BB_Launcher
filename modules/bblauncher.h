@@ -10,17 +10,6 @@ namespace Ui {
 class BBLauncher;
 }
 
-void PathToQString(QString& result, const std::filesystem::path& path);
-std::filesystem::path PathFromQString(const QString& path);
-std::string PathToU8(const std::filesystem::path& path);
-std::filesystem::path GetShadUserDir();
-
-extern std::string game_serial;
-extern std::filesystem::path installPath;
-extern std::filesystem::path SaveDir;
-extern char VERSION[];
-extern std::filesystem::path shadPs4Executable;
-
 class BBLauncher : public QMainWindow {
     Q_OBJECT
 

@@ -29,7 +29,7 @@
 #include <QXmlStreamReader>
 
 #include "ShadCheatsPatches.h"
-#include "modules/bblauncher.h"
+#include "modules/Common.h"
 
 QImage icon;
 QString gameVersion;
@@ -46,12 +46,12 @@ CheatsPatches::~CheatsPatches() {}
 
 void CheatsPatches::setupUI() {
     readGameInfo();
-    qserial = QString::fromStdString(game_serial);
+    qserial = QString::fromStdString(Common::game_serial);
     defaultTextEdit = defaultTextEditMSG;
     defaultTextEdit.replace("\\n", "\n");
 
     QString PATCHS_DIR_QString;
-    PathToQString(PATCHS_DIR_QString, GetShadUserDir() / "patches");
+    Common::PathToQString(PATCHS_DIR_QString, Common::GetShadUserDir() / "patches");
 
     QHBoxLayout* mainLayout = new QHBoxLayout(this);
 
@@ -75,7 +75,8 @@ void CheatsPatches::setupUI() {
     gameNameLabel->setWordWrap(true);
     gameInfoLayout->addWidget(gameNameLabel);
 
-    QLabel* gameSerialLabel = new QLabel(tr("Serial: ") + QString::fromStdString(game_serial));
+    QLabel* gameSerialLabel =
+        new QLabel(tr("Serial: ") + QString::fromStdString(Common::game_serial));
     gameSerialLabel->setAlignment(Qt::AlignLeft);
     gameInfoLayout->addWidget(gameSerialLabel);
 
@@ -225,7 +226,7 @@ void CheatsPatches::onSaveButtonClicked() {
     selectedPatchName = selectedPatchName.mid(separatorIndex + 3);
 
     QString patchDir;
-    PathToQString(patchDir, GetShadUserDir() / "patches");
+    Common::PathToQString(patchDir, Common::GetShadUserDir() / "patches");
     patchDir += "/" + selectedPatchName;
 
     QString filesJsonPath = patchDir + "/files.json";
@@ -242,7 +243,7 @@ void CheatsPatches::onSaveButtonClicked() {
     QJsonObject jsonObject = jsonDoc.object();
 
     QString selectedFileName;
-    QString serial = QString::fromStdString(game_serial);
+    QString serial = QString::fromStdString(Common::game_serial);
 
     for (auto it = jsonObject.constBegin(); it != jsonObject.constEnd(); ++it) {
         QString filePath = it.key();
@@ -403,7 +404,7 @@ void CheatsPatches::populateFileListPatches() {
     }
     m_patchInfos.clear();
         QString patchesDir;
-        PathToQString(patchesDir, GetShadUserDir() / "patches");
+        Common::PathToQString(patchesDir, Common::GetShadUserDir() / "patches");
         QDir dir(patchesDir);
 
         QStringList folders = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
@@ -484,7 +485,7 @@ void CheatsPatches::downloadPatches(const QString repository, const bool showMes
                 return;
             }
 
-            QDir dir(GetShadUserDir() / "patches");
+            QDir dir(Common::GetShadUserDir() / "patches");
             QString fullPath = dir.filePath(repository);
             if (!dir.exists(fullPath)) {
                 dir.mkpath(fullPath);
@@ -546,7 +547,7 @@ void CheatsPatches::downloadPatches(const QString repository, const bool showMes
 }
 
 void CheatsPatches::compatibleVersionNotice(const QString repository) {
-    QDir patchesDir(GetShadUserDir() / "patches");
+    QDir patchesDir(Common::GetShadUserDir() / "patches");
     QDir dir = patchesDir.filePath(repository);
 
     QStringList xmlFiles = dir.entryList(QStringList() << "*.xml", QDir::Files);
@@ -624,7 +625,7 @@ void CheatsPatches::compatibleVersionNotice(const QString repository) {
 }
 
 void CheatsPatches::createFilesJson(const QString& repository) {
-    QDir dir(GetShadUserDir() / "patches");
+    QDir dir(Common::GetShadUserDir() / "patches");
     QString fullPath = dir.filePath(repository);
     if (!dir.exists(fullPath)) {
         dir.mkpath(fullPath);
@@ -686,7 +687,7 @@ void CheatsPatches::addPatchesToLayout(const QString& filePath) {
     }
     m_patchInfos.clear();
 
-    QDir dir(GetShadUserDir() / "patches");
+    QDir dir(Common::GetShadUserDir() / "patches");
     QString fullPath = dir.filePath(folderPath);
 
     if (!dir.exists(fullPath)) {
@@ -864,17 +865,17 @@ void CheatsPatches::onPatchCheckBoxHovered(QCheckBox* checkBox, bool hovered) {
 }
 
 void CheatsPatches::readGameInfo() {
-    std::filesystem::path sce_folder_path = installPath / "sce_sys" / "param.sfo";
-    std::filesystem::path game_update_path = installPath;
+    std::filesystem::path sce_folder_path = Common::installPath / "sce_sys" / "param.sfo";
+    std::filesystem::path game_update_path = Common::installPath;
     game_update_path += "-UPDATE";
 
     if (std::filesystem::exists(game_update_path / "sce_sys" / "param.sfo")) {
         sce_folder_path = game_update_path / "sce_sys" / "param.sfo";
     }
 
-    std::filesystem::path icon_path = installPath / "sce_sys" / "icon0.png";
+    std::filesystem::path icon_path = Common::installPath / "sce_sys" / "icon0.png";
     QString iconpath;
-    PathToQString(iconpath, icon_path);
+    Common::PathToQString(iconpath, icon_path);
     icon = QImage(iconpath);
 
     std::ifstream sfofile(sce_folder_path, std::ios::in | std::ios::binary);

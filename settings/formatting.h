@@ -6,6 +6,7 @@
 #include <fmt/xchar.h>
 
 namespace toml {
+
 template <typename TC, typename K>
 std::filesystem::path find_fs_path_or(const basic_value<TC>& v, const K& ky,
                                       std::filesystem::path opt) {
@@ -20,9 +21,11 @@ std::filesystem::path find_fs_path_or(const basic_value<TC>& v, const K& ky,
         return opt;
     }
 }
+
 } // namespace toml
 
 namespace fmt {
+
 template <typename T = std::string_view>
 struct UTF {
     T data;
@@ -33,4 +36,5 @@ struct UTF {
     
     explicit UTF(const std::u8string& str) : UTF(std::u8string_view{str}) {}
 };
+
 } // namespace fmt

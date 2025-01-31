@@ -15,7 +15,7 @@
 
 #include "ShadSettings.h"
 #include "formatting.h"
-#include "modules/bblauncher.h"
+#include "modules/Common.h"
 #include "settings/ui_ShadSettings.h"
 
 ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSettings) {
@@ -72,15 +72,15 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
 
     connect(ui->SavePathButton, &QPushButton::clicked, this, [this]() {
         QString initial_path;
-        PathToQString(initial_path, SaveDir);
+        Common::PathToQString(initial_path, Common::SaveDir);
         QString save_data_path_string =
             QFileDialog::getExistingDirectory(this, "Directory to save data", initial_path);
-        auto file_path = PathFromQString(save_data_path_string);
+        auto file_path = Common::PathFromQString(save_data_path_string);
         if (!file_path.empty()) {
-            SaveDir = file_path;
+            Common::SaveDir = file_path;
             ui->SavePathLineEdit->setText(save_data_path_string);
 
-            std::filesystem::path shadConfigFile = GetShadUserDir() / "config.toml";
+            std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
             toml::value shadData;
             try {
                 std::ifstream ifs;
@@ -93,8 +93,8 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
                 return;
             }
 
-            shadData["GUI"]["saveDataPath"] = std::string{PathToU8(SaveDir)};
-            std::ofstream file(GetShadUserDir() / "config.toml", std::ios::binary);
+            shadData["GUI"]["saveDataPath"] = std::string{Common::PathToU8(Common::SaveDir)};
+            std::ofstream file(Common::GetShadUserDir() / "config.toml", std::ios::binary);
             file << shadData;
             file.close();
         }
@@ -133,7 +133,7 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
 
 void ShadSettings::LoadValuesFromConfig() {
 
-    std::filesystem::path shadConfigFile = GetShadUserDir() / "config.toml";
+    std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
     toml::value data;
 
     try {
@@ -181,7 +181,7 @@ void ShadSettings::LoadValuesFromConfig() {
         QString::fromStdString(toml::find_or<std::string>(data, "General", "updateChannel", "")));
 
     QString save_data_path_string;
-    PathToQString(save_data_path_string, SaveDir);
+    Common::PathToQString(save_data_path_string, Common::SaveDir);
     ui->SavePathLineEdit->setText(save_data_path_string);
 
     QString backButtonBehavior = QString::fromStdString(
@@ -282,7 +282,7 @@ bool ShadSettings::eventFilter(QObject* obj, QEvent* event) {
 
 void ShadSettings::SaveSettings() {
     toml::value data;
-    std::filesystem::path shadConfigFile = GetShadUserDir() / "config.toml";
+    std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
 
     std::error_code error;
     if (std::filesystem::exists(shadConfigFile, error)) {
@@ -325,7 +325,7 @@ void ShadSettings::SaveSettings() {
     data["Settings"]["consoleLanguage"] =
         languageIndexes[ui->consoleLanguageComboBox->currentIndex()];
 
-    std::ofstream file(GetShadUserDir() / "config.toml", std::ios::binary);
+    std::ofstream file(Common::GetShadUserDir() / "config.toml", std::ios::binary);
     file << data;
     file.close();
 }
@@ -496,7 +496,7 @@ void ShadSettings::DownloadUpdate(const QString& downloadUrl) {
             return;
         }
 
-        QString userPath = QString::fromStdString(GetShadUserDir().string());
+        QString userPath = QString::fromStdString(Common::GetShadUserDir().string());
 
 #ifdef Q_OS_WIN
         QString tempDownloadPath =
@@ -539,13 +539,13 @@ void ShadSettings::DownloadUpdate(const QString& downloadUrl) {
 
 void ShadSettings::InstallUpdate() {
     QString userPath;
-    PathToQString(userPath, GetShadUserDir());
+    Common::PathToQString(userPath, Common::GetShadUserDir());
 
     QString rootPath;
-    PathToQString(rootPath, std::filesystem::current_path());
+    Common::PathToQString(rootPath, std::filesystem::current_path());
 
     QString shadPath;
-    PathToQString(shadPath, shadPs4Executable.parent_path());
+    Common::PathToQString(shadPath, Common::shadPs4Executable.parent_path());
 
     QString tempDirPath = userPath + "/temp_download_update";
     QString startingUpdate = "Starting Update...";

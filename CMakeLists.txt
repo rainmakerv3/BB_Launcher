@@ -56,7 +56,9 @@ set(PROJECT_SOURCES
     main.cpp
     modules/bblauncher.cpp
     modules/bblauncher.h
-    modules/bblauncher.ui
+    modules/bblauncher.ui    
+    modules/Common.cpp
+    modules/Common.h
     modules/ModManager.h
     modules/ModManager.cpp
     modules/ModManager.ui

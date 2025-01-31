@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <QDialog>
-#include "modules/bblauncher.h"
+#include "Common.h"
 
 namespace Ui {
 class SaveManager;
@@ -32,6 +32,5 @@ private:
     QStringList SaveSlotList;
 
     Ui::SaveManager* ui;
-    std::filesystem::path BackupsDir =
-        std::filesystem::current_path() / "BBLauncher" / "SaveBackups";
+    const std::filesystem::path BackupsDir = Common::BBLFilesPath / "SaveBackups";
 };

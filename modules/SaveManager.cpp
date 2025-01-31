@@ -5,13 +5,12 @@
 #include <QMessageBox>
 
 #include "SaveManager.h"
-#include "modules/bblauncher.h"
 #include "modules/ui_SaveManager.h"
 
 SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveManager) {
     ui->setupUi(this);
     ui->SelectSaveComboBox->addItem("Current Save");
-    ExactSaveDir = SaveDir / "1" / game_serial / "SPRJ0005";
+    ExactSaveDir = Common::SaveDir / "1" / Common::game_serial / "SPRJ0005";
 
     if (!std::filesystem::exists(BackupsDir)) {
         std::filesystem::create_directories(BackupsDir);
@@ -20,7 +19,7 @@ SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveMana
     for (auto& FolderEntry : std::filesystem::directory_iterator(BackupsDir)) {
         if (FolderEntry.is_directory()) {
             if (!std::filesystem::is_empty(FolderEntry)) {
-                std::string Foldername = PathToU8(FolderEntry.path().filename());
+                std::string Foldername = Common::PathToU8(FolderEntry.path().filename());
                 ui->SelectSaveComboBox->addItem(QString::fromStdString(Foldername));
             }
         }

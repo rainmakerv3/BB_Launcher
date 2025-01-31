@@ -5,7 +5,6 @@
 #include <QMessageBox>
 #include <QProgressBar>
 #include "ModManager.h"
-#include "bblauncher.h"
 #include "modules/ui_ModManager.h"
 
 std::filesystem::path ModInstallPath;
@@ -23,8 +22,8 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
     ui->RecModsLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
     ui->RecModsLabel->setOpenExternalLinks(true);
 
-    if (!std::filesystem::exists(ModPath)) {
-        std::filesystem::create_directories(ModPath);
+    if (!std::filesystem::exists(Common::ModPath)) {
+        std::filesystem::create_directories(Common::ModPath);
     }
 
     if (!std::filesystem::exists(ModBackupPath)) {
@@ -42,10 +41,11 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
             &ModManager::DeactivateButton_isPressed);
     connect(this, &ModManager::progressChanged, ui->progressBar, &QProgressBar::setValue);
 
-    if (std::filesystem::exists(installPath.parent_path() / (game_serial + "-UPDATE"))) {
-        ModInstallPath = installPath.parent_path() / (game_serial + "-UPDATE");
+    if (std::filesystem::exists(Common::installPath.parent_path() /
+                                (Common::game_serial + "-UPDATE"))) {
+        ModInstallPath = Common::installPath.parent_path() / (Common::game_serial + "-UPDATE");
     } else {
-        ModInstallPath = installPath;
+        ModInstallPath = Common::installPath;
     }
 }
 
@@ -59,7 +59,7 @@ void ModManager::ActivateButton_isPressed() {
 
     bool hasconflict = false;
     const std::string ModName = ui->InactiveModList->currentItem()->text().toStdString();
-    const std::string ModFolderString = (ModPath / ModName).string();
+    const std::string ModFolderString = (Common::ModPath / ModName).string();
     const std::filesystem::path ModFolderPath = std::filesystem::u8path(ModFolderString);
     const std::string ModBackupString = (ModBackupPath / ModName).string();
     const std::filesystem::path ModBackupFolderPath = std::filesystem::u8path(ModBackupString);
@@ -82,7 +82,7 @@ void ModManager::ActivateButton_isPressed() {
     for (const auto& entry : std::filesystem::directory_iterator(ModSourcePath)) {
         if (entry.is_directory()) {
             auto relative_path = std::filesystem::relative(entry, ModSourcePath);
-            std::string relative_path_string = PathToU8(relative_path);
+            std::string relative_path_string = Common::PathToU8(relative_path);
             if (std::find(BBFolders.begin(), BBFolders.end(), relative_path_string) ==
                 BBFolders.end()) {
                 QMessageBox::warning(this, "Invalid Mod",
@@ -94,7 +94,7 @@ void ModManager::ActivateButton_isPressed() {
         }
     }
 
-    std::ifstream ModInfoFile(ModPath / "ModifiedFiles.txt", std::ios::binary);
+    std::ifstream ModInfoFile(Common::ModPath / "ModifiedFiles.txt", std::ios::binary);
     while (std::getline(ModInfoFile, line)) {
         lineCount++;
         FileList.push_back(line);
@@ -104,7 +104,7 @@ void ModManager::ActivateButton_isPressed() {
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModSourcePath)) {
         if (!entry.is_directory()) {
             auto relative_path = std::filesystem::relative(entry, ModSourcePath);
-            std::string relative_path_string = PathToU8(relative_path);
+            std::string relative_path_string = Common::PathToU8(relative_path);
             for (int i = 0; i < FileList.size(); i++) {
                 if (FileList[i].contains(relative_path_string)) {
                     hasconflict = true;
@@ -130,13 +130,13 @@ void ModManager::ActivateButton_isPressed() {
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModSourcePath)) {
         if (!entry.is_directory()) {
             auto relative_path = std::filesystem::relative(entry, ModSourcePath);
-            const auto u8_string = PathToU8(relative_path) + ", " + ModName;
+            const auto u8_string = Common::PathToU8(relative_path) + ", " + ModName;
             std::string relative_path_string{u8_string.begin(), u8_string.end()};
             FileList.push_back(relative_path_string);
         }
     }
 
-    std::ofstream ModInfoFileSave(ModPath / "ModifiedFiles.txt", std::ios::binary);
+    std::ofstream ModInfoFileSave(Common::ModPath / "ModifiedFiles.txt", std::ios::binary);
     for (const auto& i : FileList)
         ModInfoFileSave << i << "\n";
     ModInfoFileSave.close();
@@ -200,7 +200,7 @@ void ModManager::ActivateButton_isPressed() {
 
     ui->FileTransferLabel->setText("Modified File List is being written");
     ui->progressBar->setValue(0);
-    std::ifstream ActiveFile(ModPath / "ActiveMods.txt", std::ios::binary);
+    std::ifstream ActiveFile(Common::ModPath / "ActiveMods.txt", std::ios::binary);
     lineCount = 0;
     while (std::getline(ActiveFile, line)) {
         lineCount++;
@@ -211,7 +211,7 @@ void ModManager::ActivateButton_isPressed() {
     ActiveFile.close();
     ActiveModList.push_back(ModName);
 
-    std::ofstream ActiveFileSave(ModPath / "ActiveMods.txt", std::ios::binary);
+    std::ofstream ActiveFileSave(Common::ModPath / "ActiveMods.txt", std::ios::binary);
     for (const auto& l : ActiveModList)
         ActiveFileSave << l << "\n";
     ActiveFileSave.close();
@@ -255,7 +255,7 @@ void ModManager::DeactivateButton_isPressed() {
         return;
     }
 
-    std::ifstream ConflictFile(ModPath / "ConflictMods.txt", std::ios::binary);
+    std::ifstream ConflictFile(Common::ModPath / "ConflictMods.txt", std::ios::binary);
     while (std::getline(ConflictFile, line)) {
         lineCount++;
         ConflictMods.push_back(line);
@@ -374,7 +374,7 @@ void ModManager::RefreshLists() {
     std::vector<std::string> ActiveModList;
     std::string line;
     int lineCount = 0;
-    std::ifstream ActiveFile(ModPath / "ActiveMods.txt", std::ios::binary);
+    std::ifstream ActiveFile(Common::ModPath / "ActiveMods.txt", std::ios::binary);
 
     ui->ActiveModList->clear();
     ui->InactiveModList->clear();
@@ -391,9 +391,9 @@ void ModManager::RefreshLists() {
     ui->ActiveModList->addItems(ActiveModStringList);
 
     std::vector<std::string> InactiveModFolders;
-    for (auto& FolderEntry : std::filesystem::directory_iterator(ModPath)) {
+    for (auto& FolderEntry : std::filesystem::directory_iterator(Common::ModPath)) {
         if (FolderEntry.is_directory()) {
-            std::string Foldername = PathToU8(FolderEntry.path().filename());
+            std::string Foldername = Common::PathToU8(FolderEntry.path().filename());
             if (std::find(ActiveModList.begin(), ActiveModList.end(), Foldername) ==
                 ActiveModList.end()) {
                 InactiveModFolders.push_back(Foldername);
@@ -424,7 +424,7 @@ void ModManager::ConflictAdd(std::string ModName) {
     int lineCount = 0;
     std::vector<std::string> ConflictMods;
 
-    std::ifstream ConflictFile(ModPath / "ConflictMods.txt", std::ios::binary);
+    std::ifstream ConflictFile(Common::ModPath / "ConflictMods.txt", std::ios::binary);
     while (std::getline(ConflictFile, line)) {
         lineCount++;
         ConflictMods.push_back(line);
@@ -433,7 +433,7 @@ void ModManager::ConflictAdd(std::string ModName) {
 
     ConflictMods.push_back(ModName);
 
-    std::ofstream ConflictFileSave(ModPath / "ConflictMods.txt", std::ios::binary);
+    std::ofstream ConflictFileSave(Common::ModPath / "ConflictMods.txt", std::ios::binary);
     for (const auto& i : ConflictMods)
         ConflictFileSave << i << "\n";
     ConflictFileSave.close();
@@ -444,7 +444,7 @@ void ModManager::ConflictRemove(std::string ModName) {
     int lineCount = 0;
     std::vector<std::string> ConflictMods;
 
-    std::ifstream ConflictFile(ModPath / "ConflictMods.txt", std::ios::binary);
+    std::ifstream ConflictFile(Common::ModPath / "ConflictMods.txt", std::ios::binary);
     while (std::getline(ConflictFile, line)) {
         lineCount++;
         ConflictMods.push_back(line);
@@ -454,7 +454,7 @@ void ModManager::ConflictRemove(std::string ModName) {
     auto itr = std::find(ConflictMods.begin(), ConflictMods.end(), ModName);
     ConflictMods.erase(itr);
 
-    std::ofstream ConflictFileSave(ModPath / "ConflictMods.txt", std::ios::binary);
+    std::ofstream ConflictFileSave(Common::ModPath / "ConflictMods.txt", std::ios::binary);
     for (const auto& i : ConflictMods)
         ConflictFileSave << i << "\n";
     ConflictFileSave.close();
@@ -466,7 +466,7 @@ void ModManager::ActiveModRemove(std::string ModName) {
     std::string line;
     int lineCount = 0;
 
-    std::ifstream ActiveFile(ModPath / "ActiveMods.txt", std::ios::binary);
+    std::ifstream ActiveFile(Common::ModPath / "ActiveMods.txt", std::ios::binary);
     while (std::getline(ActiveFile, line)) {
         lineCount++;
         ActiveModList.push_back(line);
@@ -477,16 +477,16 @@ void ModManager::ActiveModRemove(std::string ModName) {
     if (itr != ActiveModList.end())
         ActiveModList.erase(itr);
 
-    std::ofstream ActiveFileSave(ModPath / "ActiveMods.txt", std::ios::binary);
+    std::ofstream ActiveFileSave(Common::ModPath / "ActiveMods.txt", std::ios::binary);
     for (const auto& l : ActiveModList)
         ActiveFileSave << l << "\n";
     ActiveFileSave.close();
 
-    std::filesystem::remove(ModPath / "ModifiedFiles.txt");
+    std::filesystem::remove(Common::ModPath / "ModifiedFiles.txt");
 
     for (auto& FolderEntry : std::filesystem::directory_iterator(ModBackupPath)) {
         if (FolderEntry.is_directory()) {
-            std::string Foldername = PathToU8(FolderEntry.path().filename());
+            std::string Foldername = Common::PathToU8(FolderEntry.path().filename());
             const std::string BackupModPathString = (ModBackupPath / Foldername).string();
             const std::filesystem::path BackupModPath =
                 std::filesystem::u8path(BackupModPathString);
@@ -499,7 +499,7 @@ void ModManager::ActiveModRemove(std::string ModName) {
                      std::filesystem::recursive_directory_iterator(BackupModPath)) {
                     if (!entry.is_directory()) {
                         auto relative_path = std::filesystem::relative(entry, BackupModPath);
-                        const auto u8_string = PathToU8(relative_path) + ", " + Foldername;
+                        const auto u8_string = Common::PathToU8(relative_path) + ", " + Foldername;
                         std::string relative_path_string{u8_string.begin(), u8_string.end()};
                         FileList.push_back(relative_path_string);
                     }
@@ -513,7 +513,7 @@ void ModManager::ActiveModRemove(std::string ModName) {
     ui->progressBar->setValue(0);
     for (auto& FolderEntry : std::filesystem::directory_iterator(ModUniquePath)) {
         if (FolderEntry.is_directory()) {
-            std::string Foldername = PathToU8(FolderEntry.path().filename());
+            std::string Foldername = Common::PathToU8(FolderEntry.path().filename());
             const std::string UniqueModPathString = (ModUniquePath / Foldername).string();
             const std::filesystem::path UniqueModPath =
                 std::filesystem::u8path(UniqueModPathString);
@@ -524,7 +524,7 @@ void ModManager::ActiveModRemove(std::string ModName) {
             for (const auto& entry : std::filesystem::recursive_directory_iterator(UniqueModPath)) {
                 if (!entry.is_directory()) {
                     auto relative_path = std::filesystem::relative(entry, UniqueModPath);
-                    const auto u8_string = PathToU8(relative_path) + ", " + Foldername;
+                    const auto u8_string = Common::PathToU8(relative_path) + ", " + Foldername;
                     std::string relative_path_string{u8_string.begin(), u8_string.end()};
                     FileList.push_back(relative_path_string);
                 }
@@ -535,7 +535,7 @@ void ModManager::ActiveModRemove(std::string ModName) {
     }
 
     ui->progressBar->setValue(0);
-    std::ofstream ModInfoFileSave(ModPath / "ModifiedFiles.txt", std::ios::binary);
+    std::ofstream ModInfoFileSave(Common::ModPath / "ModifiedFiles.txt", std::ios::binary);
     for (const auto& i : FileList)
         ModInfoFileSave << i << "\n";
     ModInfoFileSave.close();

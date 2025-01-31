@@ -8,13 +8,12 @@ namespace Ui {
 class LauncherSettings;
 }
 
+namespace Config {
+
 void SaveConfigPath(std::string configKey, std::filesystem::path path);
 void LoadLauncherSettings();
 void CreateSettingsFile();
 void SetTheme(std::string theme);
-
-extern std::filesystem::path SettingsPath;
-extern std::filesystem::path SettingsFile;
 
 extern std::string theme;
 extern bool SoundFixEnabled;
@@ -22,6 +21,8 @@ extern bool BackupSaveEnabled;
 extern int BackupInterval;
 extern int BackupNumber;
 extern bool AutoUpdateEnabled;
+
+} // namespace Config
 
 class LauncherSettings : public QDialog {
     Q_OBJECT

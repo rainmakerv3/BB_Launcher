@@ -9,6 +9,7 @@
 #include <QProcess>
 
 #include "bblauncher.h"
+#include "modules/Common.h"
 #include "modules/ModManager.h"
 #include "modules/SaveManager.h"
 #include "modules/ui_bblauncher.h"
@@ -17,33 +18,27 @@
 #include "settings/ShadSettings.h"
 #include "settings/updater/CheckUpdate.h"
 
-std::filesystem::path installPath = "";
-std::string game_serial = "";
-std::filesystem::path SaveDir = "";
-char VERSION[] = "Release4.5";
-std::filesystem::path shadPs4Executable;
-
 BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     : QMainWindow(parent), noGUIset(noGUI), noinstancerunning(noInstanceRunning),
       ui(new Ui::BBLauncher) {
 
     ui->setupUi(this);
-    LoadLauncherSettings();
+    Config::LoadLauncherSettings();
 
-    if (shadPs4Executable == "" || !std::filesystem::exists(shadPs4Executable)) {
+    if (Common::shadPs4Executable == "" || !std::filesystem::exists(Common::shadPs4Executable)) {
         GetShadExecutable();
     }
 
-    if (installPath == "") {
+    if (Common::installPath == "") {
         ui->ExeLabel->setText("no Bloodborne Folder selected (CUSA****)");
     } else {
         QString installQString;
-        PathToQString(installQString, installPath);
+        Common::PathToQString(installQString, Common::installPath);
         ui->ExeLabel->setText(installQString);
     }
 
     QString shadLabelString;
-    PathToQString(shadLabelString, shadPs4Executable);
+    Common::PathToQString(shadLabelString, Common::shadPs4Executable);
     ui->ShadLabel->setText(shadLabelString);
 
 #ifdef _WIN32
@@ -57,7 +52,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     this->statusBar()->setSizeGripEnabled(false);
     QApplication::setStyle("Fusion");
 
-    std::string versionstring(VERSION);
+    std::string versionstring(Common::VERSION);
     setWindowTitle(QString::fromStdString("BBLauncher " + versionstring));
 
     // this->installEventFilter(this); if needed
@@ -78,8 +73,8 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         if (!CheckBBInstall())
             return;
 
-        if (!std::filesystem::exists(SaveDir / "1" / game_serial /
-                                     "SPRJ0005" / "userdata0010")) {
+        if (!std::filesystem::exists(Common::SaveDir / "1" / Common::game_serial / "SPRJ0005" /
+                                     "userdata0010")) {
             QMessageBox::warning(this, "No saves detected",
                                  "Launch Bloodborne to generate saves before using Save Manager");
             return;
@@ -107,10 +102,11 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->shadSettingsButton, &QPushButton::pressed, this, [this]() {
-        if (!std::filesystem::exists(GetShadUserDir() / "config.toml")) {
+        if (!std::filesystem::exists(Common::GetShadUserDir() / "config.toml")) {
             QMessageBox::warning(
                 this, "No shadPS4 config file found. Run shadPS4 once to generate it.",
-                QString::fromStdString((GetShadUserDir() / "config.toml").string() + " not found"));
+                QString::fromStdString((Common::GetShadUserDir() / "config.toml").string() +
+                                       " not found"));
             return;
         }
         ShadSettings* ShadSettingsWindow = new ShadSettings(this);
@@ -123,7 +119,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         UpdateSettingsList();
     });
 
-    if (AutoUpdateEnabled) {
+    if (Config::AutoUpdateEnabled) {
         auto checkUpdate = new CheckUpdate(false);
         checkUpdate->exec();
     }
@@ -137,12 +133,12 @@ void BBLauncher::ExeSelectButton_isPressed() {
     QBBInstallLoc = QFileDialog::getExistingDirectory(
         this, "Select Bloodborne install location (ex. CUSA03173, CUSA00900", QDir::currentPath());
     if (QBBInstallLoc != "") {
-        game_serial = QBBInstallLoc.last(9).toStdString();
-        if (std::find(BBSerialList.begin(), BBSerialList.end(), game_serial) !=
+        Common::game_serial = QBBInstallLoc.last(9).toStdString();
+        if (std::find(BBSerialList.begin(), BBSerialList.end(), Common::game_serial) !=
             BBSerialList.end()) {
             ui->ExeLabel->setText(QBBInstallLoc);
-            installPath = PathFromQString(QBBInstallLoc);
-            SaveConfigPath("installPath", installPath);
+            Common::installPath = Common::PathFromQString(QBBInstallLoc);
+            Config::SaveConfigPath("installPath", Common::installPath);
         } else {
             QMessageBox::warning(
                 this, "Install Location not valid",
@@ -175,15 +171,15 @@ void BBLauncher::ShadSelectButton_isPressed() {
 #endif
 
     if (ShadLoc != "") {
-        shadPs4Executable = PathFromQString(ShadLoc);
-        SaveConfigPath("shadPath", shadPs4Executable);
+        Common::shadPs4Executable = Common::PathFromQString(ShadLoc);
+        Config::SaveConfigPath("shadPath", Common::shadPs4Executable);
         ui->ShadLabel->setText(ShadLoc);
     }
 }
 
 void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
-    const std::filesystem::path EbootPath = installPath / "eboot.bin";
-    if (installPath == "") {
+    const std::filesystem::path EbootPath = Common::installPath / "eboot.bin";
+    if (Common::installPath == "") {
         QMessageBox::warning(this, "No Bloodborne Install folder",
                              "Set-up Bloodborne Install folder before launching");
         if (noGUIset) {
@@ -201,8 +197,8 @@ void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
         }
     }
 
-    if (SoundFixEnabled) {
-        std::filesystem::path savePath = SaveDir / "1" / game_serial / "SPRJ0005";
+    if (Config::SoundFixEnabled) {
+        std::filesystem::path savePath = Common::SaveDir / "1" / Common::game_serial / "SPRJ0005";
         if (std::filesystem::exists(savePath / "userdata0010")) {
             std::ofstream savefile1;
             savefile1.open(savePath / "userdata0010",
@@ -213,7 +209,7 @@ void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
         }
     }
 
-    if (BackupSaveEnabled) {
+    if (Config::BackupSaveEnabled) {
         std::thread saveThread(StartBackupSave);
         saveThread.detach();
     }
@@ -221,14 +217,14 @@ void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
     QMainWindow::hide();
 
     QString PKGarg;
-    PathToQString(PKGarg, EbootPath);
+    Common::PathToQString(PKGarg, EbootPath);
 
     QProcess* process = new QProcess;
     QStringList processArg;
     processArg << "-g" << PKGarg;
 
     QString shadBinary;
-    PathToQString(shadBinary, shadPs4Executable);
+    Common::PathToQString(shadBinary, Common::shadPs4Executable);
 
     process->start(shadBinary, processArg);
     connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
@@ -246,14 +242,13 @@ void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
 }
 
 void BBLauncher::StartBackupSave() {
-    const std::filesystem::path BackupPath =
-        std::filesystem::current_path() / "BBLauncher" / "SaveBackups";
+    const std::filesystem::path BackupPath = Common::BBLFilesPath / "SaveBackups";
 
     if (!std ::filesystem::exists(BackupPath)) {
         std::filesystem::create_directory(BackupPath);
     }
 
-    for (int i = 1; i < BackupNumber + 1; i++) {
+    for (int i = 1; i < Config::BackupNumber + 1; i++) {
         std::string backupstring = "BACKUP" + std::to_string(i);
         auto backup_dircreate = BackupPath / backupstring;
         if (!std ::filesystem::exists(backup_dircreate)) {
@@ -261,17 +256,17 @@ void BBLauncher::StartBackupSave() {
         }
     }
 
-    const auto save_dir = SaveDir / "1" / game_serial;
+    const auto save_dir = Common::SaveDir / "1" / Common::game_serial;
     const auto backup_dir = BackupPath / "BACKUP1";
 
     while (true) {
-        std::this_thread::sleep_for(std::chrono::minutes(BackupInterval));
+        std::this_thread::sleep_for(std::chrono::minutes(Config::BackupInterval));
 
-        if (BackupNumber > 1) {
-            const std::string lastDirstring = "BACKUP" + std::to_string(BackupNumber);
+        if (Config::BackupNumber > 1) {
+            const std::string lastDirstring = "BACKUP" + std::to_string(Config::BackupNumber);
             const auto lastdir = BackupPath / lastDirstring;
             std::filesystem::remove_all(lastdir);
-            for (int i = BackupNumber - 1; i > 0; i--) {
+            for (int i = Config::BackupNumber - 1; i > 0; i--) {
                 std::string sourceString = "BACKUP" + std::to_string(i);
                 std::string destString = "BACKUP" + std::to_string(i + 1);
                 const auto sourceDir = BackupPath / sourceString;
@@ -295,6 +290,7 @@ void BBLauncher::StartBackupSave() {
 }
 
 void BBLauncher::UpdateSettingsList() {
+    using namespace Config;
     QString SoundhackSetting = "60 FPS sound fix = " + QVariant(SoundFixEnabled).toString();
     QString ThemeSetting = "Selected Theme = " + QString::fromStdString(theme);
     QString BackupEnableSetting =
@@ -324,7 +320,7 @@ void BBLauncher::UpdateModList() {
     std::vector<std::string> ActiveModList;
     std::string line;
     int lineCount = 0;
-    std::ifstream ActiveFile(ModPath / "ActiveMods.txt", std::ios::binary);
+    std::ifstream ActiveFile(Common::ModPath / "ActiveMods.txt", std::ios::binary);
 
     ui->ModList->clear();
 
@@ -351,11 +347,11 @@ void BBLauncher::UpdateModList() {
 
 void BBLauncher::GetShadExecutable() {
 
-    shadPs4Executable = "";
+    Common::shadPs4Executable = "";
 
 #ifdef _WIN32
     if (std::filesystem::exists(std::filesystem::current_path() / "shadPS4.exe")) {
-        shadPs4Executable = std::filesystem::current_path() / "shadPS4.exe";
+        Common::shadPs4Executable = std::filesystem::current_path() / "shadPS4.exe";
     } else {
         QMessageBox::warning(
             this, "No shadPS4.exe found",
@@ -376,75 +372,36 @@ void BBLauncher::GetShadExecutable() {
         "non-AppImage (shadps4)",
         0, QFileDialog::DontUseNativeDialog);
     const std::string ShadLocString = ShadLoc.toStdString();
-    shadPs4Executable = std::filesystem::u8path(ShadLocString);
+    Common::shadPs4Executable = std::filesystem::u8path(ShadLocString);
 #elif defined(__APPLE__)
     QString ShadLoc =
         QFileDialog::getOpenFileName(this, "Select ShadPS4 executable (ex. shadps4.app)",
                                      QDir::homePath(), "App Bundle (shadps4.app)");
     const std::string ShadLocString = ShadLoc.toStdString();
-    shadPs4Executable = std::filesystem::u8path(ShadLocString);
+    Common::shadPs4Executable = std::filesystem::u8path(ShadLocString);
 #endif
 
-    SaveConfigPath("shadPath", shadPs4Executable);
+    Config::SaveConfigPath("shadPath", Common::shadPs4Executable);
 
-    if (shadPs4Executable == "")
+    if (Common::shadPs4Executable == "")
         canLaunch = false;
 }
 
 // bool BBLauncher::eventFilter(QObject* obj, QEvent* event) {}
 
 bool BBLauncher::CheckBBInstall() {
-    if (installPath == "") {
+    if (Common::installPath == "") {
         QMessageBox::warning(this, "No Bloodborne install path selected",
                              "Select Bloodborne install folder before using this feature");
         return false;
-    } else if (!std::filesystem::exists(installPath) || installPath.empty()) {
+    } else if (!std::filesystem::exists(Common::installPath) || Common::installPath.empty()) {
         QMessageBox::warning(this, "Bloodborne install folder empty or does not exist",
-                             QString::fromStdString(installPath.string()) +
+                             QString::fromStdString(Common::installPath.string()) +
                                  " is empty or does not exist");
         return false;
     } else {
         return true;
     }
-}
-
-std::filesystem::path GetShadUserDir() {
-    auto user_dir = std::filesystem::current_path() / "user";
-    if (!std::filesystem::exists(user_dir)) {
-#ifdef __APPLE__
-        user_dir =
-            std::filesystem::path(getenv("HOME")) / "Library" / "Application Support" / "shadPS4";
-#elif defined(__linux__)
-        const char* xdg_data_home = getenv("XDG_DATA_HOME");
-        if (xdg_data_home != nullptr && strlen(xdg_data_home) > 0) {
-            user_dir = std::filesystem::path(xdg_data_home) / "shadPS4";
-        } else {
-            user_dir = std::filesystem::path(getenv("HOME")) / ".local" / "share" / "shadPS4";
-        }
-#endif
-    }
-    return user_dir;
-}
-
-void PathToQString(QString& result, const std::filesystem::path& path) {
-#ifdef _WIN32
-    result = QString::fromStdWString(path.wstring());
-#else
-    result = QString::fromStdString(path.string());
-#endif
-}
-
-std::filesystem::path PathFromQString(const QString& path) {
-#ifdef _WIN32
-    return std::filesystem::path(path.toStdWString());
-#else
-    return std::filesystem::path(path.toStdString());
-#endif
-}
-
-std::string PathToU8(const std::filesystem::path& path) {
-    const auto u8_string = path.u8string();
-    return std::string{u8_string.begin(), u8_string.end()};
 }
 
 BBLauncher::~BBLauncher() {

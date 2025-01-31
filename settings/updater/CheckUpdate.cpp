@@ -21,7 +21,7 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 #include "CheckUpdate.h"
-#include "modules/bblauncher.h"
+#include "modules/Common.h"
 #include "settings/updater/BuildInfo.h"
 
 CheckUpdate::CheckUpdate(const bool showMessage, QWidget* parent)
@@ -34,7 +34,7 @@ CheckUpdate::CheckUpdate(const bool showMessage, QWidget* parent)
 CheckUpdate::~CheckUpdate() {}
 
 void CheckUpdate::CheckForUpdates(const bool showMessage) {
-    QString CurrentBranch = BuildBranch;
+    QString CurrentBranch = Build::Branch;
     QUrl url = QUrl("https://api.github.com/repos/rainmakerv3/BB_Launcher/releases");
 
     QNetworkRequest request(url);
@@ -120,8 +120,8 @@ void CheckUpdate::CheckForUpdates(const bool showMessage) {
             return;
         }
 
-        QString currentRev = QString::fromStdString(VERSION);
-        QString currentDate = BuildDate;
+        QString currentRev = QString::fromStdString(Common::VERSION);
+        QString currentDate = Build::Date;
 
         QDateTime dateTime = QDateTime::fromString(latestDate, Qt::ISODate);
         latestDate = dateTime.isValid() ? dateTime.toString("yyyy-MM-dd HH:mm:ss") : "Unknown date";
@@ -158,7 +158,7 @@ void CheckUpdate::setupUI(const QString& downloadUrl, const QString& latestDate,
     layout->addLayout(titleLayout);
 
     QString updateText =
-        QString("<p><b><br>" + tr("Branch") + ": </b>" + BuildBranch + "<br><b>" +
+        QString("<p><b><br>" + tr("Branch") + ": </b>" + Build::Branch + "<br><b>" +
                 tr("Current Version") + ":</b> %1 (%2)<br><b>" + tr("Latest Version") +
                 ":</b> %3 (%4)</p><p>" + tr("Do you want to update?") + "</p>")
             .arg(currentRev, currentDate, latestRev, latestDate);
@@ -300,7 +300,7 @@ void CheckUpdate::DownloadUpdate(const QString& url) {
         }
 
         QString userPath;
-        PathToQString(userPath, GetShadUserDir());
+        Common::PathToQString(userPath, Common::GetShadUserDir());
 #ifdef Q_OS_WIN
         QString tempDownloadPath =
             QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) +
@@ -334,10 +334,10 @@ void CheckUpdate::DownloadUpdate(const QString& url) {
 
 void CheckUpdate::Install() {
     QString userPath;
-    PathToQString(userPath, GetShadUserDir());
+    Common::PathToQString(userPath, Common::GetShadUserDir());
 
     QString rootPath;
-    PathToQString(rootPath, std::filesystem::current_path());
+    Common::PathToQString(rootPath, std::filesystem::current_path());
 
     QString tempDirPath = userPath + "/temp_download_update";
     QString startingUpdate = tr("Starting Update...");
