@@ -9,7 +9,7 @@ std::string game_serial;
 std::filesystem::path installPath;
 std::filesystem::path SaveDir;
 std::filesystem::path shadPs4Executable;
-char VERSION[] = "Release5.0";
+char VERSION[] = "Release5.1";
 
 std::filesystem::path GetShadUserDir() {
     auto user_dir = std::filesystem::current_path() / "user";
