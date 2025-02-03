@@ -16,6 +16,8 @@
 #include "settings/LauncherSettings.h"
 #include "settings/ShadCheatsPatches.h"
 #include "settings/ShadSettings.h"
+#include "settings/control_settings.h"
+#include "settings/kbm_config_dialog.h"
 #include "settings/updater/CheckUpdate.h"
 
 BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
@@ -59,6 +61,12 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
 
     UpdateSettingsList();
     UpdateModList();
+
+    ui->ControllerButton->setIcon(QIcon(":controller_icon.png"));
+    ui->ControllerButton->setIconSize(QSize(48, 48));
+    ui->KBMButton->setIcon(QIcon(":keyboard.png"));
+    ui->KBMButton->setIconSize(QSize(48, 48));
+    UpdateIcons();
 
     connect(ui->ExeSelectButton, &QPushButton::pressed, this,
             &BBLauncher::ExeSelectButton_isPressed);
@@ -117,6 +125,17 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         LauncherSettings* LauncherSettingsWindow = new LauncherSettings(this);
         LauncherSettingsWindow->exec();
         UpdateSettingsList();
+        UpdateIcons();
+    });
+
+    connect(ui->KBMButton, &QPushButton::clicked, this, [this]() {
+        EditorDialog* editorWindow = new EditorDialog(this);
+        editorWindow->exec();
+    });
+
+    connect(ui->ControllerButton, &QPushButton::clicked, this, [this]() {
+        ControlSettings* RemapWindow = new ControlSettings(this);
+        RemapWindow->exec();
     });
 
     if (Config::AutoUpdateEnabled) {
@@ -402,6 +421,29 @@ bool BBLauncher::CheckBBInstall() {
     } else {
         return true;
     }
+}
+
+void BBLauncher::UpdateIcons() {
+    if (Config::theme == "Dark") {
+        ui->ControllerButton->setIcon(RecolorIcon(ui->ControllerButton->icon(), false));
+    } else {
+        ui->ControllerButton->setIcon(RecolorIcon(ui->ControllerButton->icon(), true));
+    }
+
+    if (Config::theme == "Dark") {
+        ui->KBMButton->setIcon(RecolorIcon(ui->KBMButton->icon(), false));
+    } else {
+        ui->KBMButton->setIcon(RecolorIcon(ui->KBMButton->icon(), true));
+    }
+}
+
+QIcon BBLauncher::RecolorIcon(const QIcon& icon, bool isWhite) {
+    QPixmap pixmap(icon.pixmap(icon.actualSize(QSize(128, 128))));
+    QColor clr(isWhite ? Qt::white : Qt::black);
+    QBitmap mask = pixmap.createMaskFromColor(clr, Qt::MaskOutColor);
+    pixmap.fill(QColor(isWhite ? Qt::black : Qt::white));
+    pixmap.setMask(mask);
+    return QIcon(pixmap);
 }
 
 BBLauncher::~BBLauncher() {

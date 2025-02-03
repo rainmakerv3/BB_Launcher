@@ -1,5 +1,8 @@
 <RCC>
 	<qresource prefix="/">
 		<file>BBicon2.ico</file>
+                <file>controller_icon.png</file>
+		<file>keyboard.png</file>
+		<file>ps4_controller.png</file>
 	</qresource>
 </RCC>

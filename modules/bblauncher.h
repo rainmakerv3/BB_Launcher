@@ -38,6 +38,8 @@ private:
     void UpdateSettingsList();
     void UpdateModList();
     void GetShadExecutable();
+    QIcon RecolorIcon(const QIcon& icon, bool isWhite);
+    void UpdateIcons();
 
     const std::vector<std::string> BBSerialList = {"CUSA03173", "CUSA00900", "CUSA00208",
                                                    "CUSA00207", "CUSA01363", "CUSA03023"};

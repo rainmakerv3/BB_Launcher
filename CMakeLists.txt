@@ -69,6 +69,13 @@ set(PROJECT_SOURCES
     modules/SaveManager.ui
     settings/formatting.h
     settings/toml.hpp
+    settings/control_settings.cpp
+    settings/control_settings.h
+    settings/control_settings.ui
+    settings/kbm_config_dialog.cpp
+    settings/kbm_config_dialog.h
+    settings/kbm_help_dialog.cpp
+    settings/kbm_help_dialog.h
     settings/LauncherSettings.h
     settings/LauncherSettings.cpp
     settings/LauncherSettings.ui
