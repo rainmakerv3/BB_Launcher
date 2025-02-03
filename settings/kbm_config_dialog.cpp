@@ -191,19 +191,15 @@ void EditorDialog::onHelpClicked() {
 }
 
 void EditorDialog::onResetToDefaultClicked() {
-    bool default_default = gameComboBox->currentText() == "default";
-    QString prompt =
-        default_default
-            ? "Do you want to reset your custom default config to the original default config?"
-            : "Do you want to reset this config to your custom default config?";
+
+    QString prompt = "Do you want to reset to default config?";
     QMessageBox::StandardButton reply =
         QMessageBox::question(this, "Reset to Default", prompt, QMessageBox::Yes | QMessageBox::No);
 
     if (reply == QMessageBox::Yes) {
-        if (default_default) {
-            const auto default_file = Config::GetFoolproofKbmConfigFile("default");
-            std::filesystem::remove(default_file);
-        }
+        const auto default_file = Config::GetFoolproofKbmConfigFile("default");
+        std::filesystem::remove(default_file);
+
         const auto config_file = Config::GetFoolproofKbmConfigFile("default");
         QFile file(config_file);
 
@@ -214,7 +210,6 @@ void EditorDialog::onResetToDefaultClicked() {
         } else {
             QMessageBox::warning(this, "Error", "Could not open the file for reading");
         }
-        // saveFile(gameComboBox->currentText());
     }
 }
 

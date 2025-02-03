@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>730</width>
-    <height>669</height>
+    <height>683</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -46,7 +46,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>350</y>
+      <y>370</y>
       <width>131</width>
       <height>20</height>
      </rect>
@@ -59,7 +59,7 @@
     <property name="geometry">
      <rect>
       <x>380</x>
-      <y>350</y>
+      <y>370</y>
       <width>131</width>
       <height>20</height>
      </rect>
@@ -71,8 +71,8 @@
    <widget class="QWidget" name="horizontalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>40</x>
-      <y>370</y>
+      <x>30</x>
+      <y>390</y>
       <width>671</width>
       <height>271</height>
      </rect>
@@ -391,6 +391,24 @@
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>337</y>
+      <width>431</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>Note: remapping only works on shadPS4 versions relased after Feb. 2, 2025</string>
+    </property>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

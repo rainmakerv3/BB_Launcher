@@ -15,7 +15,7 @@ void LoadLauncherSettings();
 void CreateSettingsFile();
 void SetTheme(std::string theme);
 std::filesystem::path GetFoolproofKbmConfigFile(const std::string& game_id);
-constexpr std::string_view GetDefaultKeyboardConfig();
+std::string_view GetDefaultKeyboardConfig();
 void SaveUnifiedControl(bool setting);
 
 extern std::string theme;
