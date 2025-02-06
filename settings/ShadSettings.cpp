@@ -108,7 +108,7 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
         ui->fullscreenCheckBox->installEventFilter(this);
         ui->FullscreenModeGroupBox->installEventFilter(this);
         ui->separateUpdatesCheckBox->installEventFilter(this);
-        ui->showSplashCheckBox->installEventFilter(this);
+        ui->GPUBufferCheckBox->installEventFilter(this);
         ui->discordRPCCheckbox->installEventFilter(this);
         ui->userName->installEventFilter(this);
         ui->trophyKeyLineEdit->installEventFilter(this);
@@ -160,6 +160,7 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->widthSpinBox->setValue(toml::find_or<int>(data, "GPU", "screenWidth", 1280));
     ui->heightSpinBox->setValue(toml::find_or<int>(data, "GPU", "screenHeight", 720));
     ui->vblankSpinBox->setValue(toml::find_or<int>(data, "GPU", "vblankDivider", 1));
+    ui->GPUBufferCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "copyGPUBuffers", false));
     ui->disableTrophycheckBox->setChecked(
         toml::find_or<bool>(data, "General", "isTrophyPopupDisabled", false));
     ui->discordRPCCheckbox->setChecked(
@@ -167,7 +168,6 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->fullscreenCheckBox->setChecked(toml::find_or<bool>(data, "General", "Fullscreen", false));
     ui->separateUpdatesCheckBox->setChecked(
         toml::find_or<bool>(data, "General", "separateUpdateEnabled", false));
-    ui->showSplashCheckBox->setChecked(toml::find_or<bool>(data, "General", "showSplash", false));
     ui->logTypeComboBox->setCurrentText(
         QString::fromStdString(toml::find_or<std::string>(data, "General", "logType", "async")));
     ui->logFilterLineEdit->setText(
@@ -220,8 +220,8 @@ void ShadSettings::updateNoteTextEdit(const QString& elementName) {
         text = fullscreenModeGroupBoxtext;
     } else if (elementName == "separateUpdatesCheckBox") {
         text = separateUpdatesCheckBoxtext;
-    } else if (elementName == "showSplashCheckBox") {
-        text = showSplashCheckBoxtext;
+    } else if (elementName == "GPUBufferCheckBox") {
+        text = GPUBufferCheckBoxtext;
     } else if (elementName == "discordRPCCheckbox") {
         text = discordRPCCheckboxtext;
     } else if (elementName == "userName") {
@@ -313,7 +313,6 @@ void ShadSettings::SaveSettings() {
     data["General"]["logType"] = ui->logTypeComboBox->currentText().toStdString();
     data["General"]["userName"] = ui->userNameLineEdit->text().toStdString();
     data["General"]["updateChannel"] = ui->updateComboBox->currentText().toStdString();
-    data["General"]["showSplash"] = ui->showSplashCheckBox->isChecked();
     data["General"]["separateUpdateEnabled"] = ui->separateUpdatesCheckBox->isChecked();
     data["Input"]["cursorState"] = ui->hideCursorComboBox->currentIndex();
     data["Input"]["cursorHideTimeout"] = ui->idleTimeoutSpinBox->value();
@@ -321,6 +320,7 @@ void ShadSettings::SaveSettings() {
     data["GPU"]["screenWidth"] = ui->widthSpinBox->value();
     data["GPU"]["screenHeight"] = ui->heightSpinBox->value();
     data["GPU"]["vblankDivider"] = ui->vblankSpinBox->value();
+    data["GPU"]["copyGPUBuffers"] = ui->GPUBufferCheckBox->isChecked();
     data["Keys"]["TrophyKey"] = ui->trophyKeyLineEdit->text().toStdString();
     data["Settings"]["consoleLanguage"] =
         languageIndexes[ui->consoleLanguageComboBox->currentIndex()];
@@ -341,7 +341,7 @@ void ShadSettings::SetDefaults() {
     ui->discordRPCCheckbox->setChecked(true);
     ui->fullscreenCheckBox->setChecked(false);
     ui->separateUpdatesCheckBox->setChecked(false);
-    ui->showSplashCheckBox->setChecked(false);
+    ui->GPUBufferCheckBox->setChecked(false);
     ui->logTypeComboBox->setCurrentText("async");
     ui->logFilterLineEdit->setText("");
     ui->userNameLineEdit->setText("shadPS4");

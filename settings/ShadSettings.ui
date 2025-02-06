@@ -65,8 +65,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>981</width>
-         <height>636</height>
+         <width>960</width>
+         <height>743</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="generalTabVLayout" stretch="0">
@@ -261,13 +261,6 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QCheckBox" name="showSplashCheckBox">
-                   <property name="text">
-                    <string notr="true">Show Splash Screen</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
                   <widget class="QCheckBox" name="discordRPCCheckbox">
                    <property name="text">
                     <string notr="true">Enable Discord Rich Presence</string>
@@ -275,6 +268,22 @@
                   </widget>
                  </item>
                 </layout>
+               </item>
+               <item>
+                <widget class="QGroupBox" name="DebugGroupBox">
+                 <property name="title">
+                  <string>For PM4 Type 0 Crashes</string>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_16">
+                  <item>
+                   <widget class="QCheckBox" name="GPUBufferCheckBox">
+                    <property name="text">
+                     <string>Copy GPU Buffers</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -810,7 +819,7 @@
          <x>30</x>
          <y>20</y>
          <width>921</width>
-         <height>80</height>
+         <height>90</height>
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout">
@@ -839,9 +848,9 @@
        <property name="geometry">
         <rect>
          <x>50</x>
-         <y>110</y>
+         <y>130</y>
          <width>881</width>
-         <height>61</height>
+         <height>81</height>
         </rect>
        </property>
        <property name="font">

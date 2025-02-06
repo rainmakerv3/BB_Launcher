@@ -81,8 +81,7 @@ private:
         "Enable Separate Update Folder:\nEnables installing game updates into a separate folder "
         "for easy management.\nThis can be manually created by adding the extracted update to the "
         "game folder with the name CUSA00000-UPDATE where the CUSA ID matches the game's ID.";
-    const QString showSplashCheckBoxtext = "Show Splash Screen:\nShows the game's splash screen (a "
-                                           "special image) while the game is starting.";
+    const QString GPUBufferCheckBoxtext = "Helps with PM4 Type 0 crashes";
     const QString discordRPCCheckboxtext =
         "Enable Discord Rich Presence:\nDisplays the emulator icon "
         "and relevant information on your Discord profile.";
