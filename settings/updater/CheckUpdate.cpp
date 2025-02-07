@@ -337,7 +337,11 @@ void CheckUpdate::Install() {
     Common::PathToQString(userPath, Common::GetShadUserDir());
 
     QString rootPath;
+#if defined(__APPLE__)
+    Common::PathToQString(rootPath, Common::GetBundleParentDirectory());
+#else
     Common::PathToQString(rootPath, std::filesystem::current_path());
+#endif
 
     QString tempDirPath = userPath + "/temp_download_update";
     QString startingUpdate = tr("Starting Update...");
@@ -507,9 +511,7 @@ void CheckUpdate::Install() {
         scriptFile.setPermissions(QFileDevice::ExeOwner | QFileDevice::ReadOwner |
                                   QFileDevice::WriteOwner);
 #endif
-
         QProcess::startDetached(processCommand, arguments);
-
         exit(EXIT_SUCCESS);
     } else {
         QMessageBox::warning(

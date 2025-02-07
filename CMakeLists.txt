@@ -56,7 +56,7 @@ set(PROJECT_SOURCES
     main.cpp
     modules/bblauncher.cpp
     modules/bblauncher.h
-    modules/bblauncher.ui    
+    modules/bblauncher.ui
     modules/Common.cpp
     modules/Common.h
     modules/ModManager.h
@@ -67,6 +67,7 @@ set(PROJECT_SOURCES
     modules/RunGuard.h
     modules/SaveManager.cpp
     modules/SaveManager.ui
+    modules/scope_exit.h
     settings/formatting.h
     settings/toml.hpp
     settings/control_settings.cpp

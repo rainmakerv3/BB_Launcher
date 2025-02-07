@@ -61,11 +61,6 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
 
     UpdateSettingsList();
     UpdateModList();
-
-    ui->ControllerButton->setIcon(QIcon(":controller_icon.png"));
-    ui->ControllerButton->setIconSize(QSize(48, 48));
-    ui->KBMButton->setIcon(QIcon(":keyboard.png"));
-    ui->KBMButton->setIconSize(QSize(48, 48));
     UpdateIcons();
 
     connect(ui->ExeSelectButton, &QPushButton::pressed, this,
@@ -424,21 +419,19 @@ bool BBLauncher::CheckBBInstall() {
 }
 
 void BBLauncher::UpdateIcons() {
+    ui->ControllerButton->setIcon(QIcon(":controller_icon.png"));
+    ui->ControllerButton->setIconSize(QSize(48, 48));
+    ui->KBMButton->setIcon(QIcon(":keyboard.png"));
+    ui->KBMButton->setIconSize(QSize(48, 48));
+
     if (Config::theme == "Dark") {
         ui->ControllerButton->setIcon(RecolorIcon(ui->ControllerButton->icon(), false));
-    } else {
-        ui->ControllerButton->setIcon(RecolorIcon(ui->ControllerButton->icon(), true));
-    }
-
-    if (Config::theme == "Light") {
-        ui->KBMButton->setIcon(RecolorIcon(ui->KBMButton->icon(), true));
-    } else {
         ui->KBMButton->setIcon(RecolorIcon(ui->KBMButton->icon(), false));
     }
 }
 
 QIcon BBLauncher::RecolorIcon(const QIcon& icon, bool isWhite) {
-    QPixmap pixmap(icon.pixmap(icon.actualSize(QSize(128, 128))));
+    QPixmap pixmap(icon.pixmap(icon.actualSize(QSize(120, 120))));
     QColor clr(isWhite ? Qt::white : Qt::black);
     QBitmap mask = pixmap.createMaskFromColor(clr, Qt::MaskOutColor);
     pixmap.fill(QColor(isWhite ? Qt::black : Qt::white));

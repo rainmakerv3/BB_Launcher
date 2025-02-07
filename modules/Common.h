@@ -27,5 +27,6 @@ const std::filesystem::path BBLFilesPath = std::filesystem::current_path() / "BB
 #endif
 
 const std::filesystem::path ModPath = BBLFilesPath / "Mods";
+std::filesystem::path GetBundleParentDirectory();
 
 } // namespace Common

@@ -542,7 +542,11 @@ void ShadSettings::InstallUpdate() {
     Common::PathToQString(userPath, Common::GetShadUserDir());
 
     QString rootPath;
+#if defined(__APPLE__)
+    Common::PathToQString(rootPath, Common::GetBundleParentDirectory());
+#else
     Common::PathToQString(rootPath, std::filesystem::current_path());
+#endif
 
     QString shadPath;
     Common::PathToQString(shadPath, Common::shadPs4Executable.parent_path());
@@ -678,10 +682,10 @@ void ShadSettings::InstallUpdate() {
         "sleep 2\n"
         "unzip -o \"%2/temp_download_update.zip\" -d \"%2/\"\n"
         "sleep 2\n"
-        "tar -xzf \"%2/shadps4-macos-qt.tar.gz\" -C \"%3\"\n"
+        "tar -xzf \"%2/shadps4-macos-qt.tar.gz\" -C \"%4\"\n"
         "sleep 2\n"
-        "rm \"%3/update.sh\"\n"
-        "chmod +x \"%3/BB_Launcher.app/Contents/MacOS/BB_Launcher\"\n"
+        "rm \"%4/update.sh\"\n"
+        "chmod +x \"%4/shadps4.app/Contents/MacOS/shadps4\"\n"
         "open \"%3/BB_Launcher.app\"\n"
         "rm -r \"%2\"\n");
 
@@ -710,7 +714,6 @@ void ShadSettings::InstallUpdate() {
         scriptFile.setPermissions(QFileDevice::ExeOwner | QFileDevice::ReadOwner |
                                   QFileDevice::WriteOwner);
 #endif
-
         QProcess::startDetached(processCommand, arguments);
         exit(EXIT_SUCCESS);
 
