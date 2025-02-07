@@ -88,6 +88,7 @@ set(PROJECT_SOURCES
     ${CMAKE_CURRENT_BINARY_DIR}/settings/updater/BuildInfo.cpp
     settings/updater/CheckUpdate.cpp
     settings/updater/CheckUpdate.h
+    dist/BBIcon.icns
     ${RESOURCE_FILES}
 )
 
@@ -162,7 +163,7 @@ set_target_properties(BB_Launcher PROPERTIES
 #   WIN32_EXECUTABLE TRUE
 )
 
-set_source_files_properties(images/BBIcon.icns PROPERTIES
+set_source_files_properties(dist/BBIcon.icns PROPERTIES
         MACOSX_PACKAGE_LOCATION Resources)
 
 if (WIN32)
