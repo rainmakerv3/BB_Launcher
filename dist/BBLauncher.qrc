@@ -3,6 +3,7 @@
 		<file>BBicon2.ico</file>
                 <file>controller_icon.png</file>
 		<file>keyboard.png</file>
+		<file>mod_folder.png</file>
 		<file>ps4_controller.png</file>
 	</qresource>
 </RCC>

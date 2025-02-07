@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <thread>
+#include <QDesktopServices>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QProcess>
@@ -131,6 +132,17 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     connect(ui->ControllerButton, &QPushButton::clicked, this, [this]() {
         ControlSettings* RemapWindow = new ControlSettings(this);
         RemapWindow->exec();
+    });
+
+    connect(ui->ModFolderButton, &QPushButton::clicked, this, [this]() {
+        if (!std::filesystem::exists(Common::ModPath)) {
+            std::filesystem::create_directories(Common::ModPath);
+        }
+
+        QString ModFolder;
+        Common::PathToQString(ModFolder, Common::ModPath);
+        QDir(ModFolder).mkpath(ModFolder);
+        QDesktopServices::openUrl(QUrl::fromLocalFile(ModFolder));
     });
 
     if (Config::AutoUpdateEnabled) {
@@ -351,8 +363,8 @@ void BBLauncher::UpdateModList() {
                  [&](std::string s) { ActiveModStringList.append(QString::fromStdString(s)); });
     } else {
         const QString NoModMsg =
-            "No mods active.\n\nPlace mods in the (BB Launcher exe folder)/BBLauncher/Mods and "
-            "activate them using the Mod Manager button";
+            "No mods active.\n\nPlace mods in the Mods Folder (click Mods Button) and "
+            "activate them using the Mod Manager";
         ActiveModStringList.append(NoModMsg);
     }
 
@@ -423,10 +435,13 @@ void BBLauncher::UpdateIcons() {
     ui->ControllerButton->setIconSize(QSize(48, 48));
     ui->KBMButton->setIcon(QIcon(":keyboard.png"));
     ui->KBMButton->setIconSize(QSize(48, 48));
+    ui->ModFolderButton->setIcon(QIcon(":mod_folder.png"));
+    ui->ModFolderButton->setIconSize(QSize(48, 48));
 
     if (Config::theme == "Dark") {
         ui->ControllerButton->setIcon(RecolorIcon(ui->ControllerButton->icon(), false));
         ui->KBMButton->setIcon(RecolorIcon(ui->KBMButton->icon(), false));
+        ui->ModFolderButton->setIcon(RecolorIcon(ui->ModFolderButton->icon(), false));
     }
 }
 
