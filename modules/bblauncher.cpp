@@ -430,10 +430,10 @@ void BBLauncher::UpdateIcons() {
         ui->ControllerButton->setIcon(RecolorIcon(ui->ControllerButton->icon(), true));
     }
 
-    if (Config::theme == "Dark") {
-        ui->KBMButton->setIcon(RecolorIcon(ui->KBMButton->icon(), false));
-    } else {
+    if (Config::theme == "Light") {
         ui->KBMButton->setIcon(RecolorIcon(ui->KBMButton->icon(), true));
+    } else {
+        ui->KBMButton->setIcon(RecolorIcon(ui->KBMButton->icon(), false));
     }
 }
 
