@@ -137,7 +137,7 @@ void LoadLauncherSettings() {
     using namespace Config;
 
     if (!std::filesystem::exists(Common::BBLFilesPath)) {
-        std::filesystem::create_directory(Common::BBLFilesPath);
+        std::filesystem::create_directories(Common::BBLFilesPath);
         CreateSettingsFile();
     } else if (!std::filesystem::exists(SettingsFile)) {
         CreateSettingsFile();

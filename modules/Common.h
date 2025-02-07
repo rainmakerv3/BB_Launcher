@@ -19,7 +19,13 @@ extern std::filesystem::path SaveDir;
 extern std::filesystem::path shadPs4Executable;
 extern char VERSION[];
 
+#if defined(__APPLE__)
+const std::filesystem::path BBLFilesPath =
+    std::filesystem::path(getenv("HOME")) / "Library" / "Application Support" / "BBLauncher";
+#else
 const std::filesystem::path BBLFilesPath = std::filesystem::current_path() / "BBLauncher";
+#endif
+
 const std::filesystem::path ModPath = BBLFilesPath / "Mods";
 
 } // namespace Common
