@@ -10,8 +10,6 @@
 #include <sys/param.h>
 #endif
 
-using u8 = std::uint8_t;
-
 #ifndef MAX_PATH
 #ifdef _WIN32
 // This is the maximum number of UTF-16 code units permissible in Windows file paths
@@ -26,9 +24,10 @@ namespace Common {
 
 std::string game_serial;
 std::filesystem::path installPath;
+std::filesystem::path installUpdatePath;
 std::filesystem::path SaveDir;
 std::filesystem::path shadPs4Executable;
-char VERSION[] = "Release5.1";
+char VERSION[] = "Release6.0";
 
 std::filesystem::path GetShadUserDir() {
     auto user_dir = std::filesystem::current_path() / "user";

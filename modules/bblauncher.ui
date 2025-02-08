@@ -165,7 +165,7 @@
        <item>
         <widget class="QPushButton" name="TrophyButton">
          <property name="text">
-          <string>Trophy Unlocker</string>
+          <string>Trophy Viewer</string>
          </property>
         </widget>
        </item>

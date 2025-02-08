@@ -1,0 +1,12 @@
+name: Run commitlint on PR
+
+on:
+  pull_request:
+
+jobs:
+  run-commitlint-on-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: wagoid/commitlint-github-action@v5

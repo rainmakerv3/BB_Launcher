@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(BB_Launcher VERSION 0.1 LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+if(APPLE)
+    enable_language(OBJC)
+    set(CMAKE_OSX_DEPLOYMENT_TARGET 14)
+endif()
+
+project(BB_Launcher LANGUAGES CXX)
 
 option(FORCE_UAC "Requires running as Admin on Windows" ON)
 
@@ -31,26 +39,55 @@ if (APPLE AND ARCHITECTURE STREQUAL "x86_64" AND CMAKE_SYSTEM_PROCESSOR STREQUAL
     set(ENV{PKG_CONFIG_SYSROOT_DIR} ${CMAKE_SYSROOT})
 endif()
 
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
+# Setup a custom clang-format target (if clang-format can be found) that will run
+# against all the src files. This should be used before making a pull request.
 
-set(CMAKE_CXX_STANDARD 23)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-if(APPLE)
-    enable_language(OBJC)
-    set(CMAKE_OSX_DEPLOYMENT_TARGET 14)
+if (CLANG_FORMAT)
+    set(SRCS ${PROJECT_SOURCE_DIR)
+    set(CCOMMENT "Running clang format against all the .h and .cpp files in src/")
+    if (WIN32)
+        add_custom_target(clang-format
+            COMMAND powershell.exe -Command "Get-ChildItem '${SRCS}/*' -Include *.cpp,*.h,*.mm -Recurse | Foreach {&'${CLANG_FORMAT}' -i $_.fullname}"
+            COMMENT ${CCOMMENT})
+    else()
+        add_custom_target(clang-format
+            COMMAND find ${SRCS} -iname *.h -o -iname *.cpp -o -iname *.mm | xargs ${CLANG_FORMAT} -i
+            COMMENT ${CCOMMENT})
+    endif()
+    unset(SRCS)
+    unset(CCOMMENT)
 endif()
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+# generate git revision information
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/settings/updater/cmake-modules/")
+include(GetGitRevisionDescription)
+get_git_head_revision(GIT_REF_SPEC GIT_REV)
+git_describe(GIT_DESC --always --long --dirty)
+git_branch_name(GIT_BRANCH)
+string(TIMESTAMP BUILD_DATE "%Y-%m-%d %H:%M:%S")
+
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/settings/updater/BuildInfo.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/settings/updater/BuildInfo.cpp" @ONLY)
+
+if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR NOT MSVC)
+    find_package(cryptopp 8.9.0 MODULE)
+endif()
+
+add_subdirectory(externals)
 
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
 
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+qt_add_resources(RESOURCE_FILES dist/BBLauncher.qrc)
+
 if (UNIX AND NOT APPLE)
     find_package(OpenSSL REQUIRED)
 endif()
-
-qt_add_resources(RESOURCE_FILES dist/BBLauncher.qrc)
 
 set(PROJECT_SOURCES
     main.cpp
@@ -68,6 +105,19 @@ set(PROJECT_SOURCES
     modules/SaveManager.cpp
     modules/SaveManager.ui
     modules/scope_exit.h
+    modules/TrophyManager.cpp
+    modules/TrophyManager.h
+    modules/TrophyDeps/concepts.h
+    modules/TrophyDeps/crypto.cpp
+    modules/TrophyDeps/crypto.h
+    modules/TrophyDeps/enum.h
+    modules/TrophyDeps/io_file.cpp
+    modules/TrophyDeps/io_file.h
+    modules/TrophyDeps/keys.h
+    modules/TrophyDeps/nt_api.cpp
+    modules/TrophyDeps/nt_api.h
+    modules/TrophyDeps/trp.cpp
+    modules/TrophyDeps/trp.h
     settings/formatting.h
     settings/toml.hpp
     settings/control_settings.cpp
@@ -93,35 +143,6 @@ set(PROJECT_SOURCES
     ${RESOURCE_FILES}
 )
 
-# Setup a custom clang-format target (if clang-format can be found) that will run
-# against all the src files. This should be used before making a pull request.
-
-if (CLANG_FORMAT)
-    set(SRCS ${PROJECT_SOURCE_DIR)
-    set(CCOMMENT "Running clang format against all the .h and .cpp files in src/")
-    if (WIN32)
-        add_custom_target(clang-format
-            COMMAND powershell.exe -Command "Get-ChildItem '${SRCS}/*' -Include *.cpp,*.h,*.mm -Recurse | Foreach {&'${CLANG_FORMAT}' -i $_.fullname}"
-            COMMENT ${CCOMMENT})
-    else()
-        add_custom_target(clang-format
-            COMMAND find ${SRCS} -iname *.h -o -iname *.cpp -o -iname *.mm | xargs ${CLANG_FORMAT} -i
-            COMMENT ${CCOMMENT})
-    endif()
-    unset(SRCS)
-    unset(CCOMMENT)
-endif()
-
-# generate git revision information
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/settings/updater/cmake-modules/")
-include(GetGitRevisionDescription)
-get_git_head_revision(GIT_REF_SPEC GIT_REV)
-git_describe(GIT_DESC --always --long --dirty)
-git_branch_name(GIT_BRANCH)
-string(TIMESTAMP BUILD_DATE "%Y-%m-%d %H:%M:%S")
-
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/settings/updater/BuildInfo.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/settings/updater/BuildInfo.cpp" @ONLY)
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(BB_Launcher
         ${PROJECT_SOURCES}
@@ -138,8 +159,16 @@ else()
     endif()
 endif()
 
-if (UNIX AND NOT APPLE)
-    target_link_libraries(BB_Launcher PRIVATE ${OPENSSL_LIBRARIES})
+if (WIN32)
+    target_sources(BB_Launcher PRIVATE dist/bblauncher.rc)
+endif()
+
+target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND MSVC)
+    target_link_libraries(BB_Launcher PRIVATE cryptoppwin)
+else()
+    target_link_libraries(BB_Launcher PRIVATE cryptopp::cryptopp)
 endif()
 
 target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network)
@@ -157,8 +186,7 @@ endif()
 
 set_target_properties(BB_Launcher PROPERTIES
     ${BUNDLE_ID_OPTION}
-    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
-    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "5.1"
     MACOSX_BUNDLE TRUE
     MACOSX_BUNDLE_ICON_FILE "BBIcon.icns"
 #   WIN32_EXECUTABLE TRUE
@@ -167,16 +195,14 @@ set_target_properties(BB_Launcher PROPERTIES
 set_source_files_properties(dist/BBIcon.icns PROPERTIES
         MACOSX_PACKAGE_LOCATION Resources)
 
-if (WIN32)
-    target_sources(BB_Launcher PRIVATE dist/bblauncher.rc)
-endif()
-
 if (WIN32 AND FORCE_UAC) 
     SET_TARGET_PROPERTIES(BB_Launcher PROPERTIES LINK_FLAGS "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\" ")
     add_definitions(-DFORCE_UAC)
 endif()
 
-target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+if (UNIX AND NOT APPLE)
+    target_link_libraries(BB_Launcher PRIVATE ${OPENSSL_LIBRARIES})
+endif()
 
 install(TARGETS BB_Launcher BUNDLE DESTINATION .)
 

@@ -25,6 +25,7 @@ extern int BackupInterval;
 extern int BackupNumber;
 extern bool AutoUpdateEnabled;
 extern bool UnifiedInputConfig;
+extern std::string TrophyKey;
 
 } // namespace Config
 

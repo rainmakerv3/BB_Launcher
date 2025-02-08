@@ -16,6 +16,7 @@ int Config::BackupInterval = 10;
 int Config::BackupNumber = 2;
 bool Config::AutoUpdateEnabled = false;
 bool Config::UnifiedInputConfig = true;
+std::string Config::TrophyKey = "";
 
 const std::filesystem::path SettingsFile = Common::BBLFilesPath / "LauncherSettings.toml";
 
@@ -177,6 +178,13 @@ void LoadLauncherSettings() {
         Common::installPath = "";
     }
 
+    if (std::filesystem::exists(Common::installPath.parent_path() /
+                                (Common::game_serial + "-UPDATE"))) {
+
+        Common::installUpdatePath =
+            Common::installPath.parent_path() / (Common::game_serial + "-UPDATE");
+    }
+
     Config::SetTheme(theme);
 
     std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
@@ -193,6 +201,7 @@ void LoadLauncherSettings() {
     }
 
     UnifiedInputConfig = toml::find_or<bool>(shadData, "Input,", "useUnifiedInputConfig", true);
+    TrophyKey = toml::find_or<std::string>(shadData, "Keys", "TrophyKey", "");
 
     if (shadData.contains("GUI")) {
         const toml::value& GUI = shadData.at("GUI");

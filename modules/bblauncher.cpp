@@ -13,6 +13,7 @@
 #include "modules/Common.h"
 #include "modules/ModManager.h"
 #include "modules/SaveManager.h"
+#include "modules/TrophyManager.h"
 #include "modules/ui_bblauncher.h"
 #include "settings/LauncherSettings.h"
 #include "settings/ShadCheatsPatches.h"
@@ -71,7 +72,20 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     connect(ui->LaunchButton, &QPushButton::pressed, this,
             [this]() { BBLauncher::LaunchButton_isPressed(noGUIset); });
 
-    connect(ui->TrophyButton, &QPushButton::pressed, this, &BBLauncher::WIPButton_isPressed);
+    connect(ui->TrophyButton, &QPushButton::pressed, this, [this]() {
+        QString trophyPath, gameTrpPath;
+        Common::PathToQString(trophyPath, Common::game_serial);
+        Common::PathToQString(gameTrpPath, Common::installPath);
+
+        if (std::filesystem::exists(Common::installUpdatePath)) {
+            Common::PathToQString(gameTrpPath, Common::installUpdatePath);
+        }
+
+        TrophyViewer* TrophyWindow = new TrophyViewer(trophyPath, gameTrpPath);
+        TrophyWindow->show();
+        connect(this->parent(), &QWidget::destroyed, TrophyWindow,
+                [TrophyWindow]() { TrophyWindow->deleteLater(); });
+    });
 
     connect(ui->SaveManagerButton, &QPushButton::pressed, this, [this]() {
         if (!CheckBBInstall())
