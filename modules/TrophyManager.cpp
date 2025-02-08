@@ -32,9 +32,9 @@ void TrophyViewer::PopulateTrophyWidget(QString title) {
     if (!dir.exists()) {
         std::filesystem::path path = Common::PathFromQString(gameTrpPath_);
         if (!trp.Extract(path, title.toStdString()))
-            QMessageBox::warning(
-                this, "Error",
-                "Error extracting trophy file, it may need a Trophy Key (check shadPS4 settings)");
+            QMessageBox::warning(this, "Error",
+                                 "Error extracting trophy files, a Trophy Key may be required "
+                                 "(check shadPS4 settings)");
         this->close();
         return;
     }
@@ -43,8 +43,8 @@ void TrophyViewer::PopulateTrophyWidget(QString title) {
         return;
 
     for (const QFileInfo& dirInfo : dirList) {
-        QString tabName = dirInfo.fileName();
-        QString trpDir = trophyDirQt + "/" + tabName;
+        QString fileName = dirInfo.fileName();
+        QString trpDir = trophyDirQt + "/" + fileName;
 
         QString iconsPath = trpDir + "/Icons";
         QDir iconsDir(iconsPath);
@@ -134,14 +134,12 @@ void TrophyViewer::PopulateTrophyWidget(QString title) {
             width += tableWidget->horizontalHeader()->sectionSize(i);
         }
         tableWidget->resize(width, 720);
-        tabWidget->addTab(tableWidget,
-                          tabName.insert(6, " ").replace(0, 1, tabName.at(0).toUpper()));
+        tabWidget->addTab(tableWidget, "Trophies");
         this->resize(width + 20, 720);
     }
     QVBoxLayout* layout = new QVBoxLayout();
     layout->addWidget(tabWidget);
     this->setLayout(layout);
-    // this->setCentralWidget(tabWidget);
 }
 
 void TrophyViewer::SetTableItem(QTableWidget* parent, int row, int column, QString str) {
