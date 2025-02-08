@@ -1,12 +1,14 @@
 // SPDX-FileCopyrightText: Copyright 2024 shadPS4 Emulator Project
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+#include <QMessageBox>
 #include "Common.h"
 #include "TrophyManager.h"
 
-TrophyViewer::TrophyViewer(QString trophyPath, QString gameTrpPath) : QMainWindow() {
+TrophyViewer::TrophyViewer(QString trophyPath, QString gameTrpPath) : QDialog() {
     this->setWindowTitle(tr("Trophy Viewer"));
     this->setAttribute(Qt::WA_DeleteOnClose);
+    this->setModal(true);
     tabWidget = new QTabWidget(this);
     gameTrpPath_ = gameTrpPath;
     headers << "Unlocked"
@@ -30,7 +32,11 @@ void TrophyViewer::PopulateTrophyWidget(QString title) {
     if (!dir.exists()) {
         std::filesystem::path path = Common::PathFromQString(gameTrpPath_);
         if (!trp.Extract(path, title.toStdString()))
-            return;
+            QMessageBox::warning(
+                this, "Error",
+                "Error extracting trophy file, it may need a Trophy Key (check shadPS4 settings)");
+        this->close();
+        return;
     }
     QFileInfoList dirList = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
     if (dirList.isEmpty())
@@ -94,6 +100,7 @@ void TrophyViewer::PopulateTrophyWidget(QString title) {
                 trophyDetails.append(reader.readElementText());
             }
         }
+
         QTableWidget* tableWidget = new QTableWidget(this);
         tableWidget->setShowGrid(false);
         tableWidget->setColumnCount(8);
@@ -131,7 +138,10 @@ void TrophyViewer::PopulateTrophyWidget(QString title) {
                           tabName.insert(6, " ").replace(0, 1, tabName.at(0).toUpper()));
         this->resize(width + 20, 720);
     }
-    this->setCentralWidget(tabWidget);
+    QVBoxLayout* layout = new QVBoxLayout();
+    layout->addWidget(tabWidget);
+    this->setLayout(layout);
+    // this->setCentralWidget(tabWidget);
 }
 
 void TrophyViewer::SetTableItem(QTableWidget* parent, int row, int column, QString str) {

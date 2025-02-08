@@ -18,7 +18,7 @@
 
 #include "modules/TrophyDeps/trp.h"
 
-class TrophyViewer : public QMainWindow {
+class TrophyViewer : public QDialog {
     Q_OBJECT
 public:
     explicit TrophyViewer(QString trophyPath, QString gameTrpPath);
