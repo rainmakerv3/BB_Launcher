@@ -22,6 +22,9 @@
      <height>751</height>
     </rect>
    </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
    <property name="currentIndex">
     <number>0</number>
    </property>
@@ -68,9 +71,9 @@
     <widget class="QWidget" name="horizontalLayoutWidget_14">
      <property name="geometry">
       <rect>
-       <x>40</x>
+       <x>50</x>
        <y>470</y>
-       <width>991</width>
+       <width>951</width>
        <height>115</height>
       </rect>
      </property>
@@ -232,8 +235,8 @@
     <widget class="QLabel" name="TrophyIcon">
      <property name="geometry">
       <rect>
-       <x>70</x>
-       <y>120</y>
+       <x>50</x>
+       <y>110</y>
        <width>241</width>
        <height>231</height>
       </rect>
@@ -256,7 +259,7 @@
      </property>
      <property name="font">
       <font>
-       <pointsize>16</pointsize>
+       <pointsize>18</pointsize>
        <bold>true</bold>
       </font>
      </property>
@@ -273,20 +276,26 @@
     <widget class="QLabel" name="TrophyManagerText">
      <property name="geometry">
       <rect>
-       <x>240</x>
-       <y>30</y>
-       <width>521</width>
+       <x>210</x>
+       <y>20</y>
+       <width>661</width>
        <height>61</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <pointsize>16</pointsize>
+       <pointsize>27</pointsize>
        <bold>true</bold>
       </font>
      </property>
+     <property name="frameShape">
+      <enum>QFrame::Shape::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Shadow::Raised</enum>
+     </property>
      <property name="text">
-      <string>BBLauncher Trophy Manager</string>
+      <string>BBLauncher Trophy Unlocker</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -295,8 +304,8 @@
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>70</x>
-       <y>370</y>
+       <x>50</x>
+       <y>360</y>
        <width>211</width>
        <height>33</height>
       </rect>
@@ -348,8 +357,8 @@
     <widget class="QWidget" name="verticalLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>680</x>
-       <y>160</y>
+       <x>690</x>
+       <y>110</y>
        <width>311</width>
        <height>183</height>
       </rect>
