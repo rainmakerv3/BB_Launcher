@@ -144,7 +144,7 @@ void TrophyViewer::TrophyIDChanged() {
     QString trophyDirQt;
     Common::PathToQString(trophyDirQt, trophyDir);
 
-    QString fileName = "TROP" + indexstring + ".png";
+    QString fileName = "TROP" + indexstring + ".PNG";
     QString iconsPath = trophyDirQt + "/" + fileName;
 
     ui->TrophyIcon->setPixmap(iconsPath);
