@@ -70,6 +70,8 @@ string(TIMESTAMP BUILD_DATE "%Y-%m-%d %H:%M:%S")
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/settings/updater/BuildInfo.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/settings/updater/BuildInfo.cpp" @ONLY)
 
+find_package(pugixml 1.14 CONFIG)
+
 if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR NOT MSVC)
     find_package(cryptopp 8.9.0 MODULE)
 endif()
@@ -107,6 +109,7 @@ set(PROJECT_SOURCES
     modules/scope_exit.h
     modules/TrophyManager.cpp
     modules/TrophyManager.h
+    modules/TrophyManager.ui
     modules/TrophyDeps/concepts.h
     modules/TrophyDeps/crypto.cpp
     modules/TrophyDeps/crypto.h
@@ -136,16 +139,17 @@ set(PROJECT_SOURCES
     settings/ShadSettings.cpp
     settings/ShadSettings.ui
     settings/updater/BuildInfo.h
-    ${CMAKE_CURRENT_BINARY_DIR}/settings/updater/BuildInfo.cpp
     settings/updater/CheckUpdate.cpp
     settings/updater/CheckUpdate.h
     dist/BBIcon.icns
+    ${CMAKE_CURRENT_BINARY_DIR}/settings/updater/BuildInfo.cpp
     ${RESOURCE_FILES}
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(BB_Launcher
         ${PROJECT_SOURCES}
+        modules/TrophyManager.ui
     )
 else()
     if(ANDROID)
@@ -175,6 +179,7 @@ target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network)
 
 add_subdirectory(settings/fmt)
 target_link_libraries(BB_Launcher PRIVATE fmt::fmt)
+target_link_libraries(BB_Launcher PRIVATE pugixml::pugixml)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an

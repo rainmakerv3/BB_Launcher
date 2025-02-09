@@ -8,6 +8,7 @@ set_directory_properties(PROPERTIES
     SYSTEM ON
 )
 
+# CryptoPP
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND MSVC)
     # If it is clang and MSVC we will add a static lib
     # CryptoPP
@@ -24,4 +25,9 @@ else()
         # remove externals/cryptopp from include directories because it contains a conflicting zlib.h file
         set_target_properties(cryptopp PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_BINARY_DIR}/cryptopp")
     endif()
+endif()
+
+# pugixml
+if (NOT TARGET pugixml::pugixml)
+    add_subdirectory(pugixml)
 endif()
