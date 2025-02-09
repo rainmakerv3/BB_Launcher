@@ -28,6 +28,7 @@ TrophyViewer::TrophyViewer(QString trophyPath, QString gameTrpPath, QWidget* par
     RefreshValues(trophyPath);
     PopulateTrophyWidget(trophyPath);
 
+    ui->UnlockButton->setFocus();
     ui->TrophyIDBox->addItems(trpId);
     ui->TrophyIDBox->setCurrentIndex(0);
     TrophyIDChanged();
