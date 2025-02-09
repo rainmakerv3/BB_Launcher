@@ -148,7 +148,7 @@ void TrophyViewer::TrophyIDChanged() {
     QString iconsPath = trophyDirQt + "/" + fileName;
 
     ui->TrophyIcon->setPixmap(iconsPath);
-    ui->TrophyNameLabel->setText(trophyNames[index]);
+    ui->TrophyNameLabel->setText("Trophy Name:\n" + trophyNames[index]);
     ui->LockStatusLabel->setText(trpUnlocked[index]);
 }
 
