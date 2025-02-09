@@ -68,10 +68,10 @@
     <widget class="QWidget" name="horizontalLayoutWidget_14">
      <property name="geometry">
       <rect>
-       <x>190</x>
+       <x>40</x>
        <y>470</y>
-       <width>691</width>
-       <height>71</height>
+       <width>991</width>
+       <height>115</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout_15">
@@ -87,12 +87,12 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>10</pointsize>
+            <pointsize>16</pointsize>
             <bold>true</bold>
            </font>
           </property>
           <property name="text">
-           <string>Unlock Rate:    </string>
+           <string>Unlock Rate:</string>
           </property>
          </widget>
         </item>
@@ -106,7 +106,7 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>24</pointsize>
+            <pointsize>40</pointsize>
             <bold>true</bold>
            </font>
           </property>
@@ -142,12 +142,12 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>10</pointsize>
+            <pointsize>16</pointsize>
             <bold>true</bold>
            </font>
           </property>
           <property name="text">
-           <string>Unlocked:    </string>
+           <string>Unlocked:</string>
           </property>
          </widget>
         </item>
@@ -161,7 +161,7 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>24</pointsize>
+            <pointsize>40</pointsize>
             <bold>true</bold>
            </font>
           </property>
@@ -197,12 +197,12 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>10</pointsize>
+            <pointsize>16</pointsize>
             <bold>true</bold>
            </font>
           </property>
           <property name="text">
-           <string>Locked:    </string>
+           <string>Locked:</string>
           </property>
          </widget>
         </item>
@@ -216,7 +216,7 @@
           </property>
           <property name="font">
            <font>
-            <pointsize>24</pointsize>
+            <pointsize>50</pointsize>
             <bold>true</bold>
            </font>
           </property>
