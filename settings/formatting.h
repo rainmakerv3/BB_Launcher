@@ -1,9 +1,9 @@
 // SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "toml.hpp"
 #include <fmt/core.h>
 #include <fmt/xchar.h>
+#include <toml.hpp>
 
 namespace toml {
 

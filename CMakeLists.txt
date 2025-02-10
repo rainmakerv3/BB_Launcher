@@ -70,6 +70,7 @@ string(TIMESTAMP BUILD_DATE "%Y-%m-%d %H:%M:%S")
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/settings/updater/BuildInfo.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/settings/updater/BuildInfo.cpp" @ONLY)
 
+find_package(toml11 4.2.0 CONFIG)
 find_package(pugixml 1.14 CONFIG)
 
 if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR NOT MSVC)
@@ -122,7 +123,6 @@ set(PROJECT_SOURCES
     modules/TrophyDeps/trp.cpp
     modules/TrophyDeps/trp.h
     settings/formatting.h
-    settings/toml.hpp
     settings/control_settings.cpp
     settings/control_settings.h
     settings/control_settings.ui
@@ -178,7 +178,7 @@ endif()
 target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network)
 
 add_subdirectory(settings/fmt)
-target_link_libraries(BB_Launcher PRIVATE fmt::fmt)
+target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11)
 target_link_libraries(BB_Launcher PRIVATE pugixml::pugixml)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

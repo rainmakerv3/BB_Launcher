@@ -31,3 +31,8 @@ endif()
 if (NOT TARGET pugixml::pugixml)
     add_subdirectory(pugixml)
 endif()
+
+# Toml11
+if (NOT TARGET toml11::toml11)
+    add_subdirectory(toml11)
+endif()
