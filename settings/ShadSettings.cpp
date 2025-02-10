@@ -13,6 +13,7 @@
 #include <QProcess>
 #include <QStandardPaths>
 
+#include "LauncherSettings.h"
 #include "ShadSettings.h"
 #include "formatting.h"
 #include "modules/Common.h"
@@ -324,6 +325,8 @@ void ShadSettings::SaveSettings() {
     data["Keys"]["TrophyKey"] = ui->trophyKeyLineEdit->text().toStdString();
     data["Settings"]["consoleLanguage"] =
         languageIndexes[ui->consoleLanguageComboBox->currentIndex()];
+
+    Config::TrophyKey = ui->trophyKeyLineEdit->text().toStdString();
 
     std::ofstream file(Common::GetShadUserDir() / "config.toml", std::ios::binary);
     file << data;

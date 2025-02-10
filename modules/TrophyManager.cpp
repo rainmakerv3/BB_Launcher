@@ -25,12 +25,14 @@ TrophyViewer::TrophyViewer(QString trophyPath, QString gameTrpPath, QWidget* par
             << "Type"
             << "PID";
 
-    RefreshValues(trophyPath);
+    if (!RefreshValues(trophyPath))
+        return;
     PopulateTrophyWidget(trophyPath);
 
     ui->UnlockButton->setFocus();
     ui->TrophyIDBox->addItems(trpId);
     ui->TrophyIDBox->setCurrentIndex(0);
+
     TrophyIDChanged();
     UpdateStats();
 
@@ -156,6 +158,7 @@ void TrophyViewer::TrophyIDChanged() {
 void TrophyViewer::UpdateStats() {
     int UnlockedCount = 0;
     int LockedCount = 0;
+
     for (const auto& i : trpUnlocked) {
         if (i == "locked")
             LockedCount = LockedCount + 1;
@@ -342,7 +345,7 @@ void TrophyViewer::LockAllTrophies() {
     QMessageBox::information(this, "Trophies Reset", "All trophies locked");
 }
 
-void TrophyViewer::RefreshValues(QString title) {
+bool TrophyViewer::RefreshValues(QString title) {
     trpId.clear();
     trpHidden.clear();
     trpUnlocked.clear();
@@ -358,19 +361,19 @@ void TrophyViewer::RefreshValues(QString title) {
     Common::PathToQString(trophyDirQt, trophyDir);
 
     QDir dir(trophyDirQt);
-    if (!dir.exists()) {
+    QFileInfoList dirList = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+    if (!dir.exists() || dirList.isEmpty()) {
         std::filesystem::path path = Common::PathFromQString(gameTrpPath_);
-        if (!trp.Extract(path, title.toStdString()))
+        if (!trp.Extract(path, title.toStdString())) {
             QMessageBox::warning(this, "Error",
                                  "Error extracting trophy files, a Trophy Key may be required "
                                  "(check shadPS4 settings)");
-        this->close();
-        return;
+            QWidget::close();
+            return false;
+        }
     }
-    QFileInfoList dirList = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
-    if (dirList.isEmpty())
-        return;
 
+    dirList = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
     for (const QFileInfo& dirInfo : dirList) {
         QString fileName = dirInfo.fileName();
         QString trpDir = trophyDirQt + "/" + fileName;
@@ -389,7 +392,8 @@ void TrophyViewer::RefreshValues(QString title) {
         QString xmlPath = trpDir + "/Xml/TROP.XML";
         QFile file(xmlPath);
         if (!file.open(QFile::ReadOnly | QFile::Text)) {
-            return;
+            QMessageBox::warning(this, "Error", "Error opening file");
+            return false;
         }
 
         QXmlStreamReader reader(&file);
@@ -420,6 +424,7 @@ void TrophyViewer::RefreshValues(QString title) {
             }
         }
     }
+    return true;
 }
 
 TrophyViewer::~TrophyViewer() {

@@ -40,7 +40,7 @@ private:
     void PopulateTrophyWidget(QString title);
     void SetTableItem(QTableWidget* parent, int row, int column, QString str);
     void UpdateStats();
-    void RefreshValues(QString title);
+    bool RefreshValues(QString title);
 
     QTableWidget* tableWidget;
     QTabWidget* tabWidget = nullptr;
