@@ -79,19 +79,24 @@ void ModManager::ActivateButton_isPressed() {
         ModSourcePath = ModFolderPath / "dvdroot_ps4";
     }
 
+    bool HasBBFolders = false;
     for (const auto& entry : std::filesystem::directory_iterator(ModSourcePath)) {
         if (entry.is_directory()) {
             auto relative_path = std::filesystem::relative(entry, ModSourcePath);
             std::string relative_path_string = Common::PathToU8(relative_path);
-            if (std::find(BBFolders.begin(), BBFolders.end(), relative_path_string) ==
+            if (std::find(BBFolders.begin(), BBFolders.end(), relative_path_string) !=
                 BBFolders.end()) {
-                QMessageBox::warning(this, "Invalid Mod",
-                                     "Folders inside mod folder must include either dvdroot_ps4"
-                                     " or Blooborne dvdroot_ps4 subfolders (ex. sfx, parts, "
-                                     " map ");
-                return;
+                HasBBFolders = true;
+                break;
             }
         }
+    }
+
+    if (!HasBBFolders) {
+        QMessageBox::warning(this, "Invalid Mod",
+                             "Folders inside mod folder must include either dvdroot_ps4"
+                             " or Blooborne dvdroot_ps4 subfolders (ex. sfx, parts, map)");
+        return;
     }
 
     std::ifstream ModInfoFile(Common::ModPath / "ModifiedFiles.txt", std::ios::binary);
