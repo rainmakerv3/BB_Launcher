@@ -43,21 +43,18 @@ TrophyViewer::TrophyViewer(QString trophyPath, QString gameTrpPath, QWidget* par
 
     connect(ui->UnlockButton, &QPushButton::clicked, this, [this] {
         TrophyViewer::UnlockTrophy();
-        ui->LockStatusLabel->setText("unlocked");
         RefreshValues(trophyFolder);
         UpdateStats();
     });
 
     connect(ui->LockButton, &QPushButton::clicked, this, [this] {
         TrophyViewer::LockTrophy();
-        ui->LockStatusLabel->setText("locked");
         RefreshValues(trophyFolder);
         UpdateStats();
     });
 
     connect(ui->LockAllButton, &QPushButton::clicked, this, [this] {
         TrophyViewer::LockAllTrophies();
-        ui->LockStatusLabel->setText("locked");
         RefreshValues(trophyFolder);
         UpdateStats();
     });
@@ -239,6 +236,7 @@ void TrophyViewer::UnlockTrophy() {
     }
     doc.save_file((trophy_dir / "trophy00" / "Xml" / "TROP.XML").native().c_str());
     SetTableItem(tableWidget, ID, 0, "unlocked");
+    ui->LockStatusLabel->setText("unlocked");
     QMessageBox::information(this, "Trophy Unlocked", trophyNames[ID] + " unlocked");
 }
 
@@ -299,10 +297,18 @@ void TrophyViewer::LockTrophy() {
     }
     doc.save_file((trophy_dir / "trophy00" / "Xml" / "TROP.XML").native().c_str());
     SetTableItem(tableWidget, ID, 0, "locked");
+    ui->LockStatusLabel->setText("locked");
     QMessageBox::information(this, "Trophy Locked", trophyNames[ID] + " locked");
 }
 
 void TrophyViewer::LockAllTrophies() {
+    if (QMessageBox::No ==
+        QMessageBox::question(this, "Confirm reset",
+                              "This will reset all trophies to locked status.\n\nProceed?",
+                              QMessageBox::Yes | QMessageBox::No)) {
+        return;
+    }
+
     const auto trophy_dir =
         Common::GetShadUserDir() / "game_data" / Common::game_serial / "TrophyFiles";
     auto trophy_file = trophy_dir / "trophy00" / "Xml" / "TROP.XML";
@@ -343,7 +349,7 @@ void TrophyViewer::LockAllTrophies() {
     for (int i = 0; i < 40; i++) {
         SetTableItem(tableWidget, i, 0, "locked");
     }
-
+    ui->LockStatusLabel->setText("locked");
     QMessageBox::information(this, "Trophies Reset", "All trophies locked");
 }
 
