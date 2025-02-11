@@ -27,6 +27,11 @@ else()
     endif()
 endif()
 
+# fmtlib
+if (NOT TARGET fmt::fmt)
+    add_subdirectory(fmt)
+endif()
+
 # pugixml
 if (NOT TARGET pugixml::pugixml)
     add_subdirectory(pugixml)

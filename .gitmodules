@@ -10,6 +10,10 @@
 	path = externals/cryptoppwin
 	url = https://github.com/shadps4-emu/ext-cryptoppwin.git
 	shallow = true
+[submodule "externals/fmt"]
+	path = externals/fmt
+	url = https://github.com/shadps4-emu/ext-fmt.git
+	shallow = true
 [submodule "externals/pugixml"]
 	path = externals/pugixml
 	url = https://github.com/zeux/pugixml.git
