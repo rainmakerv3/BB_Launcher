@@ -27,7 +27,7 @@ std::filesystem::path installPath;
 std::filesystem::path installUpdatePath;
 std::filesystem::path SaveDir;
 std::filesystem::path shadPs4Executable;
-char VERSION[] = "Release6.2";
+char VERSION[] = "Release6.3";
 
 std::filesystem::path GetShadUserDir() {
     auto user_dir = std::filesystem::current_path() / "user";
