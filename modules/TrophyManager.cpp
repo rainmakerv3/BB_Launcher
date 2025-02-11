@@ -46,6 +46,7 @@ TrophyViewer::TrophyViewer(QString trophyPath, QString gameTrpPath, QWidget* par
         ui->LockStatusLabel->setText("unlocked");
         RefreshValues(trophyFolder);
         UpdateStats();
+        TrophyIDChanged();
     });
 
     connect(ui->LockButton, &QPushButton::clicked, this, [this] {
@@ -53,6 +54,7 @@ TrophyViewer::TrophyViewer(QString trophyPath, QString gameTrpPath, QWidget* par
         ui->LockStatusLabel->setText("locked");
         RefreshValues(trophyFolder);
         UpdateStats();
+        TrophyIDChanged();
     });
 
     connect(ui->LockAllButton, &QPushButton::clicked, this, [this] {
@@ -60,11 +62,14 @@ TrophyViewer::TrophyViewer(QString trophyPath, QString gameTrpPath, QWidget* par
         ui->LockStatusLabel->setText("locked");
         RefreshValues(trophyFolder);
         UpdateStats();
+        TrophyIDChanged();
     });
 }
 
 void TrophyViewer::PopulateTrophyWidget(QString title) {
     tableWidget = new QTableWidget(this);
+    QImage HiddenIcon = QImage(":HiddenIcon.png")
+                            .scaled(QSize(128, 128), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     tableWidget->setShowGrid(false);
     tableWidget->setColumnCount(8);
     tableWidget->setHorizontalHeaderLabels(headers);
@@ -77,14 +82,23 @@ void TrophyViewer::PopulateTrophyWidget(QString title) {
 
     for (int row = 0; auto& icon : icons) {
         QTableWidgetItem* item = new QTableWidgetItem();
-        item->setData(Qt::DecorationRole, icon);
+        if (trpUnlocked[row] == "locked" && trpHidden[row] == "yes") {
+            item->setData(Qt::DecorationRole, HiddenIcon);
+        } else {
+            item->setData(Qt::DecorationRole, icon);
+        }
         item->setFlags(item->flags() & ~Qt::ItemIsEditable);
         tableWidget->setItem(row, 1, item);
 
         if (!trophyNames.isEmpty() && !trophyDetails.isEmpty()) {
+            if (trpUnlocked[row] == "locked" && trpHidden[row] == "yes") {
+                SetTableItem(tableWidget, row, 2, "Hidden Trophy");
+                SetTableItem(tableWidget, row, 3, "This trophy is a secret trophy");
+            } else {
+                SetTableItem(tableWidget, row, 2, trophyNames[row]);
+                SetTableItem(tableWidget, row, 3, trophyDetails[row]);
+            }
             SetTableItem(tableWidget, row, 0, trpUnlocked[row]);
-            SetTableItem(tableWidget, row, 2, trophyNames[row]);
-            SetTableItem(tableWidget, row, 3, trophyDetails[row]);
             SetTableItem(tableWidget, row, 4, trpId[row]);
             SetTableItem(tableWidget, row, 5, trpHidden[row]);
             SetTableItem(tableWidget, row, 6, GetTrpType(trpType[row].at(0)));
@@ -152,8 +166,16 @@ void TrophyViewer::TrophyIDChanged() {
     QString fileName = "TROP" + indexstring + ".PNG";
     QString iconsPath = trophyDirQt + "/" + fileName;
 
-    ui->TrophyIcon->setPixmap(iconsPath);
-    ui->TrophyNameLabel->setText("Trophy Name:\n" + trophyNames[index]);
+    if (trpUnlocked[index] == "locked" && trpHidden[index] == "yes") {
+        ui->TrophyIcon->setPixmap(
+            QPixmap(":HiddenIcon.png")
+                .scaled(QSize(240, 240), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+        ui->TrophyNameLabel->setText("Trophy Name:\nHidden Trophy");
+    } else {
+        ui->TrophyIcon->setPixmap(iconsPath);
+        ui->TrophyNameLabel->setText("Trophy Name:\n" + trophyNames[index]);
+    }
+
     ui->LockStatusLabel->setText(trpUnlocked[index]);
 }
 
@@ -238,7 +260,17 @@ void TrophyViewer::UnlockTrophy() {
         }
     }
     doc.save_file((trophy_dir / "trophy00" / "Xml" / "TROP.XML").native().c_str());
+
     SetTableItem(tableWidget, ID, 0, "unlocked");
+    if (trpHidden[ID] == "yes") {
+        QTableWidgetItem* newicon = new QTableWidgetItem();
+        newicon->setData(Qt::DecorationRole, icons[ID]);
+        newicon->setFlags(newicon->flags() & ~Qt::ItemIsEditable);
+        tableWidget->setItem(ID, 1, newicon);
+        SetTableItem(tableWidget, ID, 2, trophyNames[ID]);
+        SetTableItem(tableWidget, ID, 3, trophyDetails[ID]);
+    }
+
     QMessageBox::information(this, "Trophy Unlocked", trophyNames[ID] + " unlocked");
 }
 
@@ -299,6 +331,17 @@ void TrophyViewer::LockTrophy() {
     }
     doc.save_file((trophy_dir / "trophy00" / "Xml" / "TROP.XML").native().c_str());
     SetTableItem(tableWidget, ID, 0, "locked");
+    if (trpHidden[ID] == "yes") {
+        QImage HiddenIcon =
+            QImage(":HiddenIcon.png")
+                .scaled(QSize(128, 128), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        QTableWidgetItem* newicon = new QTableWidgetItem();
+        newicon->setData(Qt::DecorationRole, HiddenIcon);
+        newicon->setFlags(newicon->flags() & ~Qt::ItemIsEditable);
+        tableWidget->setItem(ID, 1, newicon);
+        SetTableItem(tableWidget, ID, 2, "Hidden Trophy");
+        SetTableItem(tableWidget, ID, 3, "This trophy is a secret trophy");
+    }
     QMessageBox::information(this, "Trophy Locked", trophyNames[ID] + " locked");
 }
 
@@ -342,8 +385,18 @@ void TrophyViewer::LockAllTrophies() {
 
     for (int i = 0; i < 40; i++) {
         SetTableItem(tableWidget, i, 0, "locked");
+        if (trpHidden[i] == "yes") {
+            QImage HiddenIcon =
+                QImage(":HiddenIcon.png")
+                    .scaled(QSize(128, 128), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            QTableWidgetItem* newicon = new QTableWidgetItem();
+            newicon->setData(Qt::DecorationRole, HiddenIcon);
+            newicon->setFlags(newicon->flags() & ~Qt::ItemIsEditable);
+            tableWidget->setItem(i, 1, newicon);
+            SetTableItem(tableWidget, i, 2, "Hidden Trophy");
+            SetTableItem(tableWidget, i, 3, "This trophy is a secret trophy");
+        }
     }
-
     QMessageBox::information(this, "Trophies Reset", "All trophies locked");
 }
 
