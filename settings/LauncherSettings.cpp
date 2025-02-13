@@ -201,7 +201,7 @@ void LoadLauncherSettings() {
             return;
         }
 
-        UnifiedInputConfig = toml::find_or<bool>(shadData, "Input,", "useUnifiedInputConfig", true);
+        UnifiedInputConfig = toml::find_or<bool>(shadData, "Input", "useUnifiedInputConfig", true);
         TrophyKey = toml::find_or<std::string>(shadData, "Keys", "TrophyKey", "");
 
         if (shadData.contains("GUI")) {

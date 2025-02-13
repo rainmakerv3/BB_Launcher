@@ -27,7 +27,10 @@ ControlSettings::ControlSettings(QWidget* parent) : QDialog(parent), ui(new Ui::
     });
 
     connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QWidget::close);
-    connect(ui->KBMButton, &QPushButton::clicked, this, &ControlSettings::KBMClicked);
+    connect(ui->KBMButton, &QPushButton::clicked, this, [this] {
+        KBMClicked();
+        ui->PerGameCheckBox->setChecked(!Config::UnifiedInputConfig);
+    });
     connect(ui->ProfileComboBox, &QComboBox::currentTextChanged, this,
             &ControlSettings::OnProfileChanged);
 
