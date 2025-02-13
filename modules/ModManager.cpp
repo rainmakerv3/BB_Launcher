@@ -22,6 +22,14 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
     ui->RecModsLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
     ui->RecModsLabel->setOpenExternalLinks(true);
 
+    ui->ModHelpLabel->setText("<a "
+                              "href=\"https://docs.google.com/document/d/"
+                              "19ofjr6k4qqm9l9MJFrbDHEoNVyGXlK_8o95rI3xEh2k\">Click here for help "
+                              "installing mods (especially BB Enhanced, Remaster, etc)</a>");
+    ui->ModHelpLabel->setTextFormat(Qt::RichText);
+    ui->ModHelpLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
+    ui->ModHelpLabel->setOpenExternalLinks(true);
+
     if (!std::filesystem::exists(Common::ModPath)) {
         std::filesystem::create_directories(Common::ModPath);
     }
