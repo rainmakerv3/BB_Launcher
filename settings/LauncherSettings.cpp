@@ -188,26 +188,28 @@ void LoadLauncherSettings() {
     Config::SetTheme(theme);
 
     std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
-    toml::value shadData;
-    try {
-        std::ifstream ifs;
-        ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-        ifs.open(shadConfigFile, std::ios_base::binary);
-        shadData =
-            toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
-    } catch (std::exception& ex) {
-        QMessageBox::critical(NULL, "Filesystem error", ex.what());
-        return;
-    }
+    if (std::filesystem::exists(shadConfigFile)) {
+        toml::value shadData;
+        try {
+            std::ifstream ifs;
+            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+            ifs.open(shadConfigFile, std::ios_base::binary);
+            shadData =
+                toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
+        } catch (std::exception& ex) {
+            QMessageBox::critical(NULL, "Filesystem error", ex.what());
+            return;
+        }
 
-    UnifiedInputConfig = toml::find_or<bool>(shadData, "Input,", "useUnifiedInputConfig", true);
-    TrophyKey = toml::find_or<std::string>(shadData, "Keys", "TrophyKey", "");
+        UnifiedInputConfig = toml::find_or<bool>(shadData, "Input,", "useUnifiedInputConfig", true);
+        TrophyKey = toml::find_or<std::string>(shadData, "Keys", "TrophyKey", "");
 
-    if (shadData.contains("GUI")) {
-        const toml::value& GUI = shadData.at("GUI");
-        Common::SaveDir = toml::find_fs_path_or(GUI, "saveDataPath", {});
-        if (Common::SaveDir.empty()) {
-            Common::SaveDir = Common::GetShadUserDir() / "savedata";
+        if (shadData.contains("GUI")) {
+            const toml::value& GUI = shadData.at("GUI");
+            Common::SaveDir = toml::find_fs_path_or(GUI, "saveDataPath", {});
+            if (Common::SaveDir.empty()) {
+                Common::SaveDir = Common::GetShadUserDir() / "savedata";
+            }
         }
     }
 }
