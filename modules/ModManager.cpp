@@ -73,6 +73,8 @@ void ModManager::ActivateButton_isPressed() {
     const std::filesystem::path ModBackupFolderPath = std::filesystem::u8path(ModBackupString);
     const std::string ModUniqueString = (ModUniquePath / ModName).string();
     const std::filesystem::path ModUniqueFolderPath = std::filesystem::u8path(ModUniqueString);
+    const std::string ModActiveString = (ModActivePath / ModName).string();
+    const std::filesystem::path ModActiveFolderPath = std::filesystem::u8path(ModActiveString);
 
     std::vector<std::string> FileList;
     std::vector<std::string> ActiveModList;
@@ -119,6 +121,8 @@ void ModManager::ActivateButton_isPressed() {
             auto relative_path = std::filesystem::relative(entry, ModSourcePath);
             std::string relative_path_string = Common::PathToU8(relative_path);
             for (int i = 0; i < FileList.size(); i++) {
+                if (hasconflict)
+                    break;
                 if (FileList[i].contains(relative_path_string)) {
                     hasconflict = true;
                     if (QMessageBox::Yes ==
@@ -134,8 +138,6 @@ void ModManager::ActivateButton_isPressed() {
                         return;
                     }
                 }
-                if (hasconflict)
-                    break;
             }
         }
     }
@@ -154,32 +156,60 @@ void ModManager::ActivateButton_isPressed() {
         ModInfoFileSave << i << "\n";
     ModInfoFileSave.close();
 
-    ui->FileTransferLabel->setText("Backing up original files");
+    ui->FileTransferLabel->setText("Backing up original files, symlinking to BB folder");
     ui->progressBar->setMaximum(getFileCount(ModSourcePath));
 
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModSourcePath)) {
         auto relative_path = std::filesystem::relative(entry, ModSourcePath);
         try {
             if (!entry.is_directory()) {
-                if (!std::filesystem::exists((ModBackupFolderPath / relative_path.parent_path()))) {
-                    std::filesystem::create_directories(
-                        (ModBackupFolderPath / relative_path.parent_path()));
-                }
-                if (!std::filesystem::exists((ModUniqueFolderPath / relative_path.parent_path()))) {
-                    std::filesystem::create_directories(
-                        (ModUniqueFolderPath / relative_path.parent_path()));
-                }
                 if (std::filesystem::exists(ModInstallPath / "dvdroot_ps4" / relative_path)) {
 
-                    std::filesystem::copy_file(ModInstallPath / "dvdroot_ps4" / relative_path,
-                                               (ModBackupFolderPath / relative_path),
-                                               std::filesystem::copy_options::overwrite_existing);
-                } else {
+                    if (!std::filesystem::exists(ModBackupFolderPath /
+                                                 relative_path.parent_path())) {
+                        std::filesystem::create_directories(ModBackupFolderPath /
+                                                            relative_path.parent_path());
+                    }
 
+                    if (std::filesystem::is_symlink(ModInstallPath / "dvdroot_ps4" /
+                                                    relative_path)) {
+                        std::filesystem::copy_file(
+                            std::filesystem::read_symlink(ModInstallPath / "dvdroot_ps4" /
+                                                          relative_path),
+                            ModBackupFolderPath / relative_path,
+                            std::filesystem::copy_options::overwrite_existing);
+                        std::filesystem::remove(ModInstallPath / "dvdroot_ps4" / relative_path);
+                    } else {
+                        std::filesystem::rename(ModInstallPath / "dvdroot_ps4" / relative_path,
+                                                ModBackupFolderPath / relative_path);
+                    }
+                } else {
+                    if (!std::filesystem::exists(ModUniqueFolderPath /
+                                                 relative_path.parent_path())) {
+                        std::filesystem::create_directories(ModUniqueFolderPath /
+                                                            relative_path.parent_path());
+                    }
                     std::filesystem::copy_file(ModSourcePath / relative_path,
-                                               (ModUniqueFolderPath / relative_path),
+                                               ModUniqueFolderPath / relative_path,
                                                std::filesystem::copy_options::overwrite_existing);
                 }
+
+                if (!std::filesystem::exists(ModActiveFolderPath / relative_path.parent_path())) {
+                    std::filesystem::create_directories(ModActiveFolderPath /
+                                                        relative_path.parent_path());
+                }
+
+                std::filesystem::rename(ModSourcePath / relative_path,
+                                        (ModActiveFolderPath / relative_path));
+
+                if (!std::filesystem::exists(ModInstallPath / "dvdroot_ps4" /
+                                             relative_path.parent_path())) {
+                    std::filesystem::create_directories(ModInstallPath / "dvdroot_ps4" /
+                                                        relative_path.parent_path());
+                }
+
+                std::filesystem::create_symlink(ModActiveFolderPath / relative_path,
+                                                ModInstallPath / "dvdroot_ps4" / relative_path);
             }
         } catch (std::exception& ex) {
             QMessageBox::warning(this, "Filesystem error backing up files", ex.what());
@@ -189,27 +219,7 @@ void ModManager::ActivateButton_isPressed() {
         emit progressChanged(ui->progressBar->value() + 1);
     }
 
-    ui->progressBar->setValue(0);
-    ui->FileTransferLabel->setText("Copying mod files to Bloodborne Folder");
-
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(ModSourcePath)) {
-        const std::filesystem::path destDir = ModInstallPath / "dvdroot_ps4";
-        auto relative_path = std::filesystem::relative(entry, ModSourcePath);
-        if (!entry.is_directory()) {
-            try {
-                if (!std::filesystem::exists((destDir / relative_path).parent_path())) {
-                    std::filesystem::create_directories((destDir / relative_path).parent_path());
-                }
-                std::filesystem::copy_file(ModSourcePath / relative_path, destDir / relative_path,
-                                           std::filesystem::copy_options::overwrite_existing);
-            } catch (std::exception& ex) {
-                QMessageBox::warning(this, "Filesystem error copying mod files", ex.what());
-                break;
-            }
-        }
-        ui->progressBar->setValue(ui->progressBar->value() + 1);
-        emit progressChanged(ui->progressBar->value() + 1);
-    }
+    std::filesystem::remove_all(ModFolderPath);
 
     ui->FileTransferLabel->setText("Modified File List is being written");
     ui->progressBar->setValue(0);
@@ -250,10 +260,14 @@ void ModManager::DeactivateButton_isPressed() {
     }
 
     const std::string ModName = ui->ActiveModList->currentItem()->text().toStdString();
+    const std::string ModFolderString = (Common::ModPath / ModName).string();
+    const std::filesystem::path ModFolderPath = std::filesystem::u8path(ModFolderString);
     const std::string ModBackupString = (ModBackupPath / ModName).string();
     const std::filesystem::path ModBackupFolderPath = std::filesystem::u8path(ModBackupString);
     const std::string ModUniqueString = (ModUniquePath / ModName).string();
     const std::filesystem::path ModUniqueFolderPath = std::filesystem::u8path(ModUniqueString);
+    const std::string ModActiveString = (ModActivePath / ModName).string();
+    const std::filesystem::path ModActiveFolderPath = std::filesystem::u8path(ModActiveString);
 
     std::vector<std::string> ConflictMods;
     std::string line;
@@ -288,29 +302,8 @@ void ModManager::DeactivateButton_isPressed() {
     ui->FileTransferLabel->setText("Deleting Mod Files");
 
     if (std::filesystem::exists(ModUniqueFolderPath)) {
-        ui->progressBar->setMaximum(getFileCount(ModBackupFolderPath) +
-                                    getFileCount(ModUniqueFolderPath));
-    } else {
-        ui->progressBar->setMaximum(getFileCount(ModBackupFolderPath));
-    }
+        ui->progressBar->setMaximum(getFileCount(ModUniqueFolderPath));
 
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(ModBackupFolderPath)) {
-        auto relative_path = std::filesystem::relative(entry, ModBackupFolderPath);
-        if (!entry.is_directory()) {
-            try {
-                if (std::filesystem::exists(ModInstallPath / "dvdroot_ps4" / relative_path)) {
-                    std::filesystem::remove(ModInstallPath / "dvdroot_ps4" / relative_path);
-                }
-            } catch (std::exception& ex) {
-                QMessageBox::warning(this, "Filesystem error deleting mod files", ex.what());
-                break;
-            }
-        }
-        ui->progressBar->setValue(ui->progressBar->value() + 1);
-        emit progressChanged(ui->progressBar->value() + 1);
-    }
-
-    if (std::filesystem::exists(ModUniqueFolderPath)) {
         for (const auto& entry :
              std::filesystem::recursive_directory_iterator(ModUniqueFolderPath)) {
             auto relative_path = std::filesystem::relative(entry, ModUniqueFolderPath);
@@ -329,6 +322,35 @@ void ModManager::DeactivateButton_isPressed() {
         }
     }
 
+    ui->progressBar->setValue(0);
+    ui->FileTransferLabel->setText("Moving backup to Install Folder");
+    ui->progressBar->setMaximum(getFileCount(ModBackupFolderPath));
+
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(ModBackupFolderPath)) {
+        auto relative_path = std::filesystem::relative(entry, ModBackupFolderPath);
+        if (!entry.is_directory()) {
+            try {
+                if (!std::filesystem::exists(ModInstallPath / "dvdroot_ps4" /
+                                             relative_path.parent_path())) {
+                    std::filesystem::create_directories(ModInstallPath / "dvdroot_ps4" /
+                                                        relative_path.parent_path());
+                }
+
+                if (std::filesystem::exists(ModInstallPath / "dvdroot_ps4" / relative_path))
+                    std::filesystem::remove(ModInstallPath / "dvdroot_ps4" / relative_path);
+
+                std::filesystem::rename(ModBackupFolderPath / relative_path,
+                                        ModInstallPath / "dvdroot_ps4" / relative_path);
+
+            } catch (std::exception& ex) {
+                QMessageBox::critical(this, "Filesystem error reverting backup", ex.what());
+                break;
+            }
+        }
+        ui->progressBar->setValue(ui->progressBar->value() + 1);
+        emit progressChanged(ui->progressBar->value() + 1);
+    }
+
     std::filesystem::path dir_path;
     std::vector<std::filesystem::path> directories;
     for (auto& p : std::filesystem::recursive_directory_iterator(ModInstallPath / "dvdroot_ps4")) {
@@ -345,38 +367,22 @@ void ModManager::DeactivateButton_isPressed() {
         }
     }
 
-    ui->progressBar->setValue(0);
-    ui->FileTransferLabel->setText("Moving backup to Install Folder");
-    ui->progressBar->setMaximum(getFileCount(ModBackupFolderPath));
-
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(ModBackupFolderPath)) {
-        auto relative_path = std::filesystem::relative(entry, ModBackupFolderPath);
-        if (!entry.is_directory()) {
-            try {
-                if (!std::filesystem::exists(ModInstallPath / "dvdroot_ps4" /
-                                             relative_path.parent_path())) {
-                    std::filesystem::create_directories(ModInstallPath / "dvdroot_ps4" /
-                                                        relative_path.parent_path());
-                }
-                std::filesystem::rename(ModBackupFolderPath / relative_path,
-                                        ModInstallPath / "dvdroot_ps4" / relative_path);
-            } catch (std::exception& ex) {
-                QMessageBox::critical(this, "Filesystem error reverting backup", ex.what());
-                break;
-            }
-        }
-        ui->progressBar->setValue(ui->progressBar->value() + 1);
-        emit progressChanged(ui->progressBar->value() + 1);
-    }
-
     std::filesystem::remove_all(ModBackupFolderPath);
     std::filesystem::remove_all(ModUniqueFolderPath);
 
     ActiveModRemove(ModName);
-    RefreshLists();
     ui->progressBar->setMaximum(100);
     ui->progressBar->setValue(0);
     ui->FileTransferLabel->setText("No Current File Transfers");
+
+    if (std::filesystem::exists(ModActiveFolderPath)) {
+
+        if (std::filesystem::exists(ModFolderPath))
+            std::filesystem::remove_all(ModFolderPath);
+        std::filesystem::rename(ModActiveFolderPath, ModFolderPath);
+    }
+
+    RefreshLists();
 
     QMessageBox::information(this, "Mod Deactivated",
                              "Successfully deactivated mod " + QString::fromStdString(ModName),

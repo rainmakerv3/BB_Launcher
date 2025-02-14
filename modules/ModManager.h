@@ -33,6 +33,8 @@ private:
     void ConflictRemove(std::string ModName);
 
     const std::filesystem::path ModBackupPath = Common::BBLFilesPath / "Mods-BACKUP";
+    const std::filesystem::path ModActivePath =
+        Common::BBLFilesPath / "Mods-Active (DO NOT DELETE)";
     const std::filesystem::path ModUniquePath = ModBackupPath / "Mods-UNIQUEFILES";
     const std::vector<std::string> BBFolders = {
         "dvdroot_ps4", "action", "chr",    "event", "facegen", "map",   "menu",
