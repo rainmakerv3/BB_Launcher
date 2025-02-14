@@ -163,14 +163,12 @@ void ModManager::ActivateButton_isPressed() {
         auto relative_path = std::filesystem::relative(entry, ModSourcePath);
         try {
             if (!entry.is_directory()) {
+                if (!std::filesystem::exists(ModBackupFolderPath / relative_path.parent_path())) {
+                    std::filesystem::create_directories(ModBackupFolderPath /
+                                                        relative_path.parent_path());
+                }
+
                 if (std::filesystem::exists(ModInstallPath / "dvdroot_ps4" / relative_path)) {
-
-                    if (!std::filesystem::exists(ModBackupFolderPath /
-                                                 relative_path.parent_path())) {
-                        std::filesystem::create_directories(ModBackupFolderPath /
-                                                            relative_path.parent_path());
-                    }
-
                     if (std::filesystem::is_symlink(ModInstallPath / "dvdroot_ps4" /
                                                     relative_path)) {
                         std::filesystem::copy_file(
@@ -278,8 +276,47 @@ void ModManager::DeactivateButton_isPressed() {
                              "Unable to find Mod Backup " + QString::fromStdString(ModBackupString),
                              "Unable to find Backup Folder, it may have been renamed or deleted.");
         ActiveModRemove(ModName);
+        if (std::filesystem::exists(ModActiveFolderPath)) {
+
+            if (std::filesystem::exists(ModFolderPath))
+                std::filesystem::remove_all(ModFolderPath);
+            std::filesystem::rename(ModActiveFolderPath, ModFolderPath);
+        }
         RefreshLists();
         return;
+    }
+
+    std::vector<std::string> FileList;
+    std::ifstream ModInfoFile(Common::ModPath / "ModifiedFiles.txt", std::ios::binary);
+    while (std::getline(ModInfoFile, line)) {
+        lineCount++;
+        FileList.push_back(line);
+    }
+    ModInfoFile.close();
+
+    bool hasconflict = false;
+    if (std::filesystem::exists(ModActiveFolderPath)) {
+        int conflictfilecount;
+        for (const auto& entry :
+             std::filesystem::recursive_directory_iterator(ModActiveFolderPath)) {
+            if (!entry.is_directory()) {
+                auto relative_path = std::filesystem::relative(entry, ModActiveFolderPath);
+                std::string relative_path_string = Common::PathToU8(relative_path);
+                conflictfilecount = 0;
+                for (int i = 0; i < FileList.size(); i++) {
+                    if (FileList[i].contains(relative_path_string))
+                        conflictfilecount = conflictfilecount + 1;
+                    if (conflictfilecount > 1) {
+                        hasconflict = true;
+                        break;
+                    }
+                }
+                if (hasconflict)
+                    break;
+            }
+        }
+    } else {
+        hasconflict = true;
     }
 
     std::ifstream ConflictFile(Common::ModPath / "ConflictMods.txt", std::ios::binary);
@@ -290,11 +327,13 @@ void ModManager::DeactivateButton_isPressed() {
     ConflictFile.close();
 
     if (ConflictMods.size() != 0 && ConflictMods.back() != ModName) {
-        QMessageBox::warning(this, "Most recent conflicting mod must be uninstalled first",
-                             "The last installed conflicting mod must be uninstalled before "
-                             "any others.\n\nLast conflicting mod is " +
-                                 QString::fromStdString(ConflictMods.back()));
-        return;
+        if (hasconflict) {
+            QMessageBox::warning(this, "Most recent conflicting mod must be uninstalled first",
+                                 "The last installed conflicting mod must be uninstalled before "
+                                 "any others.\n\nLast conflicting mod is " +
+                                     QString::fromStdString(ConflictMods.back()));
+            return;
+        }
     } else if (ConflictMods.size() != 0 && ConflictMods.back() == ModName) {
         ConflictRemove(ModName);
     }
