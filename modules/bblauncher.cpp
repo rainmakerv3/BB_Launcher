@@ -112,6 +112,14 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->ModManagerButton, &QPushButton::pressed, this, [this]() {
+#ifndef FORCE_UAC
+        QMessageBox::warning(
+            this, "noUAC check",
+            "noUAC version currently not working with the Mod Manager. For now a workaround is to "
+            "keep 2 exes in the BB Launcher folder, one regular version exe to use the Mod "
+            "Manager and a renamed copy of this noUAC exe for everything else.");
+        return;
+#endif
         if (!CheckBBInstall())
             return;
         ModManager* ModWindow = new ModManager(this);
