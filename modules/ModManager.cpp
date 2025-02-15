@@ -155,7 +155,12 @@ void ModManager::ActivateButton_isPressed() {
         ModInfoFileSave << i << "\n";
     ModInfoFileSave.close();
 
+#ifdef FORCE_UAC
     ui->FileTransferLabel->setText("Backing up original files, symlinking to BB folder");
+#else
+    ui->FileTransferLabel->setText("Backing up original files, copying to BB folder");
+#endif
+
     ui->progressBar->setMaximum(getFileCount(ModSourcePath));
 
     std::vector<std::string> UniqueList;
@@ -192,9 +197,12 @@ void ModManager::ActivateButton_isPressed() {
                     std::filesystem::create_directories(ModInstallPath / "dvdroot_ps4" /
                                                         relative_path.parent_path());
                 }
-
+#ifdef FORCE_UAC
                 std::filesystem::create_symlink(ModActiveFolderPath / relative_path,
                                                 ModInstallPath / "dvdroot_ps4" / relative_path);
+#else
+                std::filesystem::copy_file(entry, ModInstallPath / "dvdroot_ps4" / relative_path);
+#endif
             }
         } catch (std::exception& ex) {
             QMessageBox::warning(this, "Filesystem error backing up files", ex.what());
