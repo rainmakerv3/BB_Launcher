@@ -166,7 +166,7 @@ void ModManager::ActivateButton_isPressed() {
     std::vector<std::string> UniqueList;
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModSourcePath)) {
         auto relative_path = std::filesystem::relative(entry, ModSourcePath);
-        const auto u8_string = Common::PathToU8(relative_path);
+        const std::string u8_string = Common::PathToU8(relative_path);
         std::string relative_path_string{u8_string.begin(), u8_string.end()};
         const std::filesystem::path relative_u8path = std::filesystem::u8path(relative_path_string);
         try {
@@ -190,7 +190,7 @@ void ModManager::ActivateButton_isPressed() {
                                                 ModBackupFolderPath / relative_u8path);
                     }
                 } else {
-                    UniqueList.push_back(relative_path_string);
+                    UniqueList.push_back(relative_path_string + ", " + ModName);
                 }
 
                 if (!std::filesystem::exists(ModInstallPath / "dvdroot_ps4" /
@@ -401,8 +401,17 @@ void ModManager::DeactivateButton_isPressed() {
         if (std::filesystem::exists(UniqueIndexPath)) {
             ui->progressBar->setMaximum(UniqueLineCount);
             for (std::string fileline : UniqueList) {
-                const std::filesystem::path path = ModInstallPath / "dvdroot_ps4" / fileline;
+
+                std::size_t comma_pos = fileline.find(',');
+                std::filesystem::path path;
+                if (comma_pos != std::string::npos) {
+                    std::string modline = fileline.substr(0, comma_pos);
+                    path = ModInstallPath / "dvdroot_ps4" / modline;
+                } else {
+                    path = ModInstallPath / "dvdroot_ps4" / fileline;
+                }
                 const std::filesystem::path u8path = std::filesystem::u8path(path.string());
+
                 try {
                     if (std::filesystem::exists(u8path)) {
                         std::filesystem::remove(u8path);
@@ -648,22 +657,40 @@ void ModManager::ActiveModRemove(std::string ModName) {
     for (auto& FolderEntry : std::filesystem::directory_iterator(ModUniquePath)) {
         if (FolderEntry.is_directory()) {
             std::string Foldername = Common::PathToU8(FolderEntry.path().filename());
-            const std::string UniqueModPathString = (ModUniquePath / Foldername).string();
-            const std::filesystem::path UniqueModPath =
-                std::filesystem::u8path(UniqueModPathString);
-
             ui->FileTransferLabel->setText("Generating Unique File list for " +
                                            QString::fromStdString(Foldername));
-            ui->progressBar->setMaximum(getFileCount(UniqueModPath));
-            for (const auto& entry : std::filesystem::recursive_directory_iterator(UniqueModPath)) {
-                if (!entry.is_directory()) {
-                    auto relative_path = std::filesystem::relative(entry, UniqueModPath);
-                    const auto u8_string = Common::PathToU8(relative_path) + ", " + Foldername;
-                    std::string relative_path_string{u8_string.begin(), u8_string.end()};
-                    FileList.push_back(relative_path_string);
+            const std::string FolderString =
+                Common::PathToU8(FolderEntry.path().filename().string());
+            std::string FileName = FolderString + ".txt";
+            std::filesystem::path UniqueIndexPath(FolderEntry.path() / FileName);
+            std::ifstream UniqueIndexFile(UniqueIndexPath, std::ios::binary);
+
+            if (std::filesystem::exists(UniqueIndexPath)) {
+                std::vector<std::string> UniqueList;
+                int UniqueLineCount = 0;
+                while (std::getline(UniqueIndexFile, line)) {
+                    UniqueLineCount++;
+                    UniqueList.push_back(line);
                 }
-                ui->progressBar->setValue(ui->progressBar->value() + 1);
-                emit progressChanged(ui->progressBar->value() + 1);
+                UniqueIndexFile.close();
+
+                ui->progressBar->setMaximum(UniqueLineCount);
+                for (std::string line : UniqueList) {
+                    FileList.push_back(line);
+                }
+            } else {
+                ui->progressBar->setMaximum(getFileCount(FolderEntry));
+                for (const auto& entry :
+                     std::filesystem::recursive_directory_iterator(FolderEntry)) {
+                    if (!entry.is_directory()) {
+                        auto relative_path = std::filesystem::relative(entry, FolderEntry);
+                        const std::string relative_pathstring = Common::PathToU8(relative_path);
+                        const std::string pathstring = relative_pathstring + ", " + FolderString;
+                        FileList.push_back(pathstring);
+                    }
+                    ui->progressBar->setValue(ui->progressBar->value() + 1);
+                    emit progressChanged(ui->progressBar->value() + 1);
+                }
             }
         }
     }
