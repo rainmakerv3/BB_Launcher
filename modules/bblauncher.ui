@@ -414,7 +414,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Note: remapping only works on shadPS4 versions relased after Feb. 2, 2025</string>
+     <string>Note: remapping/lightbar color adjustment only works on shadPS4 latest *nightly* versions</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignmentFlag::AlignCenter</set>

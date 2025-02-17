@@ -39,7 +39,7 @@ private Q_SLOTS:
     void SaveControllerConfig(bool CloseOnSave);
     void SetDefault();
     void OnProfileChanged();
-    void KBMClicked();
+    void UpdateLightbarColor();
 
 private:
     std::unique_ptr<Ui::ControlSettings> ui;
