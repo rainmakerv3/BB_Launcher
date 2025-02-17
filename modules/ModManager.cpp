@@ -71,7 +71,7 @@ void ModManager::ActivateButton_isPressed() {
 #ifdef _WIN32
     const std::wstring ModString = ui->InactiveModList->currentItem()->text().toStdWString();
 #else
-    const std::string ModString = Modname;
+    const std::string ModString = ModName;
 #endif
 
     const std::filesystem::path ModFolderPath = Common::ModPath / ModString;
@@ -202,8 +202,8 @@ void ModManager::ActivateButton_isPressed() {
                 std::filesystem::create_symlink(ModActiveFolderPath / relative_path,
                                                 ModInstallPath / "dvdroot_ps4" / relative_path);
 #else
-                std::filesystem::copy_file(ModSourcePath / relative_u8path,
-                                           ModInstallPath / "dvdroot_ps4" / relative_u8path,
+                std::filesystem::copy_file(ModSourcePath / relative_path,
+                                           ModInstallPath / "dvdroot_ps4" / relative_path,
                                            std::filesystem::copy_options::overwrite_existing);
 #endif
                 ui->progressBar->setValue(ui->progressBar->value() + 1);
@@ -282,7 +282,7 @@ void ModManager::DeactivateButton_isPressed() {
 #ifdef _WIN32
     const std::wstring ModString = ui->ActiveModList->currentItem()->text().toStdWString();
 #else
-    const std::string ModString = Modname;
+    const std::string ModString = ModName;
 #endif
 
     const std::filesystem::path ModFolderPath = Common::ModPath / ModString;
