@@ -53,7 +53,7 @@ LauncherSettings::LauncherSettings(QWidget* parent)
     connect(ui->buttonBox->button(QDialogButtonBox::RestoreDefaults), &QPushButton::pressed, this,
             &LauncherSettings::SetLauncherDefaults);
 
-    connect(ui->BackupSaveCheckBox, &QCheckBox::stateChanged, this,
+    connect(ui->BackupSaveCheckBox, &QCheckBox::checkStateChanged, this,
             &LauncherSettings::OnBackupStateChanged);
 }
 

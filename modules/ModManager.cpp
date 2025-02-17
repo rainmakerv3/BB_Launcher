@@ -65,6 +65,7 @@ void ModManager::ActivateButton_isPressed() {
         return;
     }
 
+    bool haserror = false;
     bool hasconflict = false;
     const std::string ModName = ui->InactiveModList->currentItem()->text().toStdString();
 
@@ -211,6 +212,7 @@ void ModManager::ActivateButton_isPressed() {
             }
         } catch (std::exception& ex) {
             QMessageBox::warning(this, "Filesystem error backing up files", ex.what());
+            haserror = true;
             break;
         }
     }
@@ -265,9 +267,18 @@ void ModManager::ActivateButton_isPressed() {
     ui->progressBar->setValue(0);
     ui->FileTransferLabel->setText("No Current File Transfers");
 
-    QMessageBox::information(this, "Mod Activated",
-                             "Successfully activated mod " + QString::fromStdString(ModName),
-                             QMessageBox::Ok);
+    if (haserror) {
+        QMessageBox::information(this, "Error Activating Mod",
+                                 "An error occurred activating mod " +
+                                     QString::fromStdString(ModName) +
+                                     ". It may not function correctly. Reinstallation of "
+                                     "Bloodborne may be required in some cases.",
+                                 QMessageBox::Ok);
+    } else {
+        QMessageBox::information(this, "Mod Activated",
+                                 "Successfully activated mod " + QString::fromStdString(ModName),
+                                 QMessageBox::Ok);
+    }
 }
 
 void ModManager::DeactivateButton_isPressed() {
@@ -285,6 +296,7 @@ void ModManager::DeactivateButton_isPressed() {
     const std::string ModString = ModName;
 #endif
 
+    bool haserror = false;
     const std::filesystem::path ModFolderPath = Common::ModPath / ModString;
     const std::filesystem::path ModBackupFolderPath = ModBackupPath / ModString;
     const std::filesystem::path ModUniqueFolderPath = ModUniquePath / ModString;
@@ -431,6 +443,7 @@ void ModManager::DeactivateButton_isPressed() {
                     }
                 } catch (std::exception& ex) {
                     QMessageBox::warning(this, "Filesystem error deleting mod files", ex.what());
+                    haserror = true;
                     break;
                 }
             }
@@ -449,6 +462,7 @@ void ModManager::DeactivateButton_isPressed() {
                     } catch (std::exception& ex) {
                         QMessageBox::warning(this, "Filesystem error deleting mod files",
                                              ex.what());
+                        haserror = true;
                         break;
                     }
                     ui->progressBar->setValue(ui->progressBar->value() + 1);
@@ -481,6 +495,7 @@ void ModManager::DeactivateButton_isPressed() {
 
             } catch (std::exception& ex) {
                 QMessageBox::critical(this, "Filesystem error reverting backup", ex.what());
+                haserror = true;
                 break;
             }
             ui->progressBar->setValue(ui->progressBar->value() + 1);
@@ -521,9 +536,18 @@ void ModManager::DeactivateButton_isPressed() {
     }
     RefreshLists();
 
-    QMessageBox::information(this, "Mod Deactivated",
-                             "Successfully deactivated mod " + QString::fromStdString(ModName),
-                             QMessageBox::Ok);
+    if (haserror) {
+        QMessageBox::information(this, "Error Deactivating Mod",
+                                 "An error occurred deactivating mod " +
+                                     QString::fromStdString(ModName) +
+                                     ". It is recommended to check the BBLauncher/Mods-BACKUP "
+                                     "folder for any remaining files and manual copy them back.",
+                                 QMessageBox::Ok);
+    } else {
+        QMessageBox::information(this, "Mod Deactivated",
+                                 "Successfully deactivated mod " + QString::fromStdString(ModName),
+                                 QMessageBox::Ok);
+    }
 }
 
 void ModManager::RefreshLists() {
@@ -702,6 +726,8 @@ void ModManager::ActiveModRemove(std::string ModName) {
                 ui->progressBar->setMaximum(UniqueLineCount);
                 for (std::string line : UniqueList) {
                     FileList.push_back(line);
+                    ui->progressBar->setValue(ui->progressBar->value() + 1);
+                    emit progressChanged(ui->progressBar->value() + 1);
                 }
             } else {
                 ui->progressBar->setMaximum(getFileCount(FolderEntry));
@@ -712,9 +738,9 @@ void ModManager::ActiveModRemove(std::string ModName) {
                         const std::string relative_pathstring = Common::PathToU8(relative_path);
                         const std::string pathstring = relative_pathstring + ", " + Foldername;
                         FileList.push_back(pathstring);
+                        ui->progressBar->setValue(ui->progressBar->value() + 1);
+                        emit progressChanged(ui->progressBar->value() + 1);
                     }
-                    ui->progressBar->setValue(ui->progressBar->value() + 1);
-                    emit progressChanged(ui->progressBar->value() + 1);
                 }
             }
         }
