@@ -59,16 +59,16 @@ private:
 
     QString trophyFolder;
 
-    QString GetTrpType(const QChar trp_) {
+    std::string GetTrpType(const QChar trp_) {
         switch (trp_.toLatin1()) {
         case 'B':
-            return "Bronze";
+            return "bronze.png";
         case 'S':
-            return "Silver";
+            return "silver.png";
         case 'G':
-            return "Gold";
+            return "gold.png";
         case 'P':
-            return "Platinum";
+            return "platinum.png";
         }
         return "Unknown";
     }
