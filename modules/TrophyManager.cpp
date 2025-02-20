@@ -207,15 +207,6 @@ void TrophyViewer::UnlockTrophy() {
         std::string_view current_trophy_description = node.child("detail").text().as_string();
         std::string_view current_trophy_type = node.attribute("ttype").value();
 
-        if (current_trophy_type == "P") {
-            platinum_node = node;
-            if (ID == current_trophy_id) {
-                QMessageBox::critical(this, "Cannot Unlock Platinum Trophy",
-                                      "Cannot Unlock Platinum Trophy with this tool");
-                return;
-            }
-        }
-
         if (std::string_view(node.name()) == "trophy") {
             if (current_trophy_id == ID) {
                 if (current_trophy_unlockstate) {
@@ -274,14 +265,8 @@ void TrophyViewer::LockTrophy() {
         std::string_view current_trophy_description = node.child("detail").text().as_string();
         std::string_view current_trophy_type = node.attribute("ttype").value();
 
-        if (current_trophy_type == "P") {
+        if (current_trophy_type == "P")
             platinum_node = node;
-            if (ID == current_trophy_id) {
-                QMessageBox::critical(this, "Cannot lock Platinum Trophy",
-                                      "Cannot lock Platinum Trophy with this tool");
-                return;
-            }
-        }
 
         if (std::string_view(node.name()) == "trophy") {
             if (current_trophy_id == ID) {
