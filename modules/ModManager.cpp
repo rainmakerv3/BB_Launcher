@@ -187,8 +187,15 @@ void ModManager::ActivateButton_isPressed() {
                             std::filesystem::copy_options::overwrite_existing);
                         std::filesystem::remove(ModInstallPath / "dvdroot_ps4" / relative_path);
                     } else {
+#if defined(__linux__)
+                        std::filesystem::copy_file(ModInstallPath / "dvdroot_ps4" / relative_path,
+                                                   ModBackupFolderPath / relative_path);
+                        std::filesystem::remove(ModInstallPath / "dvdroot_ps4" / relative_path);
+#else
+
                         std::filesystem::rename(ModInstallPath / "dvdroot_ps4" / relative_path,
                                                 ModBackupFolderPath / relative_path);
+#endif
                     }
                 } else {
                     UniqueList.push_back(Common::PathToU8(relative_path) + ", " + ModName);
@@ -489,10 +496,14 @@ void ModManager::DeactivateButton_isPressed() {
                     std::filesystem::create_directories(
                         (ModInstallPath / "dvdroot_ps4" / relative_path).parent_path());
                 }
-
+#if defined(__linux__)
+                std::filesystem::copy_file(ModBackupFolderPath / relative_path,
+                                           ModInstallPath / "dvdroot_ps4" / relative_path);
+                std::filesystem::remove(ModBackupFolderPath / relative_path);
+#else
                 std::filesystem::rename(ModBackupFolderPath / relative_path,
                                         ModInstallPath / "dvdroot_ps4" / relative_path);
-
+#endif
             } catch (std::exception& ex) {
                 QMessageBox::critical(this, "Filesystem error reverting backup", ex.what());
                 haserror = true;
