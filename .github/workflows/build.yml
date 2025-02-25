@@ -65,7 +65,7 @@ jobs:
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: Move Files and Resources
-      run: "mkdir upload\n\t move build/Resources upload\nmove build/Release/BB_Launcher.exe upload\n"
+      run: "mkdir upload\n\t move build/Release/BB_Launcher.exe upload\n"
     - name: Deploy and Package
       run: |
         windeployqt --no-compiler-runtime --no-system-d3d-compiler --no-system-dxc-compiler --dir upload upload/BB_Launcher.exe
@@ -95,7 +95,7 @@ jobs:
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: Move Files and Resources
-      run: "mkdir upload\n\t move build/Resources upload\nmove build/Release/BB_Launcher.exe upload\n"
+      run: "mkdir upload\n\t move build/Release/BB_Launcher.exe upload\n"
     - name: Deploy and Package
       run: |
         windeployqt --no-compiler-runtime --no-system-d3d-compiler --no-system-dxc-compiler --dir upload upload/BB_Launcher.exe
