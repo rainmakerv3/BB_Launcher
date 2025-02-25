@@ -79,7 +79,6 @@ if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR NOT MSVC)
 endif()
 
 add_subdirectory(externals)
-include_directories(Resources)
 
 find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Network)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
@@ -148,8 +147,6 @@ set(PROJECT_SOURCES
     ${RESOURCE_FILES}
 )
 
-set(RESOURCEFOLDER ${CMAKE_SOURCE_DIR}/Resources)
-
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(BB_Launcher
         ${PROJECT_SOURCES}
@@ -217,19 +214,4 @@ if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     install(FILES "dist/BBLauncher.desktop" DESTINATION "share/applications")
     install(FILES "dist/libssl.so.3" DESTINATION "usr/lib")
     install(FILES "dist/BBIcon.png" DESTINATION "share/icons/hicolor/512x512/apps")
-endif()
-
-# copy Resource folder (trophy images) inside Mac App bundle resources folder
-if (APPLE)
-add_custom_command(TARGET BB_Launcher POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy_directory
-    "${CMAKE_SOURCE_DIR}/Resources"
-    "$<TARGET_FILE_DIR:BB_Launcher>/../Resources"
-)
-else()
-add_custom_target(copy-files ALL
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/Resources/
-    ${CMAKE_BINARY_DIR}/Resources/
-    )
 endif()

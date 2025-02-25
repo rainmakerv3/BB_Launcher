@@ -16,8 +16,6 @@ chmod a+x linuxdeploy-x86_64.AppImage
 chmod a+x linuxdeploy-plugin-qt-x86_64.AppImage
 chmod a+x linuxdeploy-plugin-checkrt-x86_64.sh
 
-cp -a "$GITHUB_WORKSPACE/Resources" AppDir
-
 # Build AppImage
 ./linuxdeploy-x86_64.AppImage --appdir AppDir
 ./linuxdeploy-plugin-checkrt-x86_64.sh --appdir AppDir
