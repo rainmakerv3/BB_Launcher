@@ -582,10 +582,10 @@ void ShadSettings::InstallUpdate() {
         "Write-Output $startingUpdate\n"
         "Expand-Archive -Path '%2\\temp_download_update.zip' -DestinationPath '%2' -Force\n"
         "Start-Sleep -Seconds 3\n"
-        "Copy-Item -Recurse -Force '%2\\*' '%3\\'\n"
+        "Copy-Item -Recurse -Force '%2\\*' '%4\\'\n"
         "Start-Sleep -Seconds 2\n"
-        "Remove-Item -Force -LiteralPath '%3\\update.ps1'\n"
-        "Remove-Item -Force -LiteralPath '%3\\temp_download_update.zip'\n"
+        "Remove-Item -Force -LiteralPath '%4\\update.ps1'\n"
+        "Remove-Item -Force -LiteralPath '%4\\temp_download_update.zip'\n"
         "Remove-Item -Recurse -Force '%2'\n"
         "Start-Process -FilePath '%3\\BB_Launcher.exe' "
         "-WorkingDirectory ([WildcardPattern]::Escape('%3'))\n");
@@ -705,7 +705,7 @@ void ShadSettings::InstallUpdate() {
         QTextStream out(&scriptFile);
         scriptFile.write("\xEF\xBB\xBF");
 #ifdef Q_OS_WIN
-        out << scriptContent.arg(binaryStartingUpdate).arg(tempDirPath).arg(rootPath);
+        out << scriptContent.arg(binaryStartingUpdate).arg(tempDirPath).arg(rootPath).arg(shadPath);
 #endif
 #if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
         out << scriptContent.arg(startingUpdate).arg(tempDirPath).arg(rootPath).arg(shadPath);
