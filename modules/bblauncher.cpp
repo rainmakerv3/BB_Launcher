@@ -45,21 +45,12 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     Common::PathToQString(shadLabelString, Common::shadPs4Executable);
     ui->ShadLabel->setText(shadLabelString);
 
-#ifdef _WIN32
-    ui->ShadInstallGroupBox->hide();
-#else
-    ui->verticalSpacer->changeSize(0,0);
-    ui->verticalSpacer_2->changeSize(0,0);
-#endif
-
     this->setFixedSize(this->width(), this->height());
     this->statusBar()->setSizeGripEnabled(false);
     QApplication::setStyle("Fusion");
 
     std::string versionstring(Common::VERSION);
     setWindowTitle(QString::fromStdString("BBLauncher " + versionstring));
-
-    // this->installEventFilter(this); if needed
 
     UpdateSettingsList();
     UpdateModList();
@@ -205,6 +196,9 @@ void BBLauncher::ShadSelectButton_isPressed() {
         "QT AppImage (Shadps4-qt.AppImage);;SDL AppImage (Shadps4-sdl.AppImage);;"
         "non-AppImage (shadps4)",
         0, QFileDialog::DontUseNativeDialog);
+#elif _WIN32
+    ShadLoc = QFileDialog::getOpenFileName(this, "Select ShadPS4 executable (ex. shadPS4.exe)",
+                                           QDir::homePath(), "shadPS4 exe (shadPS4.exe)");
 #elif defined(__APPLE__)
     ShadLoc = QFileDialog::getOpenFileName(this, "Select ShadPS4 executable (ex. shadps4.app)",
                                            QDir::homePath(), "App Bundle (shadps4.app)");
@@ -390,18 +384,15 @@ void BBLauncher::GetShadExecutable() {
     Common::shadPs4Executable = "";
 
 #ifdef _WIN32
-    if (std::filesystem::exists(std::filesystem::current_path() / "shadPS4.exe")) {
-        Common::shadPs4Executable = std::filesystem::current_path() / "shadPS4.exe";
-    } else {
-        QMessageBox::warning(
-            this, "No shadPS4.exe found",
-            "No shadPS4.exe found. Move BB_Launcher.exe next to shadPS4.exe.\n\nMove all other "
-            "files/folders in BB_Launcher folder to shadPS4 folder only if you are using a non-QT "
-            "(no GUI) version of shadPS4.");
-    }
-#elif defined(__linux__)
-    QMessageBox::warning(this, "No ShadPS4 executable path selected",
+    QMessageBox::warning(this, "No shadPS4.exe found",
                          "Select ShadPS4 executable before using BB Launcher.");
+    QString ShadLoc =
+        QFileDialog::getOpenFileName(this, "Select ShadPS4 executable (ex. shadPS4.exe)",
+                                     QDir::homePath(), "shadPS4 exe (shadPS4.exe)");
+    Common::shadPs4Executable = std::filesystem::path(ShadLoc.toStdWString());
+#elif defined(__linux__)
+    QMessageBox::warning(this, "No ShadPS4 path selected",
+                         "Select ShadPS4 path before using BB Launcher.");
 
     QString ShadLoc = QFileDialog::getOpenFileName(
         this,
@@ -412,13 +403,15 @@ void BBLauncher::GetShadExecutable() {
         "non-AppImage (shadps4)",
         0, QFileDialog::DontUseNativeDialog);
     const std::string ShadLocString = ShadLoc.toStdString();
-    Common::shadPs4Executable = std::filesystem::u8path(ShadLocString);
+    Common::shadPs4Executable = std::filesystem::path(ShadLocString);
 #elif defined(__APPLE__)
+    QMessageBox::warning(this, "No ShadPS4 path selected",
+                         "Select ShadPS4 path before using BB Launcher.");
     QString ShadLoc =
         QFileDialog::getOpenFileName(this, "Select ShadPS4 executable (ex. shadps4.app)",
                                      QDir::homePath(), "App Bundle (shadps4.app)");
     const std::string ShadLocString = ShadLoc.toStdString();
-    Common::shadPs4Executable = std::filesystem::u8path(ShadLocString);
+    Common::shadPs4Executable = std::filesystem::path(ShadLocString);
 #endif
 
     Config::SaveConfigPath("shadPath", Common::shadPs4Executable);
