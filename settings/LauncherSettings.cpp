@@ -17,6 +17,9 @@ int Config::BackupNumber = 2;
 bool Config::AutoUpdateEnabled = false;
 bool Config::UnifiedInputConfig = true;
 std::string Config::TrophyKey = "";
+bool Config::ShowEarnedTrophy = true;
+bool Config::ShowNotEarnedTrophy = true;
+bool Config::ShowHiddenTrophy = false;
 
 const std::filesystem::path SettingsFile = Common::BBLFilesPath / "LauncherSettings.toml";
 
@@ -168,6 +171,10 @@ void LoadLauncherSettings() {
     BackupInterval = toml::find_or<int>(data, "Backups", "BackupInterval", 10);
     BackupNumber = toml::find_or<int>(data, "Backups", "BackupNumber", 2);
 
+    ShowEarnedTrophy = toml::find_or<bool>(data, "Trophy", "ShowEarned", true);
+    ShowNotEarnedTrophy = toml::find_or<bool>(data, "Trophy", "ShowUnearned", true);
+    ShowHiddenTrophy = toml::find_or<bool>(data, "Trophy", "ShowHidden", false);
+
     if (data.contains("Launcher")) {
         const toml::value& launcher = data.at("Launcher");
 
@@ -267,6 +274,36 @@ void SaveConfigPath(std::string configKey, std::filesystem::path path) {
     }
 
     data["Launcher"][configKey] = std::string{fmt::UTF(path.u8string()).data};
+
+    std::ofstream file(SettingsFile, std::ios::binary);
+    file << data;
+    file.close();
+}
+
+void SaveTrophySettings(bool ShowEarned, bool ShowUnEarned, bool ShowHidden) {
+    toml::value data;
+    std::error_code error;
+
+    if (std::filesystem::exists(SettingsFile, error)) {
+        try {
+            std::ifstream ifs;
+            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+            ifs.open(SettingsFile, std::ios_base::binary);
+            data = toml::parse(ifs, std::string{fmt::UTF(SettingsFile.filename().u8string()).data});
+        } catch (const std::exception& ex) {
+            QMessageBox::critical(NULL, "Filesystem error", ex.what());
+            return;
+        }
+    } else {
+        if (error) {
+            QMessageBox::critical(NULL, "Filesystem error",
+                                  QString::fromStdString(error.message()));
+        }
+    }
+
+    data["Trophy"]["ShowEarned"] = ShowEarned;
+    data["Trophy"]["ShowUnearned"] = ShowUnEarned;
+    data["Trophy"]["ShowHidden"] = ShowHidden;
 
     std::ofstream file(SettingsFile, std::ios::binary);
     file << data;

@@ -9,5 +9,6 @@
                 <file>gold.png</file>
                 <file>platinum.png</file>
                 <file>silver.png</file>
+                <file>achieved.png</file>
 	</qresource>
 </RCC>

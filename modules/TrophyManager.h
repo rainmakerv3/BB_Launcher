@@ -10,6 +10,7 @@
 #include <QHeaderView>
 #include <QLabel>
 #include <QMainWindow>
+#include <QPushButton>
 #include <QTableWidget>
 #include <QTableWidgetItem>
 #include <QVBoxLayout>
@@ -48,6 +49,7 @@ private:
     QCheckBox* showEarnedCheck;
     QCheckBox* showNotEarnedCheck;
     QCheckBox* showHiddenCheck;
+    QPushButton* saveSettings;
 
     QTableWidget* tableWidget;
     QTabWidget* tabWidget = nullptr;

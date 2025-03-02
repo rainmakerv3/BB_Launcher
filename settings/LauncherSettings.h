@@ -17,6 +17,7 @@ void SetTheme(std::string theme);
 std::filesystem::path GetFoolproofKbmConfigFile(const std::string& game_id);
 std::string_view GetDefaultKeyboardConfig();
 void SaveUnifiedControl(bool setting);
+void SaveTrophySettings(bool ShowEarned, bool ShowUnEarned, bool ShowHidden);
 
 extern std::string theme;
 extern bool SoundFixEnabled;
@@ -26,6 +27,10 @@ extern int BackupNumber;
 extern bool AutoUpdateEnabled;
 extern bool UnifiedInputConfig;
 extern std::string TrophyKey;
+
+extern bool ShowEarnedTrophy;
+extern bool ShowNotEarnedTrophy;
+extern bool ShowHiddenTrophy;
 
 } // namespace Config
 
