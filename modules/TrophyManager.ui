@@ -1,27 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>TrophyViewer</class>
- <widget class="QDialog" name="TrophyViewer">
+ <widget class="QMainWindow" name="TrophyViewer">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1061</width>
-    <height>751</height>
+    <width>1355</width>
+    <height>720</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Trophy Manager</string>
   </property>
   <widget class="QTabWidget" name="tabWidget">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1061</width>
-     <height>751</height>
-    </rect>
-   </property>
    <property name="autoFillBackground">
     <bool>true</bool>
    </property>
@@ -40,7 +32,7 @@
     <widget class="QWidget" name="horizontalLayoutWidget_11">
      <property name="geometry">
       <rect>
-       <x>360</x>
+       <x>430</x>
        <y>600</y>
        <width>373</width>
        <height>61</height>
@@ -71,7 +63,7 @@
     <widget class="QWidget" name="horizontalLayoutWidget_14">
      <property name="geometry">
       <rect>
-       <x>150</x>
+       <x>220</x>
        <y>440</y>
        <width>771</width>
        <height>115</height>
@@ -235,7 +227,7 @@
     <widget class="QLabel" name="TrophyIcon">
      <property name="geometry">
       <rect>
-       <x>50</x>
+       <x>120</x>
        <y>110</y>
        <width>241</width>
        <height>231</height>
@@ -251,7 +243,7 @@
     <widget class="QLabel" name="TrophyNameLabel">
      <property name="geometry">
       <rect>
-       <x>340</x>
+       <x>410</x>
        <y>110</y>
        <width>301</width>
        <height>191</height>
@@ -276,7 +268,7 @@
     <widget class="QLabel" name="TrophyManagerText">
      <property name="geometry">
       <rect>
-       <x>210</x>
+       <x>280</x>
        <y>20</y>
        <width>661</width>
        <height>61</height>
@@ -304,7 +296,7 @@
     <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
-       <x>50</x>
+       <x>120</x>
        <y>360</y>
        <width>211</width>
        <height>33</height>
@@ -357,7 +349,7 @@
     <widget class="QWidget" name="verticalLayoutWidget">
      <property name="geometry">
       <rect>
-       <x>690</x>
+       <x>760</x>
        <y>110</y>
        <width>311</width>
        <height>183</height>

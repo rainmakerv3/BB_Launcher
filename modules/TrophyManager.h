@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <QDialog>
+#include <QCheckBox>
 #include <QDir>
 #include <QFileInfoList>
 #include <QGraphicsBlurEffect>
@@ -21,12 +21,14 @@ namespace Ui {
 class TrophyViewer;
 }
 
-class TrophyViewer : public QDialog {
+class TrophyViewer : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit TrophyViewer(QString trophyPath, QString gameTrpPath, QWidget* parent = nullptr);
+    explicit TrophyViewer(QString trophyPath, QString gameTrpPath);
     ~TrophyViewer();
+    void updateTrophyInfo();
+    void updateTableFilters();
 
 private slots:
     void TabChanged();
@@ -42,6 +44,11 @@ private:
     void UpdateStats();
     bool RefreshValues(QString title);
 
+    QLabel* trophyInfoLabel;
+    QCheckBox* showEarnedCheck;
+    QCheckBox* showNotEarnedCheck;
+    QCheckBox* showHiddenCheck;
+
     QTableWidget* tableWidget;
     QTabWidget* tabWidget = nullptr;
     QStringList headers;
@@ -55,6 +62,7 @@ private:
     QStringList trpPid;
     QStringList trophyNames;
     QStringList trophyDetails;
+    QStringList trpTimeUnlocked;
     std::vector<QImage> icons;
 
     QString trophyFolder;

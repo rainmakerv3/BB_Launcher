@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright 2024 shadPS4 Emulator Project
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+#include <QDockWidget>
 #include <QMessageBox>
 #include <pugixml.hpp>
 
@@ -8,28 +9,79 @@
 #include "TrophyManager.h"
 #include "modules/ui_TrophyManager.h"
 
-TrophyViewer::TrophyViewer(QString trophyPath, QString gameTrpPath, QWidget* parent)
-    : QDialog(parent), trophyFolder(trophyPath), ui(new Ui::TrophyViewer) {
+bool useEuropeanDateFormat = true;
+
+TrophyViewer::TrophyViewer(QString trophyPath, QString gameTrpPath)
+    : QMainWindow(), trophyFolder(trophyPath), ui(new Ui::TrophyViewer) {
     ui->setupUi(this);
     this->setWindowTitle(tr("Trophy Viewer"));
     this->setAttribute(Qt::WA_DeleteOnClose);
-    this->setModal(true);
+    this->setWindowModality(Qt::ApplicationModal);
 
     gameTrpPath_ = gameTrpPath;
     headers << "Unlocked"
             << "Trophy"
             << "Name"
             << "Description"
-            << "ID"
-            << "Hidden"
+            << "Time Unlocked"
             << "Type"
-            << "PID";
+            << "ID"
+            << "Hidden";
 
     if (!RefreshValues(trophyPath)) {
         QWidget::close();
         return;
     }
+
     PopulateTrophyWidget(trophyPath);
+
+    QDockWidget* trophyInfoDock = new QDockWidget("", this);
+    QWidget* dockWidget = new QWidget(trophyInfoDock);
+    QVBoxLayout* dockLayout = new QVBoxLayout(dockWidget);
+    dockLayout->setAlignment(Qt::AlignTop);
+
+    trophyInfoLabel = new QLabel(tr("Progress") + ": 0% (0/0)", dockWidget);
+    trophyInfoLabel->setStyleSheet(
+        "font-weight: bold; font-size: 16px; color: white; background: #333; padding: 5px;");
+    dockLayout->addWidget(trophyInfoLabel);
+
+    // Creates QCheckBox to filter trophies
+    showEarnedCheck = new QCheckBox(tr("Show Earned Trophies"), dockWidget);
+    showNotEarnedCheck = new QCheckBox(tr("Show Not Earned Trophies"), dockWidget);
+    showHiddenCheck = new QCheckBox(tr("Show Hidden Trophies"), dockWidget);
+
+    // Defines the initial states (all checked)
+    showEarnedCheck->setChecked(true);
+    showNotEarnedCheck->setChecked(true);
+    showHiddenCheck->setChecked(true);
+
+    // Adds checkboxes to the layout
+    dockLayout->addWidget(showEarnedCheck);
+    dockLayout->addWidget(showNotEarnedCheck);
+    dockLayout->addWidget(showHiddenCheck);
+
+    dockWidget->setLayout(dockLayout);
+    trophyInfoDock->setWidget(dockWidget);
+
+    // Adds the dock to the left area
+    this->addDockWidget(Qt::LeftDockWidgetArea, trophyInfoDock);
+
+    // Connects checkbox signals to update trophy display
+#if (QT_VERSION < QT_VERSION_CHECK(6, 7, 0))
+    connect(showEarnedCheck, &QCheckBox::stateChanged, this, &TrophyViewer::updateTableFilters);
+    connect(showNotEarnedCheck, &QCheckBox::stateChanged, this, &TrophyViewer::updateTableFilters);
+    connect(showHiddenCheck, &QCheckBox::stateChanged, this, &TrophyViewer::updateTableFilters);
+#else
+    connect(showEarnedCheck, &QCheckBox::checkStateChanged, this,
+            &TrophyViewer::updateTableFilters);
+    connect(showNotEarnedCheck, &QCheckBox::checkStateChanged, this,
+            &TrophyViewer::updateTableFilters);
+    connect(showHiddenCheck, &QCheckBox::checkStateChanged, this,
+            &TrophyViewer::updateTableFilters);
+#endif
+
+    updateTrophyInfo();
+    updateTableFilters();
 
     ui->UnlockButton->setFocus();
     ui->TrophyIDBox->addItems(trpId);
@@ -60,6 +112,80 @@ TrophyViewer::TrophyViewer(QString trophyPath, QString gameTrpPath, QWidget* par
     });
 }
 
+void TrophyViewer::updateTrophyInfo() {
+    int total = 0;
+    int unlocked = 0;
+
+    total += tableWidget->rowCount();
+    for (int row = 0; row < tableWidget->rowCount(); ++row) {
+        QString cellText;
+        // The "Unlocked" column can be a widget or a simple item
+        QWidget* widget = tableWidget->cellWidget(row, 0);
+        if (widget) {
+            // Looks for the QLabel inside the widget (as defined in SetTableItem)
+            QLabel* label = widget->findChild<QLabel*>();
+            if (label) {
+                cellText = label->text();
+            }
+        } else {
+            QTableWidgetItem* item = tableWidget->item(row, 0);
+            if (item) {
+                cellText = item->text();
+            }
+        }
+        if (cellText == "unlocked")
+            unlocked++;
+    }
+
+    int progress = (total > 0) ? (unlocked * 100 / total) : 0;
+    trophyInfoLabel->setText(
+        QString(tr("Progress") + ": %1% (%2/%3)").arg(progress).arg(unlocked).arg(total));
+}
+
+void TrophyViewer::updateTableFilters() {
+    bool showEarned = showEarnedCheck->isChecked();
+    bool showNotEarned = showNotEarnedCheck->isChecked();
+    bool showHidden = showHiddenCheck->isChecked();
+
+    for (int row = 0; row < tableWidget->rowCount(); ++row) {
+        QString unlockedText;
+        // Gets the text of the "Unlocked" column (index 0)
+        QWidget* widget = tableWidget->cellWidget(row, 0);
+        if (widget) {
+            QLabel* label = widget->findChild<QLabel*>();
+            if (label)
+                unlockedText = label->text();
+        } else {
+            QTableWidgetItem* item = tableWidget->item(row, 0);
+            if (item)
+                unlockedText = item->text();
+        }
+
+        QString hiddenText;
+        // Gets the text of the "Hidden" column (index 7)
+        QWidget* hiddenWidget = tableWidget->cellWidget(row, 7);
+        if (hiddenWidget) {
+            QLabel* label = hiddenWidget->findChild<QLabel*>();
+            if (label)
+                hiddenText = label->text();
+        } else {
+            QTableWidgetItem* item = tableWidget->item(row, 7);
+            if (item)
+                hiddenText = item->text();
+        }
+
+        bool visible = true;
+        if (unlockedText == "unlocked" && !showEarned)
+            visible = false;
+        if (unlockedText == "locked" && !showNotEarned)
+            visible = false;
+        if (hiddenText.toLower() == "yes" && !showHidden)
+            visible = false;
+
+        tableWidget->setRowHidden(row, !visible);
+    }
+}
+
 void TrophyViewer::PopulateTrophyWidget(QString title) {
     tableWidget = new QTableWidget(this);
     tableWidget->setShowGrid(false);
@@ -71,6 +197,7 @@ void TrophyViewer::PopulateTrophyWidget(QString title) {
     tableWidget->horizontalHeader()->setStretchLastSection(true);
     tableWidget->verticalHeader()->setVisible(false);
     tableWidget->setRowCount(icons.size());
+    tableWidget->setSortingEnabled(true);
 
     for (int row = 0; auto& icon : icons) {
         QTableWidgetItem* item = new QTableWidgetItem();
@@ -86,7 +213,7 @@ void TrophyViewer::PopulateTrophyWidget(QString title) {
             QImage(typeIcon).scaled(QSize(128, 128), Qt::KeepAspectRatio, Qt::SmoothTransformation);
         typeitem->setData(Qt::DecorationRole, type_icon);
         typeitem->setFlags(typeitem->flags() & ~Qt::ItemIsEditable);
-        tableWidget->setItem(row, 6, typeitem);
+        tableWidget->setItem(row, 5, typeitem);
 
         std::string detailString = trophyDetails[row].toStdString();
         std::size_t newline_pos = 0;
@@ -99,9 +226,9 @@ void TrophyViewer::PopulateTrophyWidget(QString title) {
             SetTableItem(tableWidget, row, 0, trpUnlocked[row]);
             SetTableItem(tableWidget, row, 2, trophyNames[row]);
             SetTableItem(tableWidget, row, 3, QString::fromStdString(detailString));
-            SetTableItem(tableWidget, row, 4, trpId[row]);
-            SetTableItem(tableWidget, row, 5, trpHidden[row]);
-            SetTableItem(tableWidget, row, 7, trpPid[row]);
+            SetTableItem(tableWidget, row, 4, trpTimeUnlocked[row]);
+            SetTableItem(tableWidget, row, 6, trpId[row]);
+            SetTableItem(tableWidget, row, 7, trpHidden[row]);
         }
 
         tableWidget->verticalHeader()->resizeSection(row, icon.height());
@@ -111,9 +238,13 @@ void TrophyViewer::PopulateTrophyWidget(QString title) {
     tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     int width = 16;
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 9; i++) {
         width += tableWidget->horizontalHeader()->sectionSize(i);
     }
+
+    tableWidget->resize(width + 150, 670);
+    tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Fixed);
+    tableWidget->setColumnWidth(3, 275);
 
     QVBoxLayout* tablayout = new QVBoxLayout();
     tablayout->addWidget(tableWidget);
@@ -363,6 +494,7 @@ bool TrophyViewer::RefreshValues(QString title) {
     trpPid.clear();
     trophyNames.clear();
     trophyDetails.clear();
+    trpTimeUnlocked.clear();
     icons.clear();
 
     const auto trophyDir =
@@ -418,15 +550,33 @@ bool TrophyViewer::RefreshValues(QString title) {
                     } else {
                         trpUnlocked.append("locked");
                     }
+                    if (reader.attributes().hasAttribute("timestamp")) {
+                        QString ts = reader.attributes().value("timestamp").toString();
+                        if (ts.length() > 10)
+                            trpTimeUnlocked.append("unknown");
+                        else {
+                            bool ok;
+                            qint64 timestampInt = ts.toLongLong(&ok);
+                            if (ok) {
+                                QDateTime dt = QDateTime::fromSecsSinceEpoch(timestampInt);
+                                QString format = useEuropeanDateFormat ? "dd/MM/yyyy HH:mm:ss"
+                                                                       : "MM/dd/yyyy HH:mm:ss";
+                                trpTimeUnlocked.append(dt.toString(format));
+                            } else {
+                                trpTimeUnlocked.append("unknown");
+                            }
+                        }
+                    } else {
+                        trpTimeUnlocked.append("");
+                    }
                 } else {
                     trpUnlocked.append("locked");
+                    trpTimeUnlocked.append("");
                 }
             }
-
             if (reader.name().toString() == "name" && !trpId.isEmpty()) {
                 trophyNames.append(reader.readElementText());
             }
-
             if (reader.name().toString() == "detail" && !trpId.isEmpty()) {
                 trophyDetails.append(reader.readElementText());
             }
