@@ -246,6 +246,8 @@ void TrophyViewer::SetTableItem(QTableWidget* parent, int row, int column, QStri
     shadowEffect->setOffset(2, 2);                // Set the offset of the shadow
 
     label->setGraphicsEffect(shadowEffect); // Apply shadow effect to the QLabel
+    if (column == 4)
+        label->setAlignment(Qt::AlignCenter);
 
     layout->addWidget(label);
     if (column != 1 && column != 2 && column != 3)
@@ -554,9 +556,10 @@ bool TrophyViewer::RefreshValues(QString title) {
                             qint64 timestampInt = ts.toLongLong(&ok);
                             if (ok) {
                                 QDateTime dt = QDateTime::fromSecsSinceEpoch(timestampInt);
-                                QString format = useEuropeanDateFormat ? "dd/MM/yyyy\n  h:mm ap"
-                                                                       : "MM/dd/yyy\n  h:mm ap";
-                                trpTimeUnlocked.append(dt.toString(format));
+                                QString format =
+                                    useEuropeanDateFormat ? "dd/MM/yyyy\n" : "MM/dd/yyy\n";
+                                QString format2 = "h:mm ap";
+                                trpTimeUnlocked.append(dt.toString(format) + dt.toString(format2));
                             } else {
                                 trpTimeUnlocked.append("unknown");
                             }
