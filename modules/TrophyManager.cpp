@@ -95,19 +95,16 @@ TrophyViewer::TrophyViewer(QString trophyPath, QString gameTrpPath)
 
     connect(ui->UnlockButton, &QPushButton::clicked, this, [this] {
         TrophyViewer::UnlockTrophy();
-        RefreshValues(trophyFolder);
         UpdateStats();
     });
 
     connect(ui->LockButton, &QPushButton::clicked, this, [this] {
         TrophyViewer::LockTrophy();
-        RefreshValues(trophyFolder);
         UpdateStats();
     });
 
     connect(ui->LockAllButton, &QPushButton::clicked, this, [this] {
         TrophyViewer::LockAllTrophies();
-        RefreshValues(trophyFolder);
         UpdateStats();
     });
 }
@@ -242,7 +239,6 @@ void TrophyViewer::PopulateTrophyWidget(QString title) {
         width += tableWidget->horizontalHeader()->sectionSize(i);
     }
 
-    tableWidget->resize(width + 150, 670);
     tableWidget->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Fixed);
     tableWidget->setColumnWidth(3, 275);
 
@@ -359,9 +355,7 @@ void TrophyViewer::UnlockTrophy() {
                         node.attribute("unlockstate").set_value("true");
                     }
 
-                    int64_t timestamp = duration_cast<std::chrono::milliseconds>(
-                                            std::chrono::system_clock::now().time_since_epoch())
-                                            .count();
+                    int64_t timestamp = QDateTime::currentSecsSinceEpoch();
 
                     if (node.attribute("timestamp").empty()) {
                         node.append_attribute("timestamp") = std::to_string(timestamp).c_str();
@@ -373,7 +367,10 @@ void TrophyViewer::UnlockTrophy() {
         }
     }
     doc.save_file((trophy_dir / "trophy00" / "Xml" / "TROP.XML").native().c_str());
+
+    RefreshValues(trophyFolder);
     SetTableItem(tableWidget, ID, 0, "unlocked");
+    SetTableItem(tableWidget, ID, 4, trpTimeUnlocked[ID]);
     ui->LockStatusLabel->setText("unlocked");
     QMessageBox::information(this, "Trophy Unlocked", trophyNames[ID] + " unlocked");
 }
@@ -428,7 +425,10 @@ void TrophyViewer::LockTrophy() {
         }
     }
     doc.save_file((trophy_dir / "trophy00" / "Xml" / "TROP.XML").native().c_str());
+
+    RefreshValues(trophyFolder);
     SetTableItem(tableWidget, ID, 0, "locked");
+    SetTableItem(tableWidget, ID, 4, "");
     ui->LockStatusLabel->setText("locked");
     QMessageBox::information(this, "Trophy Locked", trophyNames[ID] + " locked");
 }
@@ -479,8 +479,10 @@ void TrophyViewer::LockAllTrophies() {
     }
     doc.save_file((trophy_dir / "trophy00" / "Xml" / "TROP.XML").native().c_str());
 
+    RefreshValues(trophyFolder);
     for (int i = 0; i < 40; i++) {
         SetTableItem(tableWidget, i, 0, "locked");
+        SetTableItem(tableWidget, i, 4, "");
     }
     ui->LockStatusLabel->setText("locked");
     QMessageBox::information(this, "Trophies Reset", "All trophies locked");
@@ -559,8 +561,8 @@ bool TrophyViewer::RefreshValues(QString title) {
                             qint64 timestampInt = ts.toLongLong(&ok);
                             if (ok) {
                                 QDateTime dt = QDateTime::fromSecsSinceEpoch(timestampInt);
-                                QString format = useEuropeanDateFormat ? "dd/MM/yyyy HH:mm:ss"
-                                                                       : "MM/dd/yyyy HH:mm:ss";
+                                QString format = useEuropeanDateFormat ? "dd/MM/yyyy\n  h:mm ap"
+                                                                       : "MM/dd/yyy\n  h:mm ap";
                                 trpTimeUnlocked.append(dt.toString(format));
                             } else {
                                 trpTimeUnlocked.append("unknown");
