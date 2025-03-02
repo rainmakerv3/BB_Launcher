@@ -237,7 +237,12 @@ void TrophyViewer::SetTableItem(QTableWidget* parent, int row, int column, QStri
     QLabel* label = new QLabel(str);
     QTableWidgetItem* item = new QTableWidgetItem();
     label->setWordWrap(true);
-    label->setStyleSheet("color: white; font-size: 15px; font-weight: bold;");
+
+    if (Config::theme == "Dark") {
+        label->setStyleSheet("color: white; font-size: 15px; font-weight: bold;");
+    } else {
+        label->setStyleSheet("color: black; font-size: 15px; font-weight: bold;");
+    }
 
     // Create shadow effect
     QGraphicsDropShadowEffect* shadowEffect = new QGraphicsDropShadowEffect();
@@ -245,7 +250,8 @@ void TrophyViewer::SetTableItem(QTableWidget* parent, int row, int column, QStri
     shadowEffect->setColor(QColor(0, 0, 0, 160)); // Set the color and opacity of the shadow
     shadowEffect->setOffset(2, 2);                // Set the offset of the shadow
 
-    label->setGraphicsEffect(shadowEffect); // Apply shadow effect to the QLabel
+    if (Config::theme == "Dark")
+        label->setGraphicsEffect(shadowEffect); // Apply shadow effect to the QLabel
     if (column == 4)
         label->setAlignment(Qt::AlignCenter);
 
