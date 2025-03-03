@@ -215,7 +215,7 @@ jobs:
         tag: "Pre-release-BBLauncher-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}"
         draft: false
         prerelease: true
-        body: "- Mac builds are now in BETA, seems to work okay but need some more tests to be sure\n- Prerelease builds are meant for testing, releases are better for general use\n- Full Changelog: https://github.com/rainmakerv3/BB_Launcher/commits/master/"
+        body: "- Mac builds now out of BETA since there have been no reported issues\n- Prerelease builds are meant for testing, releases are better for general use\n- Full Changelog: https://github.com/rainmakerv3/BB_Launcher/commits/master/"
         artifacts: ./artifacts/*.zip
 
     - name: Publish to Release Repository
