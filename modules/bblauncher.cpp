@@ -50,7 +50,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     QApplication::setStyle("Fusion");
 
     std::string versionstring(Common::VERSION);
-    setWindowTitle(QString::fromStdString("BBLauncher " + versionstring));
+    setWindowTitle(("BBLauncher " + QString::fromStdString(versionstring).right(3)));
 
     UpdateSettingsList();
     UpdateModList();
