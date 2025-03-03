@@ -206,6 +206,12 @@ void CheckUpdate::setupUI(const QString& downloadUrl, const QString& latestDate,
                 }
             });
 
+    requestChangelog(currentRev, latestRev, downloadUrl, latestDate, currentDate);
+    textField->setVisible(true);
+    toggleButton->setText(tr("Hide Changelog"));
+    adjustSize();
+    textField->setFixedWidth(textField->width() + 20);
+
     connect(yesButton, &QPushButton::clicked, this, [this, downloadUrl]() {
         yesButton->setEnabled(false);
         noButton->setEnabled(false);
