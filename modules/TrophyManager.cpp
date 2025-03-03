@@ -305,6 +305,10 @@ void TrophyViewer::UpdateStats() {
 
     float AchievementRate = (UnlockedCount / 40.0) * 100.0;
     ui->AchivementLabel->setText(QString::number(round(AchievementRate)) + "%");
+    trophyInfoLabel->setText(QString(tr("Progress") + ": %1% (%2/%3)")
+                                 .arg(QString::number(round(AchievementRate)))
+                                 .arg(UnlockedCount)
+                                 .arg(UnlockedCount + LockedCount));
 }
 
 void TrophyViewer::UnlockTrophy() {
