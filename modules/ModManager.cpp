@@ -410,8 +410,18 @@ void ModManager::DeactivateButton_isPressed() {
         for (std::string fileline : UniqueList) {
             conflictfilecount = 0;
             for (int i = 0; i < FileList.size(); i++) {
-                if (FileList[i].contains(fileline))
+
+                std::size_t comma_pos = fileline.find(',');
+                std::string relative_string;
+                if (comma_pos != std::string::npos) {
+                    relative_string = fileline.substr(0, comma_pos);
+                } else {
+                    relative_string = fileline;
+                }
+
+                if (FileList[i].contains(relative_string))
                     conflictfilecount = conflictfilecount + 1;
+
                 if (conflictfilecount > 1) {
                     hasconflict = true;
                     break;
