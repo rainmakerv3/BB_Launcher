@@ -19,7 +19,7 @@
 #include "settings/ShadCheatsPatches.h"
 #include "settings/ShadSettings.h"
 #include "settings/control_settings.h"
-#include "settings/kbm_config_dialog.h"
+#include "settings/kbm_gui.h"
 #include "settings/updater/CheckUpdate.h"
 
 BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
@@ -130,8 +130,8 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->KBMButton, &QPushButton::clicked, this, [this]() {
-        EditorDialog* editorWindow = new EditorDialog(this);
-        editorWindow->exec();
+        KBMSettings* KBMWindow = new KBMSettings(this);
+        KBMWindow->exec();
     });
 
     connect(ui->ControllerButton, &QPushButton::clicked, this, [this]() {
