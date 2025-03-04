@@ -12,6 +12,8 @@
 
 #ifndef MAX_PATH
 #ifdef _WIN32
+#include <Shlobj.h>
+#include <windows.h>
 // This is the maximum number of UTF-16 code units permissible in Windows file paths
 #define MAX_PATH 260
 #else
@@ -42,6 +44,10 @@ std::filesystem::path GetShadUserDir() {
         } else {
             user_dir = std::filesystem::path(getenv("HOME")) / ".local" / "share" / "shadPS4";
         }
+#elif _WIN32
+        TCHAR appdata[MAX_PATH] = {0};
+        SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appdata);
+        user_dir = std::filesystem::path(appdata) / "shadPS4";
 #endif
     }
     return user_dir;
