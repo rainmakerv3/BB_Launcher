@@ -38,6 +38,9 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
     if (std::filesystem::exists(Common::installPath.parent_path() /
                                 (Common::game_serial + "-UPDATE"))) {
         ModInstallPath = Common::installPath.parent_path() / (Common::game_serial + "-UPDATE");
+    } else if (std::filesystem::exists(Common::installPath.parent_path() /
+                                       (Common::game_serial + "-patch"))) {
+        ModInstallPath = Common::installPath.parent_path() / (Common::game_serial + "-patch");
     } else {
         ModInstallPath = Common::installPath;
     }

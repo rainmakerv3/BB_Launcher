@@ -867,10 +867,14 @@ void CheatsPatches::onPatchCheckBoxHovered(QCheckBox* checkBox, bool hovered) {
 void CheatsPatches::readGameInfo() {
     std::filesystem::path sce_folder_path = Common::installPath / "sce_sys" / "param.sfo";
     std::filesystem::path game_update_path = Common::installPath;
+    std::filesystem::path game_patch_path = Common::installPath;
     game_update_path += "-UPDATE";
+    game_patch_path += "-patch";
 
     if (std::filesystem::exists(game_update_path / "sce_sys" / "param.sfo")) {
         sce_folder_path = game_update_path / "sce_sys" / "param.sfo";
+    } else if (std::filesystem::exists(game_patch_path / "sce_sys" / "param.sfo")) {
+        sce_folder_path = game_patch_path / "sce_sys" / "param.sfo";
     }
 
     std::filesystem::path icon_path = Common::installPath / "sce_sys" / "icon0.png";

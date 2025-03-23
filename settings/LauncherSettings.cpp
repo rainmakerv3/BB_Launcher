@@ -195,6 +195,10 @@ void LoadLauncherSettings() {
 
         Common::installUpdatePath =
             Common::installPath.parent_path() / (Common::game_serial + "-UPDATE");
+    } else if (std::filesystem::exists(Common::installPath.parent_path() /
+                                       (Common::game_serial + "-patch"))) {
+        Common::installUpdatePath =
+            Common::installPath.parent_path() / (Common::game_serial + "-patch");
     }
 
     Config::SetTheme(theme);
