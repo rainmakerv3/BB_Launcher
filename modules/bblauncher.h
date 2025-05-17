@@ -41,5 +41,6 @@ private:
     void UpdateIcons();
 
     const std::vector<std::string> BBSerialList = {"CUSA03173", "CUSA00900", "CUSA00208",
-                                                   "CUSA00207", "CUSA01363", "CUSA03023"};
+                                                   "CUSA00207", "CUSA01363", "CUSA03023",
+                                                   "CUSA00299", "CUSA03014"};
 };
