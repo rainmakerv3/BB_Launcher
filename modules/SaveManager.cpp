@@ -11,6 +11,8 @@ SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveMana
     ui->setupUi(this);
     ui->SelectSaveComboBox->addItem("Current Save");
     ExactSaveDir = Common::SaveDir / "1" / Common::game_serial / "SPRJ0005";
+    if (Common::game_serial == "CUSA03173")
+        ExactSaveDir = Common::SaveDir / "1" / "CUSA00207" / "SPRJ0005";
 
     if (!std::filesystem::exists(BackupsDir)) {
         std::filesystem::create_directories(BackupsDir);

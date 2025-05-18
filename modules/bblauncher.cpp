@@ -82,8 +82,16 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         if (!CheckBBInstall())
             return;
 
-        if (!std::filesystem::exists(Common::SaveDir / "1" / Common::game_serial / "SPRJ0005" /
-                                     "userdata0010")) {
+        if (Common::game_serial == "CUSA03173") {
+            if (!std::filesystem::exists(Common::SaveDir / "1" / "CUSA00207" / "SPRJ0005" /
+                                         "userdata0010")) {
+                QMessageBox::warning(
+                    this, "No saves detected",
+                    "Launch Bloodborne to generate saves before using Save Manager");
+                return;
+            }
+        } else if (!std::filesystem::exists(Common::SaveDir / "1" / Common::game_serial /
+                                            "SPRJ0005" / "userdata0010")) {
             QMessageBox::warning(this, "No saves detected",
                                  "Launch Bloodborne to generate saves before using Save Manager");
             return;
@@ -233,6 +241,9 @@ void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
 
     if (Config::SoundFixEnabled) {
         std::filesystem::path savePath = Common::SaveDir / "1" / Common::game_serial / "SPRJ0005";
+        if (Common::game_serial == "CUSA03173")
+            savePath = Common::SaveDir / "1" / "CUSA00207" / "SPRJ0005";
+
         if (std::filesystem::exists(savePath / "userdata0010")) {
             std::ofstream savefile1;
             savefile1.open(savePath / "userdata0010",
@@ -290,8 +301,10 @@ void BBLauncher::StartBackupSave() {
         }
     }
 
-    const auto save_dir = Common::SaveDir / "1" / Common::game_serial;
-    const auto backup_dir = BackupPath / "BACKUP1";
+    auto save_dir = Common::SaveDir / "1" / Common::game_serial;
+    if (Common::game_serial == "CUSA03173")
+        save_dir = Common::SaveDir / "1" / "CUSA00207" / "SPRJ0005";
+    auto backup_dir = BackupPath / "BACKUP1";
 
     while (true) {
         std::this_thread::sleep_for(std::chrono::minutes(Config::BackupInterval));
