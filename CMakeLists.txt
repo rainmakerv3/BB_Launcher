@@ -112,9 +112,8 @@ set(PROJECT_SOURCES
     modules/TrophyManager.cpp
     modules/TrophyManager.h
     modules/TrophyManager.ui
+    modules/TrophyDeps/aes.h
     modules/TrophyDeps/concepts.h
-    modules/TrophyDeps/crypto.cpp
-    modules/TrophyDeps/crypto.h
     modules/TrophyDeps/enum.h
     modules/TrophyDeps/io_file.cpp
     modules/TrophyDeps/io_file.h
@@ -173,13 +172,6 @@ if (WIN32)
 endif()
 
 target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-
-if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND MSVC)
-    target_link_libraries(BB_Launcher PRIVATE cryptoppwin)
-else()
-    target_link_libraries(BB_Launcher PRIVATE cryptopp::cryptopp)
-endif()
-
 target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network)
 target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11)
 target_link_libraries(BB_Launcher PRIVATE pugixml::pugixml)

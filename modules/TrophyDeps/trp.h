@@ -5,7 +5,6 @@
 
 #include <array>
 #include <vector>
-#include "crypto.h"
 #include "io_file.h"
 #include "modules/Common.h"
 
@@ -37,7 +36,6 @@ public:
     void GetNPcommID(const std::filesystem::path& trophyPath, int index);
 
 private:
-    Crypto crypto;
     std::vector<u8> NPcommID = std::vector<u8>(12);
     std::array<u8, 16> np_comm_id{};
     std::array<u8, 16> esfmIv{};

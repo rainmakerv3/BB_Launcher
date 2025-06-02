@@ -1,9 +1,24 @@
 
 
 #include <filesystem>
+#include "aes.h"
 #include "settings/LauncherSettings.h"
 #include "settings/formatting.h"
 #include "trp.h"
+
+static void DecryptEFSM(std::span<u8, 16> trophyKey, std::span<u8, 16> NPcommID,
+                        std::span<u8, 16> efsmIv, std::span<u8> ciphertext,
+                        std::span<u8> decrypted) {
+    // Step 1: Encrypt NPcommID
+    std::array<u8, 16> trophyIv{};
+    std::array<u8, 16> trpKey;
+    aes::encrypt_cbc(NPcommID.data(), NPcommID.size(), trophyKey.data(), trophyKey.size(),
+                     trophyIv.data(), trpKey.data(), trpKey.size(), false);
+
+    // Step 2: Decrypt EFSM
+    aes::decrypt_cbc(ciphertext.data(), ciphertext.size(), trpKey.data(), trpKey.size(),
+                     efsmIv.data(), decrypted.data(), decrypted.size(), nullptr);
+}
 
 TRP::TRP() = default;
 TRP::~TRP() = default;
@@ -53,7 +68,7 @@ bool TRP::Extract(const std::filesystem::path& trophyPath, const std::string tit
         return false;
     }
 
-    std::array<CryptoPP::byte, 16> user_key{};
+    std::array<u8, 16> user_key{};
     hexToBytes(user_key_str.c_str(), user_key.data());
 
     for (int index = 0; const auto& it : std::filesystem::directory_iterator(gameSysDir)) {
@@ -90,7 +105,8 @@ bool TRP::Extract(const std::filesystem::path& trophyPath, const std::string tit
                 std::string_view name(entry.entry_name);
                 if (entry.flag == 0 && name.find("TROP") != std::string::npos) { // PNG
                     if (!file.Seek(entry.entry_pos)) {
-                        // LOG_CRITICAL(Common_Filesystem, "Failed to seek to TRP entry offset");
+                        // LOG_CRITICAL(Common_Filesystem, "Failed to seek to TRP entry
+                        // offset");
                         return false;
                     }
                     std::vector<u8> icon(entry.entry_len);
@@ -100,7 +116,8 @@ bool TRP::Extract(const std::filesystem::path& trophyPath, const std::string tit
                 if (entry.flag == 3 && np_comm_id[0] == 'N' &&
                     np_comm_id[1] == 'P') { // ESFM, encrypted.
                     if (!file.Seek(entry.entry_pos)) {
-                        // LOG_CRITICAL(Common_Filesystem, "Failed to seek to TRP entry offset");
+                        // LOG_CRITICAL(Common_Filesystem, "Failed to seek to TRP entry
+                        // offset");
                         return false;
                     }
                     file.Read(esfmIv); // get iv key.
@@ -114,7 +131,7 @@ bool TRP::Extract(const std::filesystem::path& trophyPath, const std::string tit
                         return false;
                     }
                     file.Read(ESFM);
-                    crypto.decryptEFSM(user_key, np_comm_id, esfmIv, ESFM, XML); // decrypt
+                    DecryptEFSM(user_key, np_comm_id, esfmIv, ESFM, XML); // decrypt
                     removePadding(XML);
                     std::string xml_name = entry.entry_name;
                     size_t pos = xml_name.find("ESFM");
