@@ -303,7 +303,7 @@ void BBLauncher::StartBackupSave() {
 
     auto save_dir = Common::SaveDir / "1" / Common::game_serial;
     if (Common::game_serial == "CUSA03173")
-        save_dir = Common::SaveDir / "1" / "CUSA00207" / "SPRJ0005";
+        save_dir = Common::SaveDir / "1" / "CUSA00207";
     auto backup_dir = BackupPath / "BACKUP1";
 
     while (true) {
