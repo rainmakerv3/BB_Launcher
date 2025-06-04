@@ -60,14 +60,10 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
     connect(ui->tabWidgetSettings, &QTabWidget::currentChanged, this,
             [this]() { ui->buttonBox->button(QDialogButtonBox::Close)->setFocus(); });
 
-    // GENERAL TAB
-    { ui->updaterGroupBox->setVisible(true); }
+    ui->updaterGroupBox->setVisible(true);
 
-    // Input TAB
-    {
-        connect(ui->hideCursorComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-                [this](int index) { OnCursorStateChanged(index); });
-    }
+    connect(ui->hideCursorComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+            [this](int index) { OnCursorStateChanged(index); });
 
     connect(ui->checkUpdateButton, &QPushButton::pressed, this, &ShadSettings::UpdateShad);
 
@@ -103,8 +99,6 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
 
     // Descriptions
     {
-
-        // General
         ui->consoleLanguageGroupBox->installEventFilter(this);
         ui->fullscreenCheckBox->installEventFilter(this);
         ui->FullscreenModeGroupBox->installEventFilter(this);
@@ -119,16 +113,15 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
         ui->checkUpdateButton->installEventFilter(this);
         ui->disableTrophycheckBox->installEventFilter(this);
 
-        // Input
         ui->hideCursorGroupBox->installEventFilter(this);
         ui->idleTimeoutGroupBox->installEventFilter(this);
         ui->backButtonBehaviorGroupBox->installEventFilter(this);
 
-        // Graphics
         ui->widthGroupBox->installEventFilter(this);
         ui->heightGroupBox->installEventFilter(this);
         ui->heightDivider->installEventFilter(this);
         ui->motionControlsCheckBox->installEventFilter(this);
+        ui->DevkitCheckBox->installEventFilter(this);
     }
 }
 
@@ -143,7 +136,7 @@ void ShadSettings::LoadValuesFromConfig() {
         ifs.open(shadConfigFile, std::ios_base::binary);
         data = toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
     } catch (std::exception& ex) {
-        // handle
+        // handle ?
         return;
     }
 
@@ -169,6 +162,7 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->fullscreenCheckBox->setChecked(toml::find_or<bool>(data, "General", "Fullscreen", false));
     ui->separateUpdatesCheckBox->setChecked(
         toml::find_or<bool>(data, "General", "separateUpdateEnabled", false));
+    ui->DevkitCheckBox->setChecked(toml::find_or<bool>(data, "General", "isDevKit", false));
     ui->logTypeComboBox->setCurrentText(
         QString::fromStdString(toml::find_or<std::string>(data, "General", "logType", "async")));
     ui->logFilterLineEdit->setText(
@@ -241,6 +235,8 @@ void ShadSettings::updateNoteTextEdit(const QString& elementName) {
         text = disableTrophycheckBoxtext;
     } else if (elementName == "motionControlsCheckBox") {
         text = motionControlsCheckBoxtext;
+    } else if (elementName == "DevkitCheckBox") {
+        text = DevkitCheckBoxtext;
     }
 
     // Input
@@ -315,6 +311,7 @@ void ShadSettings::SaveSettings() {
     data["General"]["userName"] = ui->userNameLineEdit->text().toStdString();
     data["General"]["updateChannel"] = ui->updateComboBox->currentText().toStdString();
     data["General"]["separateUpdateEnabled"] = ui->separateUpdatesCheckBox->isChecked();
+    data["General"]["isDevKit"] = ui->DevkitCheckBox->isChecked();
     data["Input"]["cursorState"] = ui->hideCursorComboBox->currentIndex();
     data["Input"]["cursorHideTimeout"] = ui->idleTimeoutSpinBox->value();
     data["Input"]["isMotionControlsEnabled"] = ui->motionControlsCheckBox->isChecked();
@@ -344,6 +341,7 @@ void ShadSettings::SetDefaults() {
     ui->discordRPCCheckbox->setChecked(true);
     ui->fullscreenCheckBox->setChecked(false);
     ui->separateUpdatesCheckBox->setChecked(false);
+    ui->DevkitCheckBox->setChecked(false);
     ui->GPUBufferCheckBox->setChecked(false);
     ui->logTypeComboBox->setCurrentText("async");
     ui->logFilterLineEdit->setText("");
@@ -353,8 +351,6 @@ void ShadSettings::SetDefaults() {
     ui->motionControlsCheckBox->setChecked(true);
     ui->fullscreenModeComboBox->setCurrentText("Borderless");
 }
-
-// TODO IF POSSIBLE: update shad button
 
 void ShadSettings::UpdateShad() {
     ui->checkUpdateButton->setText("Downloading, please wait");

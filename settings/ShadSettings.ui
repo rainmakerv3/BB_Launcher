@@ -65,8 +65,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>960</width>
-         <height>743</height>
+         <width>981</width>
+         <height>636</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="generalTabVLayout" stretch="0">
@@ -249,40 +249,31 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_4">
                <item>
-                <layout class="QVBoxLayout" name="emulatorverticalLayout">
-                 <property name="spacing">
-                  <number>10</number>
+                <widget class="QCheckBox" name="separateUpdatesCheckBox">
+                 <property name="text">
+                  <string notr="true">Enable Separate Update Folder</string>
                  </property>
-                 <item>
-                  <widget class="QCheckBox" name="separateUpdatesCheckBox">
-                   <property name="text">
-                    <string notr="true">Enable Separate Update Folder</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QCheckBox" name="discordRPCCheckbox">
-                   <property name="text">
-                    <string notr="true">Enable Discord Rich Presence</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+                </widget>
                </item>
                <item>
-                <widget class="QGroupBox" name="DebugGroupBox">
-                 <property name="title">
-                  <string>For PM4 Type 0 Crashes</string>
+                <widget class="QCheckBox" name="discordRPCCheckbox">
+                 <property name="text">
+                  <string notr="true">Enable Discord Rich Presence</string>
                  </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_16">
-                  <item>
-                   <widget class="QCheckBox" name="GPUBufferCheckBox">
-                    <property name="text">
-                     <string>Copy GPU Buffers</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="GPUBufferCheckBox">
+                 <property name="text">
+                  <string>Copy GPU Buffers (may fix PM4 crashes)</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="DevkitCheckBox">
+                 <property name="text">
+                  <string>Enable Devkit mode (fixes 1440p patch)</string>
+                 </property>
                 </widget>
                </item>
               </layout>

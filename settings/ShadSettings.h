@@ -132,5 +132,8 @@ private:
         "Vblank Divider:\nThe frame rate at which the emulator refreshes at is multiplied by this "
         "number. Changing this may have adverse effects, such as increasing the game speed, or "
         "breaking critical game functionality that does not expect this to change!";
+    const QString DevkitCheckBoxtext =
+        "Enabled Devkit mode for shadPS4, this is required to use the 1440p patch as the game "
+        "crashes otherwise";
 };
 
