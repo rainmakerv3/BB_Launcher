@@ -23,6 +23,22 @@ private Q_SLOTS:
 private:
     std::unique_ptr<Ui::KBMSettings> ui;
 
+#ifdef _WIN32
+    const int lctrl = 29;
+    const int rctrl = 57373;
+    const int lalt = 56;
+    const int ralt = 57400;
+    const int lshift = 42;
+    const int rshift = 54;
+#else
+    const int lctrl = 37;
+    const int rctrl = 105;
+    const int lalt = 64;
+    const int ralt = 108;
+    const int lshift = 50;
+    const int rshift = 62;
+#endif
+
     bool eventFilter(QObject* obj, QEvent* event) override;
     void ButtonConnects();
     void SetUIValuestoMappings(std::string config_id);
@@ -35,11 +51,11 @@ private:
     bool MappingCompleted = false;
     bool HelpWindowOpen = false;
     QString mapping;
-    QString modifier;
     int MappingTimer;
     QTimer* timer;
     QPushButton* MappingButton;
     QList<QPushButton*> ButtonsList;
+    QSet<QString> pressedKeys;
 
     const std::vector<std::string> ControllerInputs = {
         "cross",        "circle",    "square",      "triangle",    "l1",
