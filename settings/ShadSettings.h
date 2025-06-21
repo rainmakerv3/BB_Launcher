@@ -121,9 +121,6 @@ private:
     const QString idleTimeoutGroupBoxtext =
         "Hide Idle Cursor Timeout:\nThe duration (seconds) after "
         "which the cursor that has been idle hides itself.";
-    const QString backButtonBehaviorGroupBoxtext =
-        "Back Button Behavior:\nSets the controller's back button to emulate tapping the specified "
-        "position on the PS4 touchpad.";
     const QString resolutionLayouttext =
         "Width/Height:\nSets the size of the emulator window at launch, which can be resized "
         "during "

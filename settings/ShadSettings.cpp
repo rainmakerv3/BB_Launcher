@@ -35,10 +35,6 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
     ui->hideCursorComboBox->addItem("Idle");
     ui->hideCursorComboBox->addItem("Always");
 
-    ui->backButtonBehaviorComboBox->addItem("Touchpad Left", "left");
-    ui->backButtonBehaviorComboBox->addItem("Touchpad Center", "center");
-    ui->backButtonBehaviorComboBox->addItem("Touchpad Right", "right");
-    ui->backButtonBehaviorComboBox->addItem("None", "none");
     LoadValuesFromConfig();
 
     defaultTextEdit = "Point your mouse at an option to display its description.";
@@ -115,7 +111,6 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
 
         ui->hideCursorGroupBox->installEventFilter(this);
         ui->idleTimeoutGroupBox->installEventFilter(this);
-        ui->backButtonBehaviorGroupBox->installEventFilter(this);
 
         ui->widthGroupBox->installEventFilter(this);
         ui->heightGroupBox->installEventFilter(this);
@@ -179,10 +174,6 @@ void ShadSettings::LoadValuesFromConfig() {
     Common::PathToQString(save_data_path_string, Common::SaveDir);
     ui->SavePathLineEdit->setText(save_data_path_string);
 
-    QString backButtonBehavior = QString::fromStdString(
-        toml::find_or<std::string>(data, "Input", "backButtonBehavior", "left"));
-    int index = ui->backButtonBehaviorComboBox->findData(backButtonBehavior);
-    ui->backButtonBehaviorComboBox->setCurrentIndex(index != -1 ? index : 0);
     ui->motionControlsCheckBox->setChecked(
         toml::find_or<bool>(data, "Input", "isMotionControlsEnabled", true));
     ui->fullscreenModeComboBox->setCurrentText(QString::fromStdString(
@@ -244,8 +235,6 @@ void ShadSettings::updateNoteTextEdit(const QString& elementName) {
         text = hideCursorGroupBoxtext;
     } else if (elementName == "idleTimeoutGroupBox") {
         text = idleTimeoutGroupBoxtext;
-    } else if (elementName == "backButtonBehaviorGroupBox") {
-        text = backButtonBehaviorGroupBoxtext;
     }
 
     // Graphics
@@ -300,8 +289,6 @@ void ShadSettings::SaveSettings() {
     }
 
     const QVector<std::string> TouchPadIndex = {"left", "center", "right", "none"};
-    data["Input"]["backButtonBehavior"] =
-        TouchPadIndex[ui->backButtonBehaviorComboBox->currentIndex()];
     data["General"]["Fullscreen"] = ui->fullscreenCheckBox->isChecked();
     data["General"]["FullscreenMode"] = ui->fullscreenModeComboBox->currentText().toStdString();
     data["General"]["isTrophyPopupDisabled"] = ui->disableTrophycheckBox->isChecked();
@@ -347,7 +334,6 @@ void ShadSettings::SetDefaults() {
     ui->logFilterLineEdit->setText("");
     ui->userNameLineEdit->setText("shadPS4");
     ui->updateComboBox->setCurrentText("Nightly");
-    ui->backButtonBehaviorComboBox->setCurrentIndex(0);
     ui->motionControlsCheckBox->setChecked(true);
     ui->fullscreenModeComboBox->setCurrentText("Borderless");
 }

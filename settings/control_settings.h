@@ -23,14 +23,25 @@ public:
         "pad_left",     "pad_right", "axis_left_x", "axis_left_y", "axis_right_x",
         "axis_right_y", "back"};
 
-    const QStringList ButtonOutputs = {"cross",    "circle",    "square",   "triangle", "l1",
-                                       "r1",       "l2",        "r2",       "l3",
-
-                                       "r3",       "options",   "pad_up",
-
+    const QStringList ButtonOutputs = {"cross",
+                                       "circle",
+                                       "square",
+                                       "triangle",
+                                       "l1",
+                                       "r1",
+                                       "l2",
+                                       "r2",
+                                       "l3",
+                                       "r3",
+                                       "options",
+                                       "pad_up",
                                        "pad_down",
-
-                                       "pad_left", "pad_right", "touchpad", "unmapped"};
+                                       "pad_left",
+                                       "pad_right",
+                                       "touchpad_left",
+                                       "touchpad_center",
+                                       "touchpad_right",
+                                       "unmapped"};
 
     const QStringList StickOutputs = {"axis_left_x", "axis_left_y", "axis_right_x", "axis_right_y",
                                       "unmapped"};
