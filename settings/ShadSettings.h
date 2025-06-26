@@ -25,9 +25,13 @@ private:
     void InstallUpdate();
     void DownloadUpdate(const QString& downloadUrl);
     void UpdateDialog();
+    void LoadFSRValues();
+    void SaveFSRValues();
 
     std::unique_ptr<Ui::ShadSettings> ui;
 
+    bool DevSettingsExists = false;
+    std::filesystem::path DevSettingsFile;
     std::map<std::string, int> languages;
     QString defaultTextEdit;
     int initialHeight;

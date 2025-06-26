@@ -768,7 +768,7 @@
      </widget>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string>Other</string>
+       <string>FSR / Save Path</string>
       </attribute>
       <widget class="QWidget" name="horizontalLayoutWidget">
        <property name="geometry">
@@ -804,8 +804,8 @@
       <widget class="QLabel" name="label">
        <property name="geometry">
         <rect>
-         <x>50</x>
-         <y>130</y>
+         <x>30</x>
+         <y>120</y>
          <width>881</width>
          <height>81</height>
         </rect>
@@ -822,6 +822,95 @@
        <property name="wordWrap">
         <bool>true</bool>
        </property>
+      </widget>
+      <widget class="QLabel" name="FSRLabel">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>170</y>
+         <width>881</width>
+         <height>81</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>FSR/DevTools Settings file must be generated first to use FSR and FSR settings. To do this, press Ctrl+F10 when in-game (note: latest shadPS4 version - 9.0 or later required for FSR)</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QGroupBox" name="FSRGroupBox">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>240</y>
+         <width>341</width>
+         <height>161</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>FSR Settings</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_17">
+        <item>
+         <widget class="QCheckBox" name="FSRCheckBox">
+          <property name="text">
+           <string>Enable FSR</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="RCASCheckBox">
+          <property name="text">
+           <string>Enable FSR RCAS Sharpening</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="verticalLayout_16">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="QLabel" name="RCASLabel">
+              <property name="text">
+               <string>RCAS Value</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="RCASValue">
+              <property name="text">
+               <string>0.250</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QSlider" name="RCASSlider">
+            <property name="maximum">
+             <number>1000</number>
+            </property>
+            <property name="value">
+             <number>250</number>
+            </property>
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
      </widget>
     </widget>
