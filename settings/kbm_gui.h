@@ -13,6 +13,9 @@ public:
     explicit KBMSettings(QWidget* parent = nullptr);
     ~KBMSettings();
 
+signals:
+    void PushKBMEvent();
+
 private Q_SLOTS:
     void SaveKBMConfig(bool CloseOnSave);
     void SetDefault();

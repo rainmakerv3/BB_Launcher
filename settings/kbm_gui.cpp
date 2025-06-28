@@ -139,6 +139,8 @@ KBMSettings::KBMSettings(QWidget* parent) : QDialog(parent), ui(new Ui::KBMSetti
         QString SOSString = tr("Speed Offset (def 0.125):") + " " + SOSValue;
         ui->SpeedOffsetLabel->setText(SOSString);
     });
+
+    connect(this, &KBMSettings::PushKBMEvent, this, [this]() { CheckMapping(MappingButton); });
 }
 
 void KBMSettings::ButtonConnects() {
@@ -268,9 +270,17 @@ void KBMSettings::SaveKBMConfig(bool CloseOnSave) {
         output_string = line.substr(0, equal_pos - 1);
         input_string = line.substr(equal_pos + 2);
 
-        if (std::find(ControllerInputs.begin(), ControllerInputs.end(), input_string) !=
-                ControllerInputs.end() ||
-            output_string == "analog_deadzone" || output_string == "override_controller_color") {
+        bool controllerInputdetected = false;
+        for (std::string input : ControllerInputs) {
+            // Needed to avoid detecting backspace while detecting back
+            if (input_string.contains(input) && !input_string.contains("backspace")) {
+                controllerInputdetected = true;
+                break;
+            }
+        }
+
+        if (controllerInputdetected || output_string == "analog_deadzone" ||
+            output_string == "override_controller_color") {
             lines.push_back(line);
         }
     }
@@ -324,27 +334,27 @@ void KBMSettings::SaveKBMConfig(bool CloseOnSave) {
 }
 
 void KBMSettings::SetDefault() {
-    ui->CrossButton->setText("kp2");
-    ui->CircleButton->setText("kp6");
-    ui->TriangleButton->setText("kp8");
-    ui->SquareButton->setText("kp4");
+    ui->CrossButton->setText("e");
+    ui->CircleButton->setText("space");
+    ui->TriangleButton->setText("f");
+    ui->SquareButton->setText("r");
 
-    ui->L1Button->setText("q");
-    ui->L2Button->setText("e");
+    ui->L1Button->setText("rightbutton, lshift");
+    ui->L2Button->setText("rightbutton");
     ui->L3Button->setText("x");
-    ui->R1Button->setText("u");
-    ui->R2Button->setText("o");
-    ui->R3Button->setText("m");
+    ui->R1Button->setText("leftbutton");
+    ui->R2Button->setText("leftbutton, lshift");
+    ui->R3Button->setText("q");
 
-    ui->TouchpadLeftButton->setText("space");
+    ui->TouchpadLeftButton->setText("g");
     ui->TouchpadCenterButton->setText("unmapped");
-    ui->TouchpadRightButton->setText("unmapped");
+    ui->TouchpadRightButton->setText("h");
     ui->OptionsButton->setText("enter");
 
-    ui->DpadUpButton->setText("up");
-    ui->DpadDownButton->setText("down");
-    ui->DpadLeftButton->setText("left");
-    ui->DpadRightButton->setText("right");
+    ui->DpadUpButton->setText("w, lalt");
+    ui->DpadDownButton->setText("s, lalt");
+    ui->DpadLeftButton->setText("a, lalt");
+    ui->DpadRightButton->setText("d, lalt");
 
     ui->LStickUpButton->setText("w");
     ui->LStickDownButton->setText("s");
@@ -356,10 +366,10 @@ void KBMSettings::SetDefault() {
     ui->RStickLeftButton->setText("j");
     ui->RStickRightButton->setText("l");
 
-    ui->LHalfButton->setText("unmapped");
+    ui->LHalfButton->setText("lctrl");
     ui->RHalfButton->setText("unmapped");
 
-    ui->MouseJoystickBox->setCurrentText("none");
+    ui->MouseJoystickBox->setCurrentText("right");
     ui->DeadzoneOffsetSlider->setValue(50);
     ui->SpeedMultiplierSlider->setValue(10);
     ui->SpeedOffsetSlider->setValue(125);
@@ -385,9 +395,16 @@ void KBMSettings::SetUIValuestoMappings(std::string config_id) {
         std::string output_string = line.substr(0, equal_pos - 1);
         std::string input_string = line.substr(equal_pos + 2);
 
-        if (std::find(ControllerInputs.begin(), ControllerInputs.end(), input_string) ==
-            ControllerInputs.end()) {
+        bool controllerInputdetected = false;
+        for (std::string input : ControllerInputs) {
+            // Needed to avoid detecting backspace while detecting back
+            if (input_string.contains(input) && !input_string.contains("backspace")) {
+                controllerInputdetected = true;
+                break;
+            }
+        }
 
+        if (!controllerInputdetected) {
             if (output_string == "cross") {
                 ui->CrossButton->setText(QString::fromStdString(input_string));
             } else if (output_string == "circle") {
@@ -895,80 +912,98 @@ bool KBMSettings::eventFilter(QObject* obj, QEvent* event) {
             }
             return true;
         }
-    }
 
-    if (event->type() == QEvent::MouseButtonPress) {
-        QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-        if (pressedKeys.size() < 3) {
-            switch (mouseEvent->button()) {
-            case Qt::LeftButton:
-                pressedKeys.insert("leftbutton");
-                break;
-            case Qt::RightButton:
-                pressedKeys.insert("rightbutton");
-                break;
-            case Qt::MiddleButton:
-                pressedKeys.insert("middlebutton");
-                break;
-            case Qt::XButton1:
-                pressedKeys.insert("sidebuttonback");
-                break;
-            case Qt::XButton2:
-                pressedKeys.insert("sidebuttonforward");
-                break;
+        if (event->type() == QEvent::MouseButtonPress) {
+            QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+            if (pressedKeys.size() < 3) {
+                switch (mouseEvent->button()) {
+                case Qt::LeftButton:
+                    pressedKeys.insert("leftbutton");
+                    break;
+                case Qt::RightButton:
+                    pressedKeys.insert("rightbutton");
+                    break;
+                case Qt::MiddleButton:
+                    pressedKeys.insert("middlebutton");
+                    break;
+                case Qt::XButton1:
+                    pressedKeys.insert("sidebuttonback");
+                    break;
+                case Qt::XButton2:
+                    pressedKeys.insert("sidebuttonforward");
+                    break;
 
-                // default case
-            default:
-                break;
-                // bottom text
-            }
-            return true;
-        }
-    }
-
-    const QList<QPushButton*> AxisList = {
-        ui->LStickUpButton, ui->LStickDownButton, ui->LStickLeftButton, ui->LStickRightButton,
-        ui->RStickUpButton, ui->LStickDownButton, ui->LStickLeftButton, ui->RStickRightButton};
-
-    if (event->type() == QEvent::Wheel) {
-        QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
-        if (pressedKeys.size() < 3) {
-            if (wheelEvent->angleDelta().y() > 5) {
-                if (std::find(AxisList.begin(), AxisList.end(), MappingButton) == AxisList.end()) {
-                    pressedKeys.insert("mousewheelup");
-                } else {
-                    QMessageBox::information(this, tr("Cannot set mapping"),
-                                             tr("Mousewheel cannot be mapped to stick outputs"));
+                    // default case
+                default:
+                    break;
+                    // bottom text
                 }
-            } else if (wheelEvent->angleDelta().y() < -5) {
-                if (std::find(AxisList.begin(), AxisList.end(), MappingButton) == AxisList.end()) {
-                    pressedKeys.insert("mousewheeldown");
-                } else {
-                    QMessageBox::information(this, tr("Cannot set mapping"),
-                                             tr("Mousewheel cannot be mapped to stick outputs"));
-                }
-            }
-            if (wheelEvent->angleDelta().x() > 5) {
-                if (std::find(AxisList.begin(), AxisList.end(), MappingButton) == AxisList.end()) {
-                    // QT changes scrolling to horizontal for all widgets with the alt modifier
-                    pressedKeys.insert(
-                        GetModifiedButton(Qt::AltModifier, "mousewheelup", "mousewheelright"));
-                } else {
-                    QMessageBox::information(this, tr("Cannot set mapping"),
-                                             tr("Mousewheel cannot be mapped to stick outputs"));
-                }
-            } else if (wheelEvent->angleDelta().x() < -5) {
-                if (std::find(AxisList.begin(), AxisList.end(), MappingButton) == AxisList.end()) {
-                    pressedKeys.insert(
-                        GetModifiedButton(Qt::AltModifier, "mousewheeldown", "mousewheelleft"));
-                } else {
-                    QMessageBox::information(this, tr("Cannot set mapping"),
-                                             tr("Mousewheel cannot be mapped to stick outputs"));
-                }
+                return true;
             }
         }
-    }
 
+        const QList<QPushButton*> AxisList = {
+            ui->LStickUpButton, ui->LStickDownButton, ui->LStickLeftButton, ui->LStickRightButton,
+            ui->RStickUpButton, ui->LStickDownButton, ui->LStickLeftButton, ui->RStickRightButton};
+
+        if (event->type() == QEvent::Wheel) {
+            QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
+            if (pressedKeys.size() < 3) {
+                if (wheelEvent->angleDelta().y() > 5) {
+                    if (std::find(AxisList.begin(), AxisList.end(), MappingButton) ==
+                        AxisList.end()) {
+                        pressedKeys.insert("mousewheelup");
+                        if (QApplication::keyboardModifiers() == Qt::NoModifier)
+                            emit PushKBMEvent();
+                    } else {
+                        QMessageBox::information(
+                            this, tr("Cannot set mapping"),
+                            tr("Mousewheel cannot be mapped to stick outputs"));
+                    }
+                } else if (wheelEvent->angleDelta().y() < -5) {
+                    if (std::find(AxisList.begin(), AxisList.end(), MappingButton) ==
+                        AxisList.end()) {
+                        pressedKeys.insert("mousewheeldown");
+                        if (QApplication::keyboardModifiers() == Qt::NoModifier)
+                            emit PushKBMEvent();
+                    } else {
+                        QMessageBox::information(
+                            this, tr("Cannot set mapping"),
+                            tr("Mousewheel cannot be mapped to stick outputs"));
+                    }
+                }
+                if (wheelEvent->angleDelta().x() > 5) {
+                    if (std::find(AxisList.begin(), AxisList.end(), MappingButton) ==
+                        AxisList.end()) {
+                        // QT changes scrolling to horizontal for all widgets with the alt modifier
+                        pressedKeys.insert(
+                            GetModifiedButton(Qt::AltModifier, "mousewheelup", "mousewheelright"));
+                        if (QApplication::keyboardModifiers() == Qt::NoModifier)
+                            emit PushKBMEvent();
+                    } else {
+                        QMessageBox::information(
+                            this, tr("Cannot set mapping"),
+                            tr("Mousewheel cannot be mapped to stick outputs"));
+                    }
+                } else if (wheelEvent->angleDelta().x() < -5) {
+                    if (std::find(AxisList.begin(), AxisList.end(), MappingButton) ==
+                        AxisList.end()) {
+                        pressedKeys.insert(
+                            GetModifiedButton(Qt::AltModifier, "mousewheeldown", "mousewheelleft"));
+                        if (QApplication::keyboardModifiers() == Qt::NoModifier)
+                            emit PushKBMEvent();
+                    } else {
+                        QMessageBox::information(
+                            this, tr("Cannot set mapping"),
+                            tr("Mousewheel cannot be mapped to stick outputs"));
+                    }
+                }
+            }
+        }
+
+        if (event->type() == QEvent::KeyRelease || event->type() == QEvent::MouseButtonRelease)
+            emit PushKBMEvent();
+    }
     return QDialog::eventFilter(obj, event);
 }
 

@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- SPDX-FileCopyrightText: Copyright 2024 shadPS4 Emulator Project
-     SPDX-License-Identifier: GPL-2.0-or-later -->
 <ui version="4.0">
  <class>KBMSettings</class>
  <widget class="QDialog" name="KBMSettings">
@@ -1049,7 +1047,7 @@
                 </size>
                </property>
                <property name="pixmap">
-                <pixmap resource="../shadps4.qrc">:/images/KBM.png</pixmap>
+                <pixmap resource="../dist/BBLauncher.qrc">:/KBM.png</pixmap>
                </property>
                <property name="scaledContents">
                 <bool>true</bool>
@@ -1980,7 +1978,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../shadps4.qrc"/>
+  <include location="../dist/BBLauncher.qrc"/>
  </resources>
  <connections/>
 </ui>
