@@ -10,3 +10,6 @@
 	path = externals/toml11
 	url = https://github.com/ToruNiina/toml11.git
 	shallow = true
+[submodule "externals/sdl3"]
+	path = externals/sdl3
+	url = https://github.com/shadps4-emu/ext-SDL.git
