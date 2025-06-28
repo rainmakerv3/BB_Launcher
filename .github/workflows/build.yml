@@ -47,10 +47,13 @@ jobs:
       run: ./.ci/clang-format.sh
 
   build-windows:
-    runs-on: windows-latest
+    runs-on: windows-2025
     needs: get-info
     steps:
     - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
     - name: Setup Qt
       uses: jurplel/install-qt-action@v4
       with:
@@ -77,10 +80,13 @@ jobs:
         path: upload/
 
   build-windows-noUAC:
-    runs-on: windows-latest
+    runs-on: windows-2025
     needs: get-info
     steps:
     - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
     - name: Setup Qt
       uses: jurplel/install-qt-action@v4
       with:
