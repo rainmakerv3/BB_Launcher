@@ -544,6 +544,43 @@ This is useful when you want to provide a fallback value instead of handling exc
 const auto a = toml::find_or(input, "a", 42);
 ```
 
+## Using `toml::find_or_default` to Search and Use the Default Value on Failure
+
+`toml::find_or_default` works similarly to `toml::find_or<T>` but returns the default constructor result if the search or conversion fails.
+
+This is useful when you want to use the default value instead of handling exceptions, especially when the default construction is costly, as this delays it until the actual failure happens.
+
+```cpp
+const auto a = toml::find_or(input, "a", expensive());  // ctor is called before the function call
+const auto a = toml::find_or_default<expensive>(input, "a");  // ctor will be called only on failure
+```
+
+## `toml::find<std::optional<T>>`
+
+If `std::optional` is available, you can specify `std::optional` as a template argument of `toml::find`.
+
+Recursive access is also supported.
+
+```cpp
+const auto input = toml::parse_str(R"(
+integer = 1
+
+[table]
+key = 2
+
+[[array-of-tables]]
+key = 3
+)");
+
+const auto a = toml::find<std::optional<int>>(input, "integer");
+const auto b = toml::find<std::optional<int>>(input, "table", "key");
+const auto c = toml::find<std::optional<int>>(input, "array-of-tables", 0, "key");
+```
+
+If a key does not exist, no exception is thrown, and `std::nullopt` is returned.
+
+However, if a type conversion fails, or if you attempt to access a key on a value that is not a table, or an index on a value that is not an array, a `toml::type_error` is thrown.
+
 ## Defining Conversions for User-Defined Types
 
 With `toml::get` and `toml::find`, you can use user-defined types by employing one of the following methods.
@@ -797,3 +834,76 @@ struct bar
     }
 };
 ```
+
+# Checking Whether a Value Has Been Accessed
+
+{{% hint warning %}}
+
+This feature is not enabled by default. To use it, you need to define `TOML11_ENABLE_ACCESS_CHECK`.
+Additionally, since this feature introduces extra processing on parsed values, it may impact runtime performance.
+
+{{% /hint %}}
+
+When compiled with the `TOML11_ENABLE_ACCESS_CHECK` macro defined, the `toml::value` class gains an additional method: `bool accessed() const`.
+This allows you to check whether a value has been accessed after parsing.
+
+```console
+$ g++ -std=c++17 -O2 -DTOML11_ENABLE_ACCESS_CHECK -I/path/to/toml11/include main.cpp
+```
+
+or
+
+```console
+$ cmake -B ./build -DTOML11_ENABLE_ACCESS_CHECK=ON
+```
+
+or
+
+```cmake
+CPMAddPackage(
+    NAME toml11
+    GITHUB_REPOSITORY "ToruNiina/toml11"
+    VERSION 4.4.0
+    OPTIONS "CMAKE_CXX_STANDARD 17" "TOML11_PRECOMPILE ON" "TOML11_ENABLE_ACCESS_CHECK ON"
+    )
+```
+
+This feature allows users to implement code that warns about values defined in a table but never used.
+
+```cpp
+#include <toml.hpp>
+
+namespace yours
+{
+
+Config read_config(const toml::value& input)
+{
+    const auto cfg = read_your_config(input);
+
+    for (const auto& [k, v] : input.as_table())
+    {
+        if (!v.accessed())
+        {
+            std::cerr << toml::format_error("value defined but not used",
+                v.source_location(), "not used");
+        }
+    }
+    return cfg;
+}
+} // namespace yours
+```
+
+This feature is useful when a value is mistakenly defined under the wrong name but is never accessed. For example:
+
+```toml
+# The correct key is "reactions"
+# reactions = [ ":+1:", "star" ]
+
+# This key is incorrect and will not be read
+reaction = [ ":+1:", "star" ]
+```
+
+If this file is read using the above code, `read_your_config` will search for `reactions`. Since it is not defined, it will process `reactions` as an empty array.
+In this case, `input.at("reaction").accessed()` will be `false`, allowing it to be detected as an error.
+
+

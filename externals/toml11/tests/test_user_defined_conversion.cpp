@@ -76,6 +76,8 @@ struct corge
 
 namespace toml
 {
+inline namespace TOML11_INLINE_VERSION_NAMESPACE
+{
 template<>
 struct from<extlib::foo>
 {
@@ -113,6 +115,7 @@ struct into<extlib::qux>
         return toml::basic_value<TC>(typename toml::basic_value<TC>::table_type{{"a", f.a}, {"b", f.b}});
     }
 };
+} // TOML11_INLINE_VERSION_NAMESPACE
 } // toml
 
 // ---------------------------------------------------------------------------
@@ -167,6 +170,8 @@ struct foobar
 
 namespace toml
 {
+inline namespace TOML11_INLINE_VERSION_NAMESPACE
+{
 template<>
 struct from<extlib2::foo>
 {
@@ -209,6 +214,7 @@ struct into<extlib2::qux>
         };
     }
 };
+} // TOML11_INLINE_VERSION_NAMESPACE
 } // toml
 
 // ---------------------------------------------------------------------------
@@ -733,6 +739,28 @@ TEST_CASE("test_optional_conversion_via_macro")
 
         const toml::ordered_value v2(bar);
         CHECK(v2 == v);
+    }
+}
+
+TEST_CASE("test_optional_conversion_via_find")
+{
+    {
+        const toml::value v(toml::table{
+            {"foo", toml::value(toml::table{{"a", 42}}) }
+        });
+
+        const auto foo = toml::find<extlib4::foo>(v, "foo");
+        CHECK(foo.a.value() == 42);
+        CHECK(foo.b == std::nullopt);
+    }
+    {
+        const toml::ordered_value v(toml::ordered_table{
+            { "foo", toml::ordered_value(toml::ordered_table{{"b", "baz"}}) }
+        });
+
+        const auto foo = toml::find<extlib4::foo>(v, "foo");
+        CHECK(foo.a == std::nullopt);
+        CHECK(foo.b.value() == "baz");
     }
 }
 #endif // TOML11_HAS_OPTIONAL

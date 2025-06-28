@@ -21,6 +21,7 @@ set(TOML11_TEST_NAMES
     test_parse_inline_table
     test_parse_table_keys
     test_parse_table
+    test_parse
     test_result
     test_scanner
     test_serialize
@@ -38,6 +39,7 @@ set(TOML11_TEST_NAMES
     test_utility
     test_user_defined_conversion
     test_value
+    test_accessed
     test_visit
     )
 

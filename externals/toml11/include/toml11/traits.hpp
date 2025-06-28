@@ -4,6 +4,7 @@
 #include "from.hpp"
 #include "into.hpp"
 #include "compat.hpp"
+#include "version.hpp"
 
 #include <array>
 #include <chrono>
@@ -11,13 +12,20 @@
 #include <string>
 #include <tuple>
 #include <type_traits>
+#include <unordered_set>
 #include <utility>
 
 #if defined(TOML11_HAS_STRING_VIEW)
 #include <string_view>
 #endif
 
+#if defined(TOML11_HAS_OPTIONAL)
+#include <optional>
+#endif
+
 namespace toml
+{
+inline namespace TOML11_INLINE_VERSION_NAMESPACE
 {
 template<typename TypeConcig>
 class basic_value;
@@ -161,6 +169,22 @@ struct is_std_tuple_impl<std::tuple<Ts...>> : std::true_type{};
 template<typename T>
 using is_std_tuple = is_std_tuple_impl<cxx::remove_cvref_t<T>>;
 
+template<typename T> struct is_unordered_set_impl : std::false_type {};
+template<typename T>
+struct is_unordered_set_impl<std::unordered_set<T>> : std::true_type {};
+template<typename T>
+using is_unordered_set = is_unordered_set_impl<cxx::remove_cvref_t<T>>;
+
+#if defined(TOML11_HAS_OPTIONAL)
+template<typename T> struct is_std_optional_impl : std::false_type{};
+template<typename T>
+struct is_std_optional_impl<std::optional<T>> : std::true_type{};
+template<typename T>
+using is_std_optional = is_std_optional_impl<cxx::remove_cvref_t<T>>;
+#else
+template<typename T> struct is_std_optional : std::false_type{};
+#endif // > C++17
+
 template<typename T> struct is_std_array_impl : std::false_type{};
 template<typename T, std::size_t N>
 struct is_std_array_impl<std::array<T, N>> : std::true_type{};
@@ -197,6 +221,11 @@ template<typename V, typename S>
 struct is_string_view_of : std::false_type {};
 template<typename C, typename T>
 struct is_string_view_of<std::basic_string_view<C, T>, std::basic_string<C, T>> : std::true_type {};
+#else
+template<typename T>
+struct is_std_basic_string_view : std::false_type {};
+template<typename V, typename S>
+struct is_string_view_of : std::false_type {};
 #endif
 
 template<typename T> struct is_chrono_duration_impl: std::false_type{};
@@ -236,5 +265,6 @@ template<typename T>
 using is_basic_value = is_basic_value_impl<cxx::remove_cvref_t<T>>;
 
 }// detail
-}//toml
+} // TOML11_INLINE_VERSION_NAMESPACE
+} // toml
 #endif // TOML11_TRAITS_HPP

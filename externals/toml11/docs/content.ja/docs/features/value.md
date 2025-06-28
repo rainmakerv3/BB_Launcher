@@ -569,6 +569,43 @@ const auto a = toml::find_or(input, "a", 42);
 
 型変換の失敗だけでなく、キーが見つからなかった場合もデフォルト値を返します。
 
+## `toml::find_or_default`を使って失敗時の値を指定する
+
+`toml::find_or_default` は、 `toml::find_or` と同様に、失敗時にデフォルトコンストラクタの結果を返します。デフォルトコンストラクタは失敗時のみに呼ばれるため、特にそれが高価な時に有効です。
+
+```cpp
+const auto a = toml::find_or(input, "a", expensive());  // 関数呼出前にコンストラクタ呼出
+const auto a = toml::find_or_default<expensive>(input, "a");  // 失敗時にのみコンストラクタ呼出
+```
+
+型変換の失敗だけでなく、キーが見つからなかった場合もデフォルトコンストラクタの結果を返します。
+
+## `toml::find<std::optional<T>>`
+
+C++17以降の場合、`std::optional`を`toml::find`に指定することができます。
+
+`find`と同様に、再帰的なアクセスも可能です。
+
+```cpp
+const auto input = toml::parse_str(R"(
+integer = 1
+
+[table]
+key = 2
+
+[[array-of-tables]]
+key = 3
+)");
+
+const auto a = toml::find<std::optional<int>>(input, "integer");
+const auto b = toml::find<std::optional<int>>(input, "table", "key");
+const auto c = toml::find<std::optional<int>>(input, "array-of-tables", 0, "key");
+```
+
+キーが存在しなかった場合、例外は投げられず、`std::nullopt`が返却されます。
+
+ただし、型変換が失敗した場合や、テーブルではない値にキーでアクセスしようとした場合、配列でない値にインデックスでアクセス仕様とした場合は、`toml::type_error`が送出されます。
+
 ## ユーザー定義型との変換を定義する
 
 `toml::get` や `toml::find` では、以下のどれかの方法を使うことで
@@ -826,3 +863,71 @@ struct bar
     }
 };
 ```
+
+# 値がアクセス済みかどうかチェックする
+
+{{% hint warning %}}
+
+この機能はデフォルトでは有効化されず、使用する際には`TOML11_ENABLE_ACCESS_CHECK`を定義する必要があります。
+また、この機能はパースした値に対して追加の処理を行うため、実行時パフォーマンスが低下する可能性があります。
+
+{{% /hint %}}
+
+`TOML11_ENABLE_ACCESS_CHECK`マクロを定義してコンパイルすると、`toml::value`に`bool accessed() const`メソッドが追加され、パース後にその値にアクセスしたかどうかが確認できるようになります。
+
+```console
+$ g++ -std=c++17 -O2 -DTOML11_ENABLE_ACCESS_CHECK -I/path/to/toml11/include main.cpp
+```
+
+```console
+$ cmake -B ./build -DTOML11_ENABLE_ACCESS_CHECK=ON
+```
+
+```cmake
+CPMAddPackage(
+    NAME toml11
+    GITHUB_REPOSITORY "ToruNiina/toml11"
+    VERSION 4.4.0
+    OPTIONS "CMAKE_CXX_STANDARD 17" "TOML11_PRECOMPILE ON" "TOML11_ENABLE_ACCESS_CHECK ON"
+    )
+```
+
+この機能によって、テーブル内に定義されているものの使用されなかった値についての警告を表示することが可能になります。
+
+```cpp
+#include <toml.hpp>
+
+namespace yours
+{
+
+Config read_config(const toml::value& v)
+{
+    const auto cfg = read_your_config(input);
+
+    for(const auto& [k, v] : input.as_table())
+    {
+        if( ! v.accessed())
+        {
+            std::cerr << toml::format_error("value defined but not used",
+                v.source_location(), "not used");
+        }
+    }
+    return cfg;
+}
+} // yours
+```
+
+この機能は、必要な場合のみ定義されるような値を、名称を間違えて定義してしまった際に役に立つでしょう。
+例えば、
+
+```toml
+# 正しくは reactions 
+# reactions = [ ":+1:", "star" ]
+
+# 名前が違うので読み込めない
+reaction = [ ":+1:", "star" ]
+```
+
+このファイルを上記のコードで読んだ場合、`read_your_config`は`reactions`を探し、定義されていなかったので空の配列として処理するでしょう。
+その場合、`reaction`は`accessed()`が`true`にならないため、エラーとして検出できます。
+

@@ -7,7 +7,10 @@
 
 #include "fmt/compile.h"
 
+#include <iterator>
+#include <list>
 #include <type_traits>
+#include <vector>
 
 #include "fmt/chrono.h"
 #include "fmt/ranges.h"
@@ -198,6 +201,21 @@ TEST(compile_test, format_to_n) {
   EXPECT_STREQ("2a", buffer);
 }
 
+TEST(compile_test, output_iterators) {
+  std::list<char> out;
+  fmt::format_to(std::back_inserter(out), FMT_COMPILE("{}"), 42);
+  EXPECT_EQ("42", std::string(out.begin(), out.end()));
+
+  std::stringstream s;
+  fmt::format_to(std::ostream_iterator<char>(s), FMT_COMPILE("{}"), 42);
+  EXPECT_EQ("42", s.str());
+
+  std::stringstream s2;
+  fmt::format_to(std::ostreambuf_iterator<char>(s2), FMT_COMPILE("{}.{:06d}"),
+                 42, 43);
+  EXPECT_EQ("42.000043", s2.str());
+}
+
 #  if FMT_USE_CONSTEVAL && (!FMT_MSC_VERSION || FMT_MSC_VERSION >= 1940)
 TEST(compile_test, constexpr_formatted_size) {
   FMT_CONSTEXPR20 size_t size = fmt::formatted_size(FMT_COMPILE("{}"), 42);
@@ -229,10 +247,14 @@ TEST(compile_test, unknown_format_fallback) {
   EXPECT_EQ(" 42 ",
             fmt::format(FMT_COMPILE("{name:^4}"), fmt::arg("name", 42)));
 
-  std::vector<char> v;
-  fmt::format_to(std::back_inserter(v), FMT_COMPILE("{name:^4}"),
+  std::vector<char> v1;
+  fmt::format_to(std::back_inserter(v1), FMT_COMPILE("{}"), 42);
+  EXPECT_EQ("42", fmt::string_view(v1.data(), v1.size()));
+
+  std::vector<char> v2;
+  fmt::format_to(std::back_inserter(v2), FMT_COMPILE("{name:^4}"),
                  fmt::arg("name", 42));
-  EXPECT_EQ(" 42 ", fmt::string_view(v.data(), v.size()));
+  EXPECT_EQ(" 42 ", fmt::string_view(v2.data(), v2.size()));
 
   char buffer[4];
   auto result = fmt::format_to_n(buffer, 4, FMT_COMPILE("{name:^5}"),
@@ -265,11 +287,23 @@ TEST(compile_test, to_string_and_formatter) {
   fmt::format(FMT_COMPILE("{}"), to_stringable());
 }
 
+struct std_context_test {};
+
+FMT_BEGIN_NAMESPACE
+template <> struct formatter<std_context_test> : formatter<int> {
+  auto format(std_context_test, format_context& ctx) const
+      -> decltype(ctx.out()) {
+    return ctx.out();
+  }
+};
+FMT_END_NAMESPACE
+
 TEST(compile_test, print) {
   EXPECT_WRITE(stdout, fmt::print(FMT_COMPILE("Don't {}!"), "panic"),
                "Don't panic!");
   EXPECT_WRITE(stderr, fmt::print(stderr, FMT_COMPILE("Don't {}!"), "panic"),
                "Don't panic!");
+  fmt::print(FMT_COMPILE("{}"), std_context_test());
 }
 #endif
 
@@ -279,6 +313,17 @@ TEST(compile_test, compile_format_string_literal) {
   EXPECT_EQ("", fmt::format(""_cf));
   EXPECT_EQ("42", fmt::format("{}"_cf, 42));
   EXPECT_EQ(L"42", fmt::format(L"{}"_cf, 42));
+}
+#endif
+
+#if defined(__cpp_if_constexpr) && defined(__cpp_return_type_deduction)
+template <typename S> auto check_is_compiled_string(const S&) -> bool {
+  return fmt::is_compiled_string<S>::value;
+}
+
+TEST(compile_test, is_compiled_string) {
+  EXPECT_TRUE(check_is_compiled_string(FMT_COMPILE("asdf")));
+  EXPECT_TRUE(check_is_compiled_string(FMT_COMPILE("{}")));
 }
 #endif
 
@@ -293,7 +338,7 @@ TEST(compile_test, compile_format_string_literal) {
      (FMT_MSC_VERSION >= 1928 && FMT_MSC_VERSION < 1930)) && \
     defined(__cpp_lib_is_constant_evaluated)
 template <size_t max_string_length, typename Char = char> struct test_string {
-  template <typename T> constexpr bool operator==(const T& rhs) const noexcept {
+  template <typename T> constexpr auto operator==(const T& rhs) const -> bool {
     return fmt::basic_string_view<Char>(rhs).compare(buffer) == 0;
   }
   Char buffer[max_string_length]{};

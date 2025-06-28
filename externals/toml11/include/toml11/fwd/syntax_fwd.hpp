@@ -3,8 +3,11 @@
 
 #include "../scanner.hpp"
 #include "../spec.hpp"
+#include "../version.hpp"
 
 namespace toml
+{
+inline namespace TOML11_INLINE_VERSION_NAMESPACE
 {
 namespace detail
 {
@@ -18,10 +21,10 @@ using char_type = location::char_type;
 
 // avoid redundant representation and out-of-unicode sequence
 
-character_in_range utf8_1byte (const spec&);
-sequence           utf8_2bytes(const spec&);
-sequence           utf8_3bytes(const spec&);
-sequence           utf8_4bytes(const spec&);
+character_in_range const& utf8_1byte (const spec&);
+sequence           const& utf8_2bytes(const spec&);
+sequence           const& utf8_3bytes(const spec&);
+sequence           const& utf8_4bytes(const spec&);
 
 class non_ascii final : public scanner_base
 {
@@ -31,12 +34,28 @@ class non_ascii final : public scanner_base
 
   public:
 
-    explicit non_ascii(const spec& s) noexcept;
+    explicit non_ascii(const spec& s) noexcept
+        : utf8_2B_(utf8_2bytes(s)),
+          utf8_3B_(utf8_3bytes(s)),
+          utf8_4B_(utf8_4bytes(s))
+    {}
     ~non_ascii() override = default;
 
     region scan(location& loc) const override
     {
-        return scanner_.scan(loc);
+        {
+            const auto reg = utf8_2B_.scan(loc);
+            if(reg.is_ok()) {return reg;}
+        }
+        {
+            const auto reg = utf8_3B_.scan(loc);
+            if(reg.is_ok()) {return reg;}
+        }
+        {
+            const auto reg = utf8_4B_.scan(loc);
+            if(reg.is_ok()) {return reg;}
+        }
+        return region{};
     }
 
     std::string expected_chars(location&) const override
@@ -55,34 +74,35 @@ class non_ascii final : public scanner_base
     }
 
   private:
-
-    either scanner_;
+    sequence utf8_2B_;
+    sequence utf8_3B_;
+    sequence utf8_4B_;
 };
 
 // ===========================================================================
 // Whitespace
 
-character_either wschar(const spec&);
+character_either const& wschar(const spec&);
 
-repeat_at_least ws(const spec& s);
+repeat_at_least const& ws(const spec& s);
 
 // ===========================================================================
 // Newline
 
-either newline(const spec&);
+either const& newline(const spec&);
 
 // ===========================================================================
 // Comments
 
-either allowed_comment_char(const spec& s);
+either const& allowed_comment_char(const spec& s);
 
 // XXX Note that it does not take newline
-sequence comment(const spec& s);
+sequence const& comment(const spec& s);
 
 // ===========================================================================
 // Boolean
 
-either boolean(const spec&);
+either const& boolean(const spec&);
 
 // ===========================================================================
 // Integer
@@ -95,7 +115,11 @@ class digit final : public scanner_base
 
   public:
 
-    explicit digit(const spec&) noexcept;
+    explicit digit(const spec&) noexcept
+      : scanner_(char_type('0'), char_type('9'))
+    {}
+
+
     ~digit() override = default;
 
     region scan(location& loc) const override
@@ -131,12 +155,23 @@ class alpha final : public scanner_base
 
   public:
 
-    explicit alpha(const spec&) noexcept;
+    explicit alpha(const spec&) noexcept
+      : lowercase_(char_type('a'), char_type('z')),
+        uppercase_(char_type('A'), char_type('Z'))
+    {}
     ~alpha() override = default;
 
     region scan(location& loc) const override
     {
-        return scanner_.scan(loc);
+        {
+            const auto reg = lowercase_.scan(loc);
+            if(reg.is_ok()) {return reg;}
+        }
+        {
+            const auto reg = uppercase_.scan(loc);
+            if(reg.is_ok()) {return reg;}
+        }
+        return region{};
     }
 
     std::string expected_chars(location&) const override
@@ -156,7 +191,8 @@ class alpha final : public scanner_base
 
   private:
 
-    either scanner_;
+    character_in_range lowercase_;
+    character_in_range uppercase_;
 };
 
 class hexdig final : public scanner_base
@@ -167,12 +203,28 @@ class hexdig final : public scanner_base
 
   public:
 
-    explicit hexdig(const spec& s) noexcept;
+    explicit hexdig(const spec& s) noexcept
+      : digit_(s),
+        lowercase_(char_type('a'), char_type('f')),
+        uppercase_(char_type('A'), char_type('F'))
+    {}
     ~hexdig() override = default;
 
     region scan(location& loc) const override
     {
-        return scanner_.scan(loc);
+        {
+            const auto reg = digit_.scan(loc);
+            if(reg.is_ok()) {return reg;}
+        }
+        {
+            const auto reg = lowercase_.scan(loc);
+            if(reg.is_ok()) {return reg;}
+        }
+        {
+            const auto reg = uppercase_.scan(loc);
+            if(reg.is_ok()) {return reg;}
+        }
+        return region{};
     }
 
     std::string expected_chars(location&) const override
@@ -192,61 +244,63 @@ class hexdig final : public scanner_base
 
   private:
 
-    either scanner_;
+    digit              digit_;
+    character_in_range lowercase_;
+    character_in_range uppercase_;
 };
 
-sequence num_suffix(const spec& s);
+sequence const& num_suffix(const spec& s);
 
-sequence dec_int(const spec& s);
-sequence hex_int(const spec& s);
-sequence oct_int(const spec&);
-sequence bin_int(const spec&);
-either   integer(const spec& s);
+sequence const& dec_int(const spec& s);
+sequence const& hex_int(const spec& s);
+sequence const& oct_int(const spec&);
+sequence const& bin_int(const spec&);
+either   const& integer(const spec& s);
 
 // ===========================================================================
 // Floating
 
-sequence zero_prefixable_int(const spec& s);
-sequence fractional_part(const spec& s);
-sequence exponent_part(const spec& s);
-sequence hex_floating(const spec& s);
-either   floating(const spec& s);
+sequence const& zero_prefixable_int(const spec& s);
+sequence const& fractional_part(const spec& s);
+sequence const& exponent_part(const spec& s);
+sequence const& hex_floating(const spec& s);
+either   const& floating(const spec& s);
 
 // ===========================================================================
 // Datetime
 
-sequence local_date(const spec& s);
-sequence local_time(const spec& s);
-either time_offset(const spec& s);
-sequence full_time(const spec& s);
-character_either time_delim(const spec&);
-sequence local_datetime(const spec& s);
-sequence offset_datetime(const spec& s);
+sequence const& local_date(const spec& s);
+sequence const& local_time(const spec& s);
+either   const& time_offset(const spec& s);
+sequence const& full_time(const spec& s);
+character_either const& time_delim(const spec&);
+sequence const& local_datetime(const spec& s);
+sequence const& offset_datetime(const spec& s);
 
 // ===========================================================================
 // String
 
-sequence escaped(const spec& s);
+sequence const& escaped_x2(const spec& s);
+sequence const& escaped_u4(const spec& s);
+sequence const& escaped_U8(const spec& s);
 
-either basic_char(const spec& s);
-
-sequence basic_string(const spec& s);
+sequence const& escaped     (const spec& s);
+either   const& basic_char  (const spec& s);
+sequence const& basic_string(const spec& s);
 
 // ---------------------------------------------------------------------------
 // multiline string
 
-sequence escaped_newline(const spec& s);
-sequence ml_basic_string(const spec& s);
+sequence const& escaped_newline(const spec& s);
+sequence const& ml_basic_string(const spec& s);
 
 // ---------------------------------------------------------------------------
 // literal string
 
-either literal_char(const spec& s);
-sequence literal_string(const spec& s);
-
-sequence ml_literal_string(const spec& s);
-
-either string(const spec& s);
+either   const& literal_char(const spec& s);
+sequence const& literal_string(const spec& s);
+sequence const& ml_literal_string(const spec& s);
+either   const& string(const spec& s);
 
 // ===========================================================================
 // Keys
@@ -290,16 +344,11 @@ class non_ascii_key_char final : public scanner_base
 };
 
 
-repeat_at_least unquoted_key(const spec& s);
-
-either quoted_key(const spec& s);
-
-either simple_key(const spec& s);
-
-sequence dot_sep(const spec& s);
-
-sequence dotted_key(const spec& s);
-
+repeat_at_least const& unquoted_key(const spec& s);
+either   const& quoted_key(const spec& s);
+either   const& simple_key(const spec& s);
+sequence const& dot_sep(const spec& s);
+sequence const& dotted_key(const spec& s);
 
 class key final : public scanner_base
 {
@@ -309,12 +358,23 @@ class key final : public scanner_base
 
   public:
 
-    explicit key(const spec& s) noexcept;
+    explicit key(const spec& s) noexcept
+        : dotted_(dotted_key(s)),
+          simple_(simple_key(s))
+    {}
     ~key() override = default;
 
     region scan(location& loc) const override
     {
-        return scanner_.scan(loc);
+        {
+            const auto reg = dotted_.scan(loc);
+            if(reg.is_ok()) {return reg;}
+        }
+        {
+            const auto reg = simple_.scan(loc);
+            if(reg.is_ok()) {return reg;}
+        }
+        return region{};
     }
 
     std::string expected_chars(location&) const override
@@ -334,24 +394,26 @@ class key final : public scanner_base
 
   private:
 
-    either scanner_;
+    sequence dotted_;
+    either   simple_;
 };
 
-sequence keyval_sep(const spec& s);
+sequence const& keyval_sep(const spec& s);
 
 // ===========================================================================
 // Table key
 
-sequence std_table(const spec& s);
+sequence const& std_table(const spec& s);
 
-sequence array_table(const spec& s);
+sequence const& array_table(const spec& s);
 
 // ===========================================================================
 // extension: null
 
-literal null_value(const spec&);
+literal const& null_value(const spec&);
 
 } // namespace syntax
 } // namespace detail
+} // TOML11_INLINE_VERSION_NAMESPACE
 } // namespace toml
 #endif // TOML11_SYNTAX_FWD_HPP

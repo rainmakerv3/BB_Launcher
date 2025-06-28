@@ -79,7 +79,7 @@ template <bool IsSigned> struct int_checker {
     unsigned max = to_unsigned(max_value<int>());
     return value <= max;
   }
-  static auto fits_in_int(bool) -> bool { return true; }
+  inline static auto fits_in_int(bool) -> bool { return true; }
 };
 
 template <> struct int_checker<true> {
@@ -87,7 +87,7 @@ template <> struct int_checker<true> {
     return value >= (std::numeric_limits<int>::min)() &&
            value <= max_value<int>();
   }
-  static auto fits_in_int(int) -> bool { return true; }
+  inline static auto fits_in_int(int) -> bool { return true; }
 };
 
 struct printf_precision_handler {
@@ -145,25 +145,19 @@ template <typename T, typename Context> class arg_converter {
     using target_type = conditional_t<std::is_same<T, void>::value, U, T>;
     if (const_check(sizeof(target_type) <= sizeof(int))) {
       // Extra casts are used to silence warnings.
-      if (is_signed) {
-        auto n = static_cast<int>(static_cast<target_type>(value));
-        arg_ = detail::make_arg<Context>(n);
-      } else {
-        using unsigned_type = typename make_unsigned_or_bool<target_type>::type;
-        auto n = static_cast<unsigned>(static_cast<unsigned_type>(value));
-        arg_ = detail::make_arg<Context>(n);
-      }
+      using unsigned_type = typename make_unsigned_or_bool<target_type>::type;
+      if (is_signed)
+        arg_ = static_cast<int>(static_cast<target_type>(value));
+      else
+        arg_ = static_cast<unsigned>(static_cast<unsigned_type>(value));
     } else {
-      if (is_signed) {
-        // glibc's printf doesn't sign extend arguments of smaller types:
-        //   std::printf("%lld", -42);  // prints "4294967254"
-        // but we don't have to do the same because it's a UB.
-        auto n = static_cast<long long>(value);
-        arg_ = detail::make_arg<Context>(n);
-      } else {
-        auto n = static_cast<typename make_unsigned_or_bool<U>::type>(value);
-        arg_ = detail::make_arg<Context>(n);
-      }
+      // glibc's printf doesn't sign extend arguments of smaller types:
+      //   std::printf("%lld", -42);  // prints "4294967254"
+      // but we don't have to do the same because it's a UB.
+      if (is_signed)
+        arg_ = static_cast<long long>(value);
+      else
+        arg_ = static_cast<typename make_unsigned_or_bool<U>::type>(value);
     }
   }
 
@@ -190,8 +184,7 @@ template <typename Context> class char_converter {
 
   template <typename T, FMT_ENABLE_IF(std::is_integral<T>::value)>
   void operator()(T value) {
-    auto c = static_cast<typename Context::char_type>(value);
-    arg_ = detail::make_arg<Context>(c);
+    arg_ = static_cast<typename Context::char_type>(value);
   }
 
   template <typename T, FMT_ENABLE_IF(!std::is_integral<T>::value)>
@@ -212,7 +205,7 @@ class printf_width_handler {
   format_specs& specs_;
 
  public:
-  explicit printf_width_handler(format_specs& specs) : specs_(specs) {}
+  inline explicit printf_width_handler(format_specs& specs) : specs_(specs) {}
 
   template <typename T, FMT_ENABLE_IF(std::is_integral<T>::value)>
   auto operator()(T value) -> unsigned {
@@ -471,7 +464,7 @@ void vprintf(buffer<Char>& buf, basic_string_view<Char> format,
       auto nul = std::find(str, str_end, Char());
       auto sv = basic_string_view<Char>(
           str, to_unsigned(nul != str_end ? nul - str : specs.precision));
-      arg = make_arg<basic_printf_context<Char>>(sv);
+      arg = sv;
     }
     if (specs.alt() && arg.visit(is_zero_int())) specs.clear_alt();
     if (specs.fill_unit<Char>() == '0') {
@@ -567,7 +560,7 @@ inline auto vsprintf(basic_string_view<Char> fmt,
     -> std::basic_string<Char> {
   auto buf = basic_memory_buffer<Char>();
   detail::vprintf(buf, fmt, args);
-  return to_string(buf);
+  return {buf.data(), buf.size()};
 }
 
 /**

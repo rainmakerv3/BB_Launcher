@@ -2,6 +2,7 @@
 #define TOML11_SOURCE_LOCATION_FWD_HPP
 
 #include "../region.hpp"
+#include "../version.hpp"
 
 #include <sstream>
 #include <string>
@@ -9,8 +10,37 @@
 
 namespace toml
 {
+inline namespace TOML11_INLINE_VERSION_NAMESPACE
+{
 
+//
 // A struct to contain location in a toml file.
+//
+// To reduce memory consumption, it omits unrelated parts of long lines. like:
+//
+// 1. one long line, short region
+// ```
+//    |
+//  1 | ... "foo", "bar", baz, "qux", "foobar", ...
+//    |                   ^-- unknown value
+// ```
+// 2. long region
+// ```
+//    |
+//  1 | array = [ "foo", ... "bar" ]
+//    |         ^^^^^^^^^^^^^^^^^^^^- in this array
+// ```
+// 3. many lines
+//     |
+//   1 | array = [ "foo",
+//     |         ^^^^^^^^
+//     | ...
+//     | ^^^
+//     |
+//  10 | , "bar"]
+//     | ^^^^^^^^- in this array
+// ```
+//
 struct source_location
 {
   public:
@@ -39,13 +69,19 @@ struct source_location
 
     std::vector<std::string> const& lines() const noexcept {return line_str_;}
 
+    // for internal use
+    std::size_t first_column_offset() const noexcept {return this->first_offset_;}
+    std::size_t last_column_offset()  const noexcept {return this->last_offset_;}
+
   private:
 
     bool        is_ok_;
     std::size_t first_line_;
-    std::size_t first_column_;
+    std::size_t first_column_; // column num in the actual file
+    std::size_t first_offset_; // column num in the shown line
     std::size_t last_line_;
-    std::size_t last_column_;
+    std::size_t last_column_;  // column num in the actual file
+    std::size_t last_offset_;  // column num in the shown line
     std::size_t length_;
     std::string file_name_;
     std::vector<std::string> line_str_;
@@ -111,5 +147,6 @@ std::string format_location(
     return detail::format_location_rec(lnw, f, loc, msg, tail...);
 }
 
+} // TOML11_INLINE_VERSION_NAMESPACE
 } // toml
 #endif // TOML11_SOURCE_LOCATION_FWD_HPP

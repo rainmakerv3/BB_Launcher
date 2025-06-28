@@ -17,9 +17,15 @@
 #include <string_view>
 #endif
 
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+#include <atomic>
+#endif
+
 #include <cassert>
 
 namespace toml
+{
+inline namespace TOML11_INLINE_VERSION_NAMESPACE
 {
 template<typename TypeConfig>
 class basic_value;
@@ -55,6 +61,11 @@ void change_region_of_value(basic_value<TC>&, const basic_value<TC>&);
 
 template<typename TC, value_t V>
 struct getter;
+
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+template<typename TC>
+void unset_access_flag(basic_value<TC>&);
+#endif
 } // detail
 
 template<typename TypeConfig>
@@ -86,6 +97,9 @@ class basic_value
 
     basic_value() noexcept
         : type_(value_t::empty), empty_('\0'), region_{}, comments_{}
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
     ~basic_value() noexcept {this->cleanup();}
 
@@ -93,6 +107,9 @@ class basic_value
 
     basic_value(const basic_value& v)
         : type_(v.type_), region_(v.region_), comments_(v.comments_)
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{v.accessed()}
+#endif
     {
         switch(this->type_)
         {
@@ -112,6 +129,9 @@ class basic_value
     basic_value(basic_value&& v)
         : type_(v.type()), region_(std::move(v.region_)),
           comments_(std::move(v.comments_))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{v.accessed()}
+#endif
     {
         switch(this->type_)
         {
@@ -137,6 +157,9 @@ class basic_value
         this->type_     = v.type_;
         this->region_   = v.region_;
         this->comments_ = v.comments_;
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = v.accessed();
+#endif
         switch(this->type_)
         {
             case value_t::boolean        : assigner(boolean_        , v.boolean_        ); break;
@@ -161,6 +184,9 @@ class basic_value
         this->type_     = v.type_;
         this->region_   = std::move(v.region_);
         this->comments_ = std::move(v.comments_);
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = v.accessed();
+#endif
         switch(this->type_)
         {
             case value_t::boolean        : assigner(boolean_        , std::move(v.boolean_        )); break;
@@ -184,6 +210,9 @@ class basic_value
     basic_value(basic_value v, std::vector<std::string> com)
         : type_(v.type()), region_(std::move(v.region_)),
           comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{v.accessed()}
+#endif
     {
         switch(this->type_)
         {
@@ -209,6 +238,9 @@ class basic_value
         : type_(other.type_),
           region_(std::move(other.region_)),
           comments_(std::move(other.comments_))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{other.accessed()}
+#endif
     {
         switch(other.type_)
         {
@@ -254,6 +286,9 @@ class basic_value
         : type_(other.type_),
           region_(std::move(other.region_)),
           comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{other.accessed()}
+#endif
     {
         switch(other.type_)
         {
@@ -300,6 +335,10 @@ class basic_value
         this->region_ = other.region_;
         this->comments_    = comment_type(other.comments_);
         this->type_        = other.type_;
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = other.accessed();
+#endif
+
         switch(other.type_)
         {
             // use auto-convert in constructor
@@ -359,6 +398,9 @@ class basic_value
                 std::vector<std::string> com, region_type reg)
         : type_(value_t::boolean), boolean_(boolean_storage(x, fmt)),
           region_(std::move(reg)), comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
     basic_value& operator=(boolean_type x)
     {
@@ -370,6 +412,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::boolean;
         this->region_ = region_type{};
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         assigner(this->boolean_, boolean_storage(x, fmt));
         return *this;
     }
@@ -393,6 +438,9 @@ class basic_value
     basic_value(integer_type x, integer_format_info fmt, std::vector<std::string> com, region_type reg)
         : type_(value_t::integer), integer_(integer_storage(std::move(x), std::move(fmt))),
           region_(std::move(reg)), comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
     basic_value& operator=(integer_type x)
     {
@@ -404,6 +452,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::integer;
         this->region_ = region_type{};
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         assigner(this->integer_, integer_storage(std::move(x), std::move(fmt)));
         return *this;
     }
@@ -439,6 +490,9 @@ class basic_value
     basic_value(T x, integer_format_info fmt, std::vector<std::string> com, region_type reg)
         : type_(value_t::integer), integer_(integer_storage(std::move(x), std::move(fmt))),
           region_(std::move(reg)), comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
     template<typename T, enable_if_integer_like_t<T> = nullptr>
     basic_value& operator=(T x)
@@ -451,6 +505,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::integer;
         this->region_ = region_type{};
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         assigner(this->integer_, integer_storage(x, std::move(fmt)));
         return *this;
     }
@@ -474,6 +531,9 @@ class basic_value
     basic_value(floating_type x, floating_format_info fmt, std::vector<std::string> com, region_type reg)
         : type_(value_t::floating), floating_(floating_storage(std::move(x), std::move(fmt))),
           region_(std::move(reg)), comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
     basic_value& operator=(floating_type x)
     {
@@ -485,6 +545,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::floating;
         this->region_ = region_type{};
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         assigner(this->floating_, floating_storage(std::move(x), std::move(fmt)));
         return *this;
     }
@@ -523,6 +586,9 @@ class basic_value
     basic_value(T x, floating_format_info fmt, std::vector<std::string> com, region_type reg)
         : type_(value_t::floating), floating_(floating_storage(x, std::move(fmt))),
           region_(std::move(reg)), comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
 
     template<typename T, enable_if_floating_like_t<T> = nullptr>
@@ -536,6 +602,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::floating;
         this->region_ = region_type{};
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         assigner(this->floating_, floating_storage(x, std::move(fmt)));
         return *this;
     }
@@ -560,6 +629,9 @@ class basic_value
                 std::vector<std::string> com, region_type reg)
         : type_(value_t::string), string_(string_storage(std::move(x), std::move(fmt))),
           region_(std::move(reg)), comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
     basic_value& operator=(string_type x)
     {
@@ -571,6 +643,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::string;
         this->region_ = region_type{};
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         assigner(this->string_, string_storage(x, std::move(fmt)));
         return *this;
     }
@@ -593,6 +668,9 @@ class basic_value
                 std::vector<std::string> com, region_type reg)
         : type_(value_t::string), string_(string_storage(string_type(x), std::move(fmt))),
           region_(std::move(reg)), comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
     basic_value& operator=(const typename string_type::value_type* x)
     {
@@ -604,6 +682,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::string;
         this->region_ = region_type{};
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         assigner(this->string_, string_storage(string_type(x), std::move(fmt)));
         return *this;
     }
@@ -628,6 +709,9 @@ class basic_value
                 std::vector<std::string> com, region_type reg)
         : type_(value_t::string), string_(string_storage(string_type(x), std::move(fmt))),
           region_(std::move(reg)), comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
     basic_value& operator=(string_view_type x)
     {
@@ -639,6 +723,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::string;
         this->region_ = region_type{};
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         assigner(this->string_, string_storage(string_type(x), std::move(fmt)));
         return *this;
     }
@@ -682,6 +769,9 @@ class basic_value
         : type_(value_t::string),
           string_(string_storage(detail::string_conv<string_type>(x), std::move(fmt))),
           region_(std::move(reg)), comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
     template<typename T, cxx::enable_if_t<cxx::conjunction<
             cxx::negation<std::is_same<cxx::remove_cvref_t<T>, string_type>>,
@@ -697,6 +787,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::string;
         this->region_ = region_type{};
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         assigner(this->string_, string_storage(detail::string_conv<string_type>(x), std::move(fmt)));
         return *this;
     }
@@ -721,6 +814,9 @@ class basic_value
                 std::vector<std::string> com, region_type reg)
         : type_(value_t::local_date), local_date_(local_date_storage(x, fmt)),
           region_(std::move(reg)), comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
     basic_value& operator=(local_date_type x)
     {
@@ -732,6 +828,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::local_date;
         this->region_ = region_type{};
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         assigner(this->local_date_, local_date_storage(x, fmt));
         return *this;
     }
@@ -756,6 +855,9 @@ class basic_value
                 std::vector<std::string> com, region_type reg)
         : type_(value_t::local_time), local_time_(local_time_storage(x, fmt)),
           region_(std::move(reg)), comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
     basic_value& operator=(local_time_type x)
     {
@@ -767,6 +869,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::local_time;
         this->region_ = region_type{};
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         assigner(this->local_time_, local_time_storage(x, fmt));
         return *this;
     }
@@ -804,6 +909,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::local_time;
         this->region_ = region_type{};
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         assigner(this->local_time_, local_time_storage(local_time_type(x), std::move(fmt)));
         return *this;
     }
@@ -828,6 +936,9 @@ class basic_value
                 std::vector<std::string> com, region_type reg)
         : type_(value_t::local_datetime), local_datetime_(local_datetime_storage(x, fmt)),
           region_(std::move(reg)), comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
     basic_value& operator=(local_datetime_type x)
     {
@@ -839,6 +950,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::local_datetime;
         this->region_ = region_type{};
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         assigner(this->local_datetime_, local_datetime_storage(x, fmt));
         return *this;
     }
@@ -863,6 +977,9 @@ class basic_value
                 std::vector<std::string> com, region_type reg)
         : type_(value_t::offset_datetime), offset_datetime_(offset_datetime_storage(x, fmt)),
           region_(std::move(reg)), comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
     basic_value& operator=(offset_datetime_type x)
     {
@@ -874,6 +991,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::offset_datetime;
         this->region_ = region_type{};
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         assigner(this->offset_datetime_, offset_datetime_storage(x, fmt));
         return *this;
     }
@@ -906,6 +1026,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::offset_datetime;
         this->region_ = region_type{};
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         assigner(this->offset_datetime_, offset_datetime_storage(offset_datetime_type(x), fmt));
         return *this;
     }
@@ -931,6 +1054,9 @@ class basic_value
         : type_(value_t::array), array_(array_storage(
               detail::storage<array_type>(std::move(x)), std::move(fmt)
           )), region_(std::move(reg)), comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
     basic_value& operator=(array_type x)
     {
@@ -942,6 +1068,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::array;
         this->region_ = region_type{};
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         assigner(this->array_, array_storage(
                     detail::storage<array_type>(std::move(x)), std::move(fmt)));
         return *this;
@@ -988,6 +1117,9 @@ class basic_value
                       std::make_move_iterator(x.end()))
               ), std::move(fmt)
           )), region_(std::move(reg)), comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
     template<typename T, enable_if_array_like_t<T> = nullptr>
     basic_value& operator=(T x)
@@ -1000,7 +1132,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::array;
         this->region_ = region_type{};
-
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         array_type a(std::make_move_iterator(x.begin()),
                      std::make_move_iterator(x.end()));
         assigner(this->array_, array_storage(
@@ -1029,6 +1163,9 @@ class basic_value
         : type_(value_t::table), table_(table_storage(
                 detail::storage<table_type>(std::move(x)), std::move(fmt)
           )), region_(std::move(reg)), comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
     basic_value& operator=(table_type x)
     {
@@ -1040,6 +1177,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::table;
         this->region_ = region_type{};
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         assigner(this->table_, table_storage(
             detail::storage<table_type>(std::move(x)), std::move(fmt)));
         return *this;
@@ -1084,6 +1224,9 @@ class basic_value
                       std::make_move_iterator(x.end())
               )), std::move(fmt)
           )), region_(std::move(reg)), comments_(std::move(com))
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
     template<typename T, enable_if_table_like_t<T> = nullptr>
     basic_value& operator=(T x)
@@ -1096,7 +1239,9 @@ class basic_value
         this->cleanup();
         this->type_   = value_t::table;
         this->region_ = region_type{};
-
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         table_type t(std::make_move_iterator(x.begin()),
                      std::make_move_iterator(x.end()));
         assigner(this->table_, table_storage(
@@ -1126,6 +1271,9 @@ class basic_value
     basic_value& operator=(const T& ud)
     {
         *this = into<cxx::remove_cvref_t<T>>::template into_toml<config_type>(ud);
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         return *this;
     }
 
@@ -1149,6 +1297,9 @@ class basic_value
     basic_value& operator=(const T& ud)
     {
         *this = ud.into_toml();
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         return *this;
     }
 
@@ -1172,6 +1323,9 @@ class basic_value
     basic_value& operator=(const T& ud)
     {
         *this = ud.template into_toml<TypeConfig>();
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         return *this;
     }
     // }}}
@@ -1181,6 +1335,9 @@ class basic_value
     // mainly for `null` extension
     basic_value(detail::none_t, region_type reg) noexcept
         : type_(value_t::empty), empty_('\0'), region_(std::move(reg)), comments_{}
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        , accessed_{false}
+#endif
     {}
 
     // }}}
@@ -1192,9 +1349,13 @@ class basic_value
         std::nullptr_t> = nullptr>
     bool is() const noexcept
     {
-        return detail::type_to_enum<T, value_type>::value == this->type_;
+        return this->is(detail::type_to_enum<T, value_type>::value);
     }
-    bool is(value_t t) const noexcept {return t == this->type_;}
+    bool is(value_t t) const noexcept
+    {
+        this->set_accessed();
+        return t == this->type_;
+    }
 
     bool is_empty()           const noexcept {return this->is(value_t::empty          );}
     bool is_boolean()         const noexcept {return this->is(value_t::boolean        );}
@@ -1210,6 +1371,7 @@ class basic_value
 
     bool is_array_of_tables() const noexcept
     {
+        this->set_accessed();
         if( ! this->is_array()) {return false;}
         const auto& a = this->as_array(std::nothrow); // already checked.
 
@@ -1229,7 +1391,11 @@ class basic_value
         return true;
     }
 
-    value_t type() const noexcept {return type_;}
+    value_t type() const noexcept
+    {
+        this->set_accessed();
+        return type_;
+    }
 
     // }}}
 
@@ -1239,36 +1405,38 @@ class basic_value
     detail::enum_to_type_t<T, basic_value<config_type>> const&
     as(const std::nothrow_t&) const noexcept
     {
+        this->set_accessed();
         return detail::getter<config_type, T>::get_nothrow(*this);
     }
     template<value_t T>
     detail::enum_to_type_t<T, basic_value<config_type>>&
     as(const std::nothrow_t&) noexcept
     {
+        this->set_accessed();
         return detail::getter<config_type, T>::get_nothrow(*this);
     }
 
-    boolean_type         const& as_boolean        (const std::nothrow_t&) const noexcept {return this->boolean_.value;}
-    integer_type         const& as_integer        (const std::nothrow_t&) const noexcept {return this->integer_.value;}
-    floating_type        const& as_floating       (const std::nothrow_t&) const noexcept {return this->floating_.value;}
-    string_type          const& as_string         (const std::nothrow_t&) const noexcept {return this->string_.value;}
-    offset_datetime_type const& as_offset_datetime(const std::nothrow_t&) const noexcept {return this->offset_datetime_.value;}
-    local_datetime_type  const& as_local_datetime (const std::nothrow_t&) const noexcept {return this->local_datetime_.value;}
-    local_date_type      const& as_local_date     (const std::nothrow_t&) const noexcept {return this->local_date_.value;}
-    local_time_type      const& as_local_time     (const std::nothrow_t&) const noexcept {return this->local_time_.value;}
-    array_type           const& as_array          (const std::nothrow_t&) const noexcept {return this->array_.value.get();}
-    table_type           const& as_table          (const std::nothrow_t&) const noexcept {return this->table_.value.get();}
+    boolean_type         const& as_boolean        (const std::nothrow_t&) const noexcept {this->set_accessed(); return this->boolean_.value;}
+    integer_type         const& as_integer        (const std::nothrow_t&) const noexcept {this->set_accessed(); return this->integer_.value;}
+    floating_type        const& as_floating       (const std::nothrow_t&) const noexcept {this->set_accessed(); return this->floating_.value;}
+    string_type          const& as_string         (const std::nothrow_t&) const noexcept {this->set_accessed(); return this->string_.value;}
+    offset_datetime_type const& as_offset_datetime(const std::nothrow_t&) const noexcept {this->set_accessed(); return this->offset_datetime_.value;}
+    local_datetime_type  const& as_local_datetime (const std::nothrow_t&) const noexcept {this->set_accessed(); return this->local_datetime_.value;}
+    local_date_type      const& as_local_date     (const std::nothrow_t&) const noexcept {this->set_accessed(); return this->local_date_.value;}
+    local_time_type      const& as_local_time     (const std::nothrow_t&) const noexcept {this->set_accessed(); return this->local_time_.value;}
+    array_type           const& as_array          (const std::nothrow_t&) const noexcept {this->set_accessed(); return this->array_.value.get();}
+    table_type           const& as_table          (const std::nothrow_t&) const noexcept {this->set_accessed(); return this->table_.value.get();}
 
-    boolean_type        & as_boolean        (const std::nothrow_t&) noexcept {return this->boolean_.value;}
-    integer_type        & as_integer        (const std::nothrow_t&) noexcept {return this->integer_.value;}
-    floating_type       & as_floating       (const std::nothrow_t&) noexcept {return this->floating_.value;}
-    string_type         & as_string         (const std::nothrow_t&) noexcept {return this->string_.value;}
-    offset_datetime_type& as_offset_datetime(const std::nothrow_t&) noexcept {return this->offset_datetime_.value;}
-    local_datetime_type & as_local_datetime (const std::nothrow_t&) noexcept {return this->local_datetime_.value;}
-    local_date_type     & as_local_date     (const std::nothrow_t&) noexcept {return this->local_date_.value;}
-    local_time_type     & as_local_time     (const std::nothrow_t&) noexcept {return this->local_time_.value;}
-    array_type          & as_array          (const std::nothrow_t&) noexcept {return this->array_.value.get();}
-    table_type          & as_table          (const std::nothrow_t&) noexcept {return this->table_.value.get();}
+    boolean_type        & as_boolean        (const std::nothrow_t&) noexcept {this->set_accessed(); return this->boolean_.value;}
+    integer_type        & as_integer        (const std::nothrow_t&) noexcept {this->set_accessed(); return this->integer_.value;}
+    floating_type       & as_floating       (const std::nothrow_t&) noexcept {this->set_accessed(); return this->floating_.value;}
+    string_type         & as_string         (const std::nothrow_t&) noexcept {this->set_accessed(); return this->string_.value;}
+    offset_datetime_type& as_offset_datetime(const std::nothrow_t&) noexcept {this->set_accessed(); return this->offset_datetime_.value;}
+    local_datetime_type & as_local_datetime (const std::nothrow_t&) noexcept {this->set_accessed(); return this->local_datetime_.value;}
+    local_date_type     & as_local_date     (const std::nothrow_t&) noexcept {this->set_accessed(); return this->local_date_.value;}
+    local_time_type     & as_local_time     (const std::nothrow_t&) noexcept {this->set_accessed(); return this->local_time_.value;}
+    array_type          & as_array          (const std::nothrow_t&) noexcept {this->set_accessed(); return this->array_.value.get();}
+    table_type          & as_table          (const std::nothrow_t&) noexcept {this->set_accessed(); return this->table_.value.get();}
 
     // }}}
 
@@ -1291,6 +1459,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_boolean()", value_t::boolean);
         }
+        this->set_accessed();
         return this->boolean_.value;
     }
     integer_type const& as_integer() const
@@ -1299,6 +1468,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_integer()", value_t::integer);
         }
+        this->set_accessed();
         return this->integer_.value;
     }
     floating_type const& as_floating() const
@@ -1307,6 +1477,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_floating()", value_t::floating);
         }
+        this->set_accessed();
         return this->floating_.value;
     }
     string_type const& as_string() const
@@ -1315,6 +1486,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_string()", value_t::string);
         }
+        this->set_accessed();
         return this->string_.value;
     }
     offset_datetime_type const& as_offset_datetime() const
@@ -1323,6 +1495,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_offset_datetime()", value_t::offset_datetime);
         }
+        this->set_accessed();
         return this->offset_datetime_.value;
     }
     local_datetime_type const& as_local_datetime() const
@@ -1331,6 +1504,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_local_datetime()", value_t::local_datetime);
         }
+        this->set_accessed();
         return this->local_datetime_.value;
     }
     local_date_type const& as_local_date() const
@@ -1339,6 +1513,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_local_date()", value_t::local_date);
         }
+        this->set_accessed();
         return this->local_date_.value;
     }
     local_time_type const& as_local_time() const
@@ -1347,6 +1522,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_local_time()", value_t::local_time);
         }
+        this->set_accessed();
         return this->local_time_.value;
     }
     array_type const& as_array() const
@@ -1355,6 +1531,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_array()", value_t::array);
         }
+        this->set_accessed();
         return this->array_.value.get();
     }
     table_type const& as_table() const
@@ -1363,6 +1540,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_table()", value_t::table);
         }
+        this->set_accessed();
         return this->table_.value.get();
     }
 
@@ -1375,6 +1553,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_boolean()", value_t::boolean);
         }
+        this->set_accessed();
         return this->boolean_.value;
     }
     integer_type& as_integer()
@@ -1383,6 +1562,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_integer()", value_t::integer);
         }
+        this->set_accessed();
         return this->integer_.value;
     }
     floating_type& as_floating()
@@ -1391,6 +1571,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_floating()", value_t::floating);
         }
+        this->set_accessed();
         return this->floating_.value;
     }
     string_type& as_string()
@@ -1399,6 +1580,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_string()", value_t::string);
         }
+        this->set_accessed();
         return this->string_.value;
     }
     offset_datetime_type& as_offset_datetime()
@@ -1407,6 +1589,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_offset_datetime()", value_t::offset_datetime);
         }
+        this->set_accessed();
         return this->offset_datetime_.value;
     }
     local_datetime_type& as_local_datetime()
@@ -1415,6 +1598,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_local_datetime()", value_t::local_datetime);
         }
+        this->set_accessed();
         return this->local_datetime_.value;
     }
     local_date_type& as_local_date()
@@ -1423,6 +1607,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_local_date()", value_t::local_date);
         }
+        this->set_accessed();
         return this->local_date_.value;
     }
     local_time_type& as_local_time()
@@ -1431,6 +1616,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_local_time()", value_t::local_time);
         }
+        this->set_accessed();
         return this->local_time_.value;
     }
     array_type& as_array()
@@ -1439,6 +1625,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_array()", value_t::array);
         }
+        this->set_accessed();
         return this->array_.value.get();
     }
     table_type& as_table()
@@ -1447,6 +1634,7 @@ class basic_value
         {
             this->throw_bad_cast("toml::value::as_table()", value_t::table);
         }
+        this->set_accessed();
         return this->table_.value.get();
     }
 
@@ -1856,9 +2044,21 @@ class basic_value
     comment_type const& comments() const noexcept {return this->comments_;}
     comment_type&       comments()       noexcept {return this->comments_;}
 
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+    bool accessed() const {return this->accessed_.load();}
+#endif
+
   private:
 
     // private helper functions =========================================== {{{
+
+    void set_accessed() const noexcept
+    {
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_.store(true);
+#endif
+        return;
+    }
 
     void cleanup() noexcept
     {
@@ -1876,6 +2076,9 @@ class basic_value
             case value_t::table           : { table_          .~table_storage           (); break; }
             default                       : { break; }
         }
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+        this->accessed_ = false;
+#endif
         this->type_ = value_t::empty;
         return;
     }
@@ -1907,6 +2110,12 @@ class basic_value
 
     template<typename TC>
     friend class basic_value;
+
+
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+    template<typename TC>
+    friend void detail::unset_access_flag(basic_value<TC>&);
+#endif
 
     // }}}
 
@@ -1942,6 +2151,10 @@ class basic_value
     };
     region_type  region_;
     comment_type comments_;
+
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+    mutable std::atomic<bool> accessed_;
+#endif
 };
 
 template<typename TC>
@@ -2252,6 +2465,49 @@ void change_region_of_value(basic_value<TC>& dst, const basic_value<TC>& src)
     return;
 }
 
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+template<typename TC>
+void unset_access_flag(basic_value<TC>& v)
+{
+    v.accessed_.store(false);
+}
+
+template<typename TC>
+void unset_access_flag_recursively(basic_value<TC>& v)
+{
+    switch(v.type())
+    {
+        case value_t::empty            : { return unset_access_flag(v); }
+        case value_t::boolean          : { return unset_access_flag(v); }
+        case value_t::integer          : { return unset_access_flag(v); }
+        case value_t::floating         : { return unset_access_flag(v); }
+        case value_t::string           : { return unset_access_flag(v); }
+        case value_t::offset_datetime  : { return unset_access_flag(v); }
+        case value_t::local_datetime   : { return unset_access_flag(v); }
+        case value_t::local_date       : { return unset_access_flag(v); }
+        case value_t::local_time       : { return unset_access_flag(v); }
+        case value_t::array:
+        {
+            for(auto& elem : v.as_array())
+            {
+                unset_access_flag_recursively(elem);
+            }
+            return unset_access_flag(v);
+        }
+        case value_t::table:
+        {
+            for(auto& kv : v.as_table())
+            {
+                unset_access_flag_recursively(kv.second);
+            }
+            return unset_access_flag(v);
+        }
+        default: { return unset_access_flag(v); }
+    }
+}
+#endif
+
 } // namespace detail
+} // TOML11_INLINE_VERSION_NAMESPACE
 } // namespace toml
 #endif // TOML11_VALUE_HPP

@@ -4,8 +4,11 @@
 #include "../fwd/literal_fwd.hpp"
 #include "../parser.hpp"
 #include "../syntax.hpp"
+#include "../version.hpp"
 
 namespace toml
+{
+inline namespace TOML11_INLINE_VERSION_NAMESPACE
 {
 
 namespace detail
@@ -115,7 +118,7 @@ inline namespace toml_literals
 {
 
 TOML11_INLINE ::toml::value
-operator"" _toml(const char* str, std::size_t len)
+operator""_toml(const char* str, std::size_t len)
 {
     if(len == 0)
     {
@@ -170,5 +173,6 @@ operator"" _toml(const char8_t* str, std::size_t len)
 
 } // toml_literals
 } // literals
+} // TOML11_INLINE_VERSION_NAMESPACE
 } // toml
 #endif // TOML11_LITERAL_IMPL_HPP

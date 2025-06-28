@@ -126,7 +126,7 @@ include(FetchContent)
 FetchContent_Declare(
   toml11
   GIT_REPOSITORY https://github.com/ToruNiina/toml11.git
-  GIT_TAG        v4.1.0
+  GIT_TAG        v4.4.0
 )
 FetchContent_MakeAvailable(toml11)
 
@@ -141,15 +141,17 @@ After [adding cpm to your project](https://github.com/cpm-cmake/CPM.cmake?tab=re
 ```cmake
 include(cmake/CPM.cmake)
 
-CPMAddPackage("gh:ToruNiina/toml11@4.2.0")
+CPMAddPackage("gh:ToruNiina/toml11@4.4.0")
 
 # OR
 
 CPMAddPackage(
     NAME toml11
     GITHUB_REPOSITORY "ToruNiina/toml11"
-    VERSION 4.2.0
-    OPTIONS "TOML11_PRECOMPILE ON" # to pre-compile
+    VERSION 4.4.0
+    OPTIONS
+    "TOML11_PRECOMPILE ON" # to pre-compile
+    "TOML11_ENABLE_ACCESS_CHECK ON" # to use value.accessed()
     )
 
 add_executable(main main.cpp)
@@ -646,6 +648,8 @@ I appreciate the help of the contributors who introduced the great feature to th
   - Support dynamic color mode
   - Support `std::optional` members for `TOML11_DEFINE_CONVERSION_NON_INTRUSIVE`
   - Make `thread_local` for `color_mode` optional
+  - Add `toml::find_or_default`
+  - Fix static assertions in success that checks if specified type is void
 - Giel van Schijndel (@muggenhor)
   - Remove needless copy in `parse` function
 - Lukáš Hrázký (@lukash)
@@ -688,6 +692,16 @@ I appreciate the help of the contributors who introduced the great feature to th
   - Suppress warnings by manually cast file size to `std::streamsize`
 - Jack W (@jackwil1)
   - Fix typos in documentation template syntax
+- amatej (@kontura)
+  - Fix: `toml::detail::region::last_` may be used uninitialized
+- Severin Leonhardt (@SeverinLeonhardt)
+  - Fix use with CMake 3.21 and older
+- hayt (@hayt)
+  - fix: prevent size_t-max length string allocation
+- somebody (@oldoldtea), (lz)
+  - Update README for better ToC, fixing example code
+- Sunlight (@SunPodder)
+  - Add `erase(...)` function to `ordered_map`
 
 ## Licensing terms
 

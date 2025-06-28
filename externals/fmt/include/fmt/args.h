@@ -110,14 +110,14 @@ template <typename Context> class dynamic_format_arg_store {
   }
 
   template <typename T> void emplace_arg(const T& arg) {
-    data_.emplace_back(detail::make_arg<Context>(arg));
+    data_.emplace_back(arg);
   }
 
   template <typename T>
   void emplace_arg(const detail::named_arg<char_type, T>& arg) {
     if (named_info_.empty())
       data_.insert(data_.begin(), basic_format_arg<Context>(nullptr, 0));
-    data_.emplace_back(detail::make_arg<Context>(detail::unwrap(arg.value)));
+    data_.emplace_back(detail::unwrap(arg.value));
     auto pop_one = [](std::vector<basic_format_arg<Context>>* data) {
       data->pop_back();
     };
@@ -210,6 +210,9 @@ template <typename Context> class dynamic_format_arg_store {
     data_.reserve(new_cap);
     named_info_.reserve(new_cap_named);
   }
+
+  /// Returns the number of elements in the store.
+  size_t size() const noexcept { return data_.size(); }
 };
 
 FMT_END_NAMESPACE

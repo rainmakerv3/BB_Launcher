@@ -5,6 +5,7 @@
 
 #include "get.hpp"
 #include "value.hpp"
+#include "version.hpp"
 
 #if defined(TOML11_HAS_STRING_VIEW)
 #include <string_view>
@@ -12,26 +13,31 @@
 
 namespace toml
 {
+inline namespace TOML11_INLINE_VERSION_NAMESPACE
+{
 
 // ----------------------------------------------------------------------------
 // find<T>(value, key);
 
 template<typename T, typename TC>
-decltype(::toml::get<T>(std::declval<basic_value<TC> const&>()))
+cxx::enable_if_t<cxx::negation<detail::is_std_optional<T>>::value,
+    decltype(::toml::get<T>(std::declval<basic_value<TC> const&>()))>
 find(const basic_value<TC>& v, const typename basic_value<TC>::key_type& ky)
 {
     return ::toml::get<T>(v.at(ky));
 }
 
 template<typename T, typename TC>
-decltype(::toml::get<T>(std::declval<basic_value<TC>&>()))
+cxx::enable_if_t<cxx::negation<detail::is_std_optional<T>>::value,
+    decltype(::toml::get<T>(std::declval<basic_value<TC>&>()))>
 find(basic_value<TC>& v, const typename basic_value<TC>::key_type& ky)
 {
     return ::toml::get<T>(v.at(ky));
 }
 
 template<typename T, typename TC>
-decltype(::toml::get<T>(std::declval<basic_value<TC>&&>()))
+cxx::enable_if_t<cxx::negation<detail::is_std_optional<T>>::value,
+    decltype(::toml::get<T>(std::declval<basic_value<TC>&&>()))>
 find(basic_value<TC>&& v, const typename basic_value<TC>::key_type& ky)
 {
     return ::toml::get<T>(std::move(v.at(ky)));
@@ -41,19 +47,22 @@ find(basic_value<TC>&& v, const typename basic_value<TC>::key_type& ky)
 // find<T>(value, idx)
 
 template<typename T, typename TC>
-decltype(::toml::get<T>(std::declval<basic_value<TC> const&>()))
+cxx::enable_if_t<cxx::negation<detail::is_std_optional<T>>::value,
+    decltype(::toml::get<T>(std::declval<basic_value<TC> const&>()))>
 find(const basic_value<TC>& v, const std::size_t idx)
 {
     return ::toml::get<T>(v.at(idx));
 }
 template<typename T, typename TC>
-decltype(::toml::get<T>(std::declval<basic_value<TC>&>()))
+cxx::enable_if_t<cxx::negation<detail::is_std_optional<T>>::value,
+    decltype(::toml::get<T>(std::declval<basic_value<TC>&>()))>
 find(basic_value<TC>& v, const std::size_t idx)
 {
     return ::toml::get<T>(v.at(idx));
 }
 template<typename T, typename TC>
-decltype(::toml::get<T>(std::declval<basic_value<TC>&&>()))
+cxx::enable_if_t<cxx::negation<detail::is_std_optional<T>>::value,
+    decltype(::toml::get<T>(std::declval<basic_value<TC>&&>()))>
 find(basic_value<TC>&& v, const std::size_t idx)
 {
     return ::toml::get<T>(std::move(v.at(idx)));
@@ -99,6 +108,95 @@ find(basic_value<TC>&& v, const std::size_t idx)
 {
     return basic_value<TC>(std::move(v.at(idx)));
 }
+
+// --------------------------------------------------------------------------
+// find<optional<T>>
+
+#if defined(TOML11_HAS_OPTIONAL)
+template<typename T, typename TC>
+cxx::enable_if_t<detail::is_std_optional<T>::value, T>
+find(const basic_value<TC>& v, const typename basic_value<TC>::key_type& ky)
+{
+    if(v.contains(ky))
+    {
+        return ::toml::get<typename T::value_type>(v.at(ky));
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}
+
+template<typename T, typename TC>
+cxx::enable_if_t<detail::is_std_optional<T>::value, T>
+find(basic_value<TC>& v, const typename basic_value<TC>::key_type& ky)
+{
+    if(v.contains(ky))
+    {
+        return ::toml::get<typename T::value_type>(v.at(ky));
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}
+
+template<typename T, typename TC>
+cxx::enable_if_t<detail::is_std_optional<T>::value, T>
+find(basic_value<TC>&& v, const typename basic_value<TC>::key_type& ky)
+{
+    if(v.contains(ky))
+    {
+        return ::toml::get<typename T::value_type>(std::move(v.at(ky)));
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}
+
+template<typename T, typename K, typename TC>
+cxx::enable_if_t<detail::is_std_optional<T>::value && std::is_integral<K>::value, T>
+find(const basic_value<TC>& v, const K& k)
+{
+    if(static_cast<std::size_t>(k) < v.size())
+    {
+        return ::toml::get<typename T::value_type>(v.at(static_cast<std::size_t>(k)));
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}
+
+template<typename T, typename K, typename TC>
+cxx::enable_if_t<detail::is_std_optional<T>::value && std::is_integral<K>::value, T>
+find(basic_value<TC>& v, const K& k)
+{
+    if(static_cast<std::size_t>(k) < v.size())
+    {
+        return ::toml::get<typename T::value_type>(v.at(static_cast<std::size_t>(k)));
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}
+
+template<typename T, typename K, typename TC>
+cxx::enable_if_t<detail::is_std_optional<T>::value && std::is_integral<K>::value, T>
+find(basic_value<TC>&& v, const K& k)
+{
+    if(static_cast<std::size_t>(k) < v.size())
+    {
+        return ::toml::get<typename T::value_type>(std::move(v.at(static_cast<std::size_t>(k))));
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}
+#endif // optional
 
 // --------------------------------------------------------------------------
 // toml::find(toml::value, toml::key, Ts&& ... keys)
@@ -173,23 +271,108 @@ find(basic_value<TC>&& v, const K1& k1, const K2& k2, const Ks& ... ks)
 // find<T>(v, keys...)
 
 template<typename T, typename TC, typename K1, typename K2, typename ... Ks>
-decltype(::toml::get<T>(std::declval<const basic_value<TC>&>()))
+cxx::enable_if_t<cxx::negation<detail::is_std_optional<T>>::value,
+    decltype(::toml::get<T>(std::declval<const basic_value<TC>&>()))>
 find(const basic_value<TC>& v, const K1& k1, const K2& k2, const Ks& ... ks)
 {
     return find<T>(v.at(detail::key_cast<TC>(k1)), detail::key_cast<TC>(k2), ks...);
 }
 template<typename T, typename TC, typename K1, typename K2, typename ... Ks>
-decltype(::toml::get<T>(std::declval<basic_value<TC>&>()))
+cxx::enable_if_t<cxx::negation<detail::is_std_optional<T>>::value,
+    decltype(::toml::get<T>(std::declval<basic_value<TC>&>()))>
 find(basic_value<TC>& v, const K1& k1, const K2& k2, const Ks& ... ks)
 {
     return find<T>(v.at(detail::key_cast<TC>(k1)), detail::key_cast<TC>(k2), ks...);
 }
 template<typename T, typename TC, typename K1, typename K2, typename ... Ks>
-decltype(::toml::get<T>(std::declval<basic_value<TC>&&>()))
+cxx::enable_if_t<cxx::negation<detail::is_std_optional<T>>::value,
+    decltype(::toml::get<T>(std::declval<basic_value<TC>&&>()))>
 find(basic_value<TC>&& v, const K1& k1, const K2& k2, const Ks& ... ks)
 {
     return find<T>(std::move(v.at(detail::key_cast<TC>(k1))), detail::key_cast<TC>(k2), ks...);
 }
+
+#if defined(TOML11_HAS_OPTIONAL)
+template<typename T, typename TC, typename K2, typename ... Ks>
+cxx::enable_if_t<detail::is_std_optional<T>::value, T>
+find(const basic_value<TC>& v, const typename basic_value<TC>::key_type& k1, const K2& k2, const Ks& ... ks)
+{
+    if(v.contains(k1))
+    {
+        return find<T>(v.at(k1), detail::key_cast<TC>(k2), ks...);
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}
+template<typename T, typename TC, typename K2, typename ... Ks>
+cxx::enable_if_t<detail::is_std_optional<T>::value, T>
+find(basic_value<TC>& v, const typename basic_value<TC>::key_type& k1, const K2& k2, const Ks& ... ks)
+{
+    if(v.contains(k1))
+    {
+        return find<T>(v.at(k1), detail::key_cast<TC>(k2), ks...);
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}
+template<typename T, typename TC, typename K2, typename ... Ks>
+cxx::enable_if_t<detail::is_std_optional<T>::value, T>
+find(basic_value<TC>&& v, const typename basic_value<TC>::key_type& k1, const K2& k2, const Ks& ... ks)
+{
+    if(v.contains(k1))
+    {
+        return find<T>(v.at(k1), detail::key_cast<TC>(k2), ks...);
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}
+
+template<typename T, typename TC, typename K1, typename K2, typename ... Ks>
+cxx::enable_if_t<detail::is_std_optional<T>::value && std::is_integral<K1>::value, T>
+find(const basic_value<TC>& v, const K1& k1, const K2& k2, const Ks& ... ks)
+{
+    if(static_cast<std::size_t>(k1) < v.size())
+    {
+        return find<T>(v.at(static_cast<std::size_t>(k1)), detail::key_cast<TC>(k2), ks...);
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}
+template<typename T, typename TC, typename K1, typename K2, typename ... Ks>
+cxx::enable_if_t<detail::is_std_optional<T>::value && std::is_integral<K1>::value, T>
+find(basic_value<TC>& v, const K1& k1, const K2& k2, const Ks& ... ks)
+{
+    if(static_cast<std::size_t>(k1) < v.size())
+    {
+        return find<T>(v.at(static_cast<std::size_t>(k1)), detail::key_cast<TC>(k2), ks...);
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}
+template<typename T, typename TC, typename K1, typename K2, typename ... Ks>
+cxx::enable_if_t<detail::is_std_optional<T>::value && std::is_integral<K1>::value, T>
+find(basic_value<TC>&& v, const K1& k1, const K2& k2, const Ks& ... ks)
+{
+    if(static_cast<std::size_t>(k1) < v.size())
+    {
+        return find<T>(v.at(static_cast<std::size_t>(k1)), detail::key_cast<TC>(k2), ks...);
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}
+#endif // optional
 
 // ===========================================================================
 // find_or<T>(value, key, fallback)
@@ -373,5 +556,37 @@ T find_or(const basic_value<TC>& v, const K1& k1, const K2& k2, const K3& k3, co
     }
 }
 
+// ===========================================================================
+// find_or_default<T>(value, key)
+
+template<typename T, typename TC, typename K>
+cxx::enable_if_t<std::is_default_constructible<T>::value, T>
+find_or_default(const basic_value<TC>& v, K&& k) noexcept(std::is_nothrow_default_constructible<T>::value)
+{
+    try
+    {
+        return ::toml::get<T>(v.at(detail::key_cast<TC>(std::forward<K>(k))));
+    }
+    catch(...)
+    {
+        return T();
+    }
+}
+
+template<typename T, typename TC, typename K1, typename ... Ks>
+cxx::enable_if_t<std::is_default_constructible<T>::value, T>
+find_or_default(const basic_value<TC>& v, K1&& k1, Ks&& ... keys) noexcept(std::is_nothrow_default_constructible<T>::value)
+{
+    try
+    {
+        return find_or_default<T>(v.at(std::forward<K1>(k1)), std::forward<Ks>(keys)...);
+    }
+    catch(...)
+    {
+        return T();
+    }
+}
+
+} // TOML11_INLINE_VERSION_NAMESPACE
 } // toml
 #endif // TOML11_FIND_HPP

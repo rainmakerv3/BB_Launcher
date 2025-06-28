@@ -6,7 +6,11 @@
 #include <utility>
 #include <vector>
 
+#include "version.hpp"
+
 namespace toml
+{
+inline namespace TOML11_INLINE_VERSION_NAMESPACE
 {
 
 namespace detail
@@ -189,6 +193,32 @@ class ordered_map : detail::ordered_map_ebo_container<Cmp>
         return iter->second;
     }
 
+    iterator erase(iterator pos)
+    {
+        return container_.erase(pos);
+    }
+
+    iterator erase(const_iterator pos)
+    {
+        return container_.erase(pos);
+    }
+
+    iterator erase(const_iterator first, const_iterator last)
+    {
+        return container_.erase(first, last);
+    }
+
+    size_type erase(const key_type& key)
+    {
+        auto it = this->find(key);
+        if (it != this->end())
+        {
+            container_.erase(it);
+            return 1;
+        }
+        return 0;
+    }
+
     mapped_type& operator[](const key_type& k)
     {
         const auto iter = this->find(k);
@@ -261,5 +291,6 @@ void swap(ordered_map<K,V,C,A>& lhs, ordered_map<K,V,C,A>& rhs)
 }
 
 
+} // TOML11_INLINE_VERSION_NAMESPACE
 } // toml
 #endif // TOML11_ORDERED_MAP_HPP

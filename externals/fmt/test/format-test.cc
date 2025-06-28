@@ -582,6 +582,8 @@ TEST(format_test, named_arg) {
   EXPECT_EQ("1/a/A", fmt::format("{_1}/{a_}/{A_}", fmt::arg("a_", 'a'),
                                  fmt::arg("A_", "A"), fmt::arg("_1", 1)));
   EXPECT_EQ(fmt::format("{0:{width}}", -42, fmt::arg("width", 4)), " -42");
+  EXPECT_EQ(fmt::format("{value:{width}}", fmt::arg("value", -42),
+      fmt::arg("width", 4)), " -42");
   EXPECT_EQ("st",
             fmt::format("{0:.{precision}}", "str", fmt::arg("precision", 2)));
   EXPECT_EQ(fmt::format("{} {two}", 1, fmt::arg("two", 2)), "1 2");
@@ -599,6 +601,8 @@ TEST(format_test, named_arg) {
   EXPECT_THROW_MSG((void)fmt::format(runtime("{a} {}"), fmt::arg("a", 2), 42),
                    format_error,
                    "cannot switch from manual to automatic argument indexing");
+  EXPECT_THROW_MSG((void)fmt::format("{a}", fmt::arg("a", 1),
+      fmt::arg("a", 10)), format_error, "duplicate named arg");
 }
 
 TEST(format_test, auto_arg_index) {
@@ -1068,7 +1072,8 @@ TEST(format_test, precision) {
   EXPECT_EQ(fmt::format("{:#.0f}", 123.0), "123.");
   EXPECT_EQ(fmt::format("{:.02f}", 1.234), "1.23");
   EXPECT_EQ(fmt::format("{:.1g}", 0.001), "0.001");
-  EXPECT_EQ(fmt::format("{}", 1019666432.0f), "1019666400");
+  EXPECT_EQ(fmt::format("{}", 123456789.0f), "1.2345679e+08");
+  EXPECT_EQ(fmt::format("{}", 1019666432.0f), "1.0196664e+09");
   EXPECT_EQ(fmt::format("{:.0e}", 9.5), "1e+01");
   EXPECT_EQ(fmt::format("{:.1e}", 1e-34), "1.0e-34");
 
@@ -1820,33 +1825,6 @@ TEST(format_test, big_print) {
   EXPECT_WRITE(stdout, big_print(), std::string(count, 'x'));
 }
 
-// Windows CRT implements _IOLBF incorrectly (full buffering).
-#if FMT_USE_FCNTL && !defined(_WIN32)
-TEST(format_test, line_buffering) {
-  auto pipe = fmt::pipe();
-
-  int write_fd = pipe.write_end.descriptor();
-  auto write_end = pipe.write_end.fdopen("w");
-  setvbuf(write_end.get(), nullptr, _IOLBF, 4096);
-  write_end.print("42\n");
-  close(write_fd);
-  try {
-    write_end.close();
-  } catch (const std::system_error&) {
-  }
-
-  auto read_end = pipe.read_end.fdopen("r");
-  std::thread reader([&]() {
-    int n = 0;
-    int result = fscanf(read_end.get(), "%d", &n);
-    (void)result;
-    EXPECT_EQ(n, 42);
-  });
-
-  reader.join();
-}
-#endif
-
 struct deadlockable {
   int value = 0;
   mutable std::mutex mutex;
@@ -2005,7 +1983,6 @@ TEST(format_test, custom_format_compile_time_string) {
   EXPECT_EQ(fmt::format(FMT_STRING("{}"), const_answer), "42");
 }
 
-#if FMT_USE_USER_LITERALS
 TEST(format_test, named_arg_udl) {
   using namespace fmt::literals;
   auto udl_a = fmt::format("{first}{second}{first}{third}", "first"_a = "abra",
@@ -2017,7 +1994,6 @@ TEST(format_test, named_arg_udl) {
 
   EXPECT_EQ(fmt::format("{answer}", "answer"_a = Answer()), "42");
 }
-#endif  // FMT_USE_USER_LITERALS
 
 TEST(format_test, enum) { EXPECT_EQ(fmt::format("{}", foo), "0"); }
 
@@ -2032,6 +2008,8 @@ enum big_enum : unsigned long long { big_enum_value = 5000000000ULL };
 auto format_as(big_enum e) -> unsigned long long { return e; }
 
 TEST(format_test, strong_enum) {
+  auto arg = fmt::basic_format_arg<fmt::context>(big_enum_value);
+  EXPECT_EQ(arg.type(), fmt::detail::type::ulong_long_type);
   EXPECT_EQ(fmt::format("{}", big_enum_value), "5000000000");
 }
 #endif
@@ -2081,6 +2059,10 @@ TEST(format_test, output_iterators) {
   std::stringstream s;
   fmt::format_to(std::ostream_iterator<char>(s), "{}", 42);
   EXPECT_EQ("42", s.str());
+
+  std::stringstream s2;
+  fmt::format_to(std::ostreambuf_iterator<char>(s2), "{}.{:06d}", 42, 43);
+  EXPECT_EQ("42.000043", s2.str());
 }
 
 TEST(format_test, fill_via_appender) {
@@ -2516,12 +2498,12 @@ TEST(format_test, writer) {
 }
 
 #if FMT_USE_BITINT
-#  pragma clang diagnostic ignored "-Wbit-int-extension"
+FMT_PRAGMA_CLANG(diagnostic ignored "-Wbit-int-extension")
 
 TEST(format_test, bitint) {
   using fmt::detail::bitint;
   using fmt::detail::ubitint;
-  
+
   EXPECT_EQ(fmt::format("{}", ubitint<3>(7)), "7");
   EXPECT_EQ(fmt::format("{}", bitint<7>()), "0");
 

@@ -350,83 +350,87 @@ TEST(chrono_test, system_clock_time_point) {
   }
 }
 
-#if FMT_USE_LOCAL_TIME
+TEST(chrono_test, local_time) {
+  auto time =
+      fmt::local_time<std::chrono::seconds>(std::chrono::seconds(290088000));
 
-TEST(chrono_test, localtime) {
-  auto t = std::time(nullptr);
-  auto tm = *std::localtime(&t);
-  EXPECT_TRUE(equal(tm, fmt::localtime(t)));
+  EXPECT_EQ(fmt::format("{}", time), "1979-03-12 12:00:00");
+  EXPECT_EQ(fmt::format("{:}", time), "1979-03-12 12:00:00");
+
+  EXPECT_EQ(fmt::format("{:%%}", time), "%");
+  EXPECT_EQ(fmt::format("{:%n}", time), "\n");
+  EXPECT_EQ(fmt::format("{:%t}", time), "\t");
+  EXPECT_EQ(fmt::format("{:%Y}", time), "1979");
+  EXPECT_EQ(fmt::format("{:%EY}", time), "1979");
+  EXPECT_EQ(fmt::format("{:%y}", time), "79");
+  EXPECT_EQ(fmt::format("{:%Oy}", time), "79");
+  EXPECT_EQ(fmt::format("{:%Ey}", time), "79");
+  EXPECT_EQ(fmt::format("{:%C}", time), "19");
+  EXPECT_EQ(fmt::format("{:%EC}", time), "19");
+  EXPECT_EQ(fmt::format("{:%G}", time), "1979");
+  EXPECT_EQ(fmt::format("{:%g}", time), "79");
+  EXPECT_EQ(fmt::format("{:%b}", time), "Mar");
+  EXPECT_EQ(fmt::format("{:%h}", time), "Mar");
+  EXPECT_EQ(fmt::format("{:%B}", time), "March");
+  EXPECT_EQ(fmt::format("{:%m}", time), "03");
+  EXPECT_EQ(fmt::format("{:%Om}", time), "03");
+  EXPECT_EQ(fmt::format("{:%U}", time), "10");
+  EXPECT_EQ(fmt::format("{:%OU}", time), "10");
+  EXPECT_EQ(fmt::format("{:%W}", time), "11");
+  EXPECT_EQ(fmt::format("{:%OW}", time), "11");
+  EXPECT_EQ(fmt::format("{:%V}", time), "11");
+  EXPECT_EQ(fmt::format("{:%OV}", time), "11");
+  EXPECT_EQ(fmt::format("{:%j}", time), "071");
+  EXPECT_EQ(fmt::format("{:%d}", time), "12");
+  EXPECT_EQ(fmt::format("{:%Od}", time), "12");
+  EXPECT_EQ(fmt::format("{:%e}", time), "12");
+  EXPECT_EQ(fmt::format("{:%Oe}", time), "12");
+  EXPECT_EQ(fmt::format("{:%a}", time), "Mon");
+  EXPECT_EQ(fmt::format("{:%A}", time), "Monday");
+  EXPECT_EQ(fmt::format("{:%w}", time), "1");
+  EXPECT_EQ(fmt::format("{:%Ow}", time), "1");
+  EXPECT_EQ(fmt::format("{:%u}", time), "1");
+  EXPECT_EQ(fmt::format("{:%Ou}", time), "1");
+  EXPECT_EQ(fmt::format("{:%H}", time), "12");
+  EXPECT_EQ(fmt::format("{:%OH}", time), "12");
+  EXPECT_EQ(fmt::format("{:%I}", time), "12");
+  EXPECT_EQ(fmt::format("{:%OI}", time), "12");
+  EXPECT_EQ(fmt::format("{:%M}", time), "00");
+  EXPECT_EQ(fmt::format("{:%OM}", time), "00");
+  EXPECT_EQ(fmt::format("{:%S}", time), "00");
+  EXPECT_EQ(fmt::format("{:%OS}", time), "00");
+  EXPECT_EQ(fmt::format("{:%x}", time), "03/12/79");
+  EXPECT_EQ(fmt::format("{:%Ex}", time), "03/12/79");
+  EXPECT_EQ(fmt::format("{:%X}", time), "12:00:00");
+  EXPECT_EQ(fmt::format("{:%EX}", time), "12:00:00");
+  EXPECT_EQ(fmt::format("{:%D}", time), "03/12/79");
+  EXPECT_EQ(fmt::format("{:%F}", time), "1979-03-12");
+  EXPECT_EQ(fmt::format("{:%R}", time), "12:00");
+  EXPECT_EQ(fmt::format("{:%T}", time), "12:00:00");
+  EXPECT_EQ(fmt::format("{:%p}", time), "PM");
+  EXPECT_EQ(fmt::format("{:%c}", time), "Mon Mar 12 12:00:00 1979");
+  EXPECT_EQ(fmt::format("{:%Ec}", time), "Mon Mar 12 12:00:00 1979");
+  EXPECT_EQ(fmt::format("{:%r}", time), "12:00:00 PM");
+
+  EXPECT_EQ(fmt::format("{:%Y-%m-%d %H:%M:%S}", time), "1979-03-12 12:00:00");
+
+  EXPECT_THROW_MSG((void)fmt::format(fmt::runtime("{:%z}"), time),
+                   fmt::format_error, "no timezone");
+  EXPECT_THROW_MSG((void)fmt::format(fmt::runtime("{:%Z}"), time),
+                   fmt::format_error, "no timezone");
 }
 
-template <typename Duration>
-auto strftime_full_local(std::chrono::local_time<Duration> tp) -> std::string {
-  auto t = std::chrono::system_clock::to_time_t(
-      std::chrono::current_zone()->to_sys(tp));
-  auto tm = *std::localtime(&t);
-  return system_strftime("%Y-%m-%d %H:%M:%S", &tm);
+TEST(chrono_test, daylight_savings_time_end) {
+  // 2024-10-27 03:05 as the number of seconds since epoch in Europe/Kyiv time.
+  // It is slightly after the DST end and passing it to to_sys will result in
+  // an ambiguous time error:
+  //   2024-10-27 03:05:00 is ambiguous.  It could be
+  //   2024-10-27 03:05:00 EEST == 2024-10-27 00:05:00 UTC or
+  //   2024-10-27 03:05:00 EET == 2024-10-27 01:05:00 UTC
+  auto t =
+      fmt::local_time<std::chrono::seconds>(std::chrono::seconds(1729998300));
+  EXPECT_EQ(fmt::format("{}", t), "2024-10-27 03:05:00");
 }
-
-TEST(chrono_test, local_system_clock_time_point) {
-#  ifdef _WIN32
-  return;  // Not supported on Windows.
-#  endif
-  auto t1 = std::chrono::time_point_cast<std::chrono::seconds>(
-      std::chrono::current_zone()->to_local(std::chrono::system_clock::now()));
-  EXPECT_EQ(strftime_full_local(t1), fmt::format("{:%Y-%m-%d %H:%M:%S}", t1));
-  EXPECT_EQ(strftime_full_local(t1), fmt::format("{}", t1));
-  EXPECT_EQ(strftime_full_local(t1), fmt::format("{:}", t1));
-  using time_point = std::chrono::local_time<std::chrono::seconds>;
-  auto t2 = time_point(std::chrono::seconds(86400 + 42));
-  EXPECT_EQ(strftime_full_local(t2), fmt::format("{:%Y-%m-%d %H:%M:%S}", t2));
-
-  std::vector<std::string> spec_list = {
-      "%%",  "%n",  "%t",  "%Y",  "%EY", "%y",  "%Oy", "%Ey", "%C",
-      "%EC", "%G",  "%g",  "%b",  "%h",  "%B",  "%m",  "%Om", "%U",
-      "%OU", "%W",  "%OW", "%V",  "%OV", "%j",  "%d",  "%Od", "%e",
-      "%Oe", "%a",  "%A",  "%w",  "%Ow", "%u",  "%Ou", "%H",  "%OH",
-      "%I",  "%OI", "%M",  "%OM", "%S",  "%OS", "%x",  "%Ex", "%X",
-      "%EX", "%D",  "%F",  "%R",  "%T",  "%p",  "%z",  "%Z"};
-#  ifndef _WIN32
-  // Disabled on Windows because these formats are not consistent among
-  // platforms.
-  spec_list.insert(spec_list.end(), {"%c", "%Ec", "%r"});
-#  elif !FMT_HAS_C99_STRFTIME
-  // Only C89 conversion specifiers when using MSVCRT instead of UCRT
-  spec_list = {"%%", "%Y", "%y", "%b", "%B", "%m", "%U", "%W", "%j", "%d", "%a",
-               "%A", "%w", "%H", "%I", "%M", "%S", "%x", "%X", "%p", "%Z"};
-#  endif
-  spec_list.push_back("%Y-%m-%d %H:%M:%S");
-
-  for (const auto& spec : spec_list) {
-    auto t = std::chrono::system_clock::to_time_t(
-        std::chrono::current_zone()->to_sys(t1));
-    auto tm = *std::localtime(&t);
-
-    auto sys_output = system_strftime(spec, &tm);
-
-    auto fmt_spec = fmt::format("{{:{}}}", spec);
-    EXPECT_EQ(sys_output, fmt::format(fmt::runtime(fmt_spec), t1));
-    EXPECT_EQ(sys_output, fmt::format(fmt::runtime(fmt_spec), tm));
-  }
-
-  if (std::find(spec_list.cbegin(), spec_list.cend(), "%z") !=
-      spec_list.cend()) {
-    auto t = std::chrono::system_clock::to_time_t(
-        std::chrono::current_zone()->to_sys(t1));
-    auto tm = *std::localtime(&t);
-
-    auto sys_output = system_strftime("%z", &tm);
-    sys_output.insert(sys_output.end() - 2, 1, ':');
-
-    EXPECT_EQ(sys_output, fmt::format("{:%Ez}", t1));
-    EXPECT_EQ(sys_output, fmt::format("{:%Ez}", tm));
-
-    EXPECT_EQ(sys_output, fmt::format("{:%Oz}", t1));
-    EXPECT_EQ(sys_output, fmt::format("{:%Oz}", tm));
-  }
-}
-
-#endif  // FMT_USE_LOCAL_TIME
 
 #ifndef FMT_STATIC_THOUSANDS_SEPARATOR
 
@@ -539,6 +543,7 @@ TEST(chrono_test, format_specs) {
   EXPECT_EQ(fmt::format("{:%I}", std::chrono::hours(24)), "12");
   EXPECT_EQ(fmt::format("{:%I}", std::chrono::hours(4)), "04");
   EXPECT_EQ(fmt::format("{:%I}", std::chrono::hours(14)), "02");
+  EXPECT_EQ(fmt::format("{:%j}", days(12)), "12");
   EXPECT_EQ(fmt::format("{:%j}", days(12345)), "12345");
   EXPECT_EQ(fmt::format("{:%j}", std::chrono::hours(12345 * 24 + 12)), "12345");
   EXPECT_EQ(fmt::format("{:%H:%M:%S}", std::chrono::seconds(12345)),
@@ -1005,6 +1010,10 @@ TEST(chrono_test, glibc_extensions) {
     EXPECT_EQ(fmt::format("{:%U,%W,%V}", t), "02,01,01");
     EXPECT_EQ(fmt::format("{:%_U,%_W,%_V}", t), " 2, 1, 1");
     EXPECT_EQ(fmt::format("{:%-U,%-W,%-V}", t), "2,1,1");
+
+    EXPECT_EQ(fmt::format("{:%j}", t), "008");
+    EXPECT_EQ(fmt::format("{:%_j}", t), "  8");
+    EXPECT_EQ(fmt::format("{:%-j}", t), "8");
   }
 
   {
@@ -1015,6 +1024,30 @@ TEST(chrono_test, glibc_extensions) {
     EXPECT_EQ(fmt::format("{:%-d}", t), "7");
 
     EXPECT_EQ(fmt::format("{:%e}", t), " 7");
+  }
+
+  {
+    auto t = std::tm();
+    t.tm_year = 7 - 1900;
+    EXPECT_EQ(fmt::format("{:%Y}", t), "0007");
+    EXPECT_EQ(fmt::format("{:%_Y}", t), "   7");
+    EXPECT_EQ(fmt::format("{:%-Y}", t), "7");
+  }
+
+  {
+    auto t = std::tm();
+    t.tm_year = -5 - 1900;
+    EXPECT_EQ(fmt::format("{:%Y}", t), "-005");
+    EXPECT_EQ(fmt::format("{:%_Y}", t), "  -5");
+    EXPECT_EQ(fmt::format("{:%-Y}", t), "-5");
+  }
+
+  {
+    auto t = std::tm();
+    t.tm_mon = 7 - 1;
+    EXPECT_EQ(fmt::format("{:%m}", t), "07");
+    EXPECT_EQ(fmt::format("{:%_m}", t), " 7");
+    EXPECT_EQ(fmt::format("{:%-m}", t), "7");
   }
 }
 

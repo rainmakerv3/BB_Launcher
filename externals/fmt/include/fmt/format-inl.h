@@ -24,8 +24,10 @@
 
 #if FMT_USE_LOCALE
 #  include <locale>
-#elif !defined(FMT_STATIC_THOUSANDS_SEPARATOR)
-#  define FMT_STATIC_THOUSANDS_SEPARATOR ','
+#endif
+
+#ifndef FMT_FUNC
+#  define FMT_FUNC
 #endif
 
 FMT_BEGIN_NAMESPACE
@@ -61,8 +63,8 @@ FMT_FUNC void format_error_code(detail::buffer<char>& out, int error_code,
   FMT_ASSERT(out.size() <= inline_buffer_size, "");
 }
 
-FMT_FUNC void report_error(format_func func, int error_code,
-                           const char* message) noexcept {
+FMT_FUNC void do_report_error(format_func func, int error_code,
+                              const char* message) noexcept {
   memory_buffer full_message;
   func(full_message, error_code, message);
   // Don't use fwrite_all because the latter may throw.
@@ -90,7 +92,7 @@ locale_ref::locale_ref(const Locale& loc) : locale_(&loc) {
 struct locale {};
 template <typename Char> struct numpunct {
   auto grouping() const -> std::string { return "\03"; }
-  auto thousands_sep() const -> Char { return FMT_STATIC_THOUSANDS_SEPARATOR; }
+  auto thousands_sep() const -> Char { return ','; }
   auto decimal_point() const -> Char { return '.'; }
 };
 template <typename Facet> Facet use_facet(locale) { return {}; }
@@ -131,8 +133,10 @@ FMT_FUNC auto write_loc(appender out, loc_value value,
 }  // namespace detail
 
 FMT_FUNC void report_error(const char* message) {
-#if FMT_EXCEPTIONS
-  throw format_error(message);
+#if FMT_USE_EXCEPTIONS
+  // Use FMT_THROW instead of throw to avoid bogus unreachable code warnings
+  // from MSVC.
+  FMT_THROW(format_error(message));
 #else
   fputs(message, stderr);
   abort();
@@ -208,7 +212,7 @@ inline auto floor_log10_pow2_minus_log10_4_over_3(int e) noexcept -> int {
   return (e * 631305 - 261663) >> 21;
 }
 
-FMT_INLINE_VARIABLE constexpr struct {
+FMT_INLINE_VARIABLE constexpr struct div_small_pow10_infos_struct {
   uint32_t divisor;
   int shift_amount;
 } div_small_pow10_infos[] = {{10, 16}, {100, 16}};
@@ -1432,7 +1436,7 @@ FMT_FUNC void format_system_error(detail::buffer<char>& out, int error_code,
 
 FMT_FUNC void report_system_error(int error_code,
                                   const char* message) noexcept {
-  report_error(format_system_error, error_code, message);
+  do_report_error(format_system_error, error_code, message);
 }
 
 FMT_FUNC auto vformat(string_view fmt, format_args args) -> std::string {
@@ -1522,9 +1526,8 @@ template <typename F> class glibc_file : public file_base<F> {
   }
 
   void init_buffer() {
-    if (this->file_->_IO_write_ptr) return;
+    if (this->file_->_IO_write_ptr < this->file_->_IO_write_end) return;
     // Force buffer initialization by placing and removing a char in a buffer.
-    assume(this->file_->_IO_write_ptr >= this->file_->_IO_write_end);
     putc_unlocked(0, this->file_);
     --this->file_->_IO_write_ptr;
   }

@@ -10,6 +10,7 @@
 #include "skip.hpp"
 #include "syntax.hpp"
 #include "value.hpp"
+#include "version.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -22,6 +23,8 @@
 #endif
 
 namespace toml
+{
+inline namespace TOML11_INLINE_VERSION_NAMESPACE
 {
 
 struct syntax_error final : public ::toml::exception
@@ -473,7 +476,7 @@ parse_floating(location& loc, const context<TC>& ctx)
     bool is_hex = false;
     std::string str;
     region reg;
-    if(spec.ext_hex_float && sequence(character('0'), character('x')).scan(loc).is_ok())
+    if(spec.ext_hex_float && literal("0x").scan(loc).is_ok())
     {
         loc = first;
         is_hex = true;
@@ -1246,8 +1249,7 @@ parse_escape_sequence(location& loc, const context<TC>& ctx)
     }
     else if(spec.v1_1_0_add_escape_sequence_x && loc.current() == 'x')
     {
-        auto scanner = sequence(character('x'), repeat_exact(2, syntax::hexdig(spec)));
-        const auto reg = scanner.scan(loc);
+        const auto reg = syntax::escaped_x2(spec).scan(loc);
         if( ! reg.is_ok())
         {
             auto src = source_location(region(loc));
@@ -1264,8 +1266,7 @@ parse_escape_sequence(location& loc, const context<TC>& ctx)
     }
     else if(loc.current() == 'u')
     {
-        auto scanner = sequence(character('u'), repeat_exact(4, syntax::hexdig(spec)));
-        const auto reg = scanner.scan(loc);
+        const auto reg = syntax::escaped_u4(spec).scan(loc);
         if( ! reg.is_ok())
         {
             auto src = source_location(region(loc));
@@ -1282,8 +1283,7 @@ parse_escape_sequence(location& loc, const context<TC>& ctx)
     }
     else if(loc.current() == 'U')
     {
-        auto scanner = sequence(character('U'), repeat_exact(8, syntax::hexdig(spec)));
-        const auto reg = scanner.scan(loc);
+        const auto reg = syntax::escaped_U8(spec).scan(loc);
         if( ! reg.is_ok())
         {
             auto src = source_location(region(loc));
@@ -2679,7 +2679,7 @@ guess_number_type(const location& first, const context<TC>& ctx)
             if('0' <= c && c <= '9')
             {
                 return err(make_syntax_error("bad datetime: missing T or space",
-                    character_either{'T', 't', ' '}, loc, std::string(
+                    character_either("Tt "), loc, std::string(
                     "Hint: valid  : 1979-05-27T07:32:00, 1979-05-27 07:32:00.999999\n"
                     "Hint: invalid: 1979-05-27T7:32:00, 1979-05-27 17:32\n")));
             }
@@ -3426,6 +3426,11 @@ parse_file(location& loc, context<TC>& ctx)
     {
         return err(std::move(ctx.errors()));
     }
+
+#ifdef TOML11_ENABLE_ACCESS_CHECK
+    detail::unset_access_flag_recursively(root);
+#endif
+
     return ok(std::move(root));
 }
 
@@ -3459,7 +3464,7 @@ parse_impl(std::vector<location::char_type> cs, std::string fname, const spec& s
     // skip BOM if found
     if(loc.source()->size() >= 3)
     {
-        auto first = loc.get_location();
+        auto first = loc;
 
         const auto c0 = loc.current(); loc.advance();
         const auto c1 = loc.current(); loc.advance();
@@ -3468,7 +3473,7 @@ parse_impl(std::vector<location::char_type> cs, std::string fname, const spec& s
         const auto bom_found = (c0 == 0xEF) && (c1 == 0xBB) && (c2 == 0xBF);
         if( ! bom_found)
         {
-            loc.set_location(first);
+            loc = first;
         }
     }
 
@@ -3784,10 +3789,13 @@ parse(FILE* fp, std::string filename, spec s = spec::default_version())
     }
 }
 
+} // TOML11_INLINE_VERSION_NAMESPACE
 } // namespace toml
 
 #if defined(TOML11_COMPILE_SOURCES)
 namespace toml
+{
+inline namespace TOML11_INLINE_VERSION_NAMESPACE
 {
 struct type_config;
 struct ordered_type_config;
@@ -3823,6 +3831,7 @@ extern template cxx::enable_if_t<std::is_same<std::filesystem::path, std::filesy
 extern template cxx::enable_if_t<std::is_same<std::filesystem::path, std::filesystem::path>::value, basic_value<ordered_type_config>                                 > parse    <ordered_type_config, std::filesystem::path>(const std::filesystem::path&, spec);
 #endif // filesystem
 
+} // TOML11_INLINE_VERSION_NAMESPACE
 } // toml
 #endif // TOML11_COMPILE_SOURCES
 

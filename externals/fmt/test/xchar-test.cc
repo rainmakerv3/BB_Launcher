@@ -72,16 +72,17 @@ TEST(xchar_test, format_explicitly_convertible_to_wstring_view) {
 #endif
 
 TEST(xchar_test, format) {
-  EXPECT_EQ(L"42", fmt::format(L"{}", 42));
-  EXPECT_EQ(L"4.2", fmt::format(L"{}", 4.2));
-  EXPECT_EQ(L"abc", fmt::format(L"{}", L"abc"));
-  EXPECT_EQ(L"z", fmt::format(L"{}", L'z'));
+  EXPECT_EQ(fmt::format(L"{}", 42), L"42");
+  EXPECT_EQ(fmt::format(L"{}", 4.2), L"4.2");
+  EXPECT_EQ(fmt::format(L"{}", L"abc"), L"abc");
+  EXPECT_EQ(fmt::format(L"{}", L'z'), L"z");
   EXPECT_THROW(fmt::format(fmt::runtime(L"{:*\x343E}"), 42), fmt::format_error);
-  EXPECT_EQ(L"true", fmt::format(L"{}", true));
-  EXPECT_EQ(L"a", fmt::format(L"{0}", L'a'));
-  EXPECT_EQ(L"Cyrillic letter \x42e",
-            fmt::format(L"Cyrillic letter {}", L'\x42e'));
-  EXPECT_EQ(L"abc1", fmt::format(L"{}c{}", L"ab", 1));
+  EXPECT_EQ(fmt::format(L"{}", true), L"true");
+  EXPECT_EQ(fmt::format(L"{0}", L'a'), L"a");
+  EXPECT_EQ(fmt::format(L"Letter {}", L'\x40e'), L"Letter \x40e");  // Ў
+  if (sizeof(wchar_t) == 4)
+    EXPECT_EQ(fmt::format(fmt::runtime(L"{:𓀨>3}"), 42), L"𓀨42");
+  EXPECT_EQ(fmt::format(L"{}c{}", L"ab", 1), L"abc1");
 }
 
 TEST(xchar_test, is_formattable) {
@@ -144,7 +145,6 @@ TEST(format_test, wide_format_to_n) {
   EXPECT_EQ(L"BC x", fmt::wstring_view(buffer, 4));
 }
 
-#if FMT_USE_USER_LITERALS
 TEST(xchar_test, named_arg_udl) {
   using namespace fmt::literals;
   auto udl_a =
@@ -155,7 +155,6 @@ TEST(xchar_test, named_arg_udl) {
                   fmt::arg(L"second", L"cad"), fmt::arg(L"third", 99)),
       udl_a);
 }
-#endif  // FMT_USE_USER_LITERALS
 
 TEST(xchar_test, print) {
   // Check that the wide print overload compiles.
@@ -492,12 +491,20 @@ TEST(locale_test, sign) {
   EXPECT_EQ(fmt::format(std::locale(), L"{:L}", -50), L"-50");
 }
 
+TEST(std_test_xchar, format_bitset) {
+  auto bs = std::bitset<6>(42);
+  EXPECT_EQ(fmt::format(L"{}", bs), L"101010");
+  EXPECT_EQ(fmt::format(L"{:0>8}", bs), L"00101010");
+  EXPECT_EQ(fmt::format(L"{:-^12}", bs), L"---101010---");
+}
+
 TEST(std_test_xchar, complex) {
   auto s = fmt::format(L"{}", std::complex<double>(1, 2));
   EXPECT_EQ(s, L"(1+2i)");
   EXPECT_EQ(fmt::format(L"{:.2f}", std::complex<double>(1, 2)),
             L"(1.00+2.00i)");
   EXPECT_EQ(fmt::format(L"{:8}", std::complex<double>(1, 2)), L"(1+2i)  ");
+  EXPECT_EQ(fmt::format(L"{:-<8}", std::complex<double>(1, 2)), L"(1+2i)--");
 }
 
 TEST(std_test_xchar, optional) {

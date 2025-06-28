@@ -2,6 +2,7 @@
 #define TOML11_SCANNER_FWD_HPP
 
 #include "../region.hpp"
+#include "../version.hpp"
 
 #include <memory>
 #include <string>
@@ -13,6 +14,8 @@
 #include <cctype>
 
 namespace toml
+{
+inline namespace TOML11_INLINE_VERSION_NAMESPACE
 {
 namespace detail
 {
@@ -98,22 +101,10 @@ class character_either final : public scanner_base
 
   public:
 
-    explicit character_either(std::initializer_list<char_type> cs) noexcept
-        : chars_(std::move(cs))
-    {
-        assert(! this->chars_.empty());
-    }
-
     template<std::size_t N>
     explicit character_either(const char (&cs)[N]) noexcept
-        : chars_(N-1, '\0')
-    {
-        static_assert(N >= 1, "");
-        for(std::size_t i=0; i+1<N; ++i)
-        {
-            chars_.at(i) = char_type(cs[i]);
-        }
-    }
+        : value_(cs), size_(N-1) // remove null character at the end
+    {}
     ~character_either() override = default;
 
     region scan(location& loc) const override;
@@ -122,12 +113,11 @@ class character_either final : public scanner_base
 
     scanner_base* clone() const override;
 
-    void push_back(const char_type c);
-
     std::string name() const override;
 
   private:
-    std::vector<char_type> chars_;
+    const char* value_;
+    std::size_t size_;
 };
 
 // ----------------------------------------------------------------------------
@@ -213,12 +203,6 @@ class sequence final: public scanner_base
 
     scanner_base* clone() const override;
 
-    template<typename Scanner>
-    void push_back(Scanner&& other_scanner)
-    {
-        this->others_.emplace_back(std::forward<Scanner>(other_scanner));
-    }
-
     std::string name() const override;
 
   private:
@@ -264,12 +248,6 @@ class either final: public scanner_base
     std::string expected_chars(location& loc) const override;
 
     scanner_base* clone() const override;
-
-    template<typename Scanner>
-    void push_back(Scanner&& other_scanner)
-    {
-        this->others_.emplace_back(std::forward<Scanner>(other_scanner));
-    }
 
     std::string name() const override;
 
@@ -387,5 +365,6 @@ class maybe final: public scanner_base
 };
 
 } // detail
+} // TOML11_INLINE_VERSION_NAMESPACE
 } // toml
 #endif // TOML11_SCANNER_FWD_HPP
