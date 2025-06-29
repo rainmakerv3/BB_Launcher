@@ -2,3 +2,12 @@
 	path = externals/sdl3
 	url = https://github.com/shadps4-emu/ext-SDL.git
 	shallow = true
+[submodule "externals/fmt"]
+	path = externals/fmt
+	url = https://github.com/shadps4-emu/ext-fmt.git
+[submodule "externals/toml11"]
+	path = externals/toml11
+	url = https://github.com/ToruNiina/toml11.git
+[submodule "externals/pugixml"]
+	path = externals/pugixml
+	url = https://github.com/zeux/pugixml.git
