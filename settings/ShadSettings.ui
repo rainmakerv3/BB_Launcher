@@ -65,8 +65,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>981</width>
-         <height>636</height>
+         <width>967</width>
+         <height>639</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="generalTabVLayout" stretch="0">
@@ -249,9 +249,22 @@
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_4">
                <item>
-                <widget class="QCheckBox" name="separateUpdatesCheckBox">
+                <widget class="QCheckBox" name="ReadbacksCheckBox">
                  <property name="text">
-                  <string notr="true">Enable Separate Update Folder</string>
+                  <string notr="true">Enable Readbacks </string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_2">
+                 <property name="font">
+                  <font>
+                   <pointsize>9</pointsize>
+                   <bold>false</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>*fixes vertex explosions, performance heavy</string>
                  </property>
                 </widget>
                </item>

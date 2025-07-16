@@ -116,7 +116,7 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
         ui->consoleLanguageGroupBox->installEventFilter(this);
         ui->fullscreenCheckBox->installEventFilter(this);
         ui->FullscreenModeGroupBox->installEventFilter(this);
-        ui->separateUpdatesCheckBox->installEventFilter(this);
+        ui->ReadbacksCheckBox->installEventFilter(this);
         ui->GPUBufferCheckBox->installEventFilter(this);
         ui->discordRPCCheckbox->installEventFilter(this);
         ui->userName->installEventFilter(this);
@@ -167,14 +167,13 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->widthSpinBox->setValue(toml::find_or<int>(data, "GPU", "screenWidth", 1280));
     ui->heightSpinBox->setValue(toml::find_or<int>(data, "GPU", "screenHeight", 720));
     ui->vblankSpinBox->setValue(toml::find_or<int>(data, "GPU", "vblankDivider", 1));
+    ui->ReadbacksCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "readbacks", false));
     ui->GPUBufferCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "copyGPUBuffers", false));
     ui->disableTrophycheckBox->setChecked(
         toml::find_or<bool>(data, "General", "isTrophyPopupDisabled", false));
     ui->discordRPCCheckbox->setChecked(
         toml::find_or<bool>(data, "General", "enableDiscordRPC", true));
     ui->fullscreenCheckBox->setChecked(toml::find_or<bool>(data, "General", "Fullscreen", false));
-    ui->separateUpdatesCheckBox->setChecked(
-        toml::find_or<bool>(data, "General", "separateUpdateEnabled", false));
     ui->DevkitCheckBox->setChecked(toml::find_or<bool>(data, "General", "isDevKit", false));
     ui->logTypeComboBox->setCurrentText(
         QString::fromStdString(toml::find_or<std::string>(data, "General", "logType", "async")));
@@ -225,8 +224,8 @@ void ShadSettings::updateNoteTextEdit(const QString& elementName) {
         text = fullscreenCheckBoxtext;
     } else if (elementName == "FullscreenModeGroupBox") {
         text = fullscreenModeGroupBoxtext;
-    } else if (elementName == "separateUpdatesCheckBox") {
-        text = separateUpdatesCheckBoxtext;
+    } else if (elementName == "ReadbacksCheckBox") {
+        text = ReadbacksCheckBoxtext;
     } else if (elementName == "GPUBufferCheckBox") {
         text = GPUBufferCheckBoxtext;
     } else if (elementName == "discordRPCCheckbox") {
@@ -309,7 +308,6 @@ void ShadSettings::SaveSettings() {
         }
     }
 
-    const QVector<std::string> TouchPadIndex = {"left", "center", "right", "none"};
     data["General"]["Fullscreen"] = ui->fullscreenCheckBox->isChecked();
     data["General"]["FullscreenMode"] = ui->fullscreenModeComboBox->currentText().toStdString();
     data["General"]["isTrophyPopupDisabled"] = ui->disableTrophycheckBox->isChecked();
@@ -318,7 +316,6 @@ void ShadSettings::SaveSettings() {
     data["General"]["logType"] = ui->logTypeComboBox->currentText().toStdString();
     data["General"]["userName"] = ui->userNameLineEdit->text().toStdString();
     data["General"]["updateChannel"] = ui->updateComboBox->currentText().toStdString();
-    data["General"]["separateUpdateEnabled"] = ui->separateUpdatesCheckBox->isChecked();
     data["General"]["isDevKit"] = ui->DevkitCheckBox->isChecked();
     data["Input"]["cursorState"] = ui->hideCursorComboBox->currentIndex();
     data["Input"]["cursorHideTimeout"] = ui->idleTimeoutSpinBox->value();
@@ -327,6 +324,7 @@ void ShadSettings::SaveSettings() {
     data["GPU"]["screenHeight"] = ui->heightSpinBox->value();
     data["GPU"]["vblankDivider"] = ui->vblankSpinBox->value();
     data["GPU"]["copyGPUBuffers"] = ui->GPUBufferCheckBox->isChecked();
+    data["GPU"]["readbacks"] = ui->ReadbacksCheckBox->isChecked();
     data["Keys"]["TrophyKey"] = ui->trophyKeyLineEdit->text().toStdString();
     data["Settings"]["consoleLanguage"] =
         languageIndexes[ui->consoleLanguageComboBox->currentIndex()];
@@ -348,7 +346,7 @@ void ShadSettings::SetDefaults() {
     ui->disableTrophycheckBox->setChecked(false);
     ui->discordRPCCheckbox->setChecked(true);
     ui->fullscreenCheckBox->setChecked(false);
-    ui->separateUpdatesCheckBox->setChecked(false);
+    ui->ReadbacksCheckBox->setChecked(false);
     ui->DevkitCheckBox->setChecked(false);
     ui->GPUBufferCheckBox->setChecked(false);
     ui->logTypeComboBox->setCurrentText("async");

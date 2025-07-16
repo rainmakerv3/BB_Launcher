@@ -81,10 +81,9 @@ private:
                                            "toggled by pressing the F11 key.";
     const QString fullscreenModeGroupBoxtext =
         "Fullscreen Mode:\nChoose between borderless or exclusive fullscreen mode";
-    const QString separateUpdatesCheckBoxtext =
-        "Enable Separate Update Folder:\nEnables installing game updates into a separate folder "
-        "for easy management.\nThis can be manually created by adding the extracted update to the "
-        "game folder with the name CUSA00000-UPDATE where the CUSA ID matches the game's ID.";
+    const QString ReadbacksCheckBoxtext =
+        "Enable GPU readbacks which fixed vertex explosions in Bloodborne without mods. This WIP "
+        "implementation hits performance significantly.";
     const QString GPUBufferCheckBoxtext = "Helps with PM4 Type 0 crashes";
     const QString discordRPCCheckboxtext =
         "Enable Discord Rich Presence:\nDisplays the emulator icon "
