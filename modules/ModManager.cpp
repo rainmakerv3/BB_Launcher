@@ -112,7 +112,7 @@ void ModManager::ActivateButton_isPressed() {
     if (!HasBBFolders) {
         QMessageBox::warning(this, "Invalid Mod",
                              "Folders inside mod folder must include either dvdroot_ps4"
-                             " or Blooborne dvdroot_ps4 subfolders (ex. sfx, parts, map)");
+                             " or Bloodborne dvdroot_ps4 subfolders (ex. sfx, parts, map)");
         return;
     }
 
