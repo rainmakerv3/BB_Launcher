@@ -18,6 +18,16 @@
       "inherits": "Qt-Default",
       "binaryDir": "${sourceDir}/out/build/release",
       "cacheVariables": {
+        "FORCE_UAC": "ON",
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "Qt-Release-noUAC",
+      "inherits": "Qt-Default",
+      "binaryDir": "${sourceDir}/out/build/release",
+      "cacheVariables": {
+        "FORCE_UAC": "OFF",
         "CMAKE_BUILD_TYPE": "Release"
       }
     },
@@ -52,7 +62,7 @@
   ],
   "vendor": {
     "qt-project.org/Presets": {
-      "checksum": "B2tKDzZ1cMiiHQSkvLx8aVlLspQ="
+      "checksum": "UTyCUXEq4vSgCUrR+AJ8jqzXFuI="
     }
   }
 }
