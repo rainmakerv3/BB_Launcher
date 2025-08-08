@@ -90,6 +90,14 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
                     "Launch Bloodborne to generate saves before using Save Manager");
                 return;
             }
+        } else if (Common::game_serial == "CUSA03023") {
+            if (!std::filesystem::exists(Common::SaveDir / "1" / "CUSA01363" / "SPRJ0005" /
+                                         "userdata0010")) {
+                QMessageBox::warning(
+                    this, "No saves detected",
+                    "Launch Bloodborne to generate saves before using Save Manager");
+                return;
+            }
         } else if (!std::filesystem::exists(Common::SaveDir / "1" / Common::game_serial /
                                             "SPRJ0005" / "userdata0010")) {
             QMessageBox::warning(this, "No saves detected",
@@ -244,6 +252,9 @@ void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
         if (Common::game_serial == "CUSA03173")
             savePath = Common::SaveDir / "1" / "CUSA00207" / "SPRJ0005";
 
+        if (Common::game_serial == "CUSA03023")
+            savePath = Common::SaveDir / "1" / "CUSA01363" / "SPRJ0005";
+
         if (std::filesystem::exists(savePath / "userdata0010")) {
             std::ofstream savefile1;
             savefile1.open(savePath / "userdata0010",
@@ -304,6 +315,9 @@ void BBLauncher::StartBackupSave() {
     auto save_dir = Common::SaveDir / "1" / Common::game_serial;
     if (Common::game_serial == "CUSA03173")
         save_dir = Common::SaveDir / "1" / "CUSA00207";
+    if (Common::game_serial == "CUSA03023")
+        save_dir = Common::SaveDir / "1" / "CUSA01363";
+
     auto backup_dir = BackupPath / "BACKUP1";
 
     while (true) {
