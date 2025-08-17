@@ -514,23 +514,16 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
             return;
         }
 
-        std::filesystem::file_time_type shadModifiedFiletime =
-            std::filesystem::last_write_time(Common::shadPs4Executable);
-        std::chrono::system_clock::time_point shadModifiedDay =
-            std::chrono::floor<std::chrono::days>(
-                std::chrono::clock_cast<std::chrono::system_clock>(shadModifiedFiletime));
+        std::filesystem::file_time_type shadModifiedDate = std::chrono::floor<std::chrono::days>(
+            std::filesystem::last_write_time(Common::shadPs4Executable));
+        std::string shadModifiedDateString = std::format("{:%F}", shadModifiedDate);
 
-        std::chrono::system_clock::time_point latestFileTime;
-        if (updateChannel == "Nightly") {
-            std::string latestVerString = latestVersion.toStdString().substr(20, 10);
-            std::istringstream nightlyDateString(latestVerString);
-            nightlyDateString >> std::chrono::parse("%F", latestFileTime);
-        } else if (updateChannel == "Release") {
-            std::istringstream releaseDateString(Common::latestReleaseDate);
-            releaseDateString >> std::chrono::parse("%F", latestFileTime);
-        }
+        std::string latestVerDateString;
+        latestVerDateString = updateChannel == "Nightly"
+                                  ? latestVersion.toStdString().substr(20, 10)
+                                  : Common::latestReleaseDate;
 
-        if (shadModifiedDay == latestFileTime) {
+        if (shadModifiedDateString == latestVerDateString) {
             if (isAutoupdate) {
                 close();
                 return;
@@ -559,7 +552,6 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
 }
 
 void CheckShadUpdate::DownloadUpdate(const QString& downloadUrl) {
-
     QNetworkAccessManager* networkManager = new QNetworkAccessManager(this);
     QNetworkRequest request(downloadUrl);
     QNetworkReply* reply = networkManager->get(request);
