@@ -20,6 +20,8 @@ std::string Config::TrophyKey = "";
 bool Config::ShowEarnedTrophy = true;
 bool Config::ShowNotEarnedTrophy = true;
 bool Config::ShowHiddenTrophy = false;
+std::string Config::UpdateChannel = "Nightly";
+bool Config::AutoUpdateShadEnabled = false;
 
 const std::filesystem::path SettingsFile = Common::BBLFilesPath / "LauncherSettings.toml";
 
@@ -228,6 +230,27 @@ void LoadLauncherSettings() {
             }
         }
     }
+
+    std::fstream file(Common::GetShadUserDir() / "qt_ui.ini");
+    std::string line;
+    std::vector<std::string> lines;
+    int lineCount = 0;
+
+    while (std::getline(file, line)) {
+        lineCount++;
+
+        if (line.contains("updateChannel")) {
+            std::size_t equal_pos = line.find('=');
+            UpdateChannel = line.substr(equal_pos + 1);
+        }
+
+        if (line.contains("checkForUpdates")) {
+            std::size_t equal_pos = line.find('=');
+            std::string updatesEnabled(line.substr(equal_pos + 1));
+            AutoUpdateShadEnabled = updatesEnabled == "true" ? true : false;
+        }
+    }
+    file.close();
 }
 
 void CreateSettingsFile() {

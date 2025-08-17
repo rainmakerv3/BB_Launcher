@@ -1,7 +1,9 @@
 // SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <QCheckBox>
 #include <QDialog>
+#include <QNetworkAccessManager>
 
 namespace Ui {
 class ShadSettings;
@@ -21,9 +23,6 @@ private:
     void OnCursorStateChanged(int index);
     void SaveSettings();
     void SetDefaults();
-    void UpdateShad();
-    void InstallUpdate();
-    void DownloadUpdate(const QString& downloadUrl);
     void UpdateDialog();
     void LoadFSRValues();
     void SaveFSRValues();
@@ -135,5 +134,31 @@ private:
     const QString DevkitCheckBoxtext =
         "Enabled Devkit mode for shadPS4, this is required to use the 1440p patch as the game "
         "crashes otherwise";
+    const QString backgroundControllerCheckBoxtext =
+        "Enable Controller Background Input:\\nAllow shadPS4 to detect controller inputs when the "
+        "game window is not in focus.";
 };
 
+class CheckShadUpdate : public QDialog {
+    Q_OBJECT
+
+signals:
+    void DownloadProgressed(int value);
+
+public:
+    explicit CheckShadUpdate(const bool showMessage, QWidget* parent = nullptr);
+    ~CheckShadUpdate();
+
+private slots:
+    void UpdateShad(bool isAutoupdate);
+    void InstallUpdate();
+    void DownloadUpdate(const QString& downloadUrl);
+
+private:
+    void setupUI(const QString& downloadUrl, const QString& latestDate, const QString& latestRev,
+                 const QString& currentDate, const QString& currentRev);
+
+    QString updateDownloadUrl;
+
+    QNetworkAccessManager* networkManager;
+};

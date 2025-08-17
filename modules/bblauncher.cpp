@@ -171,6 +171,11 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         checkUpdate->exec();
     }
 
+    if (!noGUI && Config::AutoUpdateShadEnabled) {
+        auto checkShadUpdate = new CheckShadUpdate(true);
+        checkShadUpdate->exec();
+    }
+
     if (noGUI && noInstanceRunning)
         LaunchButton_isPressed(noGUI);
 }

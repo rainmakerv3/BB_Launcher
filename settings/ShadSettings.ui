@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1005</width>
-    <height>800</height>
+    <height>831</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -65,8 +65,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>967</width>
-         <height>639</height>
+         <width>981</width>
+         <height>667</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="generalTabVLayout" stretch="0">
@@ -360,6 +360,13 @@
                 <widget class="QCheckBox" name="motionControlsCheckBox">
                  <property name="text">
                   <string>Enable Motion Controls</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="backgroundControllerCheckBox">
+                 <property name="text">
+                  <string>Enable Background Controller Input</string>
                  </property>
                 </widget>
                </item>
@@ -735,6 +742,13 @@
                 </widget>
                </item>
                <item>
+                <widget class="QCheckBox" name="autoUpdateCheckBox">
+                 <property name="text">
+                  <string>Check shadPS4 updates on startup</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QPushButton" name="checkUpdateButton">
                  <property name="enabled">
                   <bool>true</bool>
@@ -758,7 +772,7 @@
                   </size>
                  </property>
                  <property name="text">
-                  <string notr="true">Update ShadPS4</string>
+                  <string notr="true">Manually Update ShadPS4</string>
                  </property>
                 </widget>
                </item>

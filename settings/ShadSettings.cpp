@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <chrono>
 #include <QFileDialog>
 #include <QHoverEvent>
 #include <QJsonArray>
@@ -74,7 +75,21 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
     connect(ui->hideCursorComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
             [this](int index) { OnCursorStateChanged(index); });
 
-    connect(ui->checkUpdateButton, &QPushButton::pressed, this, &ShadSettings::UpdateShad);
+    connect(ui->updateComboBox, &QComboBox::currentIndexChanged, this,
+            [this]() { Config::UpdateChannel = ui->updateComboBox->currentText().toStdString(); });
+
+    connect(ui->checkUpdateButton, &QPushButton::pressed, this, [this]() {
+        ui->checkUpdateButton->setEnabled(false);
+        ui->buttonBox->setEnabled(false);
+
+        CheckShadUpdate* shadUpdateWindow = new CheckShadUpdate(false);
+        QObject::connect(shadUpdateWindow, &CheckShadUpdate::DownloadProgressed,
+                         ui->DownloadProgressBar, &QProgressBar::setValue);
+        shadUpdateWindow->exec();
+
+        ui->checkUpdateButton->setEnabled(true);
+        ui->buttonBox->setEnabled(true);
+    });
 
     connect(ui->SavePathButton, &QPushButton::clicked, this, [this]() {
         QString initial_path;
@@ -135,6 +150,7 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
         ui->heightDivider->installEventFilter(this);
         ui->motionControlsCheckBox->installEventFilter(this);
         ui->DevkitCheckBox->installEventFilter(this);
+        ui->backgroundControllerCheckBox->installEventFilter(this);
     }
 }
 
@@ -184,8 +200,6 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->trophyKeyLineEdit->setText(
         QString::fromStdString(toml::find_or<std::string>(data, "Keys", "TrophyKey", "")));
     ui->trophyKeyLineEdit->setEchoMode(QLineEdit::Password);
-    ui->updateComboBox->setCurrentText(
-        QString::fromStdString(toml::find_or<std::string>(data, "General", "updateChannel", "")));
 
     QString save_data_path_string;
     Common::PathToQString(save_data_path_string, Common::SaveDir);
@@ -195,9 +209,14 @@ void ShadSettings::LoadValuesFromConfig() {
         toml::find_or<bool>(data, "Input", "isMotionControlsEnabled", true));
     ui->fullscreenModeComboBox->setCurrentText(QString::fromStdString(
         toml::find_or<std::string>(data, "General", "FullscreenMode", "Borderless")));
+    ui->backgroundControllerCheckBox->setChecked(
+        toml::find_or<bool>(data, "Input", "backgroundControllerInput", false));
 
     if (DevSettingsExists)
         LoadFSRValues();
+
+    ui->autoUpdateCheckBox->setChecked(Config::AutoUpdateShadEnabled);
+    ui->updateComboBox->setCurrentText(QString::fromStdString(Config::UpdateChannel));
 }
 
 void ShadSettings::OnCursorStateChanged(int index) {
@@ -255,6 +274,8 @@ void ShadSettings::updateNoteTextEdit(const QString& elementName) {
         text = hideCursorGroupBoxtext;
     } else if (elementName == "idleTimeoutGroupBox") {
         text = idleTimeoutGroupBoxtext;
+    } else if (elementName == "backgroundControllerCheckBox") {
+        text = backgroundControllerCheckBoxtext;
     }
 
     // Graphics
@@ -315,11 +336,11 @@ void ShadSettings::SaveSettings() {
     data["General"]["logFilter"] = ui->logFilterLineEdit->text().toStdString();
     data["General"]["logType"] = ui->logTypeComboBox->currentText().toStdString();
     data["General"]["userName"] = ui->userNameLineEdit->text().toStdString();
-    data["General"]["updateChannel"] = ui->updateComboBox->currentText().toStdString();
     data["General"]["isDevKit"] = ui->DevkitCheckBox->isChecked();
     data["Input"]["cursorState"] = ui->hideCursorComboBox->currentIndex();
     data["Input"]["cursorHideTimeout"] = ui->idleTimeoutSpinBox->value();
     data["Input"]["isMotionControlsEnabled"] = ui->motionControlsCheckBox->isChecked();
+    data["Input"]["backgroundControllerInput"] = ui->backgroundControllerCheckBox->isChecked();
     data["GPU"]["screenWidth"] = ui->widthSpinBox->value();
     data["GPU"]["screenHeight"] = ui->heightSpinBox->value();
     data["GPU"]["vblankDivider"] = ui->vblankSpinBox->value();
@@ -334,6 +355,37 @@ void ShadSettings::SaveSettings() {
     std::ofstream file(Common::GetShadUserDir() / "config.toml", std::ios::binary);
     file << data;
     file.close();
+
+    Config::AutoUpdateShadEnabled = ui->autoUpdateCheckBox->isChecked();
+
+    std::filesystem::path guiConfig = Common::GetShadUserDir() / "qt_ui.ini";
+    std::fstream guiFile(guiConfig);
+    std::string line;
+    std::vector<std::string> lines;
+    int lineCount = 0;
+
+    while (std::getline(guiFile, line)) {
+        lineCount++;
+
+        if (line.contains("updateChannel")) {
+            lines.push_back("updateChannel=" + ui->updateComboBox->currentText().toStdString());
+            continue;
+        }
+
+        if (line.contains("checkForUpdates")) {
+            std::string updatesEnabled = Config::AutoUpdateShadEnabled ? "true" : "false";
+            lines.push_back("checkForUpdates=" + updatesEnabled);
+            continue;
+        }
+        lines.push_back(line);
+    }
+    file.close();
+
+    std::ofstream output_file(guiConfig);
+    for (auto const& line : lines) {
+        output_file << line << '\n';
+    }
+    output_file.close();
 }
 
 void ShadSettings::SetDefaults() {
@@ -354,24 +406,26 @@ void ShadSettings::SetDefaults() {
     ui->userNameLineEdit->setText("shadPS4");
     ui->updateComboBox->setCurrentText("Nightly");
     ui->motionControlsCheckBox->setChecked(true);
+    ui->backgroundControllerCheckBox->setChecked(false);
     ui->fullscreenModeComboBox->setCurrentText("Borderless");
     ui->FSRCheckBox->setChecked(true);
     ui->RCASCheckBox->setChecked(true);
     ui->RCASSlider->setValue(250);
 }
 
-void ShadSettings::UpdateShad() {
-    ui->checkUpdateButton->setText("Downloading, please wait");
-    ui->checkUpdateButton->setEnabled(false);
-    ui->buttonBox->setEnabled(false);
+CheckShadUpdate::CheckShadUpdate(const bool isAutoupdate, QWidget* parent) : QDialog(parent) {
+    setFixedSize(0, 0);
+    CheckShadUpdate::UpdateShad(isAutoupdate);
+}
 
+void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
     QNetworkAccessManager* networkManager = new QNetworkAccessManager(this);
     QString updateChannel;
     QUrl url;
 
     bool checkName = true;
     while (checkName) {
-        updateChannel = QString::fromStdString(ui->updateComboBox->currentText().toStdString());
+        updateChannel = QString::fromStdString(Config::UpdateChannel);
         if (updateChannel == "Nightly") {
             url = QUrl("https://api.github.com/repos/shadps4-emu/shadPS4/releases");
             checkName = false;
@@ -384,15 +438,12 @@ void ShadSettings::UpdateShad() {
     QNetworkRequest request(url);
     QNetworkReply* reply = networkManager->get(request);
 
-    connect(reply, &QNetworkReply::finished, this, [this, reply, updateChannel]() {
+    connect(reply, &QNetworkReply::finished, this, [this, isAutoupdate, reply, updateChannel]() {
         if (reply->error() != QNetworkReply::NoError) {
             QMessageBox::warning(this, "Error",
                                  QString::fromStdString("Network error:") + "\n" +
                                      reply->errorString());
             reply->deleteLater();
-            ui->checkUpdateButton->setText("Update ShadPS4");
-            ui->checkUpdateButton->setEnabled(true);
-            ui->buttonBox->setEnabled(true);
             return;
         }
 
@@ -402,9 +453,6 @@ void ShadSettings::UpdateShad() {
         if (jsonDoc.isNull()) {
             QMessageBox::warning(this, "Error", "Failed to parse update information.");
             reply->deleteLater();
-            ui->checkUpdateButton->setText("Update ShadPS4");
-            ui->checkUpdateButton->setEnabled(true);
-            ui->buttonBox->setEnabled(true);
             return;
         }
 
@@ -435,9 +483,6 @@ void ShadSettings::UpdateShad() {
             } else {
                 QMessageBox::warning(this, "Error", "No pre-releases found.");
                 reply->deleteLater();
-                ui->checkUpdateButton->setText("Update ShadPS4");
-                ui->checkUpdateButton->setEnabled(true);
-                ui->buttonBox->setEnabled(true);
                 return;
             }
         } else {
@@ -447,9 +492,6 @@ void ShadSettings::UpdateShad() {
             } else {
                 QMessageBox::warning(this, "Error", "Invalid release data.");
                 reply->deleteLater();
-                ui->checkUpdateButton->setText("Update ShadPS4");
-                ui->checkUpdateButton->setEnabled(true);
-                ui->buttonBox->setEnabled(true);
                 return;
             }
         }
@@ -469,17 +511,55 @@ void ShadSettings::UpdateShad() {
         if (!found) {
             QMessageBox::warning(this, "Error", "No download URL found for the specified asset.");
             reply->deleteLater();
-            ui->checkUpdateButton->setText("Update ShadPS4");
-            ui->checkUpdateButton->setEnabled(true);
-            ui->buttonBox->setEnabled(true);
             return;
+        }
+
+        std::filesystem::file_time_type shadModifiedFiletime =
+            std::filesystem::last_write_time(Common::shadPs4Executable);
+        std::chrono::system_clock::time_point shadModifiedDay =
+            std::chrono::floor<std::chrono::days>(
+                std::chrono::clock_cast<std::chrono::system_clock>(shadModifiedFiletime));
+
+        std::chrono::system_clock::time_point latestFileTime;
+        if (updateChannel == "Nightly") {
+            std::string latestVerString = latestVersion.toStdString().substr(20, 10);
+            std::istringstream nightlyDateString(latestVerString);
+            nightlyDateString >> std::chrono::parse("%F", latestFileTime);
+        } else if (updateChannel == "Release") {
+            std::istringstream releaseDateString(Common::latestReleaseDate);
+            releaseDateString >> std::chrono::parse("%F", latestFileTime);
+        }
+
+        if (shadModifiedDay == latestFileTime) {
+            if (isAutoupdate) {
+                close();
+                return;
+            } else {
+                if (QMessageBox::No ==
+                    QMessageBox::question(this, "Update confirmation",
+                                          "Latest shadPS4 build has the same date as the currently "
+                                          "installed build. Proceed with update?",
+                                          QMessageBox::Yes | QMessageBox::No)) {
+                    close();
+                    return;
+                }
+            }
+        } else {
+            if (QMessageBox::No ==
+                QMessageBox::question(this, "Update confirmation",
+                                      "New shadPS4 build detected. Proceed with Update?",
+                                      QMessageBox::Yes | QMessageBox::No)) {
+                close();
+                return;
+            }
         }
 
         DownloadUpdate(downloadUrl);
     });
 }
 
-void ShadSettings::DownloadUpdate(const QString& downloadUrl) {
+void CheckShadUpdate::DownloadUpdate(const QString& downloadUrl) {
+
     QNetworkAccessManager* networkManager = new QNetworkAccessManager(this);
     QNetworkRequest request(downloadUrl);
     QNetworkReply* reply = networkManager->get(request);
@@ -488,7 +568,7 @@ void ShadSettings::DownloadUpdate(const QString& downloadUrl) {
             [this](qint64 bytesReceived, qint64 bytesTotal) {
                 if (bytesTotal > 0) {
                     int percentage = static_cast<int>((bytesReceived * 100) / bytesTotal);
-                    ui->DownloadProgressBar->setValue(percentage);
+                    emit DownloadProgressed(percentage);
                 }
             });
 
@@ -498,8 +578,6 @@ void ShadSettings::DownloadUpdate(const QString& downloadUrl) {
                               downloadUrl + "\n" + reply->errorString());
             QMessageBox::warning(this, "Error", errmsg);
             reply->deleteLater();
-            ui->checkUpdateButton->setText("Update ShadPS4");
-            ui->checkUpdateButton->setEnabled(true);
             return;
         }
 
@@ -528,23 +606,19 @@ void ShadSettings::DownloadUpdate(const QString& downloadUrl) {
                 "The update has been downloaded, press OK to install.\n\nBBLauncher will close "
                 "to allow copying of shared QT files. The update is finished when BBLauncher "
                 "re-opens.");
-            ui->checkUpdateButton->setText("Update ShadPS4");
-            ui->checkUpdateButton->setEnabled(true);
             InstallUpdate();
         } else {
             QMessageBox::warning(this, "Error",
                                  QString::fromStdString("Failed to save the update file at") +
                                      ":\n" + downloadPath);
-            ui->DownloadProgressBar->setValue(0);
-            ui->checkUpdateButton->setText("Update ShadPS4");
-            ui->checkUpdateButton->setEnabled(true);
+            emit DownloadProgressed(0);
         }
 
         reply->deleteLater();
     });
 }
 
-void ShadSettings::InstallUpdate() {
+void CheckShadUpdate::InstallUpdate() {
     QString userPath;
     Common::PathToQString(userPath, Common::GetShadUserDir());
 
@@ -803,3 +877,5 @@ void ShadSettings::SaveFSRValues() {
     }
     output_file.close();
 }
+
+CheckShadUpdate::~CheckShadUpdate() {}

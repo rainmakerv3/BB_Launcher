@@ -24,7 +24,9 @@ extern std::filesystem::path installPath;
 extern std::filesystem::path installUpdatePath;
 extern std::filesystem::path SaveDir;
 extern std::filesystem::path shadPs4Executable;
-extern char VERSION[];
+
+extern const char VERSION[];
+extern const std::string latestReleaseDate;
 
 #if defined(__APPLE__)
 const std::filesystem::path BBLFilesPath =

@@ -27,6 +27,8 @@ extern int BackupNumber;
 extern bool AutoUpdateEnabled;
 extern bool UnifiedInputConfig;
 extern std::string TrophyKey;
+extern std::string UpdateChannel;
+extern bool AutoUpdateShadEnabled;
 
 extern bool ShowEarnedTrophy;
 extern bool ShowNotEarnedTrophy;
