@@ -82,6 +82,8 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
         ui->checkUpdateButton->setEnabled(false);
         ui->buttonBox->setEnabled(false);
 
+        SaveUpdateSettings();
+
         CheckShadUpdate* shadUpdateWindow = new CheckShadUpdate(false);
         QObject::connect(shadUpdateWindow, &CheckShadUpdate::DownloadProgressed,
                          ui->DownloadProgressBar, &QProgressBar::setValue);
@@ -356,36 +358,7 @@ void ShadSettings::SaveSettings() {
     file << data;
     file.close();
 
-    Config::AutoUpdateShadEnabled = ui->autoUpdateCheckBox->isChecked();
-
-    std::filesystem::path guiConfig = Common::GetShadUserDir() / "qt_ui.ini";
-    std::fstream guiFile(guiConfig);
-    std::string line;
-    std::vector<std::string> lines;
-    int lineCount = 0;
-
-    while (std::getline(guiFile, line)) {
-        lineCount++;
-
-        if (line.contains("updateChannel")) {
-            lines.push_back("updateChannel=" + ui->updateComboBox->currentText().toStdString());
-            continue;
-        }
-
-        if (line.contains("checkForUpdates")) {
-            std::string updatesEnabled = Config::AutoUpdateShadEnabled ? "true" : "false";
-            lines.push_back("checkForUpdates=" + updatesEnabled);
-            continue;
-        }
-        lines.push_back(line);
-    }
-    file.close();
-
-    std::ofstream output_file(guiConfig);
-    for (auto const& line : lines) {
-        output_file << line << '\n';
-    }
-    output_file.close();
+    SaveUpdateSettings();
 }
 
 void ShadSettings::SetDefaults() {
@@ -411,6 +384,112 @@ void ShadSettings::SetDefaults() {
     ui->FSRCheckBox->setChecked(true);
     ui->RCASCheckBox->setChecked(true);
     ui->RCASSlider->setValue(250);
+}
+
+void ShadSettings::LoadFSRValues() {
+    std::fstream file(DevSettingsFile);
+    std::string line;
+    std::vector<std::string> lines;
+    int lineCount = 0;
+    int FSRVal;
+    int RCASVal;
+    float RCASAtenVal;
+
+    while (std::getline(file, line)) {
+        lineCount++;
+
+        if (line.contains("fsr_enabled")) {
+            std::string FSREnabledString(1, line.back());
+            FSRVal = std::stoi(FSREnabledString);
+        }
+
+        if (line.contains("fsr_rcas_enabled")) {
+            std::string RCASEnabledString(1, line.back());
+            RCASVal = std::stoi(RCASEnabledString);
+        }
+
+        if (line.contains("fsr_rcas_attenuation")) {
+            std::size_t equal_pos = line.find('=');
+            std::string RCASAtenString(line.substr(equal_pos + 1));
+            RCASAtenVal = std::stof(RCASAtenString);
+        }
+    }
+    file.close();
+
+    ui->FSRCheckBox->setChecked((FSRVal == 1 ? true : false));
+    ui->RCASCheckBox->setChecked((RCASVal == 1 ? true : false));
+    ui->RCASSlider->setValue(round(RCASAtenVal * 1000));
+
+    QString RCASValue = QString::number(RCASAtenVal, 'f', 3);
+    ui->RCASValue->setText(RCASValue);
+}
+
+void ShadSettings::SaveFSRValues() {
+    std::ifstream file(DevSettingsFile);
+    std::string line;
+    std::vector<std::string> lines;
+    int lineCount = 0;
+
+    while (std::getline(file, line)) {
+        lineCount++;
+
+        if (line.contains("fsr_enabled")) {
+            std::string FSRVal = ui->FSRCheckBox->isChecked() ? "1" : "0";
+            line = "fsr_enabled=" + FSRVal;
+        }
+
+        if (line.contains("fsr_rcas_enabled")) {
+            std::string RCASVal = ui->RCASCheckBox->isChecked() ? "1" : "0";
+            line = "fsr_rcas_enabled=" + RCASVal;
+        }
+
+        if (line.contains("fsr_rcas_attenuation")) {
+            float RCASAtenVal = ui->RCASSlider->value() / 1000.0;
+            line = "fsr_rcas_attenuation=" + std::to_string(RCASAtenVal);
+        }
+
+        lines.push_back(line);
+    }
+    file.close();
+
+    std::ofstream output_file(DevSettingsFile);
+    for (auto const& line : lines) {
+        output_file << line << '\n';
+    }
+    output_file.close();
+}
+
+void ShadSettings::SaveUpdateSettings() {
+    Config::AutoUpdateShadEnabled = ui->autoUpdateCheckBox->isChecked();
+
+    std::filesystem::path guiConfig = Common::GetShadUserDir() / "qt_ui.ini";
+    std::fstream guiFile(guiConfig);
+    std::string line;
+    std::vector<std::string> lines;
+    int lineCount = 0;
+
+    while (std::getline(guiFile, line)) {
+        lineCount++;
+
+        if (line.contains("updateChannel")) {
+            lines.push_back("updateChannel=" + ui->updateComboBox->currentText().toStdString());
+            continue;
+        }
+
+        if (line.contains("checkForUpdates")) {
+            std::string updatesEnabled = Config::AutoUpdateShadEnabled ? "true" : "false";
+            lines.push_back("checkForUpdates=" + updatesEnabled);
+            continue;
+        }
+        lines.push_back(line);
+    }
+    guiFile.close();
+
+    std::ofstream output_file(guiConfig);
+    for (auto const& line : lines) {
+        output_file << line << '\n';
+    }
+    output_file.close();
 }
 
 CheckShadUpdate::CheckShadUpdate(const bool isAutoupdate, QWidget* parent) : QDialog(parent) {
@@ -795,79 +874,6 @@ void CheckShadUpdate::InstallUpdate() {
                              QString::fromStdString("Failed to create the update script file") +
                                  ":\n" + scriptFileName);
     }
-}
-
-void ShadSettings::LoadFSRValues() {
-    std::fstream file(DevSettingsFile);
-    std::string line;
-    std::vector<std::string> lines;
-    int lineCount = 0;
-    int FSRVal;
-    int RCASVal;
-    float RCASAtenVal;
-
-    while (std::getline(file, line)) {
-        lineCount++;
-
-        if (line.contains("fsr_enabled")) {
-            std::string FSREnabledString(1, line.back());
-            FSRVal = std::stoi(FSREnabledString);
-        }
-
-        if (line.contains("fsr_rcas_enabled")) {
-            std::string RCASEnabledString(1, line.back());
-            RCASVal = std::stoi(RCASEnabledString);
-        }
-
-        if (line.contains("fsr_rcas_attenuation")) {
-            std::size_t equal_pos = line.find('=');
-            std::string RCASAtenString(line.substr(equal_pos + 1));
-            RCASAtenVal = std::stof(RCASAtenString);
-        }
-    }
-    file.close();
-
-    ui->FSRCheckBox->setChecked((FSRVal == 1 ? true : false));
-    ui->RCASCheckBox->setChecked((RCASVal == 1 ? true : false));
-    ui->RCASSlider->setValue(round(RCASAtenVal * 1000));
-
-    QString RCASValue = QString::number(RCASAtenVal, 'f', 3);
-    ui->RCASValue->setText(RCASValue);
-}
-
-void ShadSettings::SaveFSRValues() {
-    std::ifstream file(DevSettingsFile);
-    std::string line;
-    std::vector<std::string> lines;
-    int lineCount = 0;
-
-    while (std::getline(file, line)) {
-        lineCount++;
-
-        if (line.contains("fsr_enabled")) {
-            std::string FSRVal = ui->FSRCheckBox->isChecked() ? "1" : "0";
-            line = "fsr_enabled=" + FSRVal;
-        }
-
-        if (line.contains("fsr_rcas_enabled")) {
-            std::string RCASVal = ui->RCASCheckBox->isChecked() ? "1" : "0";
-            line = "fsr_rcas_enabled=" + RCASVal;
-        }
-
-        if (line.contains("fsr_rcas_attenuation")) {
-            float RCASAtenVal = ui->RCASSlider->value() / 1000.0;
-            line = "fsr_rcas_attenuation=" + std::to_string(RCASAtenVal);
-        }
-
-        lines.push_back(line);
-    }
-    file.close();
-
-    std::ofstream output_file(DevSettingsFile);
-    for (auto const& line : lines) {
-        output_file << line << '\n';
-    }
-    output_file.close();
 }
 
 CheckShadUpdate::~CheckShadUpdate() {}

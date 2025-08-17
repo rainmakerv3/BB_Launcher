@@ -26,6 +26,7 @@ private:
     void UpdateDialog();
     void LoadFSRValues();
     void SaveFSRValues();
+    void SaveUpdateSettings();
 
     std::unique_ptr<Ui::ShadSettings> ui;
 
