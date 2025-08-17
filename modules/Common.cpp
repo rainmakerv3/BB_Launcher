@@ -30,8 +30,7 @@ std::filesystem::path installUpdatePath;
 std::filesystem::path SaveDir;
 std::filesystem::path shadPs4Executable;
 
-const char VERSION[] = "Release8.11";
-const std::string latestReleaseDate = "2025-07-06";
+const char VERSION[] = "Release8.12";
 
 std::filesystem::path GetShadUserDir() {
     auto user_dir = std::filesystem::current_path() / "user";

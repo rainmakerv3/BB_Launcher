@@ -597,10 +597,8 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
             std::filesystem::last_write_time(Common::shadPs4Executable));
         std::string shadModifiedDateString = std::format("{:%F}", shadModifiedDate);
 
-        std::string latestVerDateString;
-        latestVerDateString = updateChannel == "Nightly"
-                                  ? latestVersion.toStdString().substr(20, 10)
-                                  : Common::latestReleaseDate;
+        std::string latestVerDateString =
+            jsonObj["published_at"].toString().toStdString().substr(0, 10);
 
         if (shadModifiedDateString == latestVerDateString) {
             if (isAutoupdate) {
