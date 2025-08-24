@@ -29,3 +29,12 @@ if (NOT TARGET SDL3::SDL3)
     set(SDL_PIPEWIRE OFF)
     add_subdirectory(sdl3)
 endif()
+
+if (APPLE)
+     # date
+    if (NOT TARGET date::date-tz)
+        option(BUILD_TZ_LIB "" ON)
+        option(USE_SYSTEM_TZ_DB "" ON)
+        add_subdirectory(date)
+    endif()
+endif()

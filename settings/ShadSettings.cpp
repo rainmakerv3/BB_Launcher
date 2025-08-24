@@ -20,6 +20,12 @@
 #include "modules/Common.h"
 #include "settings/ui_ShadSettings.h"
 
+#if __APPLE__
+#include <date/date.h>
+#include <date/tz.h>
+#include <date/tz_private.h>
+#endif
+
 ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSettings) {
     ui->setupUi(this);
     ui->tabWidgetSettings->setUsesScrollButtons(false);
@@ -593,9 +599,21 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
             return;
         }
 
-        std::filesystem::file_time_type shadModifiedDate = std::chrono::floor<std::chrono::days>(
-            std::filesystem::last_write_time(Common::shadPs4Executable));
-        std::string shadModifiedDateString = std::format("{:%F}", shadModifiedDate);
+        std::chrono::time_point shadWriteTime =
+            std::filesystem::last_write_time(Common::shadPs4Executable);
+
+#if __APPLE__
+        auto sec =
+            std::chrono::duration_cast<std::chrono::seconds>(shadWriteTime.time_since_epoch());
+        auto time = date::sys_time<std::chrono::seconds>{sec};
+        auto zonedt = date::make_zoned(date::current_zone(), time);
+        std::string shadModifiedDateString = date::format("{:%F}", zonedt);
+
+#else
+        auto shadTimePoint = std::chrono::clock_cast<std::chrono::system_clock>(shadWriteTime);
+        const std::chrono::zoned_time zonedt{std::chrono::current_zone()->name(), shadTimePoint};
+        std::string shadModifiedDateString = std::format("{:%F}", zonedt);
+#endif
 
         std::string latestVerDateString =
             jsonObj["published_at"].toString().toStdString().substr(0, 10);

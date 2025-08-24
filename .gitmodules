@@ -14,3 +14,7 @@
 	path = externals/pugixml
 	url = https://github.com/zeux/pugixml.git
 	shallow = true
+[submodule "externals/date"]
+	path = externals/date
+	url = https://github.com/HowardHinnant/date.git
+	shallow = true

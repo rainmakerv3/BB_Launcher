@@ -74,6 +74,9 @@ find_package(toml11 4.2.0 CONFIG)
 find_package(pugixml 1.14 CONFIG)
 find_package(fmt 10.2.0 CONFIG)
 find_package(SDL3 3.1.2 CONFIG)
+if (APPLE)
+    find_package(date 3.0.1 CONFIG)
+endif()
 
 if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR NOT MSVC)
     find_package(cryptopp 8.9.0 MODULE)
@@ -175,6 +178,10 @@ endif()
 target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network)
 target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 pugixml::pugixml SDL3::SDL3)
+
+if (APPLE)
+    target_link_libraries(BB_Launcher PRIVATE date::date-tz)
+endif()
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
