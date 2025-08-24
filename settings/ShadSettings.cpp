@@ -608,17 +608,20 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
         auto time = date::sys_time<std::chrono::seconds>{sec};
         auto zonedt = date::make_zoned(date::current_zone(), time);
         std::string shadModifiedDateString = date::format("{:%F}", zonedt);
+        std::string shadModifiedDateStringUTC = date::format("{:%F}", time);
 
 #else
         auto shadTimePoint = std::chrono::clock_cast<std::chrono::system_clock>(shadWriteTime);
         const std::chrono::zoned_time zonedt{std::chrono::current_zone()->name(), shadTimePoint};
         std::string shadModifiedDateString = std::format("{:%F}", zonedt);
+        std::string shadModifiedDateStringUTC = std::format("{:%F}", shadWriteTime);
 #endif
 
         std::string latestVerDateString =
             jsonObj["published_at"].toString().toStdString().substr(0, 10);
 
-        if (shadModifiedDateString == latestVerDateString) {
+        if (shadModifiedDateString == latestVerDateString ||
+            shadModifiedDateStringUTC == latestVerDateString) {
             if (isAutoupdate) {
                 close();
                 return;
