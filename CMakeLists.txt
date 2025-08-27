@@ -130,6 +130,9 @@ set(PROJECT_SOURCES
     settings/control_settings.cpp
     settings/control_settings.h
     settings/control_settings.ui
+    settings/hotkeys.cpp
+    settings/hotkeys.h
+    settings/hotkeys.ui
     settings/kbm_config_dialog.cpp
     settings/kbm_config_dialog.h
     settings/kbm_gui.cpp
@@ -157,7 +160,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(BB_Launcher
         ${PROJECT_SOURCES}
         ${RESOURCEFOLDER}
-
     )
 else()
     if(ANDROID)
