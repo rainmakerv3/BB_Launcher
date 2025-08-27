@@ -105,7 +105,7 @@ void EditorDialog::loadFile(QString game) {
 
 void EditorDialog::saveFile(QString game) {
 
-    Config::SaveUnifiedControl(Config::UnifiedInputConfig);
+    Config::SaveInputSettings(Config::UnifiedInputConfig, "noIDsave");
     const auto config_file = Config::GetFoolproofKbmConfigFile(game.toStdString());
     QFile file(config_file);
 

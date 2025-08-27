@@ -8,6 +8,7 @@
 #include <QPushButton>
 #include <QTimer>
 #include <QtConcurrent/QtConcurrentRun>
+
 #include "LauncherSettings.h"
 #include "control_settings.h"
 #include "modules/Common.h"
@@ -103,6 +104,26 @@ ControlSettings::ControlSettings(QWidget* parent) : QDialog(parent), ui(new Ui::
             [this]() { CheckMapping(MappingButton); });
     connect(this, &ControlSettings::AxisChanged, this,
             [this]() { ConnectAxisInputs(MappingButton); });
+
+    connect(ui->ActiveGamepadBox, &QComboBox::currentIndexChanged, this,
+            &ControlSettings::ActiveControllerChanged);
+
+    connect(ui->DefaultGamepadButton, &QPushButton::clicked, this, [this]() {
+        ui->DefaultGamepadName->setText(ui->ActiveGamepadBox->currentText());
+        std::string GUID = Config::GetGUIDString(gamepads, ui->ActiveGamepadBox->currentIndex());
+        ui->DefaultGamepadLabel->setText(tr("ID: ") + QString::fromStdString(GUID).right(16));
+        Config::defaultControllerID = GUID;
+        QMessageBox::information(this, tr("Default Controller Selected"),
+                                 tr("Active controller set as default"));
+    });
+
+    connect(ui->RemoveDefaultGamepadButton, &QPushButton::clicked, this, [this]() {
+        ui->DefaultGamepadName->setText(tr("No default selected"));
+        ui->DefaultGamepadLabel->setText(tr("n/a"));
+        Config::defaultControllerID = "";
+        QMessageBox::information(this, tr("Default Controller Removed"),
+                                 tr("Default controller setting removed"));
+    });
 
     Polling = QtConcurrent::run(&ControlSettings::pollSDLEvents, this);
 }
@@ -311,7 +332,7 @@ void ControlSettings::SaveControllerConfig(bool CloseOnSave) {
     output_file.close();
 
     Config::UnifiedInputConfig = !ui->PerGameCheckBox->isChecked();
-    Config::SaveUnifiedControl(Config::UnifiedInputConfig);
+    Config::SaveInputSettings(Config::UnifiedInputConfig, Config::defaultControllerID);
 
     if (CloseOnSave)
         QWidget::close();
@@ -606,6 +627,22 @@ void ControlSettings::OnProfileChanged() {
     SetUIValuestoMappings();
 }
 
+void ControlSettings::ActiveControllerChanged(int value) {
+    QString GUID = QString::fromStdString(Config::GetGUIDString(gamepads, value)).right(16);
+    ui->ActiveGamepadLabel->setText("ID: " + GUID);
+
+    if (gamepad) {
+        SDL_CloseGamepad(gamepad);
+        gamepad = nullptr;
+    }
+
+    gamepad = SDL_OpenGamepad(gamepads[value]);
+
+    if (!gamepad) {
+        // LOG_ERROR(Input, "Failed to open gamepad: {}", SDL_GetError());
+    }
+}
+
 void ControlSettings::UpdateLightbarColor() {
     ui->LightbarColorFrame->setStyleSheet("");
     QString RValue = QString::number(ui->RSlider->value());
@@ -622,7 +659,7 @@ void ControlSettings::CheckGamePad() {
     }
 
     int gamepad_count;
-    SDL_JoystickID* gamepads = SDL_GetGamepads(&gamepad_count);
+    gamepads = SDL_GetGamepads(&gamepad_count);
 
     if (!gamepads) {
         // LOG_ERROR(Input, "Cannot get gamepad list: {}", SDL_GetError());
@@ -631,20 +668,53 @@ void ControlSettings::CheckGamePad() {
 
     if (gamepad_count == 0) {
         // LOG_INFO(Input, "No gamepad found!");
-        SDL_free(gamepads);
         return;
     }
 
-    // LOG_INFO(Input, "Got {} gamepads. Opening the first one.", gamepad_count);
-    gamepad = SDL_OpenGamepad(gamepads[0]);
+    QString defaultGUID = "";
+    int defaultIndex =
+        Config::GetIndexfromGUID(gamepads, gamepad_count, Config::defaultControllerID);
+
+    if (defaultIndex != -1) {
+        gamepad = SDL_OpenGamepad(gamepads[defaultIndex]);
+    } else {
+        // LOG_INFO(Input, "Got {} gamepads. Opening the first one.", gamepad_count);
+        gamepad = SDL_OpenGamepad(gamepads[0]);
+    };
 
     if (!gamepad) {
         // LOG_ERROR(Input, "Failed to open gamepad 0: {}", SDL_GetError());
-        SDL_free(gamepads);
-        return;
     }
 
-    SDL_free(gamepads);
+    if (!gamepads || gamepad_count == 0) {
+        ui->ActiveGamepadBox->addItem("No gamepads detected");
+        ui->ActiveGamepadBox->setCurrentIndex(0);
+        return;
+    } else {
+        for (int i = 0; i < gamepad_count; i++) {
+            QString name = SDL_GetGamepadNameForID(gamepads[i]);
+            ui->ActiveGamepadBox->addItem(QString("%1: %2").arg(QString::number(i + 1), name));
+        }
+    }
+
+    if (defaultIndex != -1) {
+        defaultGUID =
+            QString::fromStdString(Config::GetGUIDString(gamepads, defaultIndex)).right(16);
+        ui->DefaultGamepadName->setText(SDL_GetGamepadNameForID(gamepads[defaultIndex]));
+        ui->DefaultGamepadLabel->setText(tr("ID: ") + defaultGUID);
+    } else {
+        ui->DefaultGamepadName->setText("Default controller not connected");
+        ui->DefaultGamepadLabel->setText(tr("n/a"));
+    }
+
+    if (defaultIndex != -1) {
+        ui->ActiveGamepadLabel->setText(defaultGUID);
+        ui->ActiveGamepadBox->setCurrentIndex(defaultIndex);
+    } else {
+        QString GUID = QString::fromStdString(Config::GetGUIDString(gamepads, 0)).right(16);
+        ui->ActiveGamepadLabel->setText("ID: " + GUID);
+        ui->ActiveGamepadBox->setCurrentIndex(0);
+    }
 }
 
 void ControlSettings::DisableMappingButtons() {
@@ -757,8 +827,6 @@ bool ControlSettings::eventFilter(QObject* obj, QEvent* event) {
     return QDialog::eventFilter(obj, event);
 }
 
-void ControlSettings::processSDLEvents(int Type, int Input, int Value) {}
-
 void ControlSettings::pollSDLEvents() {
     SDL_Event event;
     while (true) {
@@ -776,61 +844,54 @@ void ControlSettings::pollSDLEvents() {
         }
 
         if (EnableButtonMapping) {
+
+            if (pressedButtons.size() >= 3) {
+                continue;
+            }
+
             if (event.type == SDL_EVENT_GAMEPAD_BUTTON_DOWN) {
                 switch (event.gbutton.button) {
                 case SDL_GAMEPAD_BUTTON_SOUTH:
-                    pressedButtons.insert("cross");
+                    pressedButtons.insert(5, "cross");
                     break;
                 case SDL_GAMEPAD_BUTTON_EAST:
-                    pressedButtons.insert("circle");
+                    pressedButtons.insert(6, "circle");
                     break;
                 case SDL_GAMEPAD_BUTTON_NORTH:
-                    pressedButtons.insert("triangle");
+                    pressedButtons.insert(7, "triangle");
                     break;
                 case SDL_GAMEPAD_BUTTON_WEST:
-                    pressedButtons.insert("square");
+                    pressedButtons.insert(8, "square");
                     break;
                 case SDL_GAMEPAD_BUTTON_LEFT_SHOULDER:
-                    pressedButtons.insert("l1");
+                    pressedButtons.insert(3, "l1");
                     break;
                 case SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER:
-                    pressedButtons.insert("r1");
+                    pressedButtons.insert(4, "r1");
                     break;
                 case SDL_GAMEPAD_BUTTON_LEFT_STICK:
-                    pressedButtons.insert("l3");
+                    pressedButtons.insert(9, "l3");
                     break;
                 case SDL_GAMEPAD_BUTTON_RIGHT_STICK:
-                    pressedButtons.insert("r3");
+                    pressedButtons.insert(10, "r3");
                     break;
                 case SDL_GAMEPAD_BUTTON_DPAD_UP:
-                    pressedButtons.insert("pad_up");
+                    pressedButtons.insert(13, "pad_up");
                     break;
                 case SDL_GAMEPAD_BUTTON_DPAD_DOWN:
-                    pressedButtons.insert("pad_down");
+                    pressedButtons.insert(14, "pad_down");
                     break;
                 case SDL_GAMEPAD_BUTTON_DPAD_LEFT:
-                    pressedButtons.insert("pad_left");
+                    pressedButtons.insert(15, "pad_left");
                     break;
                 case SDL_GAMEPAD_BUTTON_DPAD_RIGHT:
-                    pressedButtons.insert("pad_right");
+                    pressedButtons.insert(16, "pad_right");
                     break;
                 case SDL_GAMEPAD_BUTTON_BACK:
-                    pressedButtons.insert("back");
-                    break;
-                case SDL_GAMEPAD_BUTTON_LEFT_PADDLE1:
-                    pressedButtons.insert("lpaddle_high");
-                    break;
-                case SDL_GAMEPAD_BUTTON_RIGHT_PADDLE1:
-                    pressedButtons.insert("rpaddle_high");
-                    break;
-                case SDL_GAMEPAD_BUTTON_LEFT_PADDLE2:
-                    pressedButtons.insert("lpaddle_low");
-                    break;
-                case SDL_GAMEPAD_BUTTON_RIGHT_PADDLE2:
-                    pressedButtons.insert("rpaddle_low");
+                    pressedButtons.insert(11, "back");
                     break;
                 case SDL_GAMEPAD_BUTTON_START:
-                    pressedButtons.insert("options");
+                    pressedButtons.insert(12, "options");
                     break;
                 default:
                     break;
@@ -843,19 +904,19 @@ void ControlSettings::pollSDLEvents() {
                 switch (event.gaxis.axis) {
                 case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
                     if (event.gaxis.value > 16000) {
-                        pressedButtons.insert("l2");
+                        pressedButtons.insert(1, "l2");
                         L2Pressed = true;
                     } else if (event.gaxis.value < 5000) {
-                        if (L2Pressed)
+                        if (L2Pressed && !R2Pressed)
                             emit PushGamepadEvent();
                     }
                     break;
                 case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
                     if (event.gaxis.value > 16000) {
-                        pressedButtons.insert("r2");
+                        pressedButtons.insert(2, "r2");
                         R2Pressed = true;
                     } else if (event.gaxis.value < 5000) {
-                        if (R2Pressed)
+                        if (R2Pressed && !L2Pressed)
                             emit PushGamepadEvent();
                     }
                     break;
@@ -894,8 +955,12 @@ void ControlSettings::pollSDLEvents() {
 }
 
 void ControlSettings::Cleanup() {
-    if (gamepad)
+    if (gamepad) {
         SDL_CloseGamepad(gamepad);
+        gamepad = nullptr;
+    }
+
+    SDL_free(gamepads);
 
     SDL_Event quitLoop{};
     quitLoop.type = SDL_EVENT_QUIT;
