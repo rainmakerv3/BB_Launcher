@@ -20,11 +20,11 @@ ControlSettings::ControlSettings(QWidget* parent) : QDialog(parent), ui(new Ui::
 
     SDL_InitSubSystem(SDL_INIT_GAMEPAD);
     SDL_InitSubSystem(SDL_INIT_EVENTS);
-    CheckGamePad();
 
     AddBoxItems();
     SetUIValuestoMappings();
     UpdateLightbarColor();
+    CheckGamePad();
     installEventFilter(this);
 
     ButtonsList = {ui->CrossButton,
@@ -839,10 +839,6 @@ void ControlSettings::pollSDLEvents() {
             return;
         }
 
-        if (event.type == SDL_EVENT_GAMEPAD_ADDED) {
-            CheckGamePad();
-        }
-
         if (EnableButtonMapping) {
 
             if (pressedButtons.size() >= 3) {
@@ -950,6 +946,11 @@ void ControlSettings::pollSDLEvents() {
                     }
                 }
             }
+        }
+
+        if (event.type == SDL_EVENT_GAMEPAD_ADDED || SDL_EVENT_GAMEPAD_REMOVED) {
+            ui->ActiveGamepadBox->clear();
+            CheckGamePad();
         }
     }
 }
