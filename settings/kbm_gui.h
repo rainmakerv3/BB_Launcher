@@ -52,7 +52,7 @@ private:
     QTimer* timer;
     QPushButton* MappingButton;
     QList<QPushButton*> ButtonsList;
-    QSet<QString> pressedKeys;
+    QMap<int, QString> pressedKeys;
 
     const std::vector<std::string> ControllerInputs = {
         "cross",        "circle",    "square",      "triangle",    "l1",
