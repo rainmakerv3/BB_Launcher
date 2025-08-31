@@ -28,7 +28,6 @@ private Q_SLOTS:
     void CheckMapping(QPushButton*& button);
     void StartTimer(QPushButton*& button, bool isButton);
     void ConnectAxisInputs(QPushButton*& button);
-    void ActiveControllerChanged(int value);
 
 private:
     std::unique_ptr<Ui::ControlSettings> ui;
@@ -39,6 +38,7 @@ private:
     void GetGameTitle();
 
     void CheckGamePad();
+    void processSDLEvents(int Type, int Input, int Value);
     void pollSDLEvents();
     void SetMapping(QString input);
     void DisableMappingButtons();
@@ -47,7 +47,7 @@ private:
 
     QList<QPushButton*> ButtonsList;
     QList<QPushButton*> AxisList;
-    QMap<int, QString> pressedButtons;
+    QSet<QString> pressedButtons;
 
     bool L2Pressed = false;
     bool R2Pressed = false;
@@ -60,7 +60,6 @@ private:
     QPushButton* MappingButton;
     SDL_Gamepad* gamepad = nullptr;
     QFuture<void> Polling;
-    SDL_JoystickID* gamepads;
 
     const std::vector<std::string> ControllerInputs = {
         "cross",        "circle",    "square",      "triangle",    "l1",

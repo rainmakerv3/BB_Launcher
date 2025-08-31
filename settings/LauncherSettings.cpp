@@ -22,7 +22,6 @@ bool Config::ShowNotEarnedTrophy = true;
 bool Config::ShowHiddenTrophy = false;
 std::string Config::UpdateChannel = "Nightly";
 bool Config::AutoUpdateShadEnabled = false;
-std::string Config::defaultControllerID = "";
 bool Config::CheckPortableSettings = true;
 
 const std::filesystem::path SettingsFile = Common::BBLFilesPath / "LauncherSettings.toml";
@@ -229,8 +228,6 @@ void LoadLauncherSettings() {
 
         UnifiedInputConfig = toml::find_or<bool>(shadData, "Input", "useUnifiedInputConfig", true);
         TrophyKey = toml::find_or<std::string>(shadData, "Keys", "TrophyKey", "");
-        defaultControllerID =
-            toml::find_or<std::string>(shadData, "General", "defaultControllerID", "");
 
         if (shadData.contains("GUI")) {
             const toml::value& GUI = shadData.at("GUI");
@@ -454,7 +451,7 @@ analog_deadzone = rightjoystick, 2
 )";
 }
 
-void SaveInputSettings(bool unifiedControl, std::string defaultID) {
+void SaveUnifiedControl(bool setting) {
     using namespace Config;
     toml::value data;
     std::error_code error;
@@ -477,10 +474,7 @@ void SaveInputSettings(bool unifiedControl, std::string defaultID) {
         }
     }
 
-    data["Input"]["useUnifiedInputConfig"] = unifiedControl;
-
-    if (defaultID != "noIDsave")
-        data["General"]["defaultControllerID"] = defaultID;
+    data["Input"]["useUnifiedInputConfig"] = setting;
 
     std::ofstream file(ShadConfig, std::ios::binary);
     file << data;
@@ -523,25 +517,6 @@ std::filesystem::path GetFoolproofKbmConfigFile(const std::string& game_id) {
         std::filesystem::copy(default_config_file, config_file);
     }
     return config_file;
-}
-
-int GetIndexfromGUID(SDL_JoystickID* gamepadIDs, int gamepadCount, std::string GUID) {
-    char GUIDbuf[33];
-    for (int i = 0; i < gamepadCount; i++) {
-        SDL_GUIDToString(SDL_GetGamepadGUIDForID(gamepadIDs[i]), GUIDbuf, 33);
-        std::string currentGUID = std::string(GUIDbuf);
-        if (currentGUID == GUID) {
-            return i;
-        }
-    }
-    return -1;
-}
-
-std::string GetGUIDString(SDL_JoystickID* gamepadIDs, int index) {
-    char GUIDbuf[33];
-    SDL_GUIDToString(SDL_GetGamepadGUIDForID(gamepadIDs[index]), GUIDbuf, 33);
-    std::string GUID = std::string(GUIDbuf);
-    return GUID;
 }
 
 } // namespace Config

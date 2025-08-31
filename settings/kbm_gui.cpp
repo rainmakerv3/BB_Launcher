@@ -327,7 +327,7 @@ void KBMSettings::SaveKBMConfig(bool CloseOnSave) {
     output_file.close();
 
     Config::UnifiedInputConfig = !ui->PerGameCheckBox->isChecked();
-    Config::SaveInputSettings(Config::UnifiedInputConfig, "noIDsave");
+    Config::SaveUnifiedControl(Config::UnifiedInputConfig);
 
     if (CloseOnSave)
         QWidget::close();
