@@ -176,6 +176,51 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         checkShadUpdate->exec();
     }
 
+#if defined(FORCE_UAC) || defined(Q_OS_LINUX) || defined(Q_OS_MAC)
+    if (Config::CheckPortableSettings) {
+
+        if (!std::filesystem::exists(Common::GetCurrentPath() / "user") &&
+            std::filesystem::exists(Common::shadPs4Executable.parent_path() / "user")) {
+            if (QMessageBox::Yes ==
+                QMessageBox::question(
+                    this, "Settings not linked",
+                    "Portable settings folder (user folder) found in shadPS4 folder but not in "
+                    "BBLauncher folder. Create symlink to shadPS4 portable settings "
+                    "folder (Automatically syncs shadPS4 and BBLauncher settings)?",
+                    QMessageBox::Yes | QMessageBox::No)) {
+
+                try {
+                    std::filesystem::create_directory_symlink(
+                        Common::shadPs4Executable.parent_path() / "user",
+                        Common::GetCurrentPath() / "user");
+                } catch (const std::filesystem::filesystem_error& e) {
+                    std::cerr << "Error creating directory symlink: " << e.what() << std::endl;
+                }
+            }
+        }
+
+        if (std::filesystem::exists(Common::GetCurrentPath() / "user") &&
+            !std::filesystem::exists(Common::shadPs4Executable.parent_path() / "user")) {
+            if (QMessageBox::Yes ==
+                QMessageBox::question(
+                    this, "Settings not linked",
+                    "Portable settings folder found in BBLauncher folder but not in "
+                    "shadPS4 folder. Create symlink to BBLauncher portable settings "
+                    "folder (Automatically syncs shadPS4 and BBLauncher settings)?",
+                    QMessageBox::Yes | QMessageBox::No)) {
+
+                try {
+                    std::filesystem::create_directory_symlink(
+                        Common::GetCurrentPath() / "user",
+                        Common::shadPs4Executable.parent_path() / "user");
+                } catch (const std::filesystem::filesystem_error& e) {
+                    std::cerr << "Error creating directory symlink: " << e.what() << std::endl;
+                }
+            }
+        }
+    }
+#endif
+
     if (noGUI && noInstanceRunning)
         LaunchButton_isPressed(noGUI);
 }

@@ -32,6 +32,16 @@ std::filesystem::path shadPs4Executable;
 
 const char VERSION[] = "Release9.00";
 
+std::filesystem::path GetCurrentPath() {
+    std::filesystem::path currentPath;
+#if defined(__APPLE__)
+    currentPath = Common::GetBundleParentDirectory();
+#else
+    currentPath = std::filesystem::current_path();
+#endif
+    return currentPath;
+}
+
 std::filesystem::path GetShadUserDir() {
     auto user_dir = std::filesystem::current_path() / "user";
     if (!std::filesystem::exists(user_dir)) {

@@ -343,11 +343,7 @@ void CheckUpdate::Install() {
     Common::PathToQString(userPath, Common::GetShadUserDir());
 
     QString rootPath;
-#if defined(__APPLE__)
-    Common::PathToQString(rootPath, Common::GetBundleParentDirectory());
-#else
-    Common::PathToQString(rootPath, std::filesystem::current_path());
-#endif
+    Common::PathToQString(rootPath, Common::GetCurrentPath());
 
     QString tempDirPath = userPath + "/temp_download_update";
     QString startingUpdate = tr("Starting Update...");

@@ -28,6 +28,7 @@ extern bool BackupSaveEnabled;
 extern int BackupInterval;
 extern int BackupNumber;
 extern bool AutoUpdateEnabled;
+extern bool CheckPortableSettings;
 extern bool UnifiedInputConfig;
 extern std::string TrophyKey;
 extern std::string UpdateChannel;

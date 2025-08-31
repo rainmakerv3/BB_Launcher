@@ -23,6 +23,7 @@ bool Config::ShowHiddenTrophy = false;
 std::string Config::UpdateChannel = "Nightly";
 bool Config::AutoUpdateShadEnabled = false;
 std::string Config::defaultControllerID = "";
+bool Config::CheckPortableSettings = true;
 
 const std::filesystem::path SettingsFile = Common::BBLFilesPath / "LauncherSettings.toml";
 
@@ -41,6 +42,7 @@ LauncherSettings::LauncherSettings(QWidget* parent)
     }
 
     ui->UpdateCheckBox->setChecked(AutoUpdateEnabled);
+    ui->PortableSettingsCheckBox->setChecked(CheckPortableSettings);
     ui->SoundFixCheckBox->setChecked(SoundFixEnabled);
     ui->BackupSaveCheckBox->setChecked(BackupSaveEnabled);
     ui->BackupIntervalComboBox->setCurrentText(QString::number(BackupInterval));
@@ -69,6 +71,8 @@ LauncherSettings::LauncherSettings(QWidget* parent)
 }
 
 void LauncherSettings::SetLauncherDefaults() {
+    ui->PortableSettingsCheckBox->setChecked(true);
+    ui->UpdateCheckBox->setChecked(false);
     ui->DarkThemeRadioButton->setChecked(true);
     ui->SoundFixCheckBox->setChecked(true);
     ui->BackupIntervalComboBox->setCurrentText("10");
@@ -108,10 +112,12 @@ void LauncherSettings::SaveLauncherSettings() {
     BackupInterval = ui->BackupIntervalComboBox->currentText().toInt();
     BackupNumber = ui->BackupNumberComboBox->currentText().toInt();
     AutoUpdateEnabled = ui->UpdateCheckBox->isChecked();
+    CheckPortableSettings = ui->PortableSettingsCheckBox->isChecked();
 
     data["Launcher"]["Theme"] = theme;
     data["Launcher"]["SoundFixEnabled"] = SoundFixEnabled;
     data["Launcher"]["AutoUpdateEnabled"] = AutoUpdateEnabled;
+    data["Launcher"]["PortableSettings"] = CheckPortableSettings;
 
     data["Backups"]["BackupSaveEnabled"] = BackupSaveEnabled;
     data["Backups"]["BackupInterval"] = BackupInterval;
@@ -169,6 +175,7 @@ void LoadLauncherSettings() {
     theme = toml::find_or<std::string>(data, "Launcher", "Theme", "Dark");
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
     AutoUpdateEnabled = toml::find_or<bool>(data, "Launcher", "AutoUpdateEnabled", false);
+    CheckPortableSettings = toml::find_or<bool>(data, "Launcher", "PortableSettings", true);
 
     BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", false);
     BackupInterval = toml::find_or<int>(data, "Backups", "BackupInterval", 10);
@@ -272,6 +279,7 @@ void CreateSettingsFile() {
     data["Launcher"]["Theme"] = "Dark";
     data["Launcher"]["SoundFixEnabled"] = true;
     data["Launcher"]["AutoUpdateEnabled"] = false;
+    data["Launcher"]["PortableSettings"] = true;
 
     data["Backups"]["BackupSaveEnabled"] = false;
     data["Backups"]["BackupInterval"] = 10;
