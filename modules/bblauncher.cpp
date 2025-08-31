@@ -19,6 +19,7 @@
 #include "settings/ShadCheatsPatches.h"
 #include "settings/ShadSettings.h"
 #include "settings/control_settings.h"
+#include "settings/hotkeys.h"
 #include "settings/kbm_gui.h"
 #include "settings/updater/CheckUpdate.h"
 
@@ -164,6 +165,11 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         Common::PathToQString(ModFolder, Common::ModPath);
         QDir(ModFolder).mkpath(ModFolder);
         QDesktopServices::openUrl(QUrl::fromLocalFile(ModFolder));
+    });
+
+    connect(ui->HotkeyButton, &QPushButton::clicked, this, [this]() {
+        hotkeys* HKWindow = new hotkeys(this);
+        HKWindow->exec();
     });
 
     if (Config::AutoUpdateEnabled) {
@@ -521,11 +527,14 @@ void BBLauncher::UpdateIcons() {
     ui->KBMButton->setIconSize(QSize(48, 48));
     ui->ModFolderButton->setIcon(QIcon(":mod_folder.png"));
     ui->ModFolderButton->setIconSize(QSize(48, 48));
+    ui->HotkeyButton->setIcon(QIcon(":hotkey.png"));
+    ui->HotkeyButton->setIconSize(QSize(48, 48));
 
     if (Config::theme == "Dark") {
         ui->ControllerButton->setIcon(RecolorIcon(ui->ControllerButton->icon(), false));
         ui->KBMButton->setIcon(RecolorIcon(ui->KBMButton->icon(), false));
         ui->ModFolderButton->setIcon(RecolorIcon(ui->ModFolderButton->icon(), false));
+        ui->HotkeyButton->setIcon(RecolorIcon(ui->HotkeyButton->icon(), false));
     }
 }
 

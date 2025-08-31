@@ -193,7 +193,7 @@
       <x>20</x>
       <y>20</y>
       <width>521</width>
-      <height>141</height>
+      <height>144</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -331,9 +331,9 @@
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>140</x>
       <y>260</y>
-      <width>351</width>
+      <width>471</width>
       <height>80</height>
      </rect>
     </property>
@@ -371,6 +371,13 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="QPushButton" name="HotkeyButton">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
     </layout>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -388,7 +395,7 @@
      </font>
     </property>
     <property name="text">
-     <string>Note: remapping/lightbar color adjustment only works on shadPS4 latest *nightly* versions</string>
+     <string>Note: some features only work on shadPS4 latest *nightly* versions</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignmentFlag::AlignCenter</set>

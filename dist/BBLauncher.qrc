@@ -11,5 +11,6 @@
                 <file>silver.png</file>
                 <file>achieved.png</file>
                 <file>KBM.png</file>
+		<file>hotkey.png</file>
 	</qresource>
 </RCC>
