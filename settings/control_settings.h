@@ -47,7 +47,7 @@ private:
 
     QList<QPushButton*> ButtonsList;
     QList<QPushButton*> AxisList;
-    QSet<QString> pressedButtons;
+    QMap<int, QString> pressedButtons;
 
     bool L2Pressed = false;
     bool R2Pressed = false;
