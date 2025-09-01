@@ -655,6 +655,10 @@ void ControlSettings::DisableMappingButtons() {
     for (const auto& i : AxisList) {
         i->setEnabled(false);
     }
+
+    ui->buttonBox->button(QDialogButtonBox::Save)->setEnabled(false);
+    ui->buttonBox->button(QDialogButtonBox::Apply)->setEnabled(false);
+    ui->buttonBox->button(QDialogButtonBox::RestoreDefaults)->setEnabled(false);
 }
 
 void ControlSettings::EnableMappingButtons() {
@@ -665,6 +669,10 @@ void ControlSettings::EnableMappingButtons() {
     for (const auto& i : AxisList) {
         i->setEnabled(true);
     }
+
+    ui->buttonBox->button(QDialogButtonBox::Save)->setEnabled(true);
+    ui->buttonBox->button(QDialogButtonBox::Apply)->setEnabled(true);
+    ui->buttonBox->button(QDialogButtonBox::RestoreDefaults)->setEnabled(true);
 }
 
 void ControlSettings::ConnectAxisInputs(QPushButton*& button) {
