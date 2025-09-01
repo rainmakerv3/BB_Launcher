@@ -3,6 +3,7 @@
 
 #include <filesystem>
 #include <QDialog>
+#include <SDL3/SDL_gamepad.h>
 
 namespace Ui {
 class LauncherSettings;
@@ -16,7 +17,7 @@ void CreateSettingsFile();
 void SetTheme(std::string theme);
 std::filesystem::path GetFoolproofKbmConfigFile(const std::string& game_id);
 std::string_view GetDefaultKeyboardConfig();
-void SaveUnifiedControl(bool setting);
+void SaveInputSettings(bool unifiedControl, std::string defaultID);
 void SaveTrophySettings(bool ShowEarned, bool ShowUnEarned, bool ShowHidden);
 
 extern std::string theme;
@@ -30,6 +31,7 @@ extern bool UnifiedInputConfig;
 extern std::string TrophyKey;
 extern std::string UpdateChannel;
 extern bool AutoUpdateShadEnabled;
+extern std::string DefaultControllerID;
 
 extern bool ShowEarnedTrophy;
 extern bool ShowNotEarnedTrophy;
@@ -58,3 +60,12 @@ private:
     const QStringList BackupNumList = {"1", "2", "3", "4", "5"};
     const QStringList BackupFreqList = {"5", "10", "15", "20", "25", "30"};
 };
+
+namespace GamepadSelect {
+
+int GetIndexfromGUID(SDL_JoystickID* gamepadIDs, int gamepadCount, std::string GUID);
+std::string GetGUIDString(SDL_JoystickID* gamepadIDs, int index);
+std::string GetSelectedGamepad();
+void SetSelectedGamepad(std::string GUID);
+
+} // namespace GamepadSelect

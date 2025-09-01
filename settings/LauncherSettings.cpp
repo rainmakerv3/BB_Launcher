@@ -23,8 +23,11 @@ bool Config::ShowHiddenTrophy = false;
 std::string Config::UpdateChannel = "Nightly";
 bool Config::AutoUpdateShadEnabled = false;
 bool Config::CheckPortableSettings = true;
+std::string Config::DefaultControllerID = "";
 
 const std::filesystem::path SettingsFile = Common::BBLFilesPath / "LauncherSettings.toml";
+
+static std::string SelectedGamepad = "";
 
 LauncherSettings::LauncherSettings(QWidget* parent)
     : QDialog(parent), ui(new Ui::LauncherSettings) {
@@ -228,6 +231,8 @@ void LoadLauncherSettings() {
 
         UnifiedInputConfig = toml::find_or<bool>(shadData, "Input", "useUnifiedInputConfig", true);
         TrophyKey = toml::find_or<std::string>(shadData, "Keys", "TrophyKey", "");
+        DefaultControllerID =
+            toml::find_or<std::string>(shadData, "General", "defaultControllerID", "");
 
         if (shadData.contains("GUI")) {
             const toml::value& GUI = shadData.at("GUI");
@@ -451,7 +456,7 @@ analog_deadzone = rightjoystick, 2
 )";
 }
 
-void SaveUnifiedControl(bool setting) {
+void SaveInputSettings(bool unifiedControl, std::string defaultID) {
     using namespace Config;
     toml::value data;
     std::error_code error;
@@ -474,7 +479,9 @@ void SaveUnifiedControl(bool setting) {
         }
     }
 
-    data["Input"]["useUnifiedInputConfig"] = setting;
+    data["Input"]["useUnifiedInputConfig"] = unifiedControl;
+    if (defaultID != "noIDsave")
+        data["General"]["defaultControllerID"] = defaultID;
 
     std::ofstream file(ShadConfig, std::ios::binary);
     file << data;
@@ -524,3 +531,48 @@ std::filesystem::path GetFoolproofKbmConfigFile(const std::string& game_id) {
 LauncherSettings::~LauncherSettings() {
     delete ui;
 }
+
+namespace GamepadSelect {
+
+int GetDefaultGamepad(SDL_JoystickID* gamepadIDs, int gamepadCount) {
+    char GUIDbuf[33];
+    if (Config::DefaultControllerID != "") {
+        for (int i = 0; i < gamepadCount; i++) {
+            SDL_GUIDToString(SDL_GetGamepadGUIDForID(gamepadIDs[i]), GUIDbuf, 33);
+            std::string currentGUID = std::string(GUIDbuf);
+            if (currentGUID == Config::DefaultControllerID) {
+                return i;
+            }
+        }
+    }
+    return -1;
+}
+
+int GetIndexfromGUID(SDL_JoystickID* gamepadIDs, int gamepadCount, std::string GUID) {
+    char GUIDbuf[33];
+    for (int i = 0; i < gamepadCount; i++) {
+        SDL_GUIDToString(SDL_GetGamepadGUIDForID(gamepadIDs[i]), GUIDbuf, 33);
+        std::string currentGUID = std::string(GUIDbuf);
+        if (currentGUID == GUID) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+std::string GetGUIDString(SDL_JoystickID* gamepadIDs, int index) {
+    char GUIDbuf[33];
+    SDL_GUIDToString(SDL_GetGamepadGUIDForID(gamepadIDs[index]), GUIDbuf, 33);
+    std::string GUID = std::string(GUIDbuf);
+    return GUID;
+}
+
+std::string GetSelectedGamepad() {
+    return SelectedGamepad;
+}
+
+void SetSelectedGamepad(std::string GUID) {
+    SelectedGamepad = GUID;
+}
+
+} // namespace GamepadSelect

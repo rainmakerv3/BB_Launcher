@@ -167,7 +167,7 @@ void hotkeys::CheckGamePad() {
     }
 
     int gamepad_count;
-    SDL_JoystickID* h_gamepads = SDL_GetGamepads(&gamepad_count);
+    h_gamepads = SDL_GetGamepads(&gamepad_count);
 
     if (!h_gamepads) {
         // handle
@@ -180,13 +180,23 @@ void hotkeys::CheckGamePad() {
         return;
     }
 
-    h_gamepad = SDL_OpenGamepad(h_gamepads[0]);
+    int defaultIndex =
+        GamepadSelect::GetIndexfromGUID(h_gamepads, gamepad_count, Config::DefaultControllerID);
+    int activeIndex = GamepadSelect::GetIndexfromGUID(h_gamepads, gamepad_count,
+                                                      GamepadSelect::GetSelectedGamepad());
+
+    if (activeIndex != -1) {
+        h_gamepad = SDL_OpenGamepad(h_gamepads[activeIndex]);
+    } else if (defaultIndex != -1) {
+        h_gamepad = SDL_OpenGamepad(h_gamepads[defaultIndex]);
+    } else {
+        // LOG_INFO(Input, "Got {} gamepads. Opening the first one.", gamepad_count);
+        h_gamepad = SDL_OpenGamepad(h_gamepads[0]);
+    };
 
     if (!h_gamepad) {
         // LOG_ERROR(Input, "Failed to open gamepad: {}", SDL_GetError());
     }
-
-    SDL_free(h_gamepads);
 }
 
 void hotkeys::StartTimer(QPushButton*& button, bool isButton) {
@@ -261,7 +271,7 @@ void hotkeys::pollSDLEvents() {
             return;
         }
 
-        if (event.type == SDL_EVENT_GAMEPAD_ADDED) {
+        if (event.type == SDL_EVENT_GAMEPAD_ADDED || event.type == SDL_EVENT_GAMEPAD_REMOVED) {
             CheckGamePad();
         }
 
@@ -376,6 +386,8 @@ void hotkeys::Cleanup() {
         SDL_CloseGamepad(h_gamepad);
         h_gamepad = nullptr;
     }
+
+    SDL_free(h_gamepads);
 
     SDL_Event quitLoop{};
     quitLoop.type = SDL_EVENT_QUIT;

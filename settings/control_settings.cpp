@@ -104,6 +104,27 @@ ControlSettings::ControlSettings(QWidget* parent) : QDialog(parent), ui(new Ui::
     connect(this, &ControlSettings::AxisChanged, this,
             [this]() { ConnectAxisInputs(MappingButton); });
 
+    connect(ui->ActiveGamepadBox, &QComboBox::currentIndexChanged, this,
+            &ControlSettings::ActiveControllerChanged);
+
+    connect(ui->DefaultGamepadButton, &QPushButton::clicked, this, [this]() {
+        ui->DefaultGamepadName->setText(ui->ActiveGamepadBox->currentText());
+        std::string GUID =
+            GamepadSelect::GetGUIDString(gamepads, ui->ActiveGamepadBox->currentIndex());
+        ui->DefaultGamepadLabel->setText(tr("ID: ") + QString::fromStdString(GUID).right(16));
+        Config::DefaultControllerID = GUID;
+        QMessageBox::information(this, tr("Default Controller Selected"),
+                                 tr("Active controller set as default"));
+    });
+
+    connect(ui->RemoveDefaultGamepadButton, &QPushButton::clicked, this, [this]() {
+        ui->DefaultGamepadName->setText(tr("No default selected"));
+        ui->DefaultGamepadLabel->setText(tr("n/a"));
+        Config::DefaultControllerID = "";
+        QMessageBox::information(this, tr("Default Controller Removed"),
+                                 tr("Default controller setting removed"));
+    });
+
     Polling = QtConcurrent::run(&ControlSettings::pollSDLEvents, this);
 }
 
@@ -311,7 +332,7 @@ void ControlSettings::SaveControllerConfig(bool CloseOnSave) {
     output_file.close();
 
     Config::UnifiedInputConfig = !ui->PerGameCheckBox->isChecked();
-    Config::SaveUnifiedControl(Config::UnifiedInputConfig);
+    Config::SaveInputSettings(Config::UnifiedInputConfig, Config::DefaultControllerID);
 
     if (CloseOnSave)
         QWidget::close();
@@ -606,6 +627,24 @@ void ControlSettings::OnProfileChanged() {
     SetUIValuestoMappings();
 }
 
+void ControlSettings::ActiveControllerChanged(int value) {
+    std::string GUIDstring = GamepadSelect::GetGUIDString(gamepads, value);
+    GamepadSelect::SetSelectedGamepad(GUIDstring);
+    QString GUID = QString::fromStdString(GUIDstring).right(16);
+    ui->ActiveGamepadLabel->setText("ID: " + GUID);
+
+    if (gamepad) {
+        SDL_CloseGamepad(gamepad);
+        gamepad = nullptr;
+    }
+
+    gamepad = SDL_OpenGamepad(gamepads[value]);
+
+    if (!gamepad) {
+        // LOG_ERROR(Input, "Failed to open gamepad: {}", SDL_GetError());
+    }
+}
+
 void ControlSettings::UpdateLightbarColor() {
     ui->LightbarColorFrame->setStyleSheet("");
     QString RValue = QString::number(ui->RSlider->value());
@@ -622,7 +661,7 @@ void ControlSettings::CheckGamePad() {
     }
 
     int gamepad_count;
-    SDL_JoystickID* gamepads = SDL_GetGamepads(&gamepad_count);
+    gamepads = SDL_GetGamepads(&gamepad_count);
 
     if (!gamepads) {
         // LOG_ERROR(Input, "Cannot get gamepad list: {}", SDL_GetError());
@@ -635,16 +674,61 @@ void ControlSettings::CheckGamePad() {
         return;
     }
 
-    // LOG_INFO(Input, "Got {} gamepads. Opening the first one.", gamepad_count);
-    gamepad = SDL_OpenGamepad(gamepads[0]);
+    QString defaultGUID = "";
+    int defaultIndex =
+        GamepadSelect::GetIndexfromGUID(gamepads, gamepad_count, Config::DefaultControllerID);
+    int activeIndex = GamepadSelect::GetIndexfromGUID(gamepads, gamepad_count,
+                                                      GamepadSelect::GetSelectedGamepad());
+
+    if (activeIndex != -1) {
+        gamepad = SDL_OpenGamepad(gamepads[activeIndex]);
+    } else if (defaultIndex != -1) {
+        gamepad = SDL_OpenGamepad(gamepads[defaultIndex]);
+    } else {
+        // LOG_INFO(Input, "Got {} gamepads. Opening the first one.", gamepad_count);
+        gamepad = SDL_OpenGamepad(gamepads[0]);
+    };
+
+    if (!gamepads || gamepad_count == 0) {
+        ui->ActiveGamepadBox->addItem("No gamepads detected");
+        ui->ActiveGamepadBox->setCurrentIndex(0);
+        return;
+    } else {
+        for (int i = 0; i < gamepad_count; i++) {
+            QString name = SDL_GetGamepadNameForID(gamepads[i]);
+            ui->ActiveGamepadBox->addItem(QString("%1: %2").arg(QString::number(i + 1), name));
+        }
+    }
+
+    if (defaultIndex != -1) {
+        defaultGUID =
+            QString::fromStdString(GamepadSelect::GetGUIDString(gamepads, defaultIndex)).right(16);
+        ui->DefaultGamepadName->setText(SDL_GetGamepadNameForID(gamepads[defaultIndex]));
+        ui->DefaultGamepadLabel->setText(tr("ID: ") + defaultGUID);
+    } else {
+        ui->DefaultGamepadName->setText("Default controller not connected");
+        ui->DefaultGamepadLabel->setText(tr("n/a"));
+    }
+
+    if (activeIndex != -1) {
+        QString GUID =
+            QString::fromStdString(GamepadSelect::GetGUIDString(gamepads, activeIndex)).right(16);
+        ui->ActiveGamepadLabel->setText(tr("ID: ") + GUID);
+        ui->ActiveGamepadBox->setCurrentIndex(activeIndex);
+    } else if (defaultIndex != -1) {
+        ui->ActiveGamepadLabel->setText(defaultGUID);
+        ui->ActiveGamepadBox->setCurrentIndex(defaultIndex);
+    } else {
+        QString GUID = QString::fromStdString(GamepadSelect::GetGUIDString(gamepads, 0)).right(16);
+        ui->ActiveGamepadLabel->setText("ID: " + GUID);
+        ui->ActiveGamepadBox->setCurrentIndex(0);
+    }
 
     if (!gamepad) {
         // LOG_ERROR(Input, "Failed to open gamepad 0: {}", SDL_GetError());
         SDL_free(gamepads);
         return;
     }
-
-    SDL_free(gamepads);
 }
 
 void ControlSettings::DisableMappingButtons() {
@@ -779,7 +863,8 @@ void ControlSettings::pollSDLEvents() {
             return;
         }
 
-        if (event.type == SDL_EVENT_GAMEPAD_ADDED) {
+        if (event.type == SDL_EVENT_GAMEPAD_ADDED || event.type == SDL_EVENT_GAMEPAD_REMOVED) {
+            ui->ActiveGamepadBox->clear();
             CheckGamePad();
         }
 
@@ -899,6 +984,8 @@ void ControlSettings::Cleanup() {
         SDL_CloseGamepad(gamepad);
         gamepad = nullptr;
     }
+
+    SDL_free(gamepads);
 
     SDL_Event quitLoop{};
     quitLoop.type = SDL_EVENT_QUIT;

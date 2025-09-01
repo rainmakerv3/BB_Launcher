@@ -49,6 +49,7 @@ private:
     QTimer* timer;
     QPushButton* MappingButton;
     SDL_Gamepad* h_gamepad = nullptr;
+    SDL_JoystickID* h_gamepads;
 
     // use QMap instead of QSet to maintain order of inserted strings
     QMap<int, QString> pressedInputs;
