@@ -6,11 +6,34 @@
 #include <QProgressBar>
 #include "ModManager.h"
 #include "modules/ui_ModManager.h"
+#include "settings/LauncherSettings.h"
 
 ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager) {
     ui->setupUi(this);
     ui->progressBar->setMinimum(0);
     ui->progressBar->setValue(0);
+
+    if (Config::theme == "Dark") {
+        ui->ActiveModList->setStyleSheet(
+            "QListView::item { background-color: #000000; }"              // Color for odd rows
+            "QListView::item:alternate { background-color: #242424; }"    // Color for even rows
+            "QListWidget::item:selected { background-color: #AAB7DF; }"); // Color for selected row
+
+        ui->InactiveModList->setStyleSheet(
+            "QListView::item { background-color: #000000; }"
+            "QListView::item:alternate { background-color: #242424; }"
+            "QListWidget::item:selected { background-color: #AAB7DF; }");
+    } else {
+        ui->ActiveModList->setStyleSheet(
+            "QListView::item { background-color: #ECECEC; }"
+            "QListView::item:alternate { background-color: #D3D3D3; }"
+            "QListWidget::item:selected { background-color: #AAB7DF; }");
+
+        ui->InactiveModList->setStyleSheet(
+            "QListView::item { background-color: #ECECEC; }"
+            "QListView::item:alternate { background-color: #D3D3D3; }"
+            "QListWidget::item:selected { background-color: #AAB7DF; }");
+    }
 
     ui->RecModsLabel->setText("<a "
                               "href=\"https://docs.google.com/document/d/"

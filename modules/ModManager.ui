@@ -66,7 +66,7 @@
           <set>QAbstractItemView::EditTrigger::EditKeyPressed</set>
          </property>
          <property name="alternatingRowColors">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
@@ -137,7 +137,7 @@
           <set>QAbstractItemView::EditTrigger::EditKeyPressed</set>
          </property>
          <property name="alternatingRowColors">
-          <bool>false</bool>
+          <bool>true</bool>
          </property>
          <property name="selectionBehavior">
           <enum>QAbstractItemView::SelectionBehavior::SelectRows</enum>
