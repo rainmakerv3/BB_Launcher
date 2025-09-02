@@ -199,6 +199,10 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->RCASSlider->setValue(toml::find_or<int>(data, "GPU", "rcasAttenuation", 500));
     ui->RCASValue->setText(QString::number(ui->RCASSlider->value() / 1000.0, 'f', 3));
 
+    QString translatedText_PresentMode = presentModeMap.key(
+        QString::fromStdString(toml::find_or<std::string>(data, "GPU", "presentMode", "Mailbox")));
+    ui->presentModeComboBox->setCurrentText(translatedText_PresentMode);
+
     QString save_data_path_string;
     Common::PathToQString(save_data_path_string, Common::SaveDir);
     ui->SavePathLineEdit->setText(save_data_path_string);
@@ -346,6 +350,8 @@ void ShadSettings::SaveSettings() {
     data["GPU"]["fsrEnabled"] = ui->FSRCheckBox->isChecked();
     data["GPU"]["rcasEnabled"] = ui->RCASCheckBox->isChecked();
     data["GPU"]["rcasAttenuation"] = ui->RCASSlider->value();
+    data["GPU"]["presentMode"] =
+        presentModeMap.value(ui->presentModeComboBox->currentText()).toStdString();
 
     data["Keys"]["TrophyKey"] = ui->trophyKeyLineEdit->text().toStdString();
     data["Settings"]["consoleLanguage"] =
