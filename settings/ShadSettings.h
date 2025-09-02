@@ -24,14 +24,11 @@ private:
     void SaveSettings();
     void SetDefaults();
     void UpdateDialog();
-    void LoadFSRValues();
-    void SaveFSRValues();
     void SaveUpdateSettings();
 
     std::unique_ptr<Ui::ShadSettings> ui;
 
     bool DevSettingsExists = false;
-    std::filesystem::path DevSettingsFile;
     std::map<std::string, int> languages;
     QString defaultTextEdit;
     int initialHeight;

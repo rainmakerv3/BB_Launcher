@@ -43,30 +43,16 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
     ui->hideCursorComboBox->addItem("Always");
 
     LoadValuesFromConfig();
-
     defaultTextEdit = "Point your mouse at an option to display its description.";
     ui->descriptionText->setText(defaultTextEdit);
-
-    if (!std::filesystem::exists(Common::GetShadUserDir() / "imgui.ini")) {
-        ui->FSRGroupBox->setVisible(false);
-    } else {
-        ui->FSRLabel->setVisible(false);
-        DevSettingsFile = Common::GetShadUserDir() / "imgui.ini";
-        DevSettingsExists = true;
-    }
-    LoadValuesFromConfig();
 
     connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QWidget::close);
 
     connect(ui->buttonBox, &QDialogButtonBox::clicked, this, [this](QAbstractButton* button) {
         if (button == ui->buttonBox->button(QDialogButtonBox::Save)) {
-            if (DevSettingsExists)
-                SaveFSRValues();
             SaveSettings();
             QWidget::close();
         } else if (button == ui->buttonBox->button(QDialogButtonBox::Apply)) {
-            if (DevSettingsExists)
-                SaveFSRValues();
             SaveSettings();
         } else if (button == ui->buttonBox->button(QDialogButtonBox::RestoreDefaults)) {
             SetDefaults();
@@ -208,6 +194,10 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->trophyKeyLineEdit->setText(
         QString::fromStdString(toml::find_or<std::string>(data, "Keys", "TrophyKey", "")));
     ui->trophyKeyLineEdit->setEchoMode(QLineEdit::Password);
+    ui->FSRCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "fsrEnabled", true));
+    ui->RCASCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "rcasEnabled", true));
+    ui->RCASSlider->setValue(toml::find_or<int>(data, "GPU", "rcasAttenuation", 500));
+    ui->RCASValue->setText(QString::number(ui->RCASSlider->value() / 1000.0, 'f', 3));
 
     QString save_data_path_string;
     Common::PathToQString(save_data_path_string, Common::SaveDir);
@@ -219,9 +209,6 @@ void ShadSettings::LoadValuesFromConfig() {
         toml::find_or<std::string>(data, "General", "FullscreenMode", "Borderless")));
     ui->backgroundControllerCheckBox->setChecked(
         toml::find_or<bool>(data, "Input", "backgroundControllerInput", false));
-
-    if (DevSettingsExists)
-        LoadFSRValues();
 
     ui->autoUpdateCheckBox->setChecked(Config::AutoUpdateShadEnabled);
     ui->updateComboBox->setCurrentText(QString::fromStdString(Config::UpdateChannel));
@@ -345,15 +332,21 @@ void ShadSettings::SaveSettings() {
     data["General"]["logType"] = ui->logTypeComboBox->currentText().toStdString();
     data["General"]["userName"] = ui->userNameLineEdit->text().toStdString();
     data["General"]["isDevKit"] = ui->DevkitCheckBox->isChecked();
+
     data["Input"]["cursorState"] = ui->hideCursorComboBox->currentIndex();
     data["Input"]["cursorHideTimeout"] = ui->idleTimeoutSpinBox->value();
     data["Input"]["isMotionControlsEnabled"] = ui->motionControlsCheckBox->isChecked();
     data["Input"]["backgroundControllerInput"] = ui->backgroundControllerCheckBox->isChecked();
+
     data["GPU"]["screenWidth"] = ui->widthSpinBox->value();
     data["GPU"]["screenHeight"] = ui->heightSpinBox->value();
     data["GPU"]["vblankDivider"] = ui->vblankSpinBox->value();
     data["GPU"]["copyGPUBuffers"] = ui->GPUBufferCheckBox->isChecked();
     data["GPU"]["readbacks"] = ui->ReadbacksCheckBox->isChecked();
+    data["GPU"]["fsrEnabled"] = ui->FSRCheckBox->isChecked();
+    data["GPU"]["rcasEnabled"] = ui->RCASCheckBox->isChecked();
+    data["GPU"]["rcasAttenuation"] = ui->RCASSlider->value();
+
     data["Keys"]["TrophyKey"] = ui->trophyKeyLineEdit->text().toStdString();
     data["Settings"]["consoleLanguage"] =
         languageIndexes[ui->consoleLanguageComboBox->currentIndex()];
@@ -390,79 +383,6 @@ void ShadSettings::SetDefaults() {
     ui->FSRCheckBox->setChecked(true);
     ui->RCASCheckBox->setChecked(true);
     ui->RCASSlider->setValue(250);
-}
-
-void ShadSettings::LoadFSRValues() {
-    std::fstream file(DevSettingsFile);
-    std::string line;
-    std::vector<std::string> lines;
-    int lineCount = 0;
-    int FSRVal;
-    int RCASVal;
-    float RCASAtenVal;
-
-    while (std::getline(file, line)) {
-        lineCount++;
-
-        if (line.contains("fsr_enabled")) {
-            std::string FSREnabledString(1, line.back());
-            FSRVal = std::stoi(FSREnabledString);
-        }
-
-        if (line.contains("fsr_rcas_enabled")) {
-            std::string RCASEnabledString(1, line.back());
-            RCASVal = std::stoi(RCASEnabledString);
-        }
-
-        if (line.contains("fsr_rcas_attenuation")) {
-            std::size_t equal_pos = line.find('=');
-            std::string RCASAtenString(line.substr(equal_pos + 1));
-            RCASAtenVal = std::stof(RCASAtenString);
-        }
-    }
-    file.close();
-
-    ui->FSRCheckBox->setChecked((FSRVal == 1 ? true : false));
-    ui->RCASCheckBox->setChecked((RCASVal == 1 ? true : false));
-    ui->RCASSlider->setValue(round(RCASAtenVal * 1000));
-
-    QString RCASValue = QString::number(RCASAtenVal, 'f', 3);
-    ui->RCASValue->setText(RCASValue);
-}
-
-void ShadSettings::SaveFSRValues() {
-    std::ifstream file(DevSettingsFile);
-    std::string line;
-    std::vector<std::string> lines;
-    int lineCount = 0;
-
-    while (std::getline(file, line)) {
-        lineCount++;
-
-        if (line.contains("fsr_enabled")) {
-            std::string FSRVal = ui->FSRCheckBox->isChecked() ? "1" : "0";
-            line = "fsr_enabled=" + FSRVal;
-        }
-
-        if (line.contains("fsr_rcas_enabled")) {
-            std::string RCASVal = ui->RCASCheckBox->isChecked() ? "1" : "0";
-            line = "fsr_rcas_enabled=" + RCASVal;
-        }
-
-        if (line.contains("fsr_rcas_attenuation")) {
-            float RCASAtenVal = ui->RCASSlider->value() / 1000.0;
-            line = "fsr_rcas_attenuation=" + std::to_string(RCASAtenVal);
-        }
-
-        lines.push_back(line);
-    }
-    file.close();
-
-    std::ofstream output_file(DevSettingsFile);
-    for (auto const& line : lines) {
-        output_file << line << '\n';
-    }
-    output_file.close();
 }
 
 void ShadSettings::SaveUpdateSettings() {
