@@ -30,7 +30,7 @@ std::filesystem::path installUpdatePath;
 std::filesystem::path SaveDir;
 std::filesystem::path shadPs4Executable;
 
-const char VERSION[] = "Release9.01";
+const char VERSION[] = "Release9.02";
 
 std::filesystem::path GetCurrentPath() {
     std::filesystem::path currentPath;
