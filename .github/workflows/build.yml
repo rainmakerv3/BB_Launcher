@@ -57,7 +57,7 @@ jobs:
     - name: Setup Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: 6.9.2
+        version: 6.9.3
         host: windows
         target: desktop
         arch: win64_msvc2022_64
@@ -92,7 +92,7 @@ jobs:
     - name: Setup Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: 6.9.2
+        version: 6.9.3
         host: windows
         target: desktop
         arch: win64_msvc2022_64
@@ -132,7 +132,7 @@ jobs:
     - name: Setup Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: 6.9.2
+        version: 6.9.3
         host: mac
         target: desktop
         arch: clang_64
