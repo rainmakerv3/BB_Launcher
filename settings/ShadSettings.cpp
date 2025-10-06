@@ -26,17 +26,25 @@
 #include <date/tz_private.h>
 #endif
 
-ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSettings) {
+ShadSettings::ShadSettings(bool game_specific, QWidget* parent)
+    : is_game_specific(game_specific), QDialog(parent), ui(new Ui::ShadSettings) {
     ui->setupUi(this);
     ui->tabWidgetSettings->setUsesScrollButtons(false);
     initialHeight = this->height();
+
+    if (game_specific) {
+        ui->tabWidgetSettings->setTabVisible(2, false);
+    } else {
+        ui->tabWidgetSettings->setTabVisible(1, false);
+    }
 
     ui->buttonBox->button(QDialogButtonBox::StandardButton::Close)->setFocus();
 
     ui->consoleLanguageComboBox->addItems(languageNames);
 
-    ui->fullscreenModeComboBox->addItem("Borderless");
-    ui->fullscreenModeComboBox->addItem("True");
+    ui->fullscreenModeComboBox->addItem("Fullscreen (Borderless)");
+    ui->fullscreenModeComboBox->addItem("Windowed");
+    ui->fullscreenModeComboBox->addItem("Fullscreen");
 
     ui->hideCursorComboBox->addItem("Never");
     ui->hideCursorComboBox->addItem("Idle");
@@ -45,6 +53,24 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
     LoadValuesFromConfig();
     defaultTextEdit = "Point your mouse at an option to display its description.";
     ui->descriptionText->setText(defaultTextEdit);
+
+    if (game_specific) {
+        QPushButton* deleteButton = new QPushButton("Delete Game-specific config");
+        ui->buttonBox->addButton(deleteButton, QDialogButtonBox::ActionRole);
+
+        connect(deleteButton, &QPushButton::pressed, this, [this]() {
+            std::string filename = Common::game_serial + ".toml";
+            std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
+
+            if (QMessageBox::Yes ==
+                QMessageBox::question(this, "Confirm deletion",
+                                      "Are you sure you want to delete the game-specific config?",
+                                      QMessageBox::Yes | QMessageBox::No)) {
+                std::filesystem::remove(gsConfig);
+                QWidget::close();
+            }
+        });
+    }
 
     connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QWidget::close);
 
@@ -123,7 +149,6 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
     // Descriptions
     {
         ui->consoleLanguageGroupBox->installEventFilter(this);
-        ui->fullscreenCheckBox->installEventFilter(this);
         ui->FullscreenModeGroupBox->installEventFilter(this);
         ui->ReadbacksCheckBox->installEventFilter(this);
         ui->GPUBufferCheckBox->installEventFilter(this);
@@ -149,8 +174,11 @@ ShadSettings::ShadSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ShadSe
 }
 
 void ShadSettings::LoadValuesFromConfig() {
+    std::string filename = Common::game_serial + ".toml";
+    std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
+    std::filesystem::path shadConfigFile =
+        is_game_specific ? gsConfig : Common::GetShadUserDir() / "config.toml";
 
-    std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
     toml::value data;
 
     try {
@@ -169,24 +197,24 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->consoleLanguageComboBox->setCurrentIndex(
         std::distance(languageIndexes.begin(),
                       std::find(languageIndexes.begin(), languageIndexes.end(),
-                                toml::find_or<int>(data, "Settings", "consoleLanguage", 6))) %
+                                toml::find_or<int>(data, "Settings", "consoleLanguage", 1))) %
         languageIndexes.size());
     ui->hideCursorComboBox->setCurrentIndex(toml::find_or<int>(data, "Input", "cursorState", 1));
     OnCursorStateChanged(toml::find_or<int>(data, "Input", "cursorState", 1));
     ui->idleTimeoutSpinBox->setValue(toml::find_or<int>(data, "Input", "cursorHideTimeout", 5));
     ui->widthSpinBox->setValue(toml::find_or<int>(data, "GPU", "screenWidth", 1280));
     ui->heightSpinBox->setValue(toml::find_or<int>(data, "GPU", "screenHeight", 720));
-    ui->vblankSpinBox->setValue(toml::find_or<int>(data, "GPU", "vblankDivider", 1));
+    ui->vblankSpinBox->setValue(toml::find_or<int>(data, "GPU", "vblankFrequency", 60));
     ui->ReadbacksCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "readbacks", false));
     ui->GPUBufferCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "copyGPUBuffers", false));
     ui->disableTrophycheckBox->setChecked(
         toml::find_or<bool>(data, "General", "isTrophyPopupDisabled", false));
     ui->discordRPCCheckbox->setChecked(
-        toml::find_or<bool>(data, "General", "enableDiscordRPC", true));
-    ui->fullscreenCheckBox->setChecked(toml::find_or<bool>(data, "General", "Fullscreen", false));
+        toml::find_or<bool>(data, "General", "enableDiscordRPC", false));
     ui->DevkitCheckBox->setChecked(toml::find_or<bool>(data, "General", "isDevKit", false));
+    ui->dmemSpinBox->setValue(toml::find_or<int>(data, "General", "extraDmemInMbytes", 0));
     ui->logTypeComboBox->setCurrentText(
-        QString::fromStdString(toml::find_or<std::string>(data, "General", "logType", "async")));
+        QString::fromStdString(toml::find_or<std::string>(data, "General", "logType", "sync")));
     ui->logFilterLineEdit->setText(
         QString::fromStdString(toml::find_or<std::string>(data, "General", "logFilter", "")));
     ui->userNameLineEdit->setText(
@@ -196,7 +224,7 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->trophyKeyLineEdit->setEchoMode(QLineEdit::Password);
     ui->FSRCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "fsrEnabled", true));
     ui->RCASCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "rcasEnabled", true));
-    ui->RCASSlider->setValue(toml::find_or<int>(data, "GPU", "rcasAttenuation", 500));
+    ui->RCASSlider->setValue(toml::find_or<int>(data, "GPU", "rcasAttenuation", 250));
     ui->RCASValue->setText(QString::number(ui->RCASSlider->value() / 1000.0, 'f', 3));
 
     QString translatedText_PresentMode = presentModeMap.key(
@@ -208,9 +236,9 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->SavePathLineEdit->setText(save_data_path_string);
 
     ui->motionControlsCheckBox->setChecked(
-        toml::find_or<bool>(data, "Input", "isMotionControlsEnabled", true));
+        toml::find_or<bool>(data, "Input", "isMotionControlsEnabled", false));
     ui->fullscreenModeComboBox->setCurrentText(QString::fromStdString(
-        toml::find_or<std::string>(data, "General", "FullscreenMode", "Borderless")));
+        toml::find_or<std::string>(data, "GPU", "FullscreenMode", "Windowed")));
     ui->backgroundControllerCheckBox->setChecked(
         toml::find_or<bool>(data, "Input", "backgroundControllerInput", false));
 
@@ -238,8 +266,6 @@ void ShadSettings::updateNoteTextEdit(const QString& elementName) {
     // General
     if (elementName == "consoleLanguageGroupBox") {
         text = consoleLanguageGroupBoxtext;
-    } else if (elementName == "fullscreenCheckBox") {
-        text = fullscreenCheckBoxtext;
     } else if (elementName == "FullscreenModeGroupBox") {
         text = fullscreenModeGroupBoxtext;
     } else if (elementName == "ReadbacksCheckBox") {
@@ -283,7 +309,7 @@ void ShadSettings::updateNoteTextEdit(const QString& elementName) {
     } else if (elementName == "heightGroupBox") {
         text = resolutionLayouttext;
     } else if (elementName == "heightDivider") {
-        text = heightDividertext;
+        text = vblanktext;
     }
 
     ui->descriptionText->setText(text.replace("\\n", "\n"));
@@ -308,7 +334,10 @@ bool ShadSettings::eventFilter(QObject* obj, QEvent* event) {
 
 void ShadSettings::SaveSettings() {
     toml::value data;
-    std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
+    std::string filename = Common::game_serial + ".toml";
+    std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
+    std::filesystem::path shadConfigFile =
+        is_game_specific ? gsConfig : Common::GetShadUserDir() / "config.toml";
 
     std::error_code error;
     if (std::filesystem::exists(shadConfigFile, error)) {
@@ -328,14 +357,25 @@ void ShadSettings::SaveSettings() {
         }
     }
 
-    data["General"]["Fullscreen"] = ui->fullscreenCheckBox->isChecked();
-    data["General"]["FullscreenMode"] = ui->fullscreenModeComboBox->currentText().toStdString();
+    if (is_game_specific) {
+        data["General"]["isDevKit"] = ui->DevkitCheckBox->isChecked();
+        data["General"]["extraDmemInMbytes"] = ui->dmemSpinBox->value();
+
+        data["GPU"]["readbacks"] = ui->ReadbacksCheckBox->isChecked();
+        data["GPU"]["vblankFrequency"] = ui->vblankSpinBox->value();
+    } else {
+        data["General"]["enableDiscordRPC"] = ui->discordRPCCheckbox->isChecked();
+
+        data["Keys"]["TrophyKey"] = ui->trophyKeyLineEdit->text().toStdString();
+
+        Config::TrophyKey = ui->trophyKeyLineEdit->text().toStdString();
+        SaveUpdateSettings();
+    }
+
     data["General"]["isTrophyPopupDisabled"] = ui->disableTrophycheckBox->isChecked();
-    data["General"]["enableDiscordRPC"] = ui->discordRPCCheckbox->isChecked();
     data["General"]["logFilter"] = ui->logFilterLineEdit->text().toStdString();
     data["General"]["logType"] = ui->logTypeComboBox->currentText().toStdString();
     data["General"]["userName"] = ui->userNameLineEdit->text().toStdString();
-    data["General"]["isDevKit"] = ui->DevkitCheckBox->isChecked();
 
     data["Input"]["cursorState"] = ui->hideCursorComboBox->currentIndex();
     data["Input"]["cursorHideTimeout"] = ui->idleTimeoutSpinBox->value();
@@ -344,26 +384,23 @@ void ShadSettings::SaveSettings() {
 
     data["GPU"]["screenWidth"] = ui->widthSpinBox->value();
     data["GPU"]["screenHeight"] = ui->heightSpinBox->value();
-    data["GPU"]["vblankDivider"] = ui->vblankSpinBox->value();
     data["GPU"]["copyGPUBuffers"] = ui->GPUBufferCheckBox->isChecked();
-    data["GPU"]["readbacks"] = ui->ReadbacksCheckBox->isChecked();
     data["GPU"]["fsrEnabled"] = ui->FSRCheckBox->isChecked();
     data["GPU"]["rcasEnabled"] = ui->RCASCheckBox->isChecked();
     data["GPU"]["rcasAttenuation"] = ui->RCASSlider->value();
+    data["GPU"]["FullscreenMode"] = ui->fullscreenModeComboBox->currentText().toStdString();
     data["GPU"]["presentMode"] =
         presentModeMap.value(ui->presentModeComboBox->currentText()).toStdString();
 
-    data["Keys"]["TrophyKey"] = ui->trophyKeyLineEdit->text().toStdString();
+    bool isFullscreen = ui->fullscreenModeComboBox->currentText() != "Windowed";
+    data["GPU"]["Fullscreen"] = isFullscreen;
+
     data["Settings"]["consoleLanguage"] =
         languageIndexes[ui->consoleLanguageComboBox->currentIndex()];
 
-    Config::TrophyKey = ui->trophyKeyLineEdit->text().toStdString();
-
-    std::ofstream file(Common::GetShadUserDir() / "config.toml", std::ios::binary);
+    std::ofstream file(shadConfigFile, std::ios::binary);
     file << data;
     file.close();
-
-    SaveUpdateSettings();
 }
 
 void ShadSettings::SetDefaults() {
@@ -372,23 +409,25 @@ void ShadSettings::SetDefaults() {
     ui->idleTimeoutSpinBox->setValue(5);
     ui->widthSpinBox->setValue(1280);
     ui->heightSpinBox->setValue(720);
-    ui->vblankSpinBox->setValue(1);
+    ui->vblankSpinBox->setValue(60);
     ui->disableTrophycheckBox->setChecked(false);
-    ui->discordRPCCheckbox->setChecked(true);
-    ui->fullscreenCheckBox->setChecked(false);
+    ui->discordRPCCheckbox->setChecked(false);
     ui->ReadbacksCheckBox->setChecked(false);
     ui->DevkitCheckBox->setChecked(false);
     ui->GPUBufferCheckBox->setChecked(false);
-    ui->logTypeComboBox->setCurrentText("async");
+    ui->logTypeComboBox->setCurrentText("sync");
     ui->logFilterLineEdit->setText("");
     ui->userNameLineEdit->setText("shadPS4");
     ui->updateComboBox->setCurrentText("Nightly");
-    ui->motionControlsCheckBox->setChecked(true);
+    ui->autoUpdateCheckBox->setChecked(false);
+    ui->motionControlsCheckBox->setChecked(false);
     ui->backgroundControllerCheckBox->setChecked(false);
-    ui->fullscreenModeComboBox->setCurrentText("Borderless");
+    ui->fullscreenModeComboBox->setCurrentText("Windowed");
     ui->FSRCheckBox->setChecked(true);
     ui->RCASCheckBox->setChecked(true);
     ui->RCASSlider->setValue(250);
+    ui->presentModeComboBox->setCurrentText("Mailbox");
+    ui->dmemSpinBox->setValue(0);
 }
 
 void ShadSettings::SaveUpdateSettings() {

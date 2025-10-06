@@ -130,12 +130,32 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     connect(ui->shadSettingsButton, &QPushButton::pressed, this, [this]() {
         if (!std::filesystem::exists(Common::GetShadUserDir() / "config.toml")) {
             QMessageBox::warning(
-                this, "No shadPS4 config file found. Run shadPS4 once to generate it.",
+                this, "No global config file found",
                 QString::fromStdString((Common::GetShadUserDir() / "config.toml").string() +
-                                       " not found"));
+                                       " not found. Run shadPS4 once to generate it."));
             return;
         }
-        ShadSettings* ShadSettingsWindow = new ShadSettings(this);
+        ShadSettings* ShadSettingsWindow = new ShadSettings(false, this);
+        ShadSettingsWindow->exec();
+    });
+
+    connect(ui->shadSettingsGSButton, &QPushButton::pressed, this, [this]() {
+        std::string filename = Common::game_serial + ".toml";
+        std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
+
+        if (!std::filesystem::exists(gsConfig)) {
+            if (QMessageBox::Yes ==
+                QMessageBox::question(this, "No game-specific config file found",
+                                      QString::fromStdString(gsConfig.string()) +
+                                          " not found. Do you want to create it?",
+                                      QMessageBox::Yes | QMessageBox::No)) {
+                Config::CreateGSFile();
+            } else {
+                return;
+            }
+        }
+
+        ShadSettings* ShadSettingsWindow = new ShadSettings(true, this);
         ShadSettingsWindow->exec();
     });
 

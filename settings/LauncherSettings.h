@@ -19,6 +19,7 @@ std::filesystem::path GetFoolproofKbmConfigFile(const std::string& game_id);
 std::string_view GetDefaultKeyboardConfig();
 void SaveInputSettings(bool unifiedControl, std::string defaultID);
 void SaveTrophySettings(bool ShowEarned, bool ShowUnEarned, bool ShowHidden);
+void CreateGSFile();
 
 extern std::string theme;
 extern bool SoundFixEnabled;

@@ -153,6 +153,19 @@ void LauncherSettings::OnBackupStateChanged() {
 
 namespace Config {
 
+void CreateGSFile() {
+    std::string filename = Common::game_serial + ".toml";
+    std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
+
+    toml::ordered_value data;
+
+    data["General"]["extraDmemInMbytes"] = 0;
+
+    std::ofstream file(gsConfig, std::ios::binary);
+    file << data;
+    file.close();
+}
+
 void LoadLauncherSettings() {
     using namespace Config;
 

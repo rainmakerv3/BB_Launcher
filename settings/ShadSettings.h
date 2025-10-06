@@ -12,7 +12,7 @@ class ShadSettings;
 class ShadSettings : public QDialog {
     Q_OBJECT
 public:
-    explicit ShadSettings(QWidget* parent = nullptr);
+    explicit ShadSettings(bool game_specific, QWidget* parent = nullptr);
     ~ShadSettings();
 
     bool eventFilter(QObject* obj, QEvent* event) override;
@@ -28,7 +28,7 @@ private:
 
     std::unique_ptr<Ui::ShadSettings> ui;
 
-    bool DevSettingsExists = false;
+    bool is_game_specific;
     std::map<std::string, int> languages;
     QString defaultTextEdit;
     int initialHeight;
@@ -77,11 +77,8 @@ private:
         "Console Language:\nSets the language that the PS4 game uses.\nIt's recommended to set "
         "this to "
         "a language the game supports, which will vary by region.";
-    const QString fullscreenCheckBoxtext = "Enable Full Screen:\nAutomatically puts the game "
-                                           "window into full-screen mode.\nThis can be "
-                                           "toggled by pressing the F11 key.";
     const QString fullscreenModeGroupBoxtext =
-        "Fullscreen Mode:\nChoose between borderless or exclusive fullscreen mode";
+        "Fullscreen Mode:\nChoose between windowed, borderless or exclusive fullscreen mode";
     const QString ReadbacksCheckBoxtext =
         "Enable GPU readbacks which fixed vertex explosions in Bloodborne without mods. This WIP "
         "implementation hits performance significantly.";
@@ -129,10 +126,11 @@ private:
         "Width/Height:\nSets the size of the emulator window at launch, which can be resized "
         "during "
         "gameplay.\nThis is different from the in-game resolution.";
-    const QString heightDividertext =
-        "Vblank Divider:\nThe frame rate at which the emulator refreshes at is multiplied by this "
-        "number. Changing this may have adverse effects, such as increasing the game speed, or "
-        "breaking critical game functionality that does not expect this to change!";
+    const QString vblanktext =
+        "Vblank Freqency:\nThe frame rate at which the emulator refreshes at (60hz is the "
+        "baseline, whether the game runs at 30 or 60fps). Changing this may have adverse effects, "
+        "such as increasing the game speed, or breaking critical game functionality that does not "
+        "expect this to change!";
     const QString DevkitCheckBoxtext =
         "Enabled Devkit mode for shadPS4, this is required to use the 1440p patch as the game "
         "crashes otherwise";

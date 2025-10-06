@@ -46,7 +46,7 @@
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>370</y>
+      <y>380</y>
       <width>131</width>
       <height>20</height>
      </rect>
@@ -59,7 +59,7 @@
     <property name="geometry">
      <rect>
       <x>380</x>
-      <y>370</y>
+      <y>380</y>
       <width>131</width>
       <height>20</height>
      </rect>
@@ -72,7 +72,7 @@
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>390</y>
+      <y>400</y>
       <width>671</width>
       <height>271</height>
      </rect>
@@ -129,9 +129,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>190</y>
+      <y>170</y>
       <width>711</width>
-      <height>81</height>
+      <height>94</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -151,10 +151,21 @@
          </property>
         </widget>
        </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_9">
        <item>
         <widget class="QPushButton" name="shadSettingsButton">
          <property name="text">
-          <string>shadPS4 Settings</string>
+          <string>shadPS4 Settings (global)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="shadSettingsGSButton">
+         <property name="text">
+          <string>shadPS4 Settings (game-specific)</string>
          </property>
         </widget>
        </item>
@@ -191,7 +202,7 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>20</y>
+      <y>10</y>
       <width>521</width>
       <height>144</height>
      </rect>
