@@ -128,6 +128,9 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->shadSettingsButton, &QPushButton::pressed, this, [this]() {
+        if (!CheckBBInstall())
+            return;
+
         if (!std::filesystem::exists(Common::GetShadUserDir() / "config.toml")) {
             QMessageBox::warning(
                 this, "No global config file found",
@@ -140,6 +143,9 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->shadSettingsGSButton, &QPushButton::pressed, this, [this]() {
+        if (!CheckBBInstall())
+            return;
+
         std::string filename = Common::game_serial + ".toml";
         std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
 
@@ -188,7 +194,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->HotkeyButton, &QPushButton::clicked, this, [this]() {
-        hotkeys* HKWindow = new hotkeys(this);
+        Hotkeys* HKWindow = new Hotkeys(this);
         HKWindow->exec();
     });
 
