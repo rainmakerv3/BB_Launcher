@@ -511,6 +511,9 @@ QIcon BBLauncher::RecolorIcon(const QIcon& icon, bool isWhite) {
 void BBLauncher::onGameClosed() {
     isGameRunning = false;
     is_paused = false;
+
+    if (noGUIset)
+        QApplication::quit();
 }
 
 void BBLauncher::RunGame() {
