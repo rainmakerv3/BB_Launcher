@@ -27,6 +27,12 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     : QMainWindow(parent), noGUIset(noGUI), noinstancerunning(noInstanceRunning),
       ui(new Ui::BBLauncher) {
 
+    m_ipc_client = std::make_shared<IpcClient>(this);
+
+    m_ipc_client->gameClosedFunc = [this]() { onGameClosed(); };
+    m_ipc_client->restartEmulatorFunc = [this]() { RestartEmulator(); };
+    m_ipc_client->startGameFunc = [this]() { RunGame(); };
+
     ui->setupUi(this);
     Config::LoadLauncherSettings();
 
@@ -113,7 +119,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     connect(ui->PatchesButton, &QPushButton::pressed, this, [this]() {
         if (!CheckBBInstall())
             return;
-        CheatsPatches* cheatsPatches = new CheatsPatches(this);
+        CheatsPatches* cheatsPatches = new CheatsPatches(m_ipc_client, isGameRunning, this);
         cheatsPatches->show();
         connect(this, &QWidget::destroyed, cheatsPatches,
                 [cheatsPatches]() { cheatsPatches->deleteLater(); });
@@ -252,11 +258,6 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         }
     }
 #endif
-
-    m_ipc_client = std::make_shared<IpcClient>(this);
-    m_ipc_client->gameClosedFunc = [this]() { onGameClosed(); };
-    m_ipc_client->restartEmulatorFunc = [this]() { RestartEmulator(); };
-    m_ipc_client->startGameFunc = [this]() { RunGame(); };
 
     if (noGUI && noInstanceRunning)
         StartGameWithArgs({});

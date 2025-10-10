@@ -35,7 +35,8 @@ QImage icon;
 QString gameVersion;
 QString qserial;
 
-CheatsPatches::CheatsPatches(QWidget* parent) : QDialog(parent) {
+CheatsPatches::CheatsPatches(std::shared_ptr<IpcClient> client, bool game_running, QWidget* parent)
+    : m_ipc_client(client), is_game_running(game_running), QDialog(parent) {
     this->setModal(true);
     setupUI();
     resize(500, 400);
@@ -50,8 +51,14 @@ void CheatsPatches::setupUI() {
     defaultTextEdit = defaultTextEditMSG;
     defaultTextEdit.replace("\\n", "\n");
 
+    QString CHEATS_DIR_QString;
+    Common::PathToQString(CHEATS_DIR_QString, Common::GetShadUserDir() / "cheats");
+
     QString PATCHS_DIR_QString;
     Common::PathToQString(PATCHS_DIR_QString, Common::GetShadUserDir() / "patches");
+
+    QString NameCheatJson = QString::fromStdString(Common::game_serial + "_01.09.json");
+    m_cheatFilePath = CHEATS_DIR_QString + "/" + NameCheatJson;
 
     QHBoxLayout* mainLayout = new QHBoxLayout(this);
 
@@ -98,19 +105,103 @@ void CheatsPatches::setupUI() {
 
     // Create the tab widget
     QTabWidget* tabWidget = new QTabWidget();
+    QWidget* cheatsTab = new QWidget();
     QWidget* patchesTab = new QWidget();
 
     // Layouts for the tabs
+    QVBoxLayout* cheatsLayout = new QVBoxLayout();
     QVBoxLayout* patchesLayout = new QVBoxLayout();
 
+    // Setup the cheats tab
+    QGroupBox* cheatsGroupBox = new QGroupBox();
+    rightLayout = new QVBoxLayout(cheatsGroupBox);
+    rightLayout->setAlignment(Qt::AlignTop);
+
+    cheatsGroupBox->setLayout(rightLayout);
     QScrollArea* scrollArea = new QScrollArea();
     scrollArea->setWidgetResizable(true);
+    scrollArea->setWidget(cheatsGroupBox);
     scrollArea->setMinimumHeight(490);
+    cheatsLayout->addWidget(scrollArea);
 
     // QListView
     listView_selectFile = new QListView();
     listView_selectFile->setSelectionMode(QAbstractItemView::SingleSelection);
     listView_selectFile->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    // Add QListView to layout
+    QVBoxLayout* fileListLayout = new QVBoxLayout();
+    fileListLayout->addWidget(new QLabel(tr("Select Cheat File:")));
+    fileListLayout->addWidget(listView_selectFile);
+    cheatsLayout->addLayout(fileListLayout, 2);
+
+    // Call the method to fill the list of cheat files
+    populateFileListCheats();
+
+    QLabel* repositoryLabel = new QLabel(tr("Repository:"));
+    repositoryLabel->setAlignment(Qt::AlignLeft);
+    repositoryLabel->setAlignment(Qt::AlignVCenter);
+
+    // Add a combo box and a download button
+    QHBoxLayout* controlLayout = new QHBoxLayout();
+    controlLayout->addWidget(repositoryLabel);
+    controlLayout->setAlignment(Qt::AlignLeft);
+    QComboBox* downloadComboBox = new QComboBox();
+
+    downloadComboBox->addItem("GoldHEN", "GoldHEN");
+    downloadComboBox->addItem("shadPS4", "shadPS4");
+
+    controlLayout->addWidget(downloadComboBox);
+
+    QPushButton* downloadButton = new QPushButton(tr("Download Cheats"));
+    connect(downloadButton, &QPushButton::clicked, [this, downloadComboBox]() {
+        QString source = downloadComboBox->currentData().toString();
+        downloadCheats(source, QString::fromStdString(Common::game_serial), "01.09", true);
+    });
+
+    QPushButton* deleteCheatButton = new QPushButton(tr("Delete File"));
+    connect(deleteCheatButton, &QPushButton::clicked, [this, CHEATS_DIR_QString]() {
+        QStringListModel* model = qobject_cast<QStringListModel*>(listView_selectFile->model());
+        if (!model) {
+            return;
+        }
+        QItemSelectionModel* selectionModel = listView_selectFile->selectionModel();
+        if (!selectionModel) {
+            return;
+        }
+        QModelIndexList selectedIndexes = selectionModel->selectedIndexes();
+        if (selectedIndexes.isEmpty()) {
+            QMessageBox::warning(
+                this, tr("Delete File"),
+                tr("No files selected.") + "\n" +
+                    tr("You can delete the cheats you don't want after downloading them."));
+            return;
+        }
+        QModelIndex selectedIndex = selectedIndexes.first();
+        QString selectedFileName = model->data(selectedIndex).toString();
+
+        int ret = QMessageBox::warning(
+            this, tr("Delete File"),
+            QString(tr("Do you want to delete the selected file?\\n%1").replace("\\n", "\n"))
+                .arg(selectedFileName),
+            QMessageBox::Yes | QMessageBox::No);
+
+        if (ret == QMessageBox::Yes) {
+            QString filePath = CHEATS_DIR_QString + "/" + selectedFileName;
+            QFile::remove(filePath);
+            populateFileListCheats();
+        }
+    });
+
+    QPushButton* closeButton = new QPushButton(tr("Close"));
+    connect(closeButton, &QPushButton::clicked, [this]() { QWidget::close(); });
+
+    controlLayout->addWidget(downloadButton);
+    controlLayout->addWidget(deleteCheatButton);
+    controlLayout->addWidget(closeButton);
+
+    cheatsLayout->addLayout(controlLayout);
+    cheatsTab->setLayout(cheatsLayout);
 
     // Setup the patches tab
     QGroupBox* patchesGroupBox = new QGroupBox();
@@ -201,9 +292,15 @@ void CheatsPatches::setupUI() {
 
     patchesLayout->addLayout(patchesControlLayout);
     patchesTab->setLayout(patchesLayout);
+
+    tabWidget->addTab(cheatsTab, tr("Cheats"));
     tabWidget->addTab(patchesTab, "Patches");
 
-    populateFileListPatches();
+    connect(tabWidget, &QTabWidget::currentChanged, this, [this](int index) {
+        if (index == 1) {
+            populateFileListPatches();
+        }
+    });
 
     mainLayout->addWidget(gameInfoGroupBox, 1);
     mainLayout->addWidget(tabWidget, 3);
@@ -899,4 +996,350 @@ void CheatsPatches::readGameInfo() {
     sfofile.read(&version[0], 4);
     // gameVersion = "0" + QString::fromStdString(version);
     gameVersion = "01.09";
+}
+
+void CheatsPatches::clearListCheats() {
+    QLayoutItem* item;
+    while ((item = rightLayout->takeAt(0)) != nullptr) {
+        QWidget* widget = item->widget();
+        if (widget) {
+            delete widget;
+        } else {
+            QLayout* layout = item->layout();
+            if (layout) {
+                QLayoutItem* innerItem;
+                while ((innerItem = layout->takeAt(0)) != nullptr) {
+                    QWidget* innerWidget = innerItem->widget();
+                    if (innerWidget) {
+                        delete innerWidget;
+                    }
+                    delete innerItem;
+                }
+                delete layout;
+            }
+        }
+    }
+    m_cheats.clear();
+    m_cheatCheckBoxes.clear();
+}
+
+void CheatsPatches::populateFileListCheats() {
+    clearListCheats();
+
+    QString cheatsDir;
+    Common::PathToQString(cheatsDir, Common::GetShadUserDir() / "cheats");
+
+    QString fullGameVersion = "01.09";
+    QString modifiedGameVersion = fullGameVersion.mid(1);
+
+    QString patternWithFirstChar =
+        QString::fromStdString(Common::game_serial) + "_" + fullGameVersion + "*.json";
+    QString patternWithoutFirstChar =
+        QString::fromStdString(Common::game_serial) + "_" + modifiedGameVersion + "*.json";
+
+    QDir dir(cheatsDir);
+    QStringList filters;
+    filters << patternWithFirstChar << patternWithoutFirstChar;
+    dir.setNameFilters(filters);
+
+    QFileInfoList fileList = dir.entryInfoList(QDir::Files);
+    QStringList fileNames;
+
+    for (const QFileInfo& fileInfo : fileList) {
+        fileNames << fileInfo.fileName();
+    }
+
+    QStringListModel* model = new QStringListModel(fileNames, this);
+    listView_selectFile->setModel(model);
+
+    connect(listView_selectFile->selectionModel(), &QItemSelectionModel::selectionChanged, this,
+            [this]() {
+                QModelIndexList selectedIndexes =
+                    listView_selectFile->selectionModel()->selectedIndexes();
+                if (!selectedIndexes.isEmpty()) {
+
+                    QString selectedFileName = selectedIndexes.first().data().toString();
+                    QString cheatsDir;
+                    Common::PathToQString(cheatsDir, Common::GetShadUserDir() / "cheats");
+
+                    QFile file(cheatsDir + "/" + selectedFileName);
+                    if (file.open(QIODevice::ReadOnly)) {
+                        QByteArray jsonData = file.readAll();
+                        QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
+                        QJsonObject jsonObject = jsonDoc.object();
+                        QJsonArray modsArray = jsonObject["mods"].toArray();
+                        QJsonArray creditsArray = jsonObject["credits"].toArray();
+                        addCheatsToLayout(modsArray, creditsArray);
+                    }
+                }
+            });
+
+    if (!fileNames.isEmpty()) {
+        QModelIndex firstIndex = model->index(0, 0);
+        listView_selectFile->selectionModel()->select(firstIndex, QItemSelectionModel::Select |
+                                                                      QItemSelectionModel::Rows);
+        listView_selectFile->setCurrentIndex(firstIndex);
+    }
+}
+
+void CheatsPatches::downloadCheats(const QString& source, const QString& gameSerial,
+                                   const QString& gameVersion, const bool showMessageBox) {
+
+    QString cheatsDir;
+    Common::PathToQString(cheatsDir, Common::GetShadUserDir() / "cheats");
+
+    QDir dir(cheatsDir);
+    if (!dir.exists()) {
+        dir.mkpath(".");
+    }
+
+    QString url;
+    if (source == "GoldHEN") {
+        url = "https://raw.githubusercontent.com/GoldHEN/GoldHEN_Cheat_Repository/main/json.txt";
+    } else if (source == "shadPS4") {
+        url = "https://raw.githubusercontent.com/shadps4-emu/ps4_cheats/main/CHEATS_JSON.txt";
+    } else {
+        QMessageBox::warning(this, tr("Invalid Source"),
+                             QString(tr("The selected source is invalid.") + "\n%1").arg(source));
+        return;
+    }
+
+    QNetworkRequest request(url);
+    QNetworkReply* reply = manager->get(request);
+
+    connect(reply, &QNetworkReply::finished, [=, this]() {
+        if (reply->error() == QNetworkReply::NoError) {
+            QByteArray jsonData = reply->readAll();
+            bool foundFiles = false;
+
+            if (source == "GoldHEN" || source == "shadPS4") {
+                QString textContent(jsonData);
+                QRegularExpression regex(
+                    QString("%1_%2[^=]*\\.json").arg(gameSerial).arg(gameVersion));
+                QRegularExpressionMatchIterator matches = regex.globalMatch(textContent);
+                QString baseUrl;
+
+                if (source == "GoldHEN") {
+                    baseUrl = "https://raw.githubusercontent.com/GoldHEN/GoldHEN_Cheat_Repository/"
+                              "main/json/";
+                } else {
+                    baseUrl = "https://raw.githubusercontent.com/shadps4-emu/ps4_cheats/"
+                              "main/CHEATS/";
+                }
+
+                while (matches.hasNext()) {
+                    QRegularExpressionMatch match = matches.next();
+                    QString fileName = match.captured(0);
+
+                    if (!fileName.isEmpty()) {
+                        QString newFileName = fileName;
+                        int dotIndex = newFileName.lastIndexOf('.');
+                        if (dotIndex != -1) {
+
+                            if (source == "GoldHEN") {
+                                newFileName.insert(dotIndex, "_GoldHEN");
+                            } else {
+                                newFileName.insert(dotIndex, "_shadPS4");
+                            }
+                        }
+                        QString fileUrl = baseUrl + fileName;
+                        QString localFilePath = dir.filePath(newFileName);
+
+                        if (QFile::exists(localFilePath) && showMessageBox) {
+                            QMessageBox::StandardButton reply;
+                            reply = QMessageBox::question(
+                                this, tr("File Exists"),
+                                tr("File already exists. Do you want to replace it?") + "\n" +
+                                    newFileName,
+                                QMessageBox::Yes | QMessageBox::No);
+                            if (reply == QMessageBox::No) {
+                                continue;
+                            }
+                        }
+                        QNetworkRequest fileRequest(fileUrl);
+                        QNetworkReply* fileReply = manager->get(fileRequest);
+
+                        connect(fileReply, &QNetworkReply::finished, [=, this]() {
+                            if (fileReply->error() == QNetworkReply::NoError) {
+                                QByteArray fileData = fileReply->readAll();
+                                QFile localFile(localFilePath);
+                                if (localFile.open(QIODevice::WriteOnly)) {
+                                    localFile.write(fileData);
+                                    localFile.close();
+                                } else {
+                                    QMessageBox::warning(
+                                        this, tr("Error"),
+                                        QString(tr("Failed to save file:") + "\n%1")
+                                            .arg(localFilePath));
+                                }
+                            } else {
+                                QMessageBox::warning(this, tr("Error"),
+                                                     QString(tr("Failed to download file:") +
+                                                             "%1\n\n" + tr("Error") + ":%2")
+                                                         .arg(fileUrl)
+                                                         .arg(fileReply->errorString()));
+                            }
+                            fileReply->deleteLater();
+                        });
+
+                        foundFiles = true;
+                    }
+                }
+                if (!foundFiles && showMessageBox) {
+                    QMessageBox::warning(this, tr("Cheats Not Found"), CheatsNotFound_MSG);
+                }
+            }
+            if (foundFiles && showMessageBox) {
+                QMessageBox::information(this, tr("Cheats Downloaded Successfully"),
+                                         CheatsDownloadedSuccessfully_MSG);
+                populateFileListCheats();
+            }
+
+        } else {
+            if (showMessageBox) {
+                QMessageBox::warning(this, tr("Cheats Not Found"), CheatsNotFound_MSG);
+            }
+        }
+        reply->deleteLater();
+        emit downloadFinished();
+    });
+
+    connect(reply, &QNetworkReply::errorOccurred, [=](QNetworkReply::NetworkError code) {
+        if (showMessageBox)
+            QMessageBox::warning(this, "Download Error",
+                                 QString("Error in response: %1").arg(reply->errorString()));
+    });
+}
+
+void CheatsPatches::addCheatsToLayout(const QJsonArray& modsArray, const QJsonArray& creditsArray) {
+    clearListCheats();
+    int maxWidthButton = 0;
+
+    for (const QJsonValue& modValue : modsArray) {
+        QJsonObject modObject = modValue.toObject();
+        QString modName = modObject["name"].toString();
+        QString modType = modObject["type"].toString();
+
+        Cheat cheat;
+        cheat.name = modName;
+        cheat.type = modType;
+
+        QJsonArray memoryArray = modObject["memory"].toArray();
+        for (const QJsonValue& memoryValue : memoryArray) {
+            QJsonObject memoryObject = memoryValue.toObject();
+            MemoryMod memoryMod;
+            memoryMod.offset = memoryObject["offset"].toString();
+            memoryMod.on = memoryObject["on"].toString();
+            memoryMod.off = memoryObject["off"].toString();
+            cheat.memoryMods.append(memoryMod);
+        }
+
+        // Check for the presence of 'hint' field
+        cheat.hasHint = modObject.contains("hint");
+
+        m_cheats[modName] = cheat;
+
+        if (modType == "checkbox") {
+            QCheckBox* cheatCheckBox = new QCheckBox(modName);
+            rightLayout->addWidget(cheatCheckBox);
+            m_cheatCheckBoxes.append(cheatCheckBox);
+            connect(cheatCheckBox, &QCheckBox::toggled, [this, modName](bool checked) {
+                if (!is_game_running && checked) {
+                    QMessageBox::critical(this, tr("Error"),
+                                          tr("Can't apply cheats before the game is started"));
+                    uncheckAllCheatCheckBoxes();
+                    return;
+                }
+
+                applyCheat(modName, checked);
+            });
+        } else if (modType == "button") {
+            QPushButton* cheatButton = new QPushButton(modName);
+            cheatButton->adjustSize();
+            int buttonWidth = cheatButton->sizeHint().width();
+            if (buttonWidth > maxWidthButton) {
+                maxWidthButton = buttonWidth;
+            }
+
+            // Create a horizontal layout for buttons
+            QHBoxLayout* buttonLayout = new QHBoxLayout();
+            buttonLayout->setContentsMargins(0, 0, 0, 0);
+            buttonLayout->addWidget(cheatButton);
+            buttonLayout->addStretch();
+
+            rightLayout->addLayout(buttonLayout);
+            connect(cheatButton, &QPushButton::clicked,
+                    [this, modName]() { applyCheat(modName, true); });
+        }
+    }
+
+    // Set minimum and fixed size for all buttons + 20
+    for (int i = 0; i < rightLayout->count(); ++i) {
+        QLayoutItem* layoutItem = rightLayout->itemAt(i);
+        QWidget* widget = layoutItem->widget();
+        if (widget) {
+            QPushButton* button = qobject_cast<QPushButton*>(widget);
+            if (button) {
+                button->setMinimumWidth(maxWidthButton);
+                button->setFixedWidth(maxWidthButton + 20);
+            }
+        } else {
+            QLayout* layout = layoutItem->layout();
+            if (layout) {
+                for (int j = 0; j < layout->count(); ++j) {
+                    QLayoutItem* innerItem = layout->itemAt(j);
+                    QWidget* innerWidget = innerItem->widget();
+                    if (innerWidget) {
+                        QPushButton* button = qobject_cast<QPushButton*>(innerWidget);
+                        if (button) {
+                            button->setMinimumWidth(maxWidthButton);
+                            button->setFixedWidth(maxWidthButton + 20);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Set credits label
+    QLabel* creditsLabel = new QLabel();
+    QString creditsText = tr("Author: ");
+    if (!creditsArray.isEmpty()) {
+        QStringList authors;
+        for (const QJsonValue& credit : creditsArray) {
+            authors << credit.toString();
+        }
+        creditsText += authors.join(", ");
+    }
+    creditsLabel->setText(creditsText);
+    creditsLabel->setAlignment(Qt::AlignLeft);
+    rightLayout->addWidget(creditsLabel);
+}
+
+void CheatsPatches::applyCheat(const QString& modName, bool enabled) {
+    if (!m_cheats.contains(modName))
+        return;
+
+    Cheat cheat = m_cheats[modName];
+
+    for (const MemoryMod& memoryMod : cheat.memoryMods) {
+        QString value = enabled ? memoryMod.on : memoryMod.off;
+
+        std::string modNameStr = modName.toStdString();
+        std::string offsetStr = memoryMod.offset.toStdString();
+        std::string valueStr = value.toStdString();
+
+        // Determine if the hint field is present
+        bool isHintPresent = m_cheats[modName].hasHint;
+
+        m_ipc_client->sendMemoryPatches(modNameStr, offsetStr, valueStr, "", "", !isHintPresent,
+                                        false, MemoryPatcher::PatchMask::None, 0);
+    }
+}
+
+void CheatsPatches::uncheckAllCheatCheckBoxes() {
+    for (auto& cheatCheckBox : m_cheatCheckBoxes) {
+        cheatCheckBox->setChecked(false);
+    }
+    showErrorMessage = true;
 }

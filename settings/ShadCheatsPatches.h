@@ -22,15 +22,21 @@
 #include <QVector>
 #include <QWidget>
 
+#include "modules/ipc/ipc_client.h"
+
 class CheatsPatches : public QDialog {
     Q_OBJECT
 
 public:
-    explicit CheatsPatches(QWidget* parent = nullptr);
+    explicit CheatsPatches(std::shared_ptr<IpcClient> client, bool game_running,
+                           QWidget* parent = nullptr);
     ~CheatsPatches();
 
+    void downloadCheats(const QString& source, const QString& m_gameSerial,
+                        const QString& m_gameVersion, bool showMessageBox);
     void downloadPatches(const QString repository, const bool showMessageBox);
     void createFilesJson(const QString& repository);
+    void clearListCheats();
     void compatibleVersionNotice(const QString repository);
 
 signals:
@@ -45,10 +51,15 @@ private:
     void onPatchCheckBoxHovered(QCheckBox* checkBox, bool hovered);
 
     // Cheat and Patch Management
+    void populateFileListCheats();
     void populateFileListPatches();
 
     void addCheatsToLayout(const QJsonArray& modsArray, const QJsonArray& creditsArray);
     void addPatchesToLayout(const QString& serial);
+
+    void applyCheat(const QString& modName, bool enabled);
+
+    void uncheckAllCheatCheckBoxes();
 
     void updateNoteTextEdit(const QString& patchName);
     void readGameInfo();
@@ -79,6 +90,8 @@ private:
     };
 
     // Members
+    bool is_game_running;
+    std::shared_ptr<IpcClient> m_ipc_client;
     QMap<QString, PatchInfo> m_patchInfos;
 
     // UI Elements
@@ -91,6 +104,9 @@ private:
     QItemSelectionModel* selectionModel;
     QComboBox* patchesComboBox;
     QListView* patchesListView;
+    QMap<QString, Cheat> m_cheats;
+    QVector<QCheckBox*> m_cheatCheckBoxes;
+    QString m_cheatFilePath;
     QString defaultTextEdit;
     QString defaultTextEditMSG =
         "Cheats/Patches are experimental.\nUse with caution.\n\nDownload cheats individually by "
@@ -98,4 +114,13 @@ private:
         "download all patches at once, choose which ones you want to use, and save your "
         "selection.\n\nSince we do not develop the Cheats/Patches,\nplease report issues to the "
         "cheat author.\n\nCreated a new cheat? Visit:\nhttps://github.com/shadps4-emu/ps4_cheats";
+
+    QString CheatsNotFound_MSG =
+        "No Cheats found for this game in this version of the selected repository,try another "
+        "repository or a different version of the game.";
+
+    QString CheatsDownloadedSuccessfully_MSG =
+        "You have successfully downloaded the cheats for this version of the game from the "
+        "selected repository. You can try downloading from another repository, if it is available "
+        "it will also be possible to use it by selecting the file from the list.";
 };
