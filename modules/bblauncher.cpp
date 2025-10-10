@@ -62,7 +62,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     connect(ui->ShadSelectButton, &QPushButton::pressed, this,
             &BBLauncher::ShadSelectButton_isPressed);
     connect(ui->LaunchButton, &QPushButton::pressed, this,
-            [this]() { BBLauncher::LaunchButton_isPressed(noGUIset); });
+            [this]() { BBLauncher::StartGameWithArgs({}); });
 
     connect(ui->TrophyButton, &QPushButton::pressed, this, [this]() {
         QString trophyPath, gameTrpPath;
@@ -253,8 +253,13 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     }
 #endif
 
+    m_ipc_client = std::make_shared<IpcClient>(this);
+    m_ipc_client->gameClosedFunc = [this]() { onGameClosed(); };
+    m_ipc_client->restartEmulatorFunc = [this]() { RestartEmulator(); };
+    m_ipc_client->startGameFunc = [this]() { RunGame(); };
+
     if (noGUI && noInstanceRunning)
-        LaunchButton_isPressed(noGUI);
+        StartGameWithArgs({});
 }
 
 void BBLauncher::ExeSelectButton_isPressed() {
@@ -307,76 +312,6 @@ void BBLauncher::ShadSelectButton_isPressed() {
         Config::SaveConfigPath("shadPath", Common::shadPs4Executable);
         ui->ShadLabel->setText(ShadLoc);
     }
-}
-
-void BBLauncher::LaunchButton_isPressed(bool noGUIset) {
-    const std::filesystem::path EbootPath = Common::installPath / "eboot.bin";
-    if (Common::installPath == "") {
-        QMessageBox::warning(this, "No Bloodborne Install folder",
-                             "Set-up Bloodborne Install folder before launching");
-        if (noGUIset) {
-            QApplication::quit();
-        } else {
-            return;
-        }
-    } else if (!std::filesystem::exists(EbootPath)) {
-        QMessageBox::warning(this, "Bloodborne eboot.bin not found",
-                             QString::fromStdString(EbootPath.string()) + " not found");
-        if (noGUIset) {
-            QApplication::quit();
-        } else {
-            return;
-        }
-    }
-
-    if (Config::SoundFixEnabled) {
-        std::filesystem::path savePath = Common::SaveDir / "1" / Common::game_serial / "SPRJ0005";
-        if (Common::game_serial == "CUSA03173")
-            savePath = Common::SaveDir / "1" / "CUSA00207" / "SPRJ0005";
-
-        if (Common::game_serial == "CUSA03023")
-            savePath = Common::SaveDir / "1" / "CUSA01363" / "SPRJ0005";
-
-        if (std::filesystem::exists(savePath / "userdata0010")) {
-            std::ofstream savefile1;
-            savefile1.open(savePath / "userdata0010",
-                           std::ios::in | std::ios::out | std::ios::binary);
-            savefile1.seekp(0x204E);
-            savefile1.put(0x1);
-            savefile1.close();
-        }
-    }
-
-    if (Config::BackupSaveEnabled) {
-        std::thread saveThread(StartBackupSave);
-        saveThread.detach();
-    }
-
-    QMainWindow::hide();
-
-    QString PKGarg;
-    Common::PathToQString(PKGarg, EbootPath);
-
-    QProcess* process = new QProcess;
-    QStringList processArg;
-    processArg << "-g" << PKGarg;
-
-    QString shadBinary;
-    Common::PathToQString(shadBinary, Common::shadPs4Executable);
-
-    process->start(shadBinary, processArg);
-    connect(process, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),
-            [=](int exitCode, QProcess::ExitStatus exitStatus) { QApplication::quit(); });
-
-    connect(process, &QProcess::readyReadStandardOutput, [process, this]() {
-        QString output = process->readAllStandardOutput();
-        std::cout << output.toStdString();
-    });
-
-    connect(process, &QProcess::readyReadStandardError, [process]() {
-        QString err = process->readAllStandardError();
-        std::cout << err.toStdString();
-    });
 }
 
 void BBLauncher::StartBackupSave() {
@@ -571,6 +506,257 @@ QIcon BBLauncher::RecolorIcon(const QIcon& icon, bool isWhite) {
     pixmap.fill(QColor(isWhite ? Qt::black : Qt::white));
     pixmap.setMask(mask);
     return QIcon(pixmap);
+}
+
+void BBLauncher::onGameClosed() {
+    isGameRunning = false;
+    is_paused = false;
+}
+
+void BBLauncher::RunGame() {
+    auto patches = readPatches(Common::game_serial, "01.09");
+    for (auto patch : patches) {
+        m_ipc_client->sendMemoryPatches(patch.modName, patch.address, patch.value, patch.target,
+                                        patch.size, patch.maskOffset, patch.littleEndian,
+                                        patch.mask, patch.maskOffset);
+    }
+
+    m_ipc_client->startGame();
+}
+
+void BBLauncher::RestartEmulator() {
+    QString exe;
+    Common::PathToQString(exe, Common::shadPs4Executable);
+    QStringList args{"--game",
+                     QString::fromStdWString((Common::installPath / "eboot.bin").wstring())};
+
+    if (m_ipc_client->parsedArgs.size() > 0) {
+        args.clear();
+        for (auto arg : m_ipc_client->parsedArgs) {
+            args.append(QString::fromStdString(arg));
+        }
+        m_ipc_client->parsedArgs.clear();
+    }
+
+    QFileInfo fileInfo(exe);
+    QString workDir = fileInfo.absolutePath();
+
+    m_ipc_client->startEmulator(fileInfo, args, workDir);
+}
+
+std::vector<MemoryPatcher::PendingPatch> BBLauncher::readPatches(std::string gameSerial,
+                                                                 std::string appVersion) {
+    std::vector<MemoryPatcher::PendingPatch> pending;
+    QString patchDir;
+    Common::PathToQString(patchDir, (Common::GetShadUserDir() / "patches"));
+    QDir dir(patchDir);
+    QStringList folders = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+
+    for (const QString& folder : folders) {
+        QString filesJsonPath = patchDir + "/" + folder + "/files.json";
+
+        QFile jsonFile(filesJsonPath);
+        if (!jsonFile.open(QIODevice::ReadOnly)) {
+            // LOG_ERROR(Loader, "Unable to open files.json for reading in repository {}",
+            //         folder.toStdString());
+            continue;
+        }
+        const QByteArray jsonData = jsonFile.readAll();
+        jsonFile.close();
+
+        const QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
+        const QJsonObject jsonObject = jsonDoc.object();
+
+        QString selectedFileName;
+        const QString serial = QString::fromStdString(gameSerial);
+
+        for (auto it = jsonObject.constBegin(); it != jsonObject.constEnd(); ++it) {
+            const QString filePath = it.key();
+            const QJsonArray idsArray = it.value().toArray();
+            if (idsArray.contains(QJsonValue(serial))) {
+                selectedFileName = filePath;
+                break;
+            }
+        }
+
+        if (selectedFileName.isEmpty()) {
+            // LOG_ERROR(Loader, "No patch file found for the current serial in repository {}",
+            //       folder.toStdString());
+            continue;
+        }
+
+        const QString filePath = patchDir + "/" + folder + "/" + selectedFileName;
+        QFile file(filePath);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            // LOG_ERROR(Loader, "Unable to open the file for reading.");
+            continue;
+        }
+        const QByteArray xmlData = file.readAll();
+        file.close();
+
+        QXmlStreamReader xmlReader(xmlData);
+
+        bool isEnabled = false;
+        std::string currentPatchName;
+
+        bool versionMatches = true;
+
+        while (!xmlReader.atEnd()) {
+            xmlReader.readNext();
+
+            if (!xmlReader.isStartElement()) {
+                continue;
+            }
+
+            if (xmlReader.name() == QStringLiteral("Metadata")) {
+                QString name = xmlReader.attributes().value("Name").toString();
+                currentPatchName = name.toStdString();
+
+                const QString appVer = xmlReader.attributes().value("AppVer").toString();
+
+                isEnabled = false;
+                for (const QXmlStreamAttribute& attr : xmlReader.attributes()) {
+                    if (attr.name() == QStringLiteral("isEnabled")) {
+                        isEnabled = (attr.value().toString() == "true");
+                    }
+                }
+                versionMatches = (appVer.toStdString() == appVersion);
+            } else if (xmlReader.name() == QStringLiteral("PatchList")) {
+                while (!xmlReader.atEnd() &&
+                       !(xmlReader.tokenType() == QXmlStreamReader::EndElement &&
+                         xmlReader.name() == QStringLiteral("PatchList"))) {
+
+                    xmlReader.readNext();
+
+                    if (xmlReader.tokenType() != QXmlStreamReader::StartElement ||
+                        xmlReader.name() != QStringLiteral("Line")) {
+                        continue;
+                    }
+
+                    const QXmlStreamAttributes a = xmlReader.attributes();
+                    const QString type = a.value("Type").toString();
+                    const QString addr = a.value("Address").toString();
+                    QString val = a.value("Value").toString();
+                    const QString offStr = a.value("Offset").toString();
+                    const QString tgt =
+                        (type == "mask_jump32") ? a.value("Target").toString() : QString{};
+                    const QString sz =
+                        (type == "mask_jump32") ? a.value("Size").toString() : QString{};
+
+                    if (!isEnabled) {
+                        continue;
+                    }
+                    if ((type != "mask" && type != "mask_jump32") && !versionMatches) {
+                        continue;
+                    }
+
+                    MemoryPatcher::PendingPatch pp;
+                    pp.modName = currentPatchName;
+                    pp.address = addr.toStdString();
+
+                    if (type == "mask" || type == "mask_jump32") {
+                        if (!offStr.toStdString().empty()) {
+                            pp.maskOffset = std::stoi(offStr.toStdString(), nullptr, 10);
+                        }
+                        pp.mask = (type == "mask") ? MemoryPatcher::PatchMask::Mask
+                                                   : MemoryPatcher::PatchMask::Mask_Jump32;
+                        pp.value = val.toStdString();
+                        pp.target = tgt.toStdString();
+                        pp.size = sz.toStdString();
+                    } else {
+                        pp.value =
+                            MemoryPatcher::convertValueToHex(type.toStdString(), val.toStdString());
+                        pp.target.clear();
+                        pp.size.clear();
+                        pp.mask = MemoryPatcher::PatchMask::None;
+                        pp.maskOffset = 0;
+                    }
+
+                    pp.littleEndian = (type == "bytes16" || type == "bytes32" || type == "bytes64");
+                    pending.emplace_back(std::move(pp));
+                }
+            }
+        }
+
+        if (xmlReader.hasError()) {
+            // LOG_ERROR(Loader, "Failed to parse XML for {}", gameSerial);
+        } else {
+            // LOG_INFO(Loader, "Patches parsed successfully, repository: {}",
+            // folder.toStdString());
+        }
+    }
+    return pending;
+}
+
+void BBLauncher::StartGameWithArgs(QStringList args) {
+    const std::filesystem::path EbootPath = Common::installPath / "eboot.bin";
+    if (Common::installPath == "") {
+        QMessageBox::warning(this, "No Bloodborne Install folder",
+                             "Set-up Bloodborne Install folder before launching");
+        if (noGUIset) {
+            QApplication::quit();
+        } else {
+            return;
+        }
+    } else if (!std::filesystem::exists(EbootPath)) {
+        QMessageBox::warning(this, "Bloodborne eboot.bin not found",
+                             QString::fromStdString(EbootPath.string()) + " not found");
+        if (noGUIset) {
+            QApplication::quit();
+        } else {
+            return;
+        }
+    }
+
+    if (Config::SoundFixEnabled) {
+        std::filesystem::path savePath = Common::SaveDir / "1" / Common::game_serial / "SPRJ0005";
+        if (Common::game_serial == "CUSA03173")
+            savePath = Common::SaveDir / "1" / "CUSA00207" / "SPRJ0005";
+
+        if (Common::game_serial == "CUSA03023")
+            savePath = Common::SaveDir / "1" / "CUSA01363" / "SPRJ0005";
+
+        if (std::filesystem::exists(savePath / "userdata0010")) {
+            std::ofstream savefile1;
+            savefile1.open(savePath / "userdata0010",
+                           std::ios::in | std::ios::out | std::ios::binary);
+            savefile1.seekp(0x204E);
+            savefile1.put(0x1);
+            savefile1.close();
+        }
+    }
+
+    if (Config::BackupSaveEnabled) {
+        std::thread saveThread(StartBackupSave);
+        saveThread.detach();
+    }
+
+    if (EbootPath != "") {
+        StartEmulator(EbootPath, args);
+    }
+}
+
+void BBLauncher::StartEmulator(std::filesystem::path path, QStringList args) {
+    if (isGameRunning) {
+        QMessageBox::critical(nullptr, tr("Run Game"), QString(tr("Game is already running!")));
+        return;
+    }
+
+    isGameRunning = true;
+    QString exe;
+    Common::PathToQString(exe, Common::shadPs4Executable);
+    QFileInfo fileInfo(exe);
+    if (!fileInfo.exists()) {
+        QMessageBox::critical(
+            nullptr, tr("shadPS4"),
+            QString(tr("shadPS4 is not found!\nPlease change shadPS4 path in settings.")));
+        return;
+    }
+
+    QStringList final_args{"--game", QString::fromStdWString(path.wstring())};
+    final_args.append(args);
+    QString workDir = fileInfo.absolutePath();
+    m_ipc_client->startEmulator(fileInfo, final_args, workDir);
 }
 
 BBLauncher::~BBLauncher() {

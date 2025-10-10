@@ -116,6 +116,8 @@ set(PROJECT_SOURCES
     modules/TrophyManager.cpp
     modules/TrophyManager.h
     modules/TrophyManager.ui
+    modules/ipc/ipc_client.cpp
+    modules/ipc/ipc_client.h
     modules/TrophyDeps/aes.h
     modules/TrophyDeps/concepts.h
     modules/TrophyDeps/enum.h
