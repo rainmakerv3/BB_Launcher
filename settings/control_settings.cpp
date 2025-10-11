@@ -985,8 +985,6 @@ void ControlSettings::Cleanup() {
         gamepad = nullptr;
     }
 
-    SDL_free(gamepads);
-
     SDL_Event quitLoop{};
     quitLoop.type = SDL_EVENT_QUIT;
     SDL_PushEvent(&quitLoop);

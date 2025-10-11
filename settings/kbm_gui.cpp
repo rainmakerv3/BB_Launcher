@@ -233,7 +233,7 @@ void KBMSettings::SaveKBMConfig(bool CloseOnSave) {
 
     lines.push_back("");
 
-    add_mapping(ui->MouseJoystickBox->currentText(), "mouse_to_joystick");
+    lines.push_back("mouse_to_joystick = " + ui->MouseJoystickBox->currentText().toStdString());
     add_mapping(ui->LHalfButton->text(), "leftjoystick_halfmode");
     add_mapping(ui->RHalfButton->text(), "rightjoystick_halfmode");
 

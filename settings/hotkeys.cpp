@@ -902,8 +902,6 @@ void Hotkeys::Cleanup() {
         h_gamepad = nullptr;
     }
 
-    SDL_free(h_gamepads);
-
     SDL_Event quitLoop{};
     quitLoop.type = SDL_EVENT_QUIT;
     SDL_PushEvent(&quitLoop);
