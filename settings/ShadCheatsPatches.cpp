@@ -89,9 +89,8 @@ void CheatsPatches::setupUI() {
 
     auto labelFont = font();
     labelFont.setBold(true);
-    QLabel* gameVersionLabel =
-        new QLabel("IMPORTANT: Patches only work properly with\nversion 1.09, please "
-                   "update to version\n1.09 if you have not before using patches.");
+    gameVersionLabel = new QLabel(cheatsLabelText);
+
     gameVersionLabel->setAlignment(Qt::AlignLeft);
     gameVersionLabel->setFont(labelFont);
     gameInfoLayout->addWidget(gameVersionLabel);
@@ -299,6 +298,9 @@ void CheatsPatches::setupUI() {
     connect(tabWidget, &QTabWidget::currentChanged, this, [this](int index) {
         if (index == 1) {
             populateFileListPatches();
+            gameVersionLabel->setText(gameVersionLabelText);
+        } else {
+            gameVersionLabel->setText(cheatsLabelText);
         }
     });
 

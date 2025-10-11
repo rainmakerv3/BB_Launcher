@@ -95,6 +95,7 @@ private:
     QMap<QString, PatchInfo> m_patchInfos;
 
     // UI Elements
+    QLabel* gameVersionLabel;
     QVBoxLayout* rightLayout;
     QVBoxLayout* patchesGroupBoxLayout;
     QGroupBox* patchesGroupBox;
@@ -123,4 +124,9 @@ private:
         "You have successfully downloaded the cheats for this version of the game from the "
         "selected repository. You can try downloading from another repository, if it is available "
         "it will also be possible to use it by selecting the file from the list.";
+
+    QString cheatsLabelText = "IMPORTANT: Some cheats may crash the game.";
+    QString gameVersionLabelText =
+        "IMPORTANT: Patches only work properly with\nversion 1.09, please "
+        "update to version\n1.09 if you have not before using patches.";
 };
