@@ -23,6 +23,8 @@
 #include "settings/kbm_gui.h"
 #include "settings/updater/CheckUpdate.h"
 
+static bool save_backups = false;
+
 BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     : QMainWindow(parent), noGUIset(noGUI), noinstancerunning(noInstanceRunning),
       ui(new Ui::BBLauncher) {
@@ -316,6 +318,7 @@ void BBLauncher::ShadSelectButton_isPressed() {
 }
 
 void BBLauncher::StartBackupSave() {
+    save_backups = true;
     const std::filesystem::path BackupPath = Common::BBLFilesPath / "SaveBackups";
 
     if (!std ::filesystem::exists(BackupPath)) {
@@ -340,6 +343,9 @@ void BBLauncher::StartBackupSave() {
 
     while (true) {
         std::this_thread::sleep_for(std::chrono::minutes(Config::BackupInterval));
+
+        if (!save_backups)
+            return;
 
         if (Config::BackupNumber > 1) {
             const std::string lastDirstring = "BACKUP" + std::to_string(Config::BackupNumber);
@@ -512,6 +518,7 @@ QIcon BBLauncher::RecolorIcon(const QIcon& icon, bool isWhite) {
 void BBLauncher::onGameClosed() {
     isGameRunning = false;
     is_paused = false;
+    save_backups = false;
 
     if (noGUIset)
         QApplication::quit();
