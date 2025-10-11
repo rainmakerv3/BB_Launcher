@@ -190,7 +190,7 @@
        <item>
         <widget class="QPushButton" name="PatchesButton">
          <property name="text">
-          <string>Bloodborne Patches</string>
+          <string>Bloodborne Cheats/Patches</string>
          </property>
         </widget>
        </item>
