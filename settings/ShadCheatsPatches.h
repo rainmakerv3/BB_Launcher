@@ -125,8 +125,9 @@ private:
         "selected repository. You can try downloading from another repository, if it is available "
         "it will also be possible to use it by selecting the file from the list.";
 
-    QString cheatsLabelText = "IMPORTANT: Some cheats may not work or may crash the game.";
+    QString cheatsLabelText = "IMPORTANT: Cheats only work with the latest\nshadPS4 SDL version "
+                              "(not Qt) only. Also, some\ncheats may not work or may crash.";
     QString gameVersionLabelText =
         "IMPORTANT: Patches only work properly with\nversion 1.09, please "
-        "update to version\n1.09 if you have not before using patches.";
+        "update to version 1.09\nif you have not before using patches.";
 };
