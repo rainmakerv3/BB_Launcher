@@ -32,5 +32,5 @@ private:
     QStringList SaveSlotList;
 
     Ui::SaveManager* ui;
-    const std::filesystem::path BackupsDir = Common::BBLFilesPath / "SaveBackups";
+    const std::filesystem::path BackupsDir = Common::GetBBLFilesPath() / "SaveBackups";
 };

@@ -64,6 +64,25 @@ std::filesystem::path GetShadUserDir() {
     return user_dir;
 }
 
+std::filesystem::path GetBBLFilesPath() {
+    std::filesystem::path path;
+
+#if defined(__APPLE__)
+    path = std::filesystem::path(getenv("HOME")) / "Library" / "Application Support" / "BBLauncher";
+#elif defined(__linux__)
+    const char* xdg_data_home = getenv("XDG_DATA_HOME");
+    if (xdg_data_home != nullptr && strlen(xdg_data_home) > 0) {
+        path = std::filesystem::path(xdg_data_home) / "BBLauncher";
+    } else {
+        path = std::filesystem::path(getenv("HOME")) / ".local" / "share" / "BBLauncher";
+    }
+#else
+    path = std::filesystem::current_path() / "BBLauncher";
+#endif
+
+    return path;
+}
+
 void PathToQString(QString& result, const std::filesystem::path& path) {
 #ifdef _WIN32
     result = QString::fromStdWString(path.wstring());
