@@ -290,8 +290,14 @@ bool LauncherSettings::createShortcutLinux(const QString& linkPath, const std::s
         return false;
     }
 
-    QString appImagePath =
-        QProcessEnvironment::systemEnvironment().value(QStringLiteral("APPIMAGE"));
+    char* appdir_env = std::getenv("APPDIR");
+    QString appImagePath;
+
+    if (appdir_env != nullptr) {
+        appImagePath = QProcessEnvironment::systemEnvironment().value(QStringLiteral("APPIMAGE"));
+    } else {
+        appImagePath = QCoreApplication::applicationFilePath();
+    }
 
     QTextStream out(&shortcutFile);
     out << "[Desktop Entry]\n";
