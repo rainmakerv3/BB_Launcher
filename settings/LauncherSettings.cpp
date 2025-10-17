@@ -3,6 +3,7 @@
 
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QProcessEnvironment>>
 #include <QPushButton>
 #include <QStandardPaths>
 #include "LauncherSettings.h"
@@ -65,10 +66,6 @@ LauncherSettings::LauncherSettings(QWidget* parent)
 #endif
 
     connect(ui->shortcutButton, &QPushButton::clicked, this, &LauncherSettings::CreateShortcut);
-
-#ifndef Q_OS_WINDOWS
-    ui->shortcutButton->setVisible(false);
-#endif
 }
 
 void LauncherSettings::SetLauncherDefaults() {
@@ -293,11 +290,14 @@ bool LauncherSettings::createShortcutLinux(const QString& linkPath, const std::s
         return false;
     }
 
+    QString appImagePath =
+        QProcessEnvironment::systemEnvironment().value(QStringLiteral("APPIMAGE"));
+
     QTextStream out(&shortcutFile);
     out << "[Desktop Entry]\n";
     out << "Version=1.0\n";
     out << "Name=" << QString::fromStdString(name) << "\n";
-    out << "Exec=" << QCoreApplication::applicationFilePath() << " -n\n";
+    out << "Exec=" << appImagePath << " -n\n";
     out << "Icon=" << iconPath << "\n";
     out << "Terminal=false\n";
     out << "Type=Application\n";
