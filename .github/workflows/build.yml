@@ -2,7 +2,7 @@ name: Build and Prerelease
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "linux-shortcut"]
   pull_request:
     branches: [ "master" ]
 
