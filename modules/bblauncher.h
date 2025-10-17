@@ -45,7 +45,7 @@ private:
                                                          std::string appVersion);
 
     Ui::BBLauncher* ui;
-    std::shared_ptr<IpcClient> m_ipc_client;
+    std::shared_ptr<IpcClient> m_ipc_client = std::make_shared<IpcClient>();
 
     std::filesystem::path shadPs4Directory;
     bool noGUIset;
