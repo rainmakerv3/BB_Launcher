@@ -698,8 +698,8 @@ void CheckShadUpdate::InstallUpdate(QString zipPath) {
     }
 #endif
 
+    std::filesystem::remove(Common::PathFromQString(zipPath));
     QMessageBox::information(this, "Update Complete", "Update process completed");
-    emit UpdateComplete();
 }
 
 CheckShadUpdate::~CheckShadUpdate() {}
