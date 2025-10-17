@@ -318,7 +318,7 @@ void BBLauncher::ShadSelectButton_isPressed() {
 
 void BBLauncher::StartBackupSave() {
     save_backups = true;
-    const std::filesystem::path BackupPath = Common::BBLFilesPath / "SaveBackups";
+    const std::filesystem::path BackupPath = Common::GetBBLFilesPath() / "SaveBackups";
 
     if (!std ::filesystem::exists(BackupPath)) {
         std::filesystem::create_directory(BackupPath);

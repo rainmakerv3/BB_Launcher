@@ -43,8 +43,8 @@ void CreateGSFile() {
 void LoadLauncherSettings() {
     using namespace Config;
 
-    if (!std::filesystem::exists(Common::BBLFilesPath)) {
-        std::filesystem::create_directories(Common::BBLFilesPath);
+    if (!std::filesystem::exists(Common::GetBBLFilesPath())) {
+        std::filesystem::create_directories(Common::GetBBLFilesPath());
         CreateSettingsFile();
     } else if (!std::filesystem::exists(SettingsFile)) {
         CreateSettingsFile();
@@ -153,12 +153,12 @@ void LoadLauncherSettings() {
 }
 
 void CreateSettingsFile() {
-    if (!std::filesystem::exists(Common::BBLFilesPath / "Mods")) {
-        std::filesystem::create_directories(Common::BBLFilesPath / "Mods");
+    if (!std::filesystem::exists(Common::GetBBLFilesPath() / "Mods")) {
+        std::filesystem::create_directories(Common::GetBBLFilesPath() / "Mods");
     }
 
-    if (!std::filesystem::exists(Common::BBLFilesPath / "Mods-BACKUP")) {
-        std::filesystem::create_directories(Common::BBLFilesPath / "Mods-BACKUP");
+    if (!std::filesystem::exists(Common::GetBBLFilesPath() / "Mods-BACKUP")) {
+        std::filesystem::create_directories(Common::GetBBLFilesPath() / "Mods-BACKUP");
     }
 
     toml::value data;

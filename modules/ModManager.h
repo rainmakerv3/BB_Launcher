@@ -36,7 +36,7 @@ private:
     std::filesystem::path ModBackupPath;
     std::filesystem::path ModUniquePath;
     const std::filesystem::path ModActivePath =
-        Common::BBLFilesPath / "Mods-Active (DO NOT DELETE)";
+        Common::GetBBLFilesPath() / "Mods-Active (DO NOT DELETE)";
     const std::vector<std::string> BBFolders = {
         "dvdroot_ps4", "action", "chr",    "event", "facegen", "map",   "menu",
         "movie",       "msg",    "mtd",    "obj",   "other",   "param", "paramdef",

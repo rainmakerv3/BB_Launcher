@@ -324,15 +324,16 @@ void ModManager::DeactivateButton_isPressed() {
 #endif
 
     std::filesystem::path ModBackupFolderPath;
-    if (std::filesystem::exists(Common::BBLFilesPath / "Mods-BACKUP" / ModString)) {
-        ModBackupFolderPath = Common::BBLFilesPath / "Mods-BACKUP" / ModString;
+    if (std::filesystem::exists(Common::GetBBLFilesPath() / "Mods-BACKUP" / ModString)) {
+        ModBackupFolderPath = Common::GetBBLFilesPath() / "Mods-BACKUP" / ModString;
     } else {
         ModBackupFolderPath = ModBackupPath / ModString;
     }
 
     std::filesystem::path ModUniqueFolderPath;
-    if (std::filesystem::exists(Common::BBLFilesPath / "Mods-BACKUP" / ModString)) {
-        ModUniqueFolderPath = Common::BBLFilesPath / "Mods-BACKUP" / "Mods-UNIQUEFILES" / ModString;
+    if (std::filesystem::exists(Common::GetBBLFilesPath() / "Mods-BACKUP" / ModString)) {
+        ModUniqueFolderPath =
+            Common::GetBBLFilesPath() / "Mods-BACKUP" / "Mods-UNIQUEFILES" / ModString;
     } else {
         ModUniqueFolderPath = ModUniquePath / ModString;
     }
@@ -415,10 +416,10 @@ void ModManager::DeactivateButton_isPressed() {
 #endif
 
     std::filesystem::path IndexPath;
-    if (std::filesystem::exists(Common::BBLFilesPath / "Mods-BACKUP" / "Mods-UNIQUEFILES" /
+    if (std::filesystem::exists(Common::GetBBLFilesPath() / "Mods-BACKUP" / "Mods-UNIQUEFILES" /
                                 ModString / FileString)) {
         IndexPath =
-            Common::BBLFilesPath / "Mods-BACKUP" / "Mods-UNIQUEFILES" / ModString / FileString;
+            Common::GetBBLFilesPath() / "Mods-BACKUP" / "Mods-UNIQUEFILES" / ModString / FileString;
     } else {
         IndexPath = ModUniquePath / ModString / FileString;
     }
@@ -810,9 +811,9 @@ void ModManager::ActiveModRemove(std::string ModName) {
     }
 
     // check old locations
-    if (std::filesystem::exists(Common::BBLFilesPath / "Mods-BACKUP")) {
+    if (std::filesystem::exists(Common::GetBBLFilesPath() / "Mods-BACKUP")) {
         for (auto& FolderEntry :
-             std::filesystem::directory_iterator(Common::BBLFilesPath / "Mods-BACKUP")) {
+             std::filesystem::directory_iterator(Common::GetBBLFilesPath() / "Mods-BACKUP")) {
             if (FolderEntry.is_directory()) {
                 const std::string Foldername = Common::PathToU8(FolderEntry.path().filename());
 
@@ -823,7 +824,7 @@ void ModManager::ActiveModRemove(std::string ModName) {
 #endif
 
                 const std::filesystem::path BackupModPath =
-                    Common::BBLFilesPath / "Mods-BACKUP" / FolderString;
+                    Common::GetBBLFilesPath() / "Mods-BACKUP" / FolderString;
 
                 if (Foldername != "Mods-UNIQUEFILES") {
                     ui->FileTransferLabel->setText("Generating Modified File list for " +
@@ -847,9 +848,9 @@ void ModManager::ActiveModRemove(std::string ModName) {
     }
 
     ui->progressBar->setValue(0);
-    if (std::filesystem::exists(Common::BBLFilesPath / "Mods-BACKUP" / "Mods-UNIQUEFILES")) {
+    if (std::filesystem::exists(Common::GetBBLFilesPath() / "Mods-BACKUP" / "Mods-UNIQUEFILES")) {
         for (auto& FolderEntry : std::filesystem::directory_iterator(
-                 Common::BBLFilesPath / "Mods-BACKUP" / "Mods-UNIQUEFILES")) {
+                 Common::GetBBLFilesPath() / "Mods-BACKUP" / "Mods-UNIQUEFILES")) {
             if (FolderEntry.is_directory()) {
 
                 const std::string Foldername = Common::PathToU8(FolderEntry.path().filename());

@@ -35,7 +35,7 @@ extern bool ShowEarnedTrophy;
 extern bool ShowNotEarnedTrophy;
 extern bool ShowHiddenTrophy;
 
-const std::filesystem::path SettingsFile = Common::BBLFilesPath / "LauncherSettings.toml";
+const std::filesystem::path SettingsFile = Common::GetBBLFilesPath() / "LauncherSettings.toml";
 
 } // namespace Config
 
