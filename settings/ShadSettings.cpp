@@ -14,8 +14,8 @@
 #include <QProcess>
 #include <QStandardPaths>
 
-#include "LauncherSettings.h"
 #include "ShadSettings.h"
+#include "config.h"
 #include "formatting.h"
 #include "modules/Common.h"
 #include "settings/ui_ShadSettings.h"

@@ -20,6 +20,7 @@
 #include <QStringList>
 #include <QTextEdit>
 #include <QVBoxLayout>
+
 #include "CheckUpdate.h"
 #include "modules/Common.h"
 #include "settings/updater/BuildInfo.h"

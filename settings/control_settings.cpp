@@ -8,7 +8,7 @@
 #include <QPushButton>
 #include <QTimer>
 #include <QtConcurrent/QtConcurrentRun>
-#include "LauncherSettings.h"
+#include "config.h"
 #include "control_settings.h"
 #include "modules/Common.h"
 #include "settings/ui_control_settings.h"

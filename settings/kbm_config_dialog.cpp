@@ -16,7 +16,7 @@
 #include <QTextStream>
 #include <QVBoxLayout>
 
-#include "LauncherSettings.h"
+#include "config.h"
 #include "modules/Common.h"
 
 QString previous_game = "default";

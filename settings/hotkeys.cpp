@@ -7,7 +7,7 @@
 #include <QtConcurrent/QtConcurrentRun>
 #include <SDL3/SDL.h>
 
-#include "LauncherSettings.h"
+#include "config.h"
 #include "hotkeys.h"
 #include "modules/Common.h"
 #include "ui_hotkeys.h"

@@ -8,7 +8,7 @@
 #include "Common.h"
 #include "TrophyManager.h"
 #include "modules/ui_TrophyManager.h"
-#include "settings/LauncherSettings.h"
+#include "settings/config.h"
 
 bool useEuropeanDateFormat = true;
 

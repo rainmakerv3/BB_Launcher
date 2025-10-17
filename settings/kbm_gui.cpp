@@ -9,7 +9,7 @@
 #include <QTimer>
 #include <QWheelEvent>
 
-#include "LauncherSettings.h"
+#include "config.h"
 #include "kbm_config_dialog.h"
 #include "kbm_gui.h"
 #include "kbm_help_dialog.h"

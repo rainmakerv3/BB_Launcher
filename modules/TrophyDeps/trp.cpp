@@ -2,7 +2,7 @@
 
 #include <filesystem>
 #include "aes.h"
-#include "settings/LauncherSettings.h"
+#include "settings/config.h"
 #include "settings/formatting.h"
 #include "trp.h"
 

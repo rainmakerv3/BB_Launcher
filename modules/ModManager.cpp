@@ -6,7 +6,7 @@
 #include <QProgressBar>
 #include "ModManager.h"
 #include "modules/ui_ModManager.h"
-#include "settings/LauncherSettings.h"
+#include "settings/config.h"
 
 ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager) {
     ui->setupUi(this);

@@ -129,6 +129,8 @@ set(PROJECT_SOURCES
     modules/TrophyDeps/trp.cpp
     modules/TrophyDeps/trp.h
     settings/formatting.h
+    settings/config.cpp
+    settings/config.h
     settings/control_settings.cpp
     settings/control_settings.h
     settings/control_settings.ui

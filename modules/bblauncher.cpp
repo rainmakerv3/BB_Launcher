@@ -18,6 +18,7 @@
 #include "settings/LauncherSettings.h"
 #include "settings/ShadCheatsPatches.h"
 #include "settings/ShadSettings.h"
+#include "settings/config.h"
 #include "settings/control_settings.h"
 #include "settings/hotkeys.h"
 #include "settings/kbm_gui.h"
