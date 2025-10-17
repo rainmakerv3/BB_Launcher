@@ -144,6 +144,7 @@ class CheckShadUpdate : public QDialog {
 
 signals:
     void DownloadProgressed(int value);
+    void UpdateComplete();
 
 public:
     explicit CheckShadUpdate(const bool showMessage, QWidget* parent = nullptr);
@@ -151,7 +152,7 @@ public:
 
 private slots:
     void UpdateShad(bool isAutoupdate);
-    void InstallUpdate();
+    void InstallUpdate(QString zipPath);
     void DownloadUpdate(const QString& downloadUrl);
 
 private:
@@ -159,6 +160,5 @@ private:
                  const QString& currentDate, const QString& currentRev);
 
     QString updateDownloadUrl;
-
     QNetworkAccessManager* networkManager;
 };

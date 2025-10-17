@@ -11,8 +11,9 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
-#include <QProcess>
 #include <QStandardPaths>
+#include <qmicroz.h>
+#include <sys/stat.h>
 
 #include "ShadSettings.h"
 #include "config.h"
@@ -99,16 +100,16 @@ ShadSettings::ShadSettings(bool game_specific, QWidget* parent)
     connect(ui->checkUpdateButton, &QPushButton::pressed, this, [this]() {
         ui->checkUpdateButton->setEnabled(false);
         ui->buttonBox->setEnabled(false);
-
         SaveUpdateSettings();
 
         CheckShadUpdate* shadUpdateWindow = new CheckShadUpdate(false);
         QObject::connect(shadUpdateWindow, &CheckShadUpdate::DownloadProgressed,
                          ui->DownloadProgressBar, &QProgressBar::setValue);
+        QObject::connect(shadUpdateWindow, &CheckShadUpdate::UpdateComplete, this, [this]() {
+            ui->checkUpdateButton->setEnabled(true);
+            ui->buttonBox->setEnabled(true);
+        });
         shadUpdateWindow->exec();
-
-        ui->checkUpdateButton->setEnabled(true);
-        ui->buttonBox->setEnabled(true);
     });
 
     connect(ui->SavePathButton, &QPushButton::clicked, this, [this]() {
@@ -466,6 +467,8 @@ void ShadSettings::SaveUpdateSettings() {
 CheckShadUpdate::CheckShadUpdate(const bool isAutoupdate, QWidget* parent) : QDialog(parent) {
     setFixedSize(0, 0);
     CheckShadUpdate::UpdateShad(isAutoupdate);
+
+    connect(this, &CheckShadUpdate::UpdateComplete, this, &QDialog::close);
 }
 
 void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
@@ -494,6 +497,7 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
                                  QString::fromStdString("Network error:") + "\n" +
                                      reply->errorString());
             reply->deleteLater();
+            emit UpdateComplete();
             return;
         }
 
@@ -503,6 +507,7 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
         if (jsonDoc.isNull()) {
             QMessageBox::warning(this, "Error", "Failed to parse update information.");
             reply->deleteLater();
+            emit UpdateComplete();
             return;
         }
 
@@ -513,11 +518,11 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
         QString platformString;
 
 #ifdef Q_OS_WIN
-        platformString = "win64-qt";
+        platformString = "win64-sdl";
 #elif defined(Q_OS_LINUX)
-        platformString = "linux-qt";
+        platformString = "linux-sdl";
 #elif defined(Q_OS_MAC)
-        platformString = "macos-qt";
+        platformString = "macos-sdl";
 #endif
         QJsonObject jsonObj;
         if (updateChannel == "Nightly") {
@@ -533,6 +538,7 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
             } else {
                 QMessageBox::warning(this, "Error", "No pre-releases found.");
                 reply->deleteLater();
+                emit UpdateComplete();
                 return;
             }
         } else {
@@ -542,6 +548,7 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
             } else {
                 QMessageBox::warning(this, "Error", "Invalid release data.");
                 reply->deleteLater();
+                emit UpdateComplete();
                 return;
             }
         }
@@ -561,6 +568,7 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
         if (!found) {
             QMessageBox::warning(this, "Error", "No download URL found for the specified asset.");
             reply->deleteLater();
+            emit UpdateComplete();
             return;
         }
 
@@ -588,7 +596,7 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
         if (shadModifiedDateString == latestVerDateString ||
             shadModifiedDateStringUTC == latestVerDateString) {
             if (isAutoupdate) {
-                close();
+                emit UpdateComplete();
                 return;
             } else {
                 if (QMessageBox::No ==
@@ -596,7 +604,7 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
                                           "Latest shadPS4 build has the same date as the currently "
                                           "installed build. Proceed with update?",
                                           QMessageBox::Yes | QMessageBox::No)) {
-                    close();
+                    emit UpdateComplete();
                     return;
                 }
             }
@@ -605,7 +613,7 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
                 QMessageBox::question(this, "Update confirmation",
                                       "New shadPS4 build detected. Proceed with Update?",
                                       QMessageBox::Yes | QMessageBox::No)) {
-                close();
+                emit UpdateComplete();
                 return;
             }
         }
@@ -633,16 +641,17 @@ void CheckShadUpdate::DownloadUpdate(const QString& downloadUrl) {
                               downloadUrl + "\n" + reply->errorString());
             QMessageBox::warning(this, "Error", errmsg);
             reply->deleteLater();
+            emit UpdateComplete();
             return;
         }
-
-        QString userPath = QString::fromStdString(Common::GetShadUserDir().string());
 
 #ifdef Q_OS_WIN
         QString tempDownloadPath =
             QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) +
             "/Temp/temp_download_update";
 #else
+        QString userPath;
+        Common::PathToQString(userPath, Common::GetShadUserDir());
         QString tempDownloadPath = userPath + "/temp_download_update";
 #endif
 
@@ -656,12 +665,7 @@ void CheckShadUpdate::DownloadUpdate(const QString& downloadUrl) {
         if (file.open(QIODevice::WriteOnly)) {
             file.write(reply->readAll());
             file.close();
-            QMessageBox::information(
-                this, "Download Complete",
-                "The update has been downloaded, press OK to install.\n\nBBLauncher will close "
-                "to allow copying of shared QT files. The update is finished when BBLauncher "
-                "re-opens.");
-            InstallUpdate();
+            InstallUpdate(downloadPath);
         } else {
             QMessageBox::warning(this, "Error",
                                  QString::fromStdString("Failed to save the update file at") +
@@ -670,194 +674,32 @@ void CheckShadUpdate::DownloadUpdate(const QString& downloadUrl) {
         }
 
         reply->deleteLater();
+        emit UpdateComplete();
     });
 }
 
-void CheckShadUpdate::InstallUpdate() {
-    QString userPath;
-    Common::PathToQString(userPath, Common::GetShadUserDir());
-
-    QString rootPath;
-#if defined(__APPLE__)
-    Common::PathToQString(rootPath, Common::GetBundleParentDirectory());
-#else
-    Common::PathToQString(rootPath, std::filesystem::current_path());
-#endif
-
+void CheckShadUpdate::InstallUpdate(QString zipPath) {
     QString shadPath;
     Common::PathToQString(shadPath, Common::shadPs4Executable.parent_path());
 
-    QString tempDirPath = userPath + "/temp_download_update";
-    QString startingUpdate = "Starting Update...";
+    std::filesystem::remove(Common::shadPs4Executable);
+    QMicroz::extract(zipPath, shadPath);
 
-    QString binaryStartingUpdate;
-    for (QChar c : startingUpdate) {
-        binaryStartingUpdate.append(QString::number(c.unicode(), 2).rightJustified(16, '0'));
+#ifndef Q_OS_WIN
+    QString shadFullPath;
+    Common::PathToQString(shadPath, Common::shadPs4Executable);
+    mode_t permissions = S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
+    std::string exe = Common::shadPs4Executable.string();
+
+    if (chmod(exe.c_str(), permissions) != 0) {
+        QMessageBox::information(this, "Error setting permissions",
+                                 "Could not set access permissions for " + shadFullPath +
+                                     ". Set permissions manually before launching.");
     }
-
-    QString scriptContent;
-    QString scriptFileName;
-    QStringList arguments;
-    QString processCommand;
-
-#ifdef Q_OS_WIN
-    tempDirPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) +
-                  "/Temp/temp_download_update";
-    scriptFileName = tempDirPath + "/update.ps1";
-    scriptContent = QStringLiteral(
-        "Set-ExecutionPolicy Bypass -Scope Process -Force\n"
-        "$binaryStartingUpdate = '%1'\n"
-        "$chars = @()\n"
-        "for ($i = 0; $i -lt $binaryStartingUpdate.Length; $i += 16) {\n"
-        "    $chars += [char]([convert]::ToInt32($binaryStartingUpdate.Substring($i, 16), 2))\n"
-        "}\n"
-        "$startingUpdate = -join $chars\n"
-        "Write-Output $startingUpdate\n"
-        "Expand-Archive -Path '%2\\temp_download_update.zip' -DestinationPath '%2' -Force\n"
-        "Start-Sleep -Seconds 3\n"
-        "Copy-Item -Recurse -Force '%2\\*' '%4\\'\n"
-        "Start-Sleep -Seconds 2\n"
-        "Remove-Item -Force -LiteralPath '%4\\update.ps1'\n"
-        "Remove-Item -Force -LiteralPath '%4\\temp_download_update.zip'\n"
-        "Remove-Item -Recurse -Force '%2'\n"
-        "Start-Process -FilePath '%3\\BB_Launcher.exe' "
-        "-WorkingDirectory ([WildcardPattern]::Escape('%3'))\n");
-    arguments << "-ExecutionPolicy"
-              << "Bypass"
-              << "-File" << scriptFileName;
-    processCommand = "powershell.exe";
-
-#elif defined(Q_OS_LINUX)
-    // Linux Shell Script
-    scriptFileName = tempDirPath + "/update.sh";
-    scriptContent = QStringLiteral(
-        "#!/bin/bash\n"
-        "check_unzip() {\n"
-        "    if ! command -v unzip &> /dev/null && ! command -v 7z &> /dev/null; then\n"
-        "        echo \"Neither 'unzip' nor '7z' is installed.\"\n"
-        "        read -p \"Would you like to install 'unzip'? (y/n): \" response\n"
-        "        if [[ \"$response\" == \"y\" || \"$response\" == \"Y\" ]]; then\n"
-        "            if [[ -f /etc/os-release ]]; then\n"
-        "                . /etc/os-release\n"
-        "                case \"$ID\" in\n"
-        "                    ubuntu|debian)\n"
-        "                        sudo apt-get install unzip -y\n"
-        "                        ;;\n"
-        "                    fedora|redhat)\n"
-        "                        sudo dnf install unzip -y\n"
-        "                        ;;\n"
-        "                    *)\n"
-        "                        echo \"Unsupported distribution for automatic installation.\"\n"
-        "                        exit 1\n"
-        "                        ;;\n"
-        "                esac\n"
-        "            else\n"
-        "                echo \"Could not identify the distribution.\"\n"
-        "                exit 1\n"
-        "            fi\n"
-        "        else\n"
-        "            echo \"At least one of 'unzip' or '7z' is required to continue. The process "
-        "will be terminated.\"\n"
-        "            exit 1\n"
-        "        fi\n"
-        "    fi\n"
-        "}\n"
-        "extract_file() {\n"
-        "    if command -v unzip &> /dev/null; then\n"
-        "        unzip -o \"%2/temp_download_update.zip\" -d \"%2/\"\n"
-        "    elif command -v 7z &> /dev/null; then\n"
-        "        7z x \"%2/temp_download_update.zip\" -o\"%2/\" -y\n"
-        "    else\n"
-        "        echo \"No suitable extraction tool found.\"\n"
-        "        exit 1\n"
-        "    fi\n"
-        "}\n"
-        "main() {\n"
-        "    check_unzip\n"
-        "    echo \"%1\"\n"
-        "    sleep 2\n"
-        "    extract_file\n"
-        "    sleep 2\n"
-        "    if pgrep -f \"Shadps4-qt.AppImage\" > /dev/null; then\n"
-        "        pkill -f \"Shadps4-qt.AppImage\"\n"
-        "        sleep 2\n"
-        "    fi\n"
-        "    cp -r \"%2/\"* \"%4/\"\n"
-        "    sleep 2\n"
-        "    rm \"%4/update.sh\"\n"
-        "    rm \"%4/temp_download_update.zip\"\n"
-        "    chmod +x \"%4/Shadps4-qt.AppImage\"\n"
-        "    rm -r \"%2\"\n"
-        "    cd \"%3\" && ./BB_Launcher-qt.AppImage\n"
-        "}\n"
-        "main\n");
-    arguments << scriptFileName;
-    processCommand = "bash";
-
-#elif defined(Q_OS_MAC)
-    // macOS Shell Script
-    scriptFileName = tempDirPath + "/update.sh";
-    scriptContent = QStringLiteral(
-        "#!/bin/bash\n"
-        "check_tools() {\n"
-        "    if ! command -v unzip &> /dev/null && ! command -v tar &> /dev/null; then\n"
-        "        echo \"Neither 'unzip' nor 'tar' is installed.\"\n"
-        "        read -p \"Would you like to install 'unzip'? (y/n): \" response\n"
-        "        if [[ \"$response\" == \"y\" || \"$response\" == \"Y\" ]]; then\n"
-        "            echo \"Please install 'unzip' using Homebrew or another package manager.\"\n"
-        "            exit 1\n"
-        "        else\n"
-        "            echo \"At least one of 'unzip' or 'tar' is required to continue. The process "
-        "will be terminated.\"\n"
-        "            exit 1\n"
-        "        fi\n"
-        "    fi\n"
-        "}\n"
-        "check_tools\n"
-        "echo \"%1\"\n"
-        "sleep 2\n"
-        "unzip -o \"%2/temp_download_update.zip\" -d \"%2/\"\n"
-        "sleep 2\n"
-        "tar -xzf \"%2/shadps4-macos-qt.tar.gz\" -C \"%4\"\n"
-        "sleep 2\n"
-        "rm \"%4/update.sh\"\n"
-        "chmod +x \"%4/shadps4.app/Contents/MacOS/shadps4\"\n"
-        "open \"%3/BB_Launcher.app\"\n"
-        "rm -r \"%2\"\n");
-
-    arguments << scriptFileName;
-    processCommand = "bash";
-
-#else
-    QMessageBox::warning(this, "Error", "Unsupported operating system.");
-    return;
 #endif
 
-    QFile scriptFile(scriptFileName);
-    if (scriptFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QTextStream out(&scriptFile);
-        scriptFile.write("\xEF\xBB\xBF");
-#ifdef Q_OS_WIN
-        out << scriptContent.arg(binaryStartingUpdate).arg(tempDirPath).arg(rootPath).arg(shadPath);
-#endif
-#if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
-        out << scriptContent.arg(startingUpdate).arg(tempDirPath).arg(rootPath).arg(shadPath);
-#endif
-        scriptFile.close();
-
-// Make the script executable on Unix-like systems
-#if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
-        scriptFile.setPermissions(QFileDevice::ExeOwner | QFileDevice::ReadOwner |
-                                  QFileDevice::WriteOwner);
-#endif
-        QProcess::startDetached(processCommand, arguments);
-        exit(EXIT_SUCCESS);
-
-    } else {
-        QMessageBox::warning(this, "Error",
-                             QString::fromStdString("Failed to create the update script file") +
-                                 ":\n" + scriptFileName);
-    }
+    QMessageBox::information(this, "Update Complete", "Update process completed");
+    emit UpdateComplete();
 }
 
 CheckShadUpdate::~CheckShadUpdate() {}

@@ -18,3 +18,7 @@
 	path = externals/date
 	url = https://github.com/HowardHinnant/date.git
 	shallow = true
+[submodule "externals/microz"]
+	path = externals/microz
+	url = https://github.com/artemvlas/qmicroz
+	shallow = true

@@ -30,6 +30,9 @@ if (NOT TARGET SDL3::SDL3)
     add_subdirectory(sdl3)
 endif()
 
+# microz
+add_subdirectory(microz)
+
 if (APPLE)
      # date
     if (NOT TARGET date::date-tz)
