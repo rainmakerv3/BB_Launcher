@@ -84,6 +84,10 @@ LauncherSettings::LauncherSettings(QWidget* parent)
 #endif
 
     connect(ui->shortcutButton, &QPushButton::clicked, this, &LauncherSettings::CreateShortcut);
+
+#ifndef Q_OS_WINDOWS
+    ui->shortcutButton->setVisible(false);
+#endif
 }
 
 void LauncherSettings::SetLauncherDefaults() {
