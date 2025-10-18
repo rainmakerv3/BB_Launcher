@@ -138,6 +138,12 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
     });
 
     connect(ui->checkUpdateButton, &QPushButton::pressed, this, [this]() {
+        if (Config::GameRunning) {
+            QMessageBox::warning(this, "Cannot update",
+                                 "Cannot update shadPS4 while game is running");
+            return;
+        }
+
         ui->checkUpdateButton->setEnabled(false);
         ui->buttonBox->setEnabled(false);
         SaveUpdateSettings();
@@ -697,6 +703,34 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
             return;
         }
 
+        if (Config::LastBuildHash != "") {
+            bool isUpdated;
+            if (updateChannel == "Release") {
+                isUpdated = latestVersion.toStdString() == Config::LastBuildBranch;
+            } else {
+                isUpdated = latestVersion.right(40).toStdString() == Config::LastBuildHash;
+            }
+
+            if (!isUpdated) {
+                if (QMessageBox::Yes ==
+                    QMessageBox::question(this, "Update confirmation",
+                                          "New shadPS4 build detected. Proceed with Update?",
+                                          QMessageBox::Yes | QMessageBox::No)) {
+                    DownloadUpdate(downloadUrl);
+                } else {
+                    emit UpdateComplete();
+                }
+                return;
+            }
+
+            if (!isAutoupdate) {
+                QMessageBox::information(this, "BBLauncher", "Current build is already updated.");
+            }
+
+            emit UpdateComplete();
+            return;
+        }
+
         std::chrono::time_point shadWriteTime =
             std::filesystem::last_write_time(Common::shadPs4Executable);
 
@@ -791,15 +825,16 @@ void CheckShadUpdate::DownloadUpdate(const QString& downloadUrl) {
             file.write(reply->readAll());
             file.close();
             InstallUpdate(downloadPath);
+            emit UpdateComplete();
         } else {
             QMessageBox::warning(this, "Error",
                                  QString::fromStdString("Failed to save the update file at") +
                                      ":\n" + downloadPath);
             emit DownloadProgressed(0);
+            emit UpdateComplete();
         }
 
         reply->deleteLater();
-        emit UpdateComplete();
     });
 }
 
@@ -824,6 +859,7 @@ void CheckShadUpdate::InstallUpdate(QString zipPath) {
 #endif
 
     std::filesystem::remove(Common::PathFromQString(zipPath));
+    Config::SaveBuild("", "");
     QMessageBox::information(this, "Update Complete", "Update process completed");
 }
 

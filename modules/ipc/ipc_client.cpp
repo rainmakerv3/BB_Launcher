@@ -6,6 +6,7 @@
 #include <QProcessEnvironment>
 
 #include "ipc_client.h"
+#include "settings/config.h"
 
 using u32 = std::uint32_t;
 using u64 = std::uint64_t;
@@ -164,7 +165,19 @@ void IpcClient::onStderr() {
 }
 
 void IpcClient::onStdout() {
-    printf("%s", process->readAllStandardOutput().toStdString().c_str());
+    QString outputString = QString::fromUtf8(process->readAllStandardOutput());
+    printf("%s", outputString.toStdString().c_str());
+    std::string build;
+
+    if (outputString.contains("Revision")) {
+        int index = outputString.indexOf("Revision");
+        build = outputString.toStdString().substr(index + 9, 40);
+    }
+
+    if (outputString.contains("Branch")) {
+        int index = outputString.indexOf("Branch");
+        Config::SaveBuild(build, outputString.toStdString().substr(index + 7, 8));
+    }
 }
 
 void IpcClient::onProcessClosed() {

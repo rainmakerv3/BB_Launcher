@@ -469,8 +469,11 @@ void BBLauncher::GetShadExecutable() {
 
     Config::SaveConfigPath("shadPath", Common::shadPs4Executable);
 
-    if (Common::shadPs4Executable == "")
+    if (Common::shadPs4Executable == "") {
         canLaunch = false;
+    } else {
+        Config::SaveBuild("", "");
+    }
 }
 
 // bool BBLauncher::eventFilter(QObject* obj, QEvent* event) {}
