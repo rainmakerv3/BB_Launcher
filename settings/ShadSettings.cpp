@@ -275,6 +275,8 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->RCASCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "rcasEnabled", true));
     ui->RCASSlider->setValue(toml::find_or<int>(data, "GPU", "rcasAttenuation", 250));
     ui->RCASValue->setText(QString::number(ui->RCASSlider->value() / 1000.0, 'f', 3));
+    ui->volumeSlider->setValue(toml::find_or<int>(data, "General", "volumeSlider", 100));
+    ui->volumeValue->setText(QString::number(ui->volumeSlider->value()) + "%");
 
     QString translatedText_PresentMode = presentModeMap.key(
         QString::fromStdString(toml::find_or<std::string>(data, "GPU", "presentMode", "Mailbox")));
@@ -425,6 +427,7 @@ void ShadSettings::SaveSettings() {
     data["General"]["logFilter"] = ui->logFilterLineEdit->text().toStdString();
     data["General"]["logType"] = ui->logTypeComboBox->currentText().toStdString();
     data["General"]["userName"] = ui->userNameLineEdit->text().toStdString();
+    data["General"]["volumeSlider"] = ui->volumeSlider->value();
 
     data["Input"]["cursorState"] = ui->hideCursorComboBox->currentIndex();
     data["Input"]["cursorHideTimeout"] = ui->idleTimeoutSpinBox->value();
@@ -475,6 +478,7 @@ void ShadSettings::SetDefaults() {
     ui->FSRCheckBox->setChecked(true);
     ui->RCASCheckBox->setChecked(true);
     ui->RCASSlider->setValue(250);
+    ui->volumeSlider->setValue(100);
     ui->presentModeComboBox->setCurrentText("Mailbox");
     ui->dmemSpinBox->setValue(0);
 }
