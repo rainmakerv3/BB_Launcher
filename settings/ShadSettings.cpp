@@ -269,6 +269,11 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->GPUBufferCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "copyGPUBuffers", false));
     ui->disableTrophycheckBox->setChecked(
         toml::find_or<bool>(data, "General", "isTrophyPopupDisabled", false));
+    ui->popUpPosComboBox->setCurrentText(
+        QString::fromStdString(toml::find_or<std::string>(data, "General", "sideTrophy", "right")));
+    ui->popUpDurationSpinBox->setValue(
+        toml::find_or<double>(data, "General", "trophyNotificationDuration", 6.0));
+
     ui->discordRPCCheckbox->setChecked(
         toml::find_or<bool>(data, "General", "enableDiscordRPC", false));
     ui->DevkitCheckBox->setChecked(toml::find_or<bool>(data, "General", "isDevKit", false));
@@ -434,6 +439,8 @@ void ShadSettings::SaveSettings() {
     }
 
     data["General"]["isTrophyPopupDisabled"] = ui->disableTrophycheckBox->isChecked();
+    data["General"]["sideTrophy"] = ui->popUpPosComboBox->currentText().toStdString();
+    data["General"]["trophyNotificationDuration"] = ui->popUpDurationSpinBox->value();
     data["General"]["logFilter"] = ui->logFilterLineEdit->text().toStdString();
     data["General"]["logType"] = ui->logTypeComboBox->currentText().toStdString();
     data["General"]["userName"] = ui->userNameLineEdit->text().toStdString();
@@ -475,6 +482,8 @@ void ShadSettings::SetDefaults() {
     ui->heightSpinBox->setValue(720);
     ui->vblankSpinBox->setValue(60);
     ui->disableTrophycheckBox->setChecked(false);
+    ui->popUpPosComboBox->setCurrentText("right");
+    ui->popUpDurationSpinBox->setValue(6.0);
     ui->discordRPCCheckbox->setChecked(false);
     ui->ReadbacksCheckBox->setChecked(false);
     ui->DevkitCheckBox->setChecked(false);
