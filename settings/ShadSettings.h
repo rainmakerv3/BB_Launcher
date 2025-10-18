@@ -165,5 +165,7 @@ private:
                  const QString& currentDate, const QString& currentRev);
 
     QString updateDownloadUrl;
+    QString latestVersion;
+    QString updateChannel;
     QNetworkAccessManager* networkManager;
 };

@@ -604,7 +604,6 @@ CheckShadUpdate::CheckShadUpdate(const bool isAutoupdate, QWidget* parent) : QDi
 
 void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
     QNetworkAccessManager* networkManager = new QNetworkAccessManager(this);
-    QString updateChannel;
     QUrl url;
 
     bool checkName = true;
@@ -622,7 +621,7 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
     QNetworkRequest request(url);
     QNetworkReply* reply = networkManager->get(request);
 
-    connect(reply, &QNetworkReply::finished, this, [this, isAutoupdate, reply, updateChannel]() {
+    connect(reply, &QNetworkReply::finished, this, [this, isAutoupdate, reply]() {
         if (reply->error() != QNetworkReply::NoError) {
             QMessageBox::warning(this, "Error",
                                  QString::fromStdString("Network error:") + "\n" +
@@ -643,7 +642,6 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
         }
 
         QString downloadUrl;
-        QString latestVersion;
         QString latestRev;
         QString latestDate;
         QString platformString;
@@ -858,8 +856,12 @@ void CheckShadUpdate::InstallUpdate(QString zipPath) {
     }
 #endif
 
+    updateChannel == "Release"
+        ? Config::SaveBuild(latestVersion.toStdString(), latestVersion.toStdString())
+        : Config::SaveBuild(latestVersion.right(40).toStdString(),
+                            latestVersion.right(40).toStdString());
+
     std::filesystem::remove(Common::PathFromQString(zipPath));
-    Config::SaveBuild("", "");
     QMessageBox::information(this, "Update Complete", "Update process completed");
 }
 
