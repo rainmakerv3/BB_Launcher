@@ -381,6 +381,8 @@ void BBLauncher::UpdateSettingsList() {
         "Back up saves enabled = " + QVariant(BackupSaveEnabled).toString();
     QString AutoUpdateSetting =
         "Check updates on startup enabled = " + QVariant(AutoUpdateEnabled).toString();
+    QString CheckPortableSetting =
+        "Check portable settings folder = " + QVariant(CheckPortableSettings).toString();
 
     QString BackupIntSetting;
     QString BackupNumSetting;
@@ -393,8 +395,9 @@ void BBLauncher::UpdateSettingsList() {
         BackupNumSetting = "Backup Copies = disabled";
     }
 
-    QStringList SettingStrings = {SoundhackSetting, ThemeSetting,     BackupEnableSetting,
-                                  BackupIntSetting, BackupNumSetting, AutoUpdateSetting};
+    QStringList SettingStrings = {SoundhackSetting,    ThemeSetting,     BackupEnableSetting,
+                                  BackupIntSetting,    BackupNumSetting, AutoUpdateSetting,
+                                  CheckPortableSetting};
 
     ui->SettingList->clear();
     ui->SettingList->addItems(SettingStrings);

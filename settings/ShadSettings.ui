@@ -51,7 +51,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QScrollArea" name="generalTab">
       <property name="widgetResizable">
@@ -748,7 +748,7 @@
      </widget>
      <widget class="QWidget" name="tab_3">
       <attribute name="title">
-       <string>Game-Specific Settings</string>
+       <string>Game-Specific and Experimental Settings</string>
       </attribute>
       <widget class="QCheckBox" name="DevkitCheckBox">
        <property name="geometry">
@@ -872,7 +872,7 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Global Settings</string>
+       <string>Global Settings and ShadPS4 updates</string>
       </attribute>
       <widget class="QCheckBox" name="discordRPCCheckbox">
        <property name="geometry">
