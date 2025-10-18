@@ -121,7 +121,7 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
     });
 
     connect(ui->tabWidgetSettings, &QTabWidget::currentChanged, this,
-            [this]() { ui->buttonBox->button(QDialogButtonBox::Close)->setFocus(); });
+            [this]() { ui->buttonBox->button(QDialogButtonBox::Cancel)->setFocus(); });
 
     ui->updaterGroupBox->setVisible(true);
 
