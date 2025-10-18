@@ -22,6 +22,7 @@ std::string Config::UpdateChannel = "Nightly";
 bool Config::AutoUpdateShadEnabled = false;
 bool Config::CheckPortableSettings = true;
 std::string Config::DefaultControllerID = "";
+bool Config::GameRunning = false;
 
 static std::string SelectedGamepad = "";
 

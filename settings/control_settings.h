@@ -6,6 +6,8 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_gamepad.h>
 
+#include "modules/ipc/ipc_client.h"
+
 namespace Ui {
 class ControlSettings;
 }
@@ -13,7 +15,7 @@ class ControlSettings;
 class ControlSettings : public QDialog {
     Q_OBJECT
 public:
-    explicit ControlSettings(QWidget* parent = nullptr);
+    explicit ControlSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent = nullptr);
     ~ControlSettings();
 
 signals:
@@ -32,6 +34,7 @@ private Q_SLOTS:
 
 private:
     std::unique_ptr<Ui::ControlSettings> ui;
+    std::shared_ptr<IpcClient> m_ipc_client;
 
     bool eventFilter(QObject* obj, QEvent* event) override;
     void AddBoxItems();

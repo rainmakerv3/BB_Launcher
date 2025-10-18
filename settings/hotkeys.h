@@ -7,6 +7,8 @@
 #include <QTimer>
 #include <SDL3/SDL_gamepad.h>
 
+#include "modules/ipc/ipc_client.h"
+
 #ifdef _WIN32
 #define LCTRL_KEY 29
 #define LALT_KEY 56
@@ -25,7 +27,7 @@ class Hotkeys : public QDialog {
     Q_OBJECT
 
 public:
-    explicit Hotkeys(QWidget* parent = nullptr);
+    explicit Hotkeys(std::shared_ptr<IpcClient> ipc_client, QWidget* parent = nullptr);
     ~Hotkeys();
 
 private Q_SLOTS:
@@ -65,6 +67,7 @@ private:
     QFuture<void> Polling;
 
     Ui::Hotkeys* ui;
+    std::shared_ptr<IpcClient> m_ipc_client;
 
     const std::vector<std::string> ControllerInputs = {
         "cross",        "circle",    "square",      "triangle",    "l1",

@@ -12,7 +12,8 @@
 #include "modules/Common.h"
 #include "ui_hotkeys.h"
 
-Hotkeys::Hotkeys(QWidget* parent) : QDialog(parent), ui(new Ui::Hotkeys) {
+Hotkeys::Hotkeys(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
+    : QDialog(parent), m_ipc_client(ipc_client), ui(new Ui::Hotkeys) {
 
     ui->setupUi(this);
 
@@ -212,6 +213,9 @@ void Hotkeys::SaveHotkeys(bool CloseOnSave) {
         output_file << line << '\n';
     }
     output_file.close();
+
+    if (Config::GameRunning)
+        m_ipc_client->reloadInputs("default");
 
     if (CloseOnSave)
         QWidget::close();

@@ -5,6 +5,8 @@
 #include <QDialog>
 #include <QNetworkAccessManager>
 
+#include "modules/ipc/ipc_client.h"
+
 namespace Ui {
 class ShadSettings;
 }
@@ -12,7 +14,8 @@ class ShadSettings;
 class ShadSettings : public QDialog {
     Q_OBJECT
 public:
-    explicit ShadSettings(bool game_specific, QWidget* parent = nullptr);
+    explicit ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_specific,
+                          QWidget* parent = nullptr);
     ~ShadSettings();
 
     bool eventFilter(QObject* obj, QEvent* event) override;
@@ -27,6 +30,7 @@ private:
     void SaveUpdateSettings();
 
     std::unique_ptr<Ui::ShadSettings> ui;
+    std::shared_ptr<IpcClient> m_ipc_client;
 
     bool is_game_specific;
     std::map<std::string, int> languages;

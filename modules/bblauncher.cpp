@@ -120,7 +120,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     connect(ui->PatchesButton, &QPushButton::pressed, this, [this]() {
         if (!CheckBBInstall())
             return;
-        CheatsPatches* cheatsPatches = new CheatsPatches(m_ipc_client, isGameRunning, this);
+        CheatsPatches* cheatsPatches = new CheatsPatches(m_ipc_client, Config::GameRunning, this);
         cheatsPatches->show();
         connect(this, &QWidget::destroyed, cheatsPatches,
                 [cheatsPatches]() { cheatsPatches->deleteLater(); });
@@ -145,7 +145,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
                                        " not found. Run shadPS4 once to generate it."));
             return;
         }
-        ShadSettings* ShadSettingsWindow = new ShadSettings(false, this);
+        ShadSettings* ShadSettingsWindow = new ShadSettings(m_ipc_client, false, this);
         ShadSettingsWindow->exec();
     });
 
@@ -168,7 +168,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             }
         }
 
-        ShadSettings* ShadSettingsWindow = new ShadSettings(true, this);
+        ShadSettings* ShadSettingsWindow = new ShadSettings(m_ipc_client, true, this);
         ShadSettingsWindow->exec();
     });
 
@@ -180,12 +180,12 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->KBMButton, &QPushButton::clicked, this, [this]() {
-        KBMSettings* KBMWindow = new KBMSettings(this);
+        KBMSettings* KBMWindow = new KBMSettings(m_ipc_client, this);
         KBMWindow->exec();
     });
 
     connect(ui->ControllerButton, &QPushButton::clicked, this, [this]() {
-        ControlSettings* RemapWindow = new ControlSettings(this);
+        ControlSettings* RemapWindow = new ControlSettings(m_ipc_client, this);
         RemapWindow->exec();
     });
 
@@ -201,7 +201,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->HotkeyButton, &QPushButton::clicked, this, [this]() {
-        Hotkeys* HKWindow = new Hotkeys(this);
+        Hotkeys* HKWindow = new Hotkeys(m_ipc_client, this);
         HKWindow->exec();
     });
 
@@ -515,7 +515,7 @@ QIcon BBLauncher::RecolorIcon(const QIcon& icon, bool isWhite) {
 }
 
 void BBLauncher::onGameClosed() {
-    isGameRunning = false;
+    Config::GameRunning = false;
     is_paused = false;
     save_backups = false;
 
@@ -747,12 +747,11 @@ void BBLauncher::StartGameWithArgs(QStringList args) {
 }
 
 void BBLauncher::StartEmulator(std::filesystem::path path, QStringList args) {
-    if (isGameRunning) {
+    if (Config::GameRunning) {
         QMessageBox::critical(nullptr, tr("Run Game"), QString(tr("Game is already running!")));
         return;
     }
 
-    isGameRunning = true;
     QString exe;
     Common::PathToQString(exe, Common::shadPs4Executable);
     QFileInfo fileInfo(exe);
@@ -767,6 +766,8 @@ void BBLauncher::StartEmulator(std::filesystem::path path, QStringList args) {
     final_args.append(args);
     QString workDir = fileInfo.absolutePath();
     m_ipc_client->startEmulator(fileInfo, final_args, workDir);
+
+    Config::GameRunning = true;
 }
 
 BBLauncher::~BBLauncher() {

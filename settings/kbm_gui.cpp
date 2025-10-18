@@ -18,7 +18,8 @@
 
 HelpDialog* HelpWindow;
 
-KBMSettings::KBMSettings(QWidget* parent) : QDialog(parent), ui(new Ui::KBMSettings) {
+KBMSettings::KBMSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
+    : QDialog(parent), m_ipc_client(ipc_client), ui(new Ui::KBMSettings) {
 
     ui->setupUi(this);
     ui->PerGameCheckBox->setChecked(!Config::UnifiedInputConfig);
@@ -336,6 +337,11 @@ void KBMSettings::SaveKBMConfig(bool CloseOnSave) {
 
     Config::UnifiedInputConfig = !ui->PerGameCheckBox->isChecked();
     Config::SaveInputSettings(Config::UnifiedInputConfig, "noIDsave");
+
+    if (Config::GameRunning) {
+        Config::UnifiedInputConfig ? m_ipc_client->reloadInputs("default")
+                                   : m_ipc_client->reloadInputs(Common::game_serial);
+    }
 
     if (CloseOnSave)
         QWidget::close();

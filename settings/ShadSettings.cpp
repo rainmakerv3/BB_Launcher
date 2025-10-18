@@ -27,8 +27,10 @@
 #include <date/tz_private.h>
 #endif
 
-ShadSettings::ShadSettings(bool game_specific, QWidget* parent)
-    : is_game_specific(game_specific), QDialog(parent), ui(new Ui::ShadSettings) {
+ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_specific,
+                           QWidget* parent)
+    : is_game_specific(game_specific), m_ipc_client(ipc_client), QDialog(parent),
+      ui(new Ui::ShadSettings) {
     ui->setupUi(this);
     ui->tabWidgetSettings->setUsesScrollButtons(false);
     initialHeight = this->height();
@@ -39,7 +41,7 @@ ShadSettings::ShadSettings(bool game_specific, QWidget* parent)
         ui->tabWidgetSettings->setTabVisible(1, false);
     }
 
-    ui->buttonBox->button(QDialogButtonBox::StandardButton::Close)->setFocus();
+    ui->buttonBox->button(QDialogButtonBox::StandardButton::Save)->setFocus();
 
     ui->consoleLanguageComboBox->addItems(languageNames);
 
@@ -73,7 +75,26 @@ ShadSettings::ShadSettings(bool game_specific, QWidget* parent)
         });
     }
 
-    connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QWidget::close);
+    connect(this, &QDialog::rejected, this, [this]() {
+        toml::value data = toml::parse(Common::GetShadUserDir() / "config.toml");
+        toml::value gs_data;
+        is_game_specific ? gs_data = toml::parse(Common::GetShadUserDir() / "custom_configs" /
+                                                 (Common::game_serial + ".toml"))
+                         : gs_data = data;
+
+        // reset real-time widgets to config value if not saved
+        int sliderValue = toml::find_or<int>(gs_data, "General", "volumeSlider", 100);
+        ui->volumeSlider->setValue(sliderValue);
+
+        if (Config::GameRunning) {
+            m_ipc_client->setFsr(toml::find_or<bool>(gs_data, "GPU", "fsrEnabled", true));
+            m_ipc_client->setRcas(toml::find_or<bool>(gs_data, "GPU", "rcasEnabled", true));
+            m_ipc_client->setRcasAttenuation(
+                toml::find_or<int>(gs_data, "GPU", "rcasAttenuation", 250));
+        }
+
+        QWidget::close();
+    });
 
     connect(ui->buttonBox, &QDialogButtonBox::clicked, this, [this](QAbstractButton* button) {
         if (button == ui->buttonBox->button(QDialogButtonBox::Save)) {
@@ -83,7 +104,9 @@ ShadSettings::ShadSettings(bool game_specific, QWidget* parent)
             SaveSettings();
         } else if (button == ui->buttonBox->button(QDialogButtonBox::RestoreDefaults)) {
             SetDefaults();
-        } 
+        } else if (button == ui->buttonBox->button(QDialogButtonBox::Cancel)) {
+            QDialog::rejected();
+        }
     });
 
     connect(ui->tabWidgetSettings, &QTabWidget::currentChanged, this,
@@ -96,6 +119,12 @@ ShadSettings::ShadSettings(bool game_specific, QWidget* parent)
 
     connect(ui->updateComboBox, &QComboBox::currentIndexChanged, this,
             [this]() { Config::UpdateChannel = ui->updateComboBox->currentText().toStdString(); });
+
+    connect(ui->volumeSlider, &QSlider::valueChanged, this, [this](int value) {
+        ui->volumeValue->setText(QString::number(value) + "%");
+        if (Config::GameRunning)
+            m_ipc_client->adjustVol(value, is_game_specific);
+    });
 
     connect(ui->checkUpdateButton, &QPushButton::pressed, this, [this]() {
         ui->checkUpdateButton->setEnabled(false);
@@ -146,6 +175,25 @@ ShadSettings::ShadSettings(bool game_specific, QWidget* parent)
         QString RCASValue = QString::number(value / 1000.0, 'f', 3);
         ui->RCASValue->setText(RCASValue);
     });
+
+    if (Config::GameRunning) {
+        connect(ui->RCASSlider, &QSlider::valueChanged, this,
+                [this](int value) { m_ipc_client->setRcasAttenuation(value); });
+
+#if (QT_VERSION < QT_VERSION_CHECK(6, 7, 0))
+        connect(ui->FSRCheckBox, &QCheckBox::stateChanged, this,
+                [this](int state) { m_ipc_client->setFsr(state); });
+
+        connect(ui->RCASCheckBox, &QCheckBox::stateChanged, this,
+                [this](int state) { m_ipc_client->setRcas(state); });
+#else
+        connect(ui->FSRCheckBox, &QCheckBox::checkStateChanged, this,
+                [this](Qt::CheckState state) { m_ipc_client->setFsr(state); });
+
+        connect(ui->RCASCheckBox, &QCheckBox::checkStateChanged, this,
+                [this](Qt::CheckState state) { m_ipc_client->setRcas(state); });
+#endif
+    }
 
     // Descriptions
     {

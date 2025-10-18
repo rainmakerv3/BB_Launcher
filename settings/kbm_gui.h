@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+#include "modules/ipc/ipc_client.h"
+
 namespace Ui {
 class KBMSettings;
 }
@@ -10,7 +12,7 @@ class KBMSettings;
 class KBMSettings : public QDialog {
     Q_OBJECT
 public:
-    explicit KBMSettings(QWidget* parent = nullptr);
+    explicit KBMSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent = nullptr);
     ~KBMSettings();
 
 signals:
@@ -25,6 +27,7 @@ private Q_SLOTS:
 
 private:
     std::unique_ptr<Ui::KBMSettings> ui;
+    std::shared_ptr<IpcClient> m_ipc_client;
 
 #ifdef _WIN32
 #define LCTRL_KEY 29

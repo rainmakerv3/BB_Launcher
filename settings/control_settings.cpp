@@ -13,7 +13,8 @@
 #include "modules/Common.h"
 #include "settings/ui_control_settings.h"
 
-ControlSettings::ControlSettings(QWidget* parent) : QDialog(parent), ui(new Ui::ControlSettings) {
+ControlSettings::ControlSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
+    : QDialog(parent), m_ipc_client(ipc_client), ui(new Ui::ControlSettings) {
     ui->setupUi(this);
     ui->PerGameCheckBox->setChecked(!Config::UnifiedInputConfig);
 
@@ -333,6 +334,11 @@ void ControlSettings::SaveControllerConfig(bool CloseOnSave) {
 
     Config::UnifiedInputConfig = !ui->PerGameCheckBox->isChecked();
     Config::SaveInputSettings(Config::UnifiedInputConfig, Config::DefaultControllerID);
+
+    if (Config::GameRunning) {
+        Config::UnifiedInputConfig ? m_ipc_client->reloadInputs("default")
+                                   : m_ipc_client->reloadInputs(Common::game_serial);
+    }
 
     if (CloseOnSave)
         QWidget::close();
@@ -993,6 +999,9 @@ void ControlSettings::Cleanup() {
     SDL_QuitSubSystem(SDL_INIT_GAMEPAD);
     SDL_QuitSubSystem(SDL_INIT_EVENTS);
     SDL_Quit();
+
+    if (Config::GameRunning)
+        m_ipc_client->setActiveController(GamepadSelect::GetSelectedGamepad());
 }
 
 ControlSettings::~ControlSettings() {}

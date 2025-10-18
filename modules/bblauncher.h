@@ -50,7 +50,6 @@ private:
     std::filesystem::path shadPs4Directory;
     bool noGUIset;
     bool noinstancerunning;
-    bool isGameRunning = false;
     bool is_paused;
 
     const std::vector<std::string> BBSerialList = {"CUSA03173", "CUSA00900", "CUSA00208",
