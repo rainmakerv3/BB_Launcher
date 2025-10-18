@@ -138,6 +138,12 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
     });
 
     connect(ui->checkUpdateButton, &QPushButton::pressed, this, [this]() {
+        if (Config::GameRunning) {
+            QMessageBox::warning(this, "Cannot update",
+                                 "Cannot update shadPS4 while game is running");
+            return;
+        }
+
         ui->checkUpdateButton->setEnabled(false);
         ui->buttonBox->setEnabled(false);
         SaveUpdateSettings();
@@ -598,7 +604,6 @@ CheckShadUpdate::CheckShadUpdate(const bool isAutoupdate, QWidget* parent) : QDi
 
 void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
     QNetworkAccessManager* networkManager = new QNetworkAccessManager(this);
-    QString updateChannel;
     QUrl url;
 
     bool checkName = true;
@@ -616,7 +621,7 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
     QNetworkRequest request(url);
     QNetworkReply* reply = networkManager->get(request);
 
-    connect(reply, &QNetworkReply::finished, this, [this, isAutoupdate, reply, updateChannel]() {
+    connect(reply, &QNetworkReply::finished, this, [this, isAutoupdate, reply]() {
         if (reply->error() != QNetworkReply::NoError) {
             QMessageBox::warning(this, "Error",
                                  QString::fromStdString("Network error:") + "\n" +
@@ -637,7 +642,6 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
         }
 
         QString downloadUrl;
-        QString latestVersion;
         QString latestRev;
         QString latestDate;
         QString platformString;
@@ -693,6 +697,34 @@ void CheckShadUpdate::UpdateShad(bool isAutoupdate) {
         if (!found) {
             QMessageBox::warning(this, "Error", "No download URL found for the specified asset.");
             reply->deleteLater();
+            emit UpdateComplete();
+            return;
+        }
+
+        if (Config::LastBuildHash != "") {
+            bool isUpdated;
+            if (updateChannel == "Release") {
+                isUpdated = latestVersion.toStdString() == Config::LastBuildBranch;
+            } else {
+                isUpdated = latestVersion.right(40).toStdString() == Config::LastBuildHash;
+            }
+
+            if (!isUpdated) {
+                if (QMessageBox::Yes ==
+                    QMessageBox::question(this, "Update confirmation",
+                                          "New shadPS4 build detected. Proceed with Update?",
+                                          QMessageBox::Yes | QMessageBox::No)) {
+                    DownloadUpdate(downloadUrl);
+                } else {
+                    emit UpdateComplete();
+                }
+                return;
+            }
+
+            if (!isAutoupdate) {
+                QMessageBox::information(this, "BBLauncher", "Current build is already updated.");
+            }
+
             emit UpdateComplete();
             return;
         }
@@ -791,15 +823,16 @@ void CheckShadUpdate::DownloadUpdate(const QString& downloadUrl) {
             file.write(reply->readAll());
             file.close();
             InstallUpdate(downloadPath);
+            emit UpdateComplete();
         } else {
             QMessageBox::warning(this, "Error",
                                  QString::fromStdString("Failed to save the update file at") +
                                      ":\n" + downloadPath);
             emit DownloadProgressed(0);
+            emit UpdateComplete();
         }
 
         reply->deleteLater();
-        emit UpdateComplete();
     });
 }
 
@@ -822,6 +855,11 @@ void CheckShadUpdate::InstallUpdate(QString zipPath) {
                                      ". Set permissions manually before launching.");
     }
 #endif
+
+    updateChannel == "Release"
+        ? Config::SaveBuild(latestVersion.toStdString(), latestVersion.toStdString())
+        : Config::SaveBuild(latestVersion.right(40).toStdString(),
+                            latestVersion.right(40).toStdString());
 
     std::filesystem::remove(Common::PathFromQString(zipPath));
     QMessageBox::information(this, "Update Complete", "Update process completed");

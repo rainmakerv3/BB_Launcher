@@ -23,6 +23,8 @@ bool Config::AutoUpdateShadEnabled = false;
 bool Config::CheckPortableSettings = true;
 std::string Config::DefaultControllerID = "";
 bool Config::GameRunning = false;
+std::string Config::LastBuildHash = "";
+std::string Config::LastBuildBranch = "";
 
 static std::string SelectedGamepad = "";
 
@@ -66,6 +68,8 @@ void LoadLauncherSettings() {
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
     AutoUpdateEnabled = toml::find_or<bool>(data, "Launcher", "AutoUpdateEnabled", false);
     CheckPortableSettings = toml::find_or<bool>(data, "Launcher", "PortableSettings", true);
+    LastBuildHash = toml::find_or<std::string>(data, "Launcher", "Build", "");
+    LastBuildBranch = toml::find_or<std::string>(data, "Launcher", "Branch", "");
 
     BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", false);
     BackupInterval = toml::find_or<int>(data, "Backups", "BackupInterval", 10);
@@ -232,6 +236,37 @@ void SaveTrophySettings(bool ShowEarned, bool ShowUnEarned, bool ShowHidden) {
     data["Trophy"]["ShowEarned"] = ShowEarned;
     data["Trophy"]["ShowUnearned"] = ShowUnEarned;
     data["Trophy"]["ShowHidden"] = ShowHidden;
+
+    std::ofstream file(SettingsFile, std::ios::binary);
+    file << data;
+    file.close();
+}
+
+void SaveBuild(std::string build, std::string branch) {
+    toml::value data;
+    std::error_code error;
+
+    if (std::filesystem::exists(SettingsFile, error)) {
+        try {
+            std::ifstream ifs;
+            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+            ifs.open(SettingsFile, std::ios_base::binary);
+            data = toml::parse(ifs, std::string{fmt::UTF(SettingsFile.filename().u8string()).data});
+        } catch (const std::exception& ex) {
+            QMessageBox::critical(NULL, "Filesystem error", ex.what());
+            return;
+        }
+    } else {
+        if (error) {
+            QMessageBox::critical(NULL, "Filesystem error",
+                                  QString::fromStdString(error.message()));
+        }
+    }
+
+    Config::LastBuildHash = build;
+    Config::LastBuildBranch = branch;
+    data["Launcher"]["Build"] = build;
+    data["Launcher"]["Branch"] = branch;
 
     std::ofstream file(SettingsFile, std::ios::binary);
     file << data;
