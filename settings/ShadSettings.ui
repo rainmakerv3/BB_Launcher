@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1005</width>
-    <height>792</height>
+    <height>797</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -66,7 +66,7 @@
          <x>0</x>
          <y>0</y>
          <width>981</width>
-         <height>628</height>
+         <height>633</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="generalTabVLayout" stretch="0,0">
@@ -274,17 +274,16 @@
                 </layout>
                </item>
                <item>
-                <spacer name="verticalSpacer_2">
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Vertical</enum>
+                <widget class="QGroupBox" name="GpuGroupBox">
+                 <property name="title">
+                  <string>Select GPU</string>
                  </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                </spacer>
+                 <layout class="QVBoxLayout" name="verticalLayout_6">
+                  <item>
+                   <widget class="QComboBox" name="graphicsAdapterBox"/>
+                  </item>
+                 </layout>
+                </widget>
                </item>
               </layout>
              </widget>

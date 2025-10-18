@@ -28,6 +28,7 @@ private:
     void SetDefaults();
     void UpdateDialog();
     void SaveUpdateSettings();
+    void getPhysicalDevices();
 
     std::unique_ptr<Ui::ShadSettings> ui;
     std::shared_ptr<IpcClient> m_ipc_client;

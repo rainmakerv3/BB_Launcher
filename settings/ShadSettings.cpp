@@ -15,6 +15,9 @@
 #include <qmicroz.h>
 #include <sys/stat.h>
 
+#define VOLK_IMPLEMENTATION
+#include <volk.h>
+
 #include "ShadSettings.h"
 #include "config.h"
 #include "formatting.h"
@@ -27,11 +30,14 @@
 #include <date/tz_private.h>
 #endif
 
+static std::vector<QString> m_physical_devices;
+
 ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_specific,
                            QWidget* parent)
     : is_game_specific(game_specific), m_ipc_client(ipc_client), QDialog(parent),
       ui(new Ui::ShadSettings) {
     ui->setupUi(this);
+    getPhysicalDevices();
     ui->tabWidgetSettings->setUsesScrollButtons(false);
     initialHeight = this->height();
 
@@ -52,6 +58,11 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
     ui->hideCursorComboBox->addItem("Never");
     ui->hideCursorComboBox->addItem("Idle");
     ui->hideCursorComboBox->addItem("Always");
+
+    ui->graphicsAdapterBox->addItem(tr("Auto Select")); // -1, auto selection
+    for (const auto& device : m_physical_devices) {
+        ui->graphicsAdapterBox->addItem(device);
+    }
 
     LoadValuesFromConfig();
     defaultTextEdit = "Point your mouse at an option to display its description.";
@@ -277,6 +288,7 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->RCASValue->setText(QString::number(ui->RCASSlider->value() / 1000.0, 'f', 3));
     ui->volumeSlider->setValue(toml::find_or<int>(data, "General", "volumeSlider", 100));
     ui->volumeValue->setText(QString::number(ui->volumeSlider->value()) + "%");
+    ui->graphicsAdapterBox->setCurrentIndex(toml::find_or<int>(data, "Vulkan", "gpuId", -1) + 1);
 
     QString translatedText_PresentMode = presentModeMap.key(
         QString::fromStdString(toml::find_or<std::string>(data, "GPU", "presentMode", "Mailbox")));
@@ -308,8 +320,6 @@ void ShadSettings::OnCursorStateChanged(int index) {
         }
     }
 }
-
-ShadSettings::~ShadSettings() {}
 
 void ShadSettings::updateNoteTextEdit(const QString& elementName) {
     QString text; // put texts definition somewhere
@@ -447,6 +457,8 @@ void ShadSettings::SaveSettings() {
     bool isFullscreen = ui->fullscreenModeComboBox->currentText() != "Windowed";
     data["GPU"]["Fullscreen"] = isFullscreen;
 
+    data["Vulkan"]["gpuId"] = ui->graphicsAdapterBox->currentIndex() - 1;
+
     data["Settings"]["consoleLanguage"] =
         languageIndexes[ui->consoleLanguageComboBox->currentIndex()];
 
@@ -515,6 +527,58 @@ void ShadSettings::SaveUpdateSettings() {
     }
     output_file.close();
 }
+
+void ShadSettings::getPhysicalDevices() {
+    if (volkInitialize() != VK_SUCCESS) {
+        qWarning() << "Failed to initialize Volk.";
+        return;
+    }
+
+    // Create Vulkan instance
+    VkApplicationInfo appInfo{};
+    appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+    appInfo.pApplicationName = "shadPS4QtLauncher";
+    appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+    appInfo.pEngineName = "No Engine";
+    appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+    appInfo.apiVersion = VK_API_VERSION_1_3;
+
+    VkInstanceCreateInfo instInfo{};
+    instInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    instInfo.pApplicationInfo = &appInfo;
+
+    VkInstance instance;
+    if (vkCreateInstance(&instInfo, nullptr, &instance) != VK_SUCCESS) {
+        qWarning() << "Failed to create Vulkan instance.";
+        return;
+    }
+
+    // Load instance-based function pointers
+    volkLoadInstance(instance);
+
+    // Enumerate devices
+    uint32_t deviceCount = 0;
+    vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+    if (deviceCount == 0) {
+        qWarning() << "No Vulkan physical devices found.";
+        return;
+    }
+
+    std::vector<VkPhysicalDevice> devices(deviceCount);
+    vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+
+    m_physical_devices.clear();
+    for (uint32_t i = 0; i < deviceCount; ++i) {
+        VkPhysicalDeviceProperties props;
+        vkGetPhysicalDeviceProperties(devices[i], &props);
+        QString name = QString::fromUtf8(props.deviceName, -1);
+        m_physical_devices.push_back(name);
+    }
+
+    vkDestroyInstance(instance, nullptr);
+}
+
+ShadSettings::~ShadSettings() {}
 
 CheckShadUpdate::CheckShadUpdate(const bool isAutoupdate, QWidget* parent) : QDialog(parent) {
     setFixedSize(0, 0);

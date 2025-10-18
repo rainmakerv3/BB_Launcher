@@ -33,6 +33,15 @@ endif()
 # microz
 add_subdirectory(microz)
 
+#volk
+add_subdirectory(volk)
+
+# vulkan-headers
+if (NOT TARGET Vulkan::Headers)
+    set(VULKAN_HEADERS_ENABLE_MODULE OFF)
+    add_subdirectory(vulkan-headers)
+endif()
+
 if (APPLE)
      # date
     if (NOT TARGET date::date-tz)

@@ -22,3 +22,11 @@
 	path = externals/microz
 	url = https://github.com/artemvlas/qmicroz
 	shallow = true
+[submodule "externals/volk"]
+	path = externals/volk
+	url = https://github.com/zeux/volk.git
+	shallow = true
+[submodule "externals/vulkan-headers"]
+	path = externals/vulkan-headers
+	url = https://github.com/KhronosGroup/Vulkan-Headers.git
+	shallow = true
