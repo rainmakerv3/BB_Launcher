@@ -30,6 +30,7 @@
 
 #include "ShadCheatsPatches.h"
 #include "modules/Common.h"
+#include "settings/PSF/psf.h"
 
 QImage icon;
 QString gameVersion;
@@ -43,10 +44,23 @@ CheatsPatches::CheatsPatches(std::shared_ptr<IpcClient> client, bool game_runnin
     setWindowTitle("Enable/Disable Patches for Bloodborne");
 }
 
-CheatsPatches::~CheatsPatches() {}
-
 void CheatsPatches::setupUI() {
-    readGameInfo();
+    std::filesystem::path icon_path = Common::installPath / "sce_sys" / "icon0.png";
+    QString iconpath;
+    Common::PathToQString(iconpath, icon_path);
+    icon = QImage(iconpath);
+
+    gameVersion = QString::fromStdString(getGameVersion());
+    if (gameVersion != "01.09") {
+        QMessageBox::critical(
+            this, "Potential game version issue",
+            "Detected game version is " + gameVersion +
+                ". Using a version other than 01.09 may cause issues with patches");
+    }
+
+    // hardcode to 01.09 in case sfo detection is faulty
+    gameVersion = "01.09";
+
     qserial = QString::fromStdString(Common::game_serial);
     defaultTextEdit = defaultTextEditMSG;
     defaultTextEdit.replace("\\n", "\n");
@@ -57,7 +71,7 @@ void CheatsPatches::setupUI() {
     QString PATCHS_DIR_QString;
     Common::PathToQString(PATCHS_DIR_QString, Common::GetShadUserDir() / "patches");
 
-    QString NameCheatJson = QString::fromStdString(Common::game_serial + "_01.09.json");
+    QString NameCheatJson = qserial + "_" + gameVersion + ".json";
     m_cheatFilePath = CHEATS_DIR_QString + "/" + NameCheatJson;
 
     QHBoxLayout* mainLayout = new QHBoxLayout(this);
@@ -155,7 +169,7 @@ void CheatsPatches::setupUI() {
     QPushButton* downloadButton = new QPushButton(tr("Download Cheats"));
     connect(downloadButton, &QPushButton::clicked, [this, downloadComboBox]() {
         QString source = downloadComboBox->currentData().toString();
-        downloadCheats(source, QString::fromStdString(Common::game_serial), "01.09", true);
+        downloadCheats(source, QString::fromStdString(Common::game_serial), gameVersion, true);
     });
 
     QPushButton* deleteCheatButton = new QPushButton(tr("Delete File"));
@@ -974,32 +988,6 @@ void CheatsPatches::onPatchCheckBoxHovered(QCheckBox* checkBox, bool hovered) {
     }
 }
 
-void CheatsPatches::readGameInfo() {
-    std::filesystem::path sce_folder_path = Common::installPath / "sce_sys" / "param.sfo";
-    std::filesystem::path game_update_path = Common::installPath;
-    std::filesystem::path game_patch_path = Common::installPath;
-    game_update_path += "-UPDATE";
-    game_patch_path += "-patch";
-
-    if (std::filesystem::exists(game_update_path / "sce_sys" / "param.sfo")) {
-        sce_folder_path = game_update_path / "sce_sys" / "param.sfo";
-    } else if (std::filesystem::exists(game_patch_path / "sce_sys" / "param.sfo")) {
-        sce_folder_path = game_patch_path / "sce_sys" / "param.sfo";
-    }
-
-    std::filesystem::path icon_path = Common::installPath / "sce_sys" / "icon0.png";
-    QString iconpath;
-    Common::PathToQString(iconpath, icon_path);
-    icon = QImage(iconpath);
-
-    std::ifstream sfofile(sce_folder_path, std::ios::in | std::ios::binary);
-    sfofile.seekg(0x351);
-    std::string version(4, '\0');
-    sfofile.read(&version[0], 4);
-    // gameVersion = "0" + QString::fromStdString(version);
-    gameVersion = "01.09";
-}
-
 void CheatsPatches::clearListCheats() {
     QLayoutItem* item;
     while ((item = rightLayout->takeAt(0)) != nullptr) {
@@ -1031,7 +1019,7 @@ void CheatsPatches::populateFileListCheats() {
     QString cheatsDir;
     Common::PathToQString(cheatsDir, Common::GetShadUserDir() / "cheats");
 
-    QString fullGameVersion = "01.09";
+    QString fullGameVersion = gameVersion;
     QString modifiedGameVersion = fullGameVersion.mid(1);
 
     QString patternWithFirstChar =
@@ -1345,3 +1333,38 @@ void CheatsPatches::uncheckAllCheatCheckBoxes() {
     }
     showErrorMessage = true;
 }
+
+void CheatsPatches::SceUpdateChecker(const std::string sceItem, std::filesystem::path& gameItem,
+                                     std::filesystem::path& update_folder,
+                                     std::filesystem::path& patch_folder,
+                                     std::filesystem::path& game_folder) {
+    if (std::filesystem::exists(update_folder / "sce_sys" / sceItem)) {
+        gameItem = update_folder / "sce_sys" / sceItem;
+    } else if (std::filesystem::exists(patch_folder / "sce_sys" / sceItem)) {
+        gameItem = patch_folder / "sce_sys" / sceItem;
+    } else {
+        gameItem = game_folder / "sce_sys" / sceItem;
+    }
+}
+
+std::string CheatsPatches::getGameVersion() {
+    std::filesystem::path gamePath = Common::installPath;
+    std::filesystem::path filePath = gamePath;
+    std::filesystem::path param_sfo_path;
+    std::filesystem::path game_update_path = filePath;
+    game_update_path += "-UPDATE";
+    std::filesystem::path game_patch_path = filePath;
+    game_patch_path += "-patch";
+    SceUpdateChecker("param.sfo", param_sfo_path, game_update_path, game_patch_path, gamePath);
+    std::string version;
+
+    PSF psf;
+    if (psf.Open(param_sfo_path)) {
+        if (auto app_ver = psf.GetString("APP_VER"); app_ver.has_value()) {
+            version = *app_ver;
+        }
+    }
+    return version;
+}
+
+CheatsPatches::~CheatsPatches() {}

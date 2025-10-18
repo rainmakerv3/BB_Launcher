@@ -129,6 +129,8 @@ set(PROJECT_SOURCES
     modules/TrophyDeps/nt_api.h
     modules/TrophyDeps/trp.cpp
     modules/TrophyDeps/trp.h
+    settings/PSF/psf.cpp
+    settings/PSF/psf.h
     settings/formatting.h
     settings/config.cpp
     settings/config.h

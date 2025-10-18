@@ -9,6 +9,7 @@
 #include <QString>
 
 using u8 = std::uint8_t;
+using u16 = std::uint16_t;
 using u32 = std::uint32_t;
 using u64 = std::uint64_t;
 
@@ -237,6 +238,10 @@ public:
 private:
     T data;
 };
+
+template <typename T>
+using LittleEndian = std::conditional_t<std::endian::native == std::endian::little, NativeEndian<T>,
+                                        SwappedEndian<T>>;
 
 template <typename T>
 using BigEndian =

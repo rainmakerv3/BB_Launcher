@@ -62,7 +62,10 @@ private:
     void uncheckAllCheatCheckBoxes();
 
     void updateNoteTextEdit(const QString& patchName);
-    void readGameInfo();
+    std::string getGameVersion();
+    void SceUpdateChecker(const std::string sceItem, std::filesystem::path& gameItem,
+                          std::filesystem::path& update_folder, std::filesystem::path& patch_folder,
+                          std::filesystem::path& game_folder);
 
     // Network Manager
     QNetworkAccessManager* manager;
