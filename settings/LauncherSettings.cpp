@@ -155,6 +155,11 @@ void LauncherSettings::CreateShortcut() {
     return;
 #endif
 
+    if (!std::filesystem::exists(Common::shadPs4Executable) || Common::shadPs4Executable.empty()) {
+        QMessageBox::critical(this, "Error", "Set valid shadPS4 path first.");
+        return;
+    }
+
     // Path to shortcut/link
     QString linkPath;
 
