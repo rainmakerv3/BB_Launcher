@@ -333,7 +333,11 @@ void ControlSettings::SaveControllerConfig(bool CloseOnSave) {
     output_file.close();
 
     Config::UnifiedInputConfig = !ui->PerGameCheckBox->isChecked();
-    Config::SaveInputSettings(Config::UnifiedInputConfig, Config::DefaultControllerID);
+
+    Config::ShadSettings settings;
+    settings.useUnifiedInputConfig = Config::UnifiedInputConfig;
+    settings.defaultControllerID = Config::DefaultControllerID;
+    Config::SaveShadSettings(settings);
 
     if (Config::GameRunning) {
         Config::UnifiedInputConfig ? m_ipc_client->reloadInputs("default")

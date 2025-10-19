@@ -41,8 +41,13 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         GetShadExecutable();
     }
 
-    if (Config::GetLastModifiedString(Common::shadPs4Executable) != Config::LastBuildModified)
-        Config::SaveBuild("", "", "");
+    if (Config::GetLastModifiedString(Common::shadPs4Executable) != Config::LastBuildModified) {
+        Config::LauncherSettings settings;
+        settings.build = "";
+        settings.branch = "";
+        settings.modified = "";
+        Config::SaveLauncherSettings(settings);
+    }
 
     if (Common::installPath == "") {
         ui->ExeLabel->setText("no Bloodborne Folder selected (CUSA****)");
@@ -277,7 +282,10 @@ void BBLauncher::ExeSelectButton_isPressed() {
             BBSerialList.end()) {
             ui->ExeLabel->setText(QBBInstallLoc);
             Common::installPath = Common::PathFromQString(QBBInstallLoc);
-            Config::SaveConfigPath("installPath", Common::installPath);
+
+            Config::LauncherSettings settings;
+            settings.installPath = Common::installPath;
+            Config::SaveLauncherSettings(settings);
         } else {
             QMessageBox::warning(
                 this, "Install Location not valid",
@@ -313,11 +321,16 @@ void BBLauncher::ShadSelectButton_isPressed() {
 #endif
 
     if (!ShadLoc.isEmpty()) {
-        Common::shadPs4Executable = Common::PathFromQString(ShadLoc);
-        Config::SaveConfigPath("shadPath", Common::shadPs4Executable);
-        ui->ShadLabel->setText(ShadLoc);
-        Config::SaveBuild("", "", "");
         canLaunch = true;
+        Common::shadPs4Executable = Common::PathFromQString(ShadLoc);
+        ui->ShadLabel->setText(ShadLoc);
+
+        Config::LauncherSettings settings;
+        settings.build = "";
+        settings.branch = "";
+        settings.modified = "";
+        settings.shadPath = Common::shadPs4Executable;
+        Config::SaveLauncherSettings(settings);
     }
 }
 
@@ -355,7 +368,10 @@ void BBLauncher::GetShadExecutable() {
 #endif
 
     if (!ShadLoc.isEmpty()) {
-        Config::SaveConfigPath("shadPath", Common::shadPs4Executable);
+        Config::LauncherSettings settings;
+        settings.shadPath = Common::shadPs4Executable;
+        Config::SaveLauncherSettings(settings);
+
     } else {
         canLaunch = false;
         QMessageBox::critical(
@@ -363,7 +379,11 @@ void BBLauncher::GetShadExecutable() {
             "Bloodborne will not be able to launch until the shadPS4 path is set-up");
     }
 
-    Config::SaveBuild("", "", "");
+    Config::LauncherSettings settings;
+    settings.build = "";
+    settings.branch = "";
+    settings.modified = "";
+    Config::SaveLauncherSettings(settings);
 }
 
 void BBLauncher::StartBackupSave() {

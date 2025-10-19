@@ -336,7 +336,10 @@ void KBMSettings::SaveKBMConfig(bool CloseOnSave) {
     output_file.close();
 
     Config::UnifiedInputConfig = !ui->PerGameCheckBox->isChecked();
-    Config::SaveInputSettings(Config::UnifiedInputConfig, "noIDsave");
+
+    Config::ShadSettings settings;
+    settings.useUnifiedInputConfig = Config::UnifiedInputConfig;
+    Config::SaveShadSettings(settings);
 
     if (Config::GameRunning) {
         Config::UnifiedInputConfig ? m_ipc_client->reloadInputs("default")

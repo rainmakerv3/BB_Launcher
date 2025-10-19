@@ -194,16 +194,22 @@ void CreateSettingsFile() {
     file.close();
 }
 
-void SaveConfigPath(std::string configKey, std::filesystem::path path) {
-    toml::value data;
+void SaveShadSettings(ShadSettings settings, bool is_game_specific) {
+    using namespace Config;
+
+    std::filesystem::path ShadConfig =
+        is_game_specific
+            ? Common::GetShadUserDir() / "custom_configs" / (Common::game_serial + ".toml")
+            : Common::GetShadUserDir() / "config.toml";
+    toml::value data = toml::parse(ShadConfig);
     std::error_code error;
 
-    if (std::filesystem::exists(SettingsFile, error)) {
+    if (std::filesystem::exists(ShadConfig, error)) {
         try {
             std::ifstream ifs;
             ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-            ifs.open(SettingsFile, std::ios_base::binary);
-            data = toml::parse(ifs, std::string{fmt::UTF(path.filename().u8string()).data});
+            ifs.open(ShadConfig, std::ios_base::binary);
+            data = toml::parse(ifs, std::string{fmt::UTF(ShadConfig.filename().u8string()).data});
         } catch (const std::exception& ex) {
             QMessageBox::critical(NULL, "Filesystem error", ex.what());
             return;
@@ -215,14 +221,27 @@ void SaveConfigPath(std::string configKey, std::filesystem::path path) {
         }
     }
 
-    data["Launcher"][configKey] = std::string{fmt::UTF(path.u8string()).data};
+    // global only
+    if (!is_game_specific) {
+        if (settings.useUnifiedInputConfig.has_value())
+            data["Input"]["useUnifiedInputConfig"] = settings.useUnifiedInputConfig.value();
 
-    std::ofstream file(SettingsFile, std::ios::binary);
+        if (settings.defaultControllerID.has_value())
+            data["General"]["defaultControllerID"] = settings.defaultControllerID.value();
+    }
+
+    // game-specific only
+
+    // common
+
+    std::ofstream file(ShadConfig, std::ios::binary);
     file << data;
     file.close();
+
+    SetTheme(theme);
 }
 
-void SaveTrophySettings(bool ShowEarned, bool ShowUnEarned, bool ShowHidden) {
+void SaveLauncherSettings(LauncherSettings settings) {
     toml::value data;
     std::error_code error;
 
@@ -243,43 +262,34 @@ void SaveTrophySettings(bool ShowEarned, bool ShowUnEarned, bool ShowHidden) {
         }
     }
 
-    data["Trophy"]["ShowEarned"] = ShowEarned;
-    data["Trophy"]["ShowUnearned"] = ShowUnEarned;
-    data["Trophy"]["ShowHidden"] = ShowHidden;
+    if (settings.shadPath.has_value())
+        data["Launcher"]["shadPath"] =
+            std::string{fmt::UTF(settings.shadPath.value().u8string()).data};
 
-    std::ofstream file(SettingsFile, std::ios::binary);
-    file << data;
-    file.close();
-}
+    if (settings.installPath.has_value())
+        data["Launcher"]["installPath"] =
+            std::string{fmt::UTF(settings.installPath.value().u8string()).data};
 
-void SaveBuild(std::string build, std::string branch, std::string modified) {
-    toml::value data;
-    std::error_code error;
+    if (settings.ShowEarned.has_value())
+        data["Trophy"]["ShowEarned"] = settings.ShowEarned.value();
 
-    if (std::filesystem::exists(SettingsFile, error)) {
-        try {
-            std::ifstream ifs;
-            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-            ifs.open(SettingsFile, std::ios_base::binary);
-            data = toml::parse(ifs, std::string{fmt::UTF(SettingsFile.filename().u8string()).data});
-        } catch (const std::exception& ex) {
-            QMessageBox::critical(NULL, "Filesystem error", ex.what());
-            return;
-        }
-    } else {
-        if (error) {
-            QMessageBox::critical(NULL, "Filesystem error",
-                                  QString::fromStdString(error.message()));
-        }
-    }
+    if (settings.ShowEarned.has_value())
+        data["Trophy"]["ShowEarned"] = settings.ShowEarned.value();
 
-    Config::LastBuildHash = build;
-    Config::LastBuildBranch = branch;
-    Config::LastBuildModified = modified;
+    if (settings.ShowUnEarned.has_value())
+        data["Trophy"]["ShowUnEarned"] = settings.ShowUnEarned.value();
 
-    data["Build"]["Build"] = build;
-    data["Build"]["Branch"] = branch;
-    data["Build"]["Modified"] = modified;
+    if (settings.ShowHidden.has_value())
+        data["Trophy"]["ShowHidden"] = settings.ShowHidden.value();
+
+    if (settings.build.has_value())
+        data["Build"]["Build"] = settings.build.value();
+
+    if (settings.branch.has_value())
+        data["Build"]["Branch"] = settings.branch.value();
+
+    if (settings.modified.has_value())
+        data["Build"]["Modified"] = settings.modified.value();
 
     std::ofstream file(SettingsFile, std::ios::binary);
     file << data;
@@ -390,40 +400,6 @@ axis_right_y = axis_right_y
 analog_deadzone = leftjoystick, 2
 analog_deadzone = rightjoystick, 2
 )";
-}
-
-void SaveInputSettings(bool unifiedControl, std::string defaultID) {
-    using namespace Config;
-    toml::value data;
-    std::error_code error;
-    std::filesystem::path ShadConfig = Common::GetShadUserDir() / "config.toml";
-
-    if (std::filesystem::exists(ShadConfig, error)) {
-        try {
-            std::ifstream ifs;
-            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-            ifs.open(ShadConfig, std::ios_base::binary);
-            data = toml::parse(ifs, std::string{fmt::UTF(ShadConfig.filename().u8string()).data});
-        } catch (const std::exception& ex) {
-            QMessageBox::critical(NULL, "Filesystem error", ex.what());
-            return;
-        }
-    } else {
-        if (error) {
-            QMessageBox::critical(NULL, "Filesystem error",
-                                  QString::fromStdString(error.message()));
-        }
-    }
-
-    data["Input"]["useUnifiedInputConfig"] = unifiedControl;
-    if (defaultID != "noIDsave")
-        data["General"]["defaultControllerID"] = defaultID;
-
-    std::ofstream file(ShadConfig, std::ios::binary);
-    file << data;
-    file.close();
-
-    Config::SetTheme(theme);
 }
 
 std::filesystem::path GetFoolproofKbmConfigFile(const std::string& game_id) {

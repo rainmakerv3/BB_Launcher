@@ -49,10 +49,13 @@ LauncherSettings::LauncherSettings(QWidget* parent)
         checkUpdate->exec();
     });
 
-    connect(ui->buttonBox->button(QDialogButtonBox::Save), &QPushButton::pressed, this,
-            &LauncherSettings::SaveAndCloseLauncherSettings);
+    connect(ui->buttonBox->button(QDialogButtonBox::Save), &QPushButton::pressed, this, [this]() {
+        SaveSettings();
+        QWidget::close();
+    });
+
     connect(ui->buttonBox->button(QDialogButtonBox::Apply), &QPushButton::pressed, this,
-            &LauncherSettings::SaveLauncherSettings);
+            &LauncherSettings::SaveSettings);
     connect(ui->buttonBox->button(QDialogButtonBox::RestoreDefaults), &QPushButton::pressed, this,
             &LauncherSettings::SetLauncherDefaults);
 
@@ -77,7 +80,7 @@ void LauncherSettings::SetLauncherDefaults() {
     ui->BackupNumberComboBox->setCurrentText("2");
 }
 
-void LauncherSettings::SaveLauncherSettings() {
+void LauncherSettings::SaveSettings() {
     using namespace Config;
     toml::value data;
     std::error_code error;
@@ -126,11 +129,6 @@ void LauncherSettings::SaveLauncherSettings() {
     file.close();
 
     Config::SetTheme(theme);
-}
-
-void LauncherSettings::SaveAndCloseLauncherSettings() {
-    SaveLauncherSettings();
-    QWidget::close();
 }
 
 void LauncherSettings::OnBackupStateChanged() {

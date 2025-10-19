@@ -2,21 +2,40 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <filesystem>
+#include <optional>
 #include <SDL3/SDL_gamepad.h>
 
 #include "modules/Common.h"
 
 namespace Config {
 
-void SaveConfigPath(std::string configKey, std::filesystem::path path);
+struct ShadSettings {
+    std::optional<std::string> defaultControllerID;
+    std::optional<bool> useUnifiedInputConfig;
+};
+
+struct LauncherSettings {
+    std::optional<std::filesystem::path> shadPath;
+    std::optional<std::filesystem::path> installPath;
+
+    std::optional<bool> ShowEarned;
+    std::optional<bool> ShowUnEarned;
+    std::optional<bool> ShowHidden;
+
+    std::optional<std::string> build;
+    std::optional<std::string> branch;
+    std::optional<std::string> modified;
+};
+
 void LoadLauncherSettings();
 void CreateSettingsFile();
 void SetTheme(std::string theme);
 std::filesystem::path GetFoolproofKbmConfigFile(const std::string& game_id);
 std::string_view GetDefaultKeyboardConfig();
-void SaveInputSettings(bool unifiedControl, std::string defaultID);
-void SaveTrophySettings(bool ShowEarned, bool ShowUnEarned, bool ShowHidden);
-void SaveBuild(std::string build, std::string branch, std::string modified);
+
+void SaveShadSettings(ShadSettings settings, bool is_game_specific = false);
+void SaveLauncherSettings(LauncherSettings settings);
+
 void CreateGSFile();
 std::string GetLastModifiedString(const std::filesystem::path& path);
 
