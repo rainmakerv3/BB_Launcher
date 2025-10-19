@@ -23,7 +23,7 @@ void IpcClient::startEmulator(const QFileInfo& exe, const QStringList& args,
     process = new QProcess(this);
 
     connect(process, &QProcess::readyReadStandardError, this, [this] { onStderr(); });
-    connect(process, &QProcess::readyReadStandardOutput, this, [this] { onStdout(); });
+    connect(process, &QProcess::readyReadStandardOutput, this, [=, this] { onStdout(exe); });
     connect(process, &QProcess::finished, this, [this] { onProcessClosed(); });
 
     process->setProcessChannelMode(QProcess::SeparateChannels);
@@ -164,7 +164,7 @@ void IpcClient::onStderr() {
     }
 }
 
-void IpcClient::onStdout() {
+void IpcClient::onStdout(const QFileInfo& exe) {
     QString outputString = QString::fromUtf8(process->readAllStandardOutput());
     printf("%s", outputString.toStdString().c_str());
     std::string build;
@@ -176,7 +176,8 @@ void IpcClient::onStdout() {
 
     if (outputString.contains("Branch")) {
         int index = outputString.indexOf("Branch");
-        Config::SaveBuild(build, outputString.toStdString().substr(index + 7, 8));
+        Config::SaveBuild(build, outputString.toStdString().substr(index + 7, 8),
+                          Config::GetLastModifiedString(exe.filesystemAbsoluteFilePath()));
     }
 }
 

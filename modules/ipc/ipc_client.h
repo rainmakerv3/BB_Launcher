@@ -65,7 +65,7 @@ public:
 
 private:
     void onStderr();
-    void onStdout();
+    void onStdout(const QFileInfo& exe);
     void onProcessClosed();
     void writeLine(const QString& text);
 

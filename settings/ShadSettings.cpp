@@ -857,9 +857,11 @@ void CheckShadUpdate::InstallUpdate(QString zipPath) {
 #endif
 
     updateChannel == "Release"
-        ? Config::SaveBuild(latestVersion.toStdString(), latestVersion.toStdString())
+        ? Config::SaveBuild(latestVersion.toStdString(), latestVersion.toStdString(),
+                            Config::GetLastModifiedString(Common::shadPs4Executable))
         : Config::SaveBuild(latestVersion.right(40).toStdString(),
-                            latestVersion.right(40).toStdString());
+                            latestVersion.right(40).toStdString(),
+                            Config::GetLastModifiedString(Common::shadPs4Executable));
 
     std::filesystem::remove(Common::PathFromQString(zipPath));
     QMessageBox::information(this, "Update Complete", "Update process completed");

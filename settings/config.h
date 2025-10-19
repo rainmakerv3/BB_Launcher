@@ -16,8 +16,9 @@ std::filesystem::path GetFoolproofKbmConfigFile(const std::string& game_id);
 std::string_view GetDefaultKeyboardConfig();
 void SaveInputSettings(bool unifiedControl, std::string defaultID);
 void SaveTrophySettings(bool ShowEarned, bool ShowUnEarned, bool ShowHidden);
-void SaveBuild(std::string build, std::string branch);
+void SaveBuild(std::string build, std::string branch, std::string modified);
 void CreateGSFile();
+std::string GetLastModifiedString(const std::filesystem::path& path);
 
 extern std::string theme;
 extern bool SoundFixEnabled;
@@ -31,8 +32,10 @@ extern std::string TrophyKey;
 extern std::string UpdateChannel;
 extern bool AutoUpdateShadEnabled;
 extern std::string DefaultControllerID;
+
 extern std::string LastBuildHash;
 extern std::string LastBuildBranch;
+extern std::string LastBuildModified;
 
 extern bool ShowEarnedTrophy;
 extern bool ShowNotEarnedTrophy;

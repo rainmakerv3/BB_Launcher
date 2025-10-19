@@ -23,10 +23,18 @@ bool Config::AutoUpdateShadEnabled = false;
 bool Config::CheckPortableSettings = true;
 std::string Config::DefaultControllerID = "";
 bool Config::GameRunning = false;
+
 std::string Config::LastBuildHash = "";
 std::string Config::LastBuildBranch = "";
+std::string Config::LastBuildModified = "";
 
 static std::string SelectedGamepad = "";
+
+#if __APPLE__
+#include <date/date.h>
+#include <date/tz.h>
+#include <date/tz_private.h>
+#endif
 
 namespace Config {
 
@@ -68,8 +76,10 @@ void LoadLauncherSettings() {
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
     AutoUpdateEnabled = toml::find_or<bool>(data, "Launcher", "AutoUpdateEnabled", false);
     CheckPortableSettings = toml::find_or<bool>(data, "Launcher", "PortableSettings", true);
-    LastBuildHash = toml::find_or<std::string>(data, "Launcher", "Build", "");
-    LastBuildBranch = toml::find_or<std::string>(data, "Launcher", "Branch", "");
+
+    LastBuildHash = toml::find_or<std::string>(data, "Build", "Build", "");
+    LastBuildBranch = toml::find_or<std::string>(data, "Build", "Branch", "");
+    LastBuildModified = toml::find_or<std::string>(data, "Build", "Modified", "");
 
     BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", false);
     BackupInterval = toml::find_or<int>(data, "Backups", "BackupInterval", 10);
@@ -242,7 +252,7 @@ void SaveTrophySettings(bool ShowEarned, bool ShowUnEarned, bool ShowHidden) {
     file.close();
 }
 
-void SaveBuild(std::string build, std::string branch) {
+void SaveBuild(std::string build, std::string branch, std::string modified) {
     toml::value data;
     std::error_code error;
 
@@ -265,8 +275,11 @@ void SaveBuild(std::string build, std::string branch) {
 
     Config::LastBuildHash = build;
     Config::LastBuildBranch = branch;
-    data["Launcher"]["Build"] = build;
-    data["Launcher"]["Branch"] = branch;
+    Config::LastBuildModified = modified;
+
+    data["Build"]["Build"] = build;
+    data["Build"]["Branch"] = branch;
+    data["Build"]["Modified"] = modified;
 
     std::ofstream file(SettingsFile, std::ios::binary);
     file << data;
@@ -447,6 +460,25 @@ std::filesystem::path GetFoolproofKbmConfigFile(const std::string& game_id) {
         std::filesystem::copy(default_config_file, config_file);
     }
     return config_file;
+}
+
+std::string GetLastModifiedString(const std::filesystem::path& path) {
+    if (!std::filesystem::exists(path))
+        return "";
+
+    std::chrono::time_point shadWriteTime =
+        std::filesystem::last_write_time(Common::shadPs4Executable);
+
+#if __APPLE__
+    auto sec = std::chrono::duration_cast<std::chrono::seconds>(shadWriteTime.time_since_epoch());
+    auto time = date::sys_time<std::chrono::seconds>{sec};
+    std::string shadModifiedStringUTC = date::format("{:%F %T}", time);
+#else
+    auto shadTimePoint = std::chrono::clock_cast<std::chrono::system_clock>(shadWriteTime);
+    std::string shadModifiedStringUTC = std::format("{:%F %T}", shadWriteTime);
+#endif
+
+    return shadModifiedStringUTC;
 }
 
 } // namespace Config
