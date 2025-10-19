@@ -9,16 +9,12 @@
 
 std::string Config::theme = "Dark";
 bool Config::SoundFixEnabled = true;
+bool Config::AutoUpdateEnabled = false;
+
 bool Config::BackupSaveEnabled = false;
 int Config::BackupInterval = 10;
 int Config::BackupNumber = 2;
-bool Config::AutoUpdateEnabled = false;
-bool Config::CheckPortableSettings = true;
 
-bool Config::UnifiedInputConfig = true;
-std::string Config::DefaultControllerID = "";
-
-std::string Config::TrophyKey = "";
 bool Config::ShowEarnedTrophy = true;
 bool Config::ShowNotEarnedTrophy = true;
 bool Config::ShowHiddenTrophy = false;
@@ -29,6 +25,10 @@ bool Config::AutoUpdateShadEnabled = false;
 std::string Config::LastBuildHash = "";
 std::string Config::LastBuildBranch = "";
 std::string Config::LastBuildModified = "";
+
+std::string Config::TrophyKey = "";
+bool Config::UnifiedInputConfig = true;
+std::string Config::DefaultControllerID = "";
 
 bool Config::GameRunning = false;
 static std::string SelectedGamepad = "";
@@ -78,7 +78,6 @@ void LoadSettings() {
     theme = toml::find_or<std::string>(data, "Launcher", "Theme", "Dark");
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
     AutoUpdateEnabled = toml::find_or<bool>(data, "Launcher", "AutoUpdateEnabled", false);
-    CheckPortableSettings = toml::find_or<bool>(data, "Launcher", "PortableSettings", true);
 
     LastBuildHash = toml::find_or<std::string>(data, "Build", "Build", "");
     LastBuildBranch = toml::find_or<std::string>(data, "Build", "Branch", "");
@@ -169,7 +168,6 @@ void CreateSettingsFile() {
     data["Launcher"]["Theme"] = "Dark";
     data["Launcher"]["SoundFixEnabled"] = true;
     data["Launcher"]["AutoUpdateEnabled"] = false;
-    data["Launcher"]["PortableSettings"] = true;
 
     data["Backups"]["BackupSaveEnabled"] = false;
     data["Backups"]["BackupInterval"] = 10;
@@ -251,7 +249,6 @@ void SaveLauncherSettings() {
     data["Launcher"]["Theme"] = theme;
     data["Launcher"]["SoundFixEnabled"] = SoundFixEnabled;
     data["Launcher"]["AutoUpdateEnabled"] = AutoUpdateEnabled;
-    data["Launcher"]["PortableSettings"] = CheckPortableSettings;
     data["Launcher"]["installPath"] = std::string{fmt::UTF(Common::installPath.u8string()).data};
     data["Launcher"]["shadPath"] = std::string{fmt::UTF(Common::shadPs4Executable.u8string()).data};
 

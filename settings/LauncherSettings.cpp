@@ -54,7 +54,6 @@ LauncherSettings::LauncherSettings(QWidget* parent)
     ui->shadChannelComboBox->setCurrentText(QString::fromStdString(UpdateChannel));
     ui->shadUpdateCheckBox->setChecked(AutoUpdateShadEnabled);
     ui->UpdateCheckBox->setChecked(AutoUpdateEnabled);
-    ui->PortableSettingsCheckBox->setChecked(CheckPortableSettings);
     ui->SoundFixCheckBox->setChecked(SoundFixEnabled);
     ui->BackupSaveCheckBox->setChecked(BackupSaveEnabled);
     ui->BackupIntervalComboBox->setCurrentText(QString::number(BackupInterval));
@@ -119,7 +118,6 @@ LauncherSettings::LauncherSettings(QWidget* parent)
 void LauncherSettings::SetLauncherDefaults() {
     ui->shadChannelComboBox->setCurrentText("Nightly");
     ui->shadUpdateCheckBox->setChecked(false);
-    ui->PortableSettingsCheckBox->setChecked(true);
     ui->UpdateCheckBox->setChecked(false);
     ui->DarkThemeRadioButton->setChecked(true);
     ui->SoundFixCheckBox->setChecked(true);
@@ -157,7 +155,6 @@ void LauncherSettings::SaveSettings() {
 
     SoundFixEnabled = ui->SoundFixCheckBox->isChecked();
     AutoUpdateEnabled = ui->UpdateCheckBox->isChecked();
-    CheckPortableSettings = ui->PortableSettingsCheckBox->isChecked();
 
     BackupSaveEnabled = ui->BackupSaveCheckBox->isChecked();
     BackupInterval = ui->BackupIntervalComboBox->currentText().toInt();

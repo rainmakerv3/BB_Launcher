@@ -71,8 +71,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     UpdateModList();
     UpdateIcons();
 
-    connect(ui->ExeSelectButton, &QPushButton::pressed, this,
-            &BBLauncher::ExeSelectButton_isPressed);
+    connect(ui->BBSelectButton, &QPushButton::pressed, this, &BBLauncher::BBSelectButton_isPressed);
     connect(ui->ShadSelectButton, &QPushButton::pressed, this,
             &BBLauncher::ShadSelectButton_isPressed);
     connect(ui->LaunchButton, &QPushButton::pressed, this,
@@ -152,6 +151,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
                                        " not found. Run shadPS4 once to generate it."));
             return;
         }
+        
         ShadSettings* ShadSettingsWindow = new ShadSettings(m_ipc_client, false, this);
         ShadSettingsWindow->exec();
     });
@@ -222,56 +222,11 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         checkShadUpdate->exec();
     }
 
-#if defined(FORCE_UAC) || defined(Q_OS_LINUX) || defined(Q_OS_MAC)
-    if (Config::CheckPortableSettings) {
-
-        if (!std::filesystem::exists(Common::GetCurrentPath() / "user") &&
-            std::filesystem::exists(Common::shadPs4Executable.parent_path() / "user")) {
-            if (QMessageBox::Yes ==
-                QMessageBox::question(
-                    this, "Settings not linked",
-                    "Portable settings folder (user folder) found in shadPS4 folder but not in "
-                    "BBLauncher folder. Create symlink to shadPS4 portable settings "
-                    "folder (Automatically syncs shadPS4 and BBLauncher settings)?",
-                    QMessageBox::Yes | QMessageBox::No)) {
-
-                try {
-                    std::filesystem::create_directory_symlink(
-                        Common::shadPs4Executable.parent_path() / "user",
-                        Common::GetCurrentPath() / "user");
-                } catch (const std::filesystem::filesystem_error& e) {
-                    std::cerr << "Error creating directory symlink: " << e.what() << std::endl;
-                }
-            }
-        }
-
-        if (std::filesystem::exists(Common::GetCurrentPath() / "user") &&
-            !std::filesystem::exists(Common::shadPs4Executable.parent_path() / "user")) {
-            if (QMessageBox::Yes ==
-                QMessageBox::question(
-                    this, "Settings not linked",
-                    "Portable settings folder found in BBLauncher folder but not in "
-                    "shadPS4 folder. Create symlink to BBLauncher portable settings "
-                    "folder (Automatically syncs shadPS4 and BBLauncher settings)?",
-                    QMessageBox::Yes | QMessageBox::No)) {
-
-                try {
-                    std::filesystem::create_directory_symlink(
-                        Common::GetCurrentPath() / "user",
-                        Common::shadPs4Executable.parent_path() / "user");
-                } catch (const std::filesystem::filesystem_error& e) {
-                    std::cerr << "Error creating directory symlink: " << e.what() << std::endl;
-                }
-            }
-        }
-    }
-#endif
-
     if (noGUI && noInstanceRunning)
         StartGameWithArgs({});
 }
 
-void BBLauncher::ExeSelectButton_isPressed() {
+void BBLauncher::BBSelectButton_isPressed() {
     QString QBBInstallLoc = "";
     QBBInstallLoc = QFileDialog::getExistingDirectory(
         this, "Select Bloodborne install location (ex. CUSA03173, CUSA00900", QDir::currentPath());
@@ -288,12 +243,6 @@ void BBLauncher::ExeSelectButton_isPressed() {
                 "Select valid BB Install folder starting with CUSA (ex: CUSA03173, CUSA00900)");
         }
     }
-}
-
-void BBLauncher::WIPButton_isPressed() {
-    QMessageBox::warning(
-        this, "On hold",
-        "Work on trophy manager will be put on-hold until it's easier to dump trophy keys");
 }
 
 void BBLauncher::ShadSelectButton_isPressed() {
@@ -439,8 +388,6 @@ void BBLauncher::UpdateSettingsList() {
         "Back up saves enabled = " + QVariant(BackupSaveEnabled).toString();
     QString AutoUpdateSetting =
         "Check updates on startup enabled = " + QVariant(AutoUpdateEnabled).toString();
-    QString CheckPortableSetting =
-        "Check portable settings folder = " + QVariant(CheckPortableSettings).toString();
 
     QString BackupIntSetting;
     QString BackupNumSetting;
@@ -453,9 +400,8 @@ void BBLauncher::UpdateSettingsList() {
         BackupNumSetting = "Backup Copies = disabled";
     }
 
-    QStringList SettingStrings = {SoundhackSetting,    ThemeSetting,     BackupEnableSetting,
-                                  BackupIntSetting,    BackupNumSetting, AutoUpdateSetting,
-                                  CheckPortableSetting};
+    QStringList SettingStrings = {SoundhackSetting, ThemeSetting,     BackupEnableSetting,
+                                  BackupIntSetting, BackupNumSetting, AutoUpdateSetting};
 
     ui->SettingList->clear();
     ui->SettingList->addItems(SettingStrings);
