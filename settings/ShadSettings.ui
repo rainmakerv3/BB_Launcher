@@ -872,13 +872,13 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string>Global Settings and ShadPS4 updates</string>
+       <string>Global Settings and Trophy Key</string>
       </attribute>
       <widget class="QCheckBox" name="discordRPCCheckbox">
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>450</y>
+         <y>200</y>
          <width>290</width>
          <height>25</height>
         </rect>
@@ -916,7 +916,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>360</y>
+         <y>110</y>
          <width>321</width>
          <height>75</height>
         </rect>
@@ -932,155 +932,6 @@
             <width>0</width>
             <height>0</height>
            </size>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QGroupBox" name="updaterGroupBox">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>110</y>
-         <width>321</width>
-         <height>232</height>
-        </rect>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>0</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="maximumSize">
-        <size>
-         <width>16777215</width>
-         <height>16777215</height>
-        </size>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>11</pointsize>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="title">
-        <string>Update ShadPS4</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="QGroupBox" name="updaterComboBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="title">
-           <string notr="true">Update Channel</string>
-          </property>
-          <layout class="QVBoxLayout" name="UpdateChannelLayout">
-           <property name="spacing">
-            <number>7</number>
-           </property>
-           <property name="leftMargin">
-            <number>11</number>
-           </property>
-           <property name="topMargin">
-            <number>11</number>
-           </property>
-           <property name="rightMargin">
-            <number>11</number>
-           </property>
-           <property name="bottomMargin">
-            <number>11</number>
-           </property>
-           <item>
-            <widget class="QComboBox" name="updateComboBox">
-             <property name="enabled">
-              <bool>true</bool>
-             </property>
-             <property name="sizePolicy">
-              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-               <horstretch>0</horstretch>
-               <verstretch>0</verstretch>
-              </sizepolicy>
-             </property>
-             <property name="currentText">
-              <string notr="true">Release</string>
-             </property>
-             <item>
-              <property name="text">
-               <string>Release</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Nightly</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="autoUpdateCheckBox">
-          <property name="text">
-           <string>Check shadPS4 updates on startup</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="checkUpdateButton">
-          <property name="enabled">
-           <bool>true</bool>
-          </property>
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>16777215</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string notr="true">Manually Update ShadPS4</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QProgressBar" name="DownloadProgressBar">
-          <property name="value">
-           <number>0</number>
           </property>
          </widget>
         </item>

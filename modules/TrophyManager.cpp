@@ -87,12 +87,7 @@ TrophyViewer::TrophyViewer(QString trophyPath, QString gameTrpPath)
         Config::ShowEarnedTrophy = showEarnedCheck->isChecked();
         Config::ShowNotEarnedTrophy = showNotEarnedCheck->isChecked();
         Config::ShowHiddenTrophy = showHiddenCheck->isChecked();
-
-        Config::LauncherSettings settings;
-        settings.ShowEarned = Config::ShowEarnedTrophy;
-        settings.ShowUnEarned = Config::ShowNotEarnedTrophy;
-        settings.ShowHidden = Config::ShowHiddenTrophy;
-        Config::SaveLauncherSettings(settings);
+        Config::SaveLauncherSettings();
 
         QMessageBox::information(this, "Save Successful", "Trophy settings saved");
     });

@@ -3,7 +3,6 @@
 
 #include <QCheckBox>
 #include <QDialog>
-#include <QNetworkAccessManager>
 
 #include "modules/ipc/ipc_client.h"
 
@@ -27,7 +26,6 @@ private:
     void SaveSettings();
     void SetDefaults();
     void UpdateDialog();
-    void SaveUpdateSettings();
     void getPhysicalDevices();
 
     std::unique_ptr<Ui::ShadSettings> ui;
@@ -105,14 +103,6 @@ private:
         " : Critical\nLevels: Trace, Debug, Info, Warning, Error, Critical - in this order, a "
         "specific "
         "level silences all levels preceding it in the list and logs every level after it.";
-    const QString updaterComboBoxtext = "Update:\nRelease: Official versions released every month "
-                                        "that may be very outdated, but are "
-                                        "more reliable and tested.\nNightly: Development versions "
-                                        "that have all the latest features "
-                                        "and fixes, but may contain bugs and are less stable.";
-    const QString checkUpdateButtontext =
-        "Updates to the latest version of shadPS4.\n\n ***NOTE*** BBLauncher cannot detect whether "
-        "current version is the same as the latest. It will update regardless.";
     const QString disableTrophycheckBoxtext =
         "Disable Trophy Pop-ups:\nDisable in-game trophy notifications. Trophy progress can still "
         "be "
@@ -142,30 +132,4 @@ private:
     const QString backgroundControllerCheckBoxtext =
         "Enable Controller Background Input:\\nAllow shadPS4 to detect controller inputs when the "
         "game window is not in focus.";
-};
-
-class CheckShadUpdate : public QDialog {
-    Q_OBJECT
-
-signals:
-    void DownloadProgressed(int value);
-    void UpdateComplete();
-
-public:
-    explicit CheckShadUpdate(const bool showMessage, QWidget* parent = nullptr);
-    ~CheckShadUpdate();
-
-private slots:
-    void UpdateShad(bool isAutoupdate);
-    void InstallUpdate(QString zipPath);
-    void DownloadUpdate(const QString& downloadUrl);
-
-private:
-    void setupUI(const QString& downloadUrl, const QString& latestDate, const QString& latestRev,
-                 const QString& currentDate, const QString& currentRev);
-
-    QString updateDownloadUrl;
-    QString latestVersion;
-    QString updateChannel;
-    QNetworkAccessManager* networkManager;
 };

@@ -35,18 +35,17 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     m_ipc_client->startGameFunc = [this]() { RunGame(); };
 
     ui->setupUi(this);
-    Config::LoadLauncherSettings();
+    Config::LoadSettings();
 
     if (Common::shadPs4Executable == "" || !std::filesystem::exists(Common::shadPs4Executable)) {
         GetShadExecutable();
     }
 
     if (Config::GetLastModifiedString(Common::shadPs4Executable) != Config::LastBuildModified) {
-        Config::LauncherSettings settings;
-        settings.build = "";
-        settings.branch = "";
-        settings.modified = "";
-        Config::SaveLauncherSettings(settings);
+        Config::LastBuildHash = "";
+        Config::LastBuildBranch = "";
+        Config::LastBuildModified = "";
+        Config::SaveLauncherSettings();
     }
 
     if (Common::installPath == "") {
@@ -282,10 +281,7 @@ void BBLauncher::ExeSelectButton_isPressed() {
             BBSerialList.end()) {
             ui->ExeLabel->setText(QBBInstallLoc);
             Common::installPath = Common::PathFromQString(QBBInstallLoc);
-
-            Config::LauncherSettings settings;
-            settings.installPath = Common::installPath;
-            Config::SaveLauncherSettings(settings);
+            Config::SaveLauncherSettings();
         } else {
             QMessageBox::warning(
                 this, "Install Location not valid",
@@ -325,12 +321,10 @@ void BBLauncher::ShadSelectButton_isPressed() {
         Common::shadPs4Executable = Common::PathFromQString(ShadLoc);
         ui->ShadLabel->setText(ShadLoc);
 
-        Config::LauncherSettings settings;
-        settings.build = "";
-        settings.branch = "";
-        settings.modified = "";
-        settings.shadPath = Common::shadPs4Executable;
-        Config::SaveLauncherSettings(settings);
+        Config::LastBuildHash = "";
+        Config::LastBuildBranch = "";
+        Config::LastBuildModified = "";
+        Config::SaveLauncherSettings();
     }
 }
 
@@ -367,23 +361,17 @@ void BBLauncher::GetShadExecutable() {
     Common::shadPs4Executable = std::filesystem::path(ShadLocString);
 #endif
 
-    if (!ShadLoc.isEmpty()) {
-        Config::LauncherSettings settings;
-        settings.shadPath = Common::shadPs4Executable;
-        Config::SaveLauncherSettings(settings);
-
-    } else {
+    if (ShadLoc.isEmpty()) {
         canLaunch = false;
         QMessageBox::critical(
             this, "BBLauncher",
             "Bloodborne will not be able to launch until the shadPS4 path is set-up");
     }
 
-    Config::LauncherSettings settings;
-    settings.build = "";
-    settings.branch = "";
-    settings.modified = "";
-    Config::SaveLauncherSettings(settings);
+    Config::LastBuildHash = "";
+    Config::LastBuildBranch = "";
+    Config::LastBuildModified = "";
+    Config::SaveLauncherSettings();
 }
 
 void BBLauncher::StartBackupSave() {

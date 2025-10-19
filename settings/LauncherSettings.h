@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <QDialog>
+#include <QNetworkAccessManager>
 #include <SDL3/SDL_gamepad.h>
 
 namespace Ui {
@@ -39,11 +40,28 @@ private:
     const QStringList BackupFreqList = {"5", "10", "15", "20", "25", "30"};
 };
 
-namespace GamepadSelect {
+class CheckShadUpdate : public QDialog {
+    Q_OBJECT
 
-int GetIndexfromGUID(SDL_JoystickID* gamepadIDs, int gamepadCount, std::string GUID);
-std::string GetGUIDString(SDL_JoystickID* gamepadIDs, int index);
-std::string GetSelectedGamepad();
-void SetSelectedGamepad(std::string GUID);
+signals:
+    void DownloadProgressed(int value);
+    void UpdateComplete();
 
-} // namespace GamepadSelect
+public:
+    explicit CheckShadUpdate(const bool showMessage, QWidget* parent = nullptr);
+    ~CheckShadUpdate();
+
+private slots:
+    void UpdateShad(bool isAutoupdate);
+    void InstallUpdate(QString zipPath);
+    void DownloadUpdate(const QString& downloadUrl);
+
+private:
+    void setupUI(const QString& downloadUrl, const QString& latestDate, const QString& latestRev,
+                 const QString& currentDate, const QString& currentRev);
+
+    QString updateDownloadUrl;
+    QString latestVersion;
+    QString updateChannel;
+    QNetworkAccessManager* networkManager;
+};

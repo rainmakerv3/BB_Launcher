@@ -13,21 +13,24 @@ bool Config::BackupSaveEnabled = false;
 int Config::BackupInterval = 10;
 int Config::BackupNumber = 2;
 bool Config::AutoUpdateEnabled = false;
+bool Config::CheckPortableSettings = true;
+
 bool Config::UnifiedInputConfig = true;
+std::string Config::DefaultControllerID = "";
+
 std::string Config::TrophyKey = "";
 bool Config::ShowEarnedTrophy = true;
 bool Config::ShowNotEarnedTrophy = true;
 bool Config::ShowHiddenTrophy = false;
+
 std::string Config::UpdateChannel = "Nightly";
 bool Config::AutoUpdateShadEnabled = false;
-bool Config::CheckPortableSettings = true;
-std::string Config::DefaultControllerID = "";
-bool Config::GameRunning = false;
 
 std::string Config::LastBuildHash = "";
 std::string Config::LastBuildBranch = "";
 std::string Config::LastBuildModified = "";
 
+bool Config::GameRunning = false;
 static std::string SelectedGamepad = "";
 
 #if __APPLE__
@@ -51,7 +54,7 @@ void CreateGSFile() {
     file.close();
 }
 
-void LoadLauncherSettings() {
+void LoadSettings() {
     using namespace Config;
 
     if (!std::filesystem::exists(Common::GetBBLFilesPath())) {
@@ -88,6 +91,10 @@ void LoadLauncherSettings() {
     ShowEarnedTrophy = toml::find_or<bool>(data, "Trophy", "ShowEarned", true);
     ShowNotEarnedTrophy = toml::find_or<bool>(data, "Trophy", "ShowUnearned", true);
     ShowHiddenTrophy = toml::find_or<bool>(data, "Trophy", "ShowHidden", false);
+
+    UpdateChannel = toml::find_or<std::string>(data, "shadUpdater", "UpdateChannel", "");
+    AutoUpdateShadEnabled =
+        toml::find_or<bool>(data, "shadUpdater", "AutoUpdateShadEnabled", false);
 
     if (data.contains("Launcher")) {
         const toml::value& launcher = data.at("Launcher");
@@ -144,27 +151,6 @@ void LoadLauncherSettings() {
             }
         }
     }
-
-    std::fstream file(Common::GetShadUserDir() / "qt_ui.ini");
-    std::string line;
-    std::vector<std::string> lines;
-    int lineCount = 0;
-
-    while (std::getline(file, line)) {
-        lineCount++;
-
-        if (line.contains("updateChannel")) {
-            std::size_t equal_pos = line.find('=');
-            UpdateChannel = line.substr(equal_pos + 1);
-        }
-
-        if (line.contains("checkForUpdates")) {
-            std::size_t equal_pos = line.find('=');
-            std::string updatesEnabled(line.substr(equal_pos + 1));
-            AutoUpdateShadEnabled = updatesEnabled == "true" ? true : false;
-        }
-    }
-    file.close();
 }
 
 void CreateSettingsFile() {
@@ -241,7 +227,7 @@ void SaveShadSettings(ShadSettings settings, bool is_game_specific) {
     SetTheme(theme);
 }
 
-void SaveLauncherSettings(LauncherSettings settings) {
+void SaveLauncherSettings() {
     toml::value data;
     std::error_code error;
 
@@ -262,34 +248,27 @@ void SaveLauncherSettings(LauncherSettings settings) {
         }
     }
 
-    if (settings.shadPath.has_value())
-        data["Launcher"]["shadPath"] =
-            std::string{fmt::UTF(settings.shadPath.value().u8string()).data};
+    data["Launcher"]["Theme"] = theme;
+    data["Launcher"]["SoundFixEnabled"] = SoundFixEnabled;
+    data["Launcher"]["AutoUpdateEnabled"] = AutoUpdateEnabled;
+    data["Launcher"]["PortableSettings"] = CheckPortableSettings;
+    data["Launcher"]["installPath"] = std::string{fmt::UTF(Common::installPath.u8string()).data};
+    data["Launcher"]["shadPath"] = std::string{fmt::UTF(Common::shadPs4Executable.u8string()).data};
 
-    if (settings.installPath.has_value())
-        data["Launcher"]["installPath"] =
-            std::string{fmt::UTF(settings.installPath.value().u8string()).data};
+    data["Backups"]["BackupSaveEnabled"] = BackupSaveEnabled;
+    data["Backups"]["BackupInterval"] = BackupInterval;
+    data["Backups"]["BackupNumber"] = BackupNumber;
 
-    if (settings.ShowEarned.has_value())
-        data["Trophy"]["ShowEarned"] = settings.ShowEarned.value();
+    data["shadUpdater"]["UpdateChannel"] = UpdateChannel;
+    data["shadUpdater"]["AutoUpdateShadEnabled"] = AutoUpdateShadEnabled;
 
-    if (settings.ShowEarned.has_value())
-        data["Trophy"]["ShowEarned"] = settings.ShowEarned.value();
+    data["Trophy"]["ShowEarned"] = Config::ShowEarnedTrophy;
+    data["Trophy"]["ShowUnearned"] = Config::ShowNotEarnedTrophy;
+    data["Trophy"]["ShowHidden"] = Config::ShowHiddenTrophy;
 
-    if (settings.ShowUnEarned.has_value())
-        data["Trophy"]["ShowUnEarned"] = settings.ShowUnEarned.value();
-
-    if (settings.ShowHidden.has_value())
-        data["Trophy"]["ShowHidden"] = settings.ShowHidden.value();
-
-    if (settings.build.has_value())
-        data["Build"]["Build"] = settings.build.value();
-
-    if (settings.branch.has_value())
-        data["Build"]["Branch"] = settings.branch.value();
-
-    if (settings.modified.has_value())
-        data["Build"]["Modified"] = settings.modified.value();
+    data["Build"]["Build"] = Config::LastBuildHash;
+    data["Build"]["Branch"] = Config::LastBuildBranch;
+    data["Build"]["Modified"] = Config::LastBuildModified;
 
     std::ofstream file(SettingsFile, std::ios::binary);
     file << data;

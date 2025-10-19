@@ -176,12 +176,14 @@ void IpcClient::onStdout(const QFileInfo& exe) {
 
     if (outputString.contains("Branch")) {
         int index = outputString.indexOf("Branch");
+        std::string branch = outputString.toStdString().substr(index + 7, 8);
+        if (branch.contains("main"))
+            branch = "main";
 
-        Config::LauncherSettings settings;
-        settings.build = build;
-        settings.branch = outputString.toStdString().substr(index + 7, 8);
-        settings.modified = Config::GetLastModifiedString(exe.filesystemAbsoluteFilePath());
-        Config::SaveLauncherSettings(settings);
+        Config::LastBuildHash = build;
+        Config::LastBuildBranch = branch;
+        Config::LastBuildModified = Config::GetLastModifiedString(exe.filesystemAbsoluteFilePath());
+        Config::SaveLauncherSettings();
     }
 }
 

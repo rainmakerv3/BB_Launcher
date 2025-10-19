@@ -14,27 +14,14 @@ struct ShadSettings {
     std::optional<bool> useUnifiedInputConfig;
 };
 
-struct LauncherSettings {
-    std::optional<std::filesystem::path> shadPath;
-    std::optional<std::filesystem::path> installPath;
-
-    std::optional<bool> ShowEarned;
-    std::optional<bool> ShowUnEarned;
-    std::optional<bool> ShowHidden;
-
-    std::optional<std::string> build;
-    std::optional<std::string> branch;
-    std::optional<std::string> modified;
-};
-
-void LoadLauncherSettings();
+void LoadSettings();
 void CreateSettingsFile();
 void SetTheme(std::string theme);
 std::filesystem::path GetFoolproofKbmConfigFile(const std::string& game_id);
 std::string_view GetDefaultKeyboardConfig();
 
 void SaveShadSettings(ShadSettings settings, bool is_game_specific = false);
-void SaveLauncherSettings(LauncherSettings settings);
+void SaveLauncherSettings();
 
 void CreateGSFile();
 std::string GetLastModifiedString(const std::filesystem::path& path);

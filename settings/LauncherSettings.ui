@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>602</width>
-    <height>528</height>
+    <width>989</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,9 +16,9 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>250</x>
-     <y>490</y>
-     <width>261</width>
+     <x>10</x>
+     <y>440</y>
+     <width>551</width>
      <height>32</height>
     </rect>
    </property>
@@ -28,14 +28,17 @@
    <property name="standardButtons">
     <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Close|QDialogButtonBox::StandardButton::Save</set>
    </property>
+   <property name="centerButtons">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QGroupBox" name="LauncherSetDescGroupBox">
    <property name="geometry">
     <rect>
-     <x>230</x>
+     <x>550</x>
      <y>10</y>
-     <width>361</width>
-     <height>471</height>
+     <width>431</width>
+     <height>461</height>
     </rect>
    </property>
    <property name="title">
@@ -81,140 +84,229 @@ li.checked::marker { content: &quot;\2612&quot;; }
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="verticalLayoutWidget">
+  <widget class="QWidget" name="verticalLayoutWidget_3">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>10</y>
-     <width>200</width>
-     <height>511</height>
+     <x>0</x>
+     <y>20</y>
+     <width>541</width>
+     <height>412</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout_10">
     <item>
-     <widget class="QGroupBox" name="groupBox">
-      <property name="title">
-       <string>BBLauncher</string>
+     <widget class="QLabel" name="label">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_6">
-       <item>
-        <widget class="QCheckBox" name="UpdateCheckBox">
-         <property name="text">
-          <string>Check updates at startup</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="UpdateButton">
-         <property name="text">
-          <string>Check Update</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="PortableSettingsCheckBox">
-         <property name="text">
-          <string>Check Portable Settings</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="ThemeGroupBox">
-      <property name="title">
-       <string>Themes</string>
+      <property name="font">
+       <font>
+        <pointsize>15</pointsize>
+        <bold>true</bold>
+       </font>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
-        <widget class="QRadioButton" name="DarkThemeRadioButton">
-         <property name="text">
-          <string>Dark Theme</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="LightThemeRadioButton">
-         <property name="text">
-          <string>Light Theme</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="groupBox_4">
-      <property name="title">
-       <string>Hacks</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
-        <widget class="QCheckBox" name="SoundFixCheckBox">
-         <property name="text">
-          <string>60 FPS Sound Fix</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="BackupSaveGroupBox">
-      <property name="title">
-       <string>Backup Saves</string>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QCheckBox" name="BackupSaveCheckBox">
-         <property name="text">
-          <string>Generate backup saves</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="BackupIntervalLabel">
-         <property name="text">
-          <string>Interval (minutes)</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="BackupIntervalComboBox"/>
-       </item>
-       <item>
-        <widget class="QLabel" name="BackupNumberLabel">
-         <property name="text">
-          <string>Number of backups</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="BackupNumberComboBox"/>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="shortcutButton">
       <property name="text">
-       <string>Create Direct Shortcut</string>
+       <string>BBLauncher Settings</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignHCenter</set>
       </property>
      </widget>
     </item>
     <item>
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Orientation::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>40</height>
-       </size>
-      </property>
-     </spacer>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>BBLauncher</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <item>
+            <widget class="QGroupBox" name="groupBox_5">
+             <property name="title">
+              <string>Updates</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_11">
+              <item>
+               <widget class="QCheckBox" name="UpdateCheckBox">
+                <property name="text">
+                 <string>Check BBLauncher updates at startup</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="UpdateButton">
+                <property name="text">
+                 <string>Check BBLauncher updates</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="PortableSettingsCheckBox">
+             <property name="text">
+              <string>Check Portable Settings</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="shortcutButton">
+             <property name="text">
+              <string>Create Direct Shortcut</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="ThemeGroupBox">
+          <property name="title">
+           <string>Themes</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QRadioButton" name="DarkThemeRadioButton">
+             <property name="text">
+              <string>Dark Theme</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="LightThemeRadioButton">
+             <property name="text">
+              <string>Light Theme</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_4">
+          <property name="title">
+           <string>Hacks</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <item>
+            <widget class="QCheckBox" name="SoundFixCheckBox">
+             <property name="text">
+              <string>60 FPS Sound Fix</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_7">
+        <item>
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>shadPS4 Updates</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_9">
+           <item>
+            <widget class="QGroupBox" name="groupBox_3">
+             <property name="title">
+              <string>shadPS4 Update Channel</string>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_8">
+              <item>
+               <widget class="QComboBox" name="shadChannelComboBox">
+                <item>
+                 <property name="text">
+                  <string>Nightly</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>Release</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="shadUpdateCheckBox">
+             <property name="text">
+              <string>Check shadPS4 updates at startup</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="shadUpdateButton">
+             <property name="text">
+              <string>Check shadPS4 updates</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QProgressBar" name="DownloadProgressBar">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="value">
+              <number>0</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="BackupSaveGroupBox">
+          <property name="title">
+           <string>Backup Saves</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="QCheckBox" name="BackupSaveCheckBox">
+             <property name="text">
+              <string>Generate backup saves</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="BackupIntervalLabel">
+             <property name="text">
+              <string>Interval (minutes)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="BackupIntervalComboBox"/>
+           </item>
+           <item>
+            <widget class="QLabel" name="BackupNumberLabel">
+             <property name="text">
+              <string>Number of backups</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="BackupNumberComboBox"/>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
