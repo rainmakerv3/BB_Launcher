@@ -133,9 +133,6 @@ void VersionDialog::onItemChanged(QTreeWidgetItem* item, int column) {
         if (item->checkState(0) == Qt::Checked) {
             QString fullPath = item->text(3);
             Common::shadPs4Executable = Common::PathFromQString(fullPath);
-            Config::LastBuildType = item->text(1).toStdString();
-            Config::LastBuildId = item->text(2).toStdString();
-            Config::LastBuildModified = item->text(4).toStdString();
             Config::SaveLauncherSettings();
 
             for (int row = 0; row < ui->installedTreeWidget->topLevelItemCount(); ++row) {
@@ -1195,9 +1192,6 @@ void VersionDialog::RemoveItem(bool alsoDelete) {
 
         if (selectedItem->checkState(0) == Qt::Checked) {
             Common::shadPs4Executable = "";
-            Config::LastBuildType = "";
-            Config::LastBuildModified = "";
-            Config::LastBuildId = "";
             Config::SaveLauncherSettings();
         }
 

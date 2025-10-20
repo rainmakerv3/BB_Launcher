@@ -263,14 +263,11 @@ void BBLauncher::ShadSelectButton_isPressed() {
 
 void BBLauncher::GetShadExecutable() {
     Common::shadPs4Executable = "";
-    Config::LastBuildType = "";
-    Config::LastBuildModified = "";
-    Config::LastBuildId = "";
-
     Config::SaveLauncherSettings();
 
-    QMessageBox::warning(this, "No shadPS4.exe found",
-                         "Select ShadPS4 executable before using BB Launcher.");
+    QMessageBox::warning(
+        this, "No shadPS4.exe found",
+        "Select ShadPS4 executable using the 'Manage builds'button before using BB Launcher.");
 }
 
 void BBLauncher::StartBackupSave() {

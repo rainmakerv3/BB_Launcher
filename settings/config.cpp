@@ -22,11 +22,7 @@ bool Config::ShowHiddenTrophy = false;
 bool Config::AutoUpdateVersionsEnabled = true;
 bool Config::AutoUpdateShadEnabled = false;
 bool Config::ShowChangeLog = true;
-
 std::string Config::DefaultFolderString = "";
-std::string Config::LastBuildId = "";
-std::string Config::LastBuildType = "";
-std::string Config::LastBuildModified = "";
 
 std::string Config::TrophyKey = "";
 bool Config::UnifiedInputConfig = true;
@@ -80,10 +76,6 @@ void LoadSettings() {
     theme = toml::find_or<std::string>(data, "Launcher", "Theme", "Dark");
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
     AutoUpdateEnabled = toml::find_or<bool>(data, "Launcher", "AutoUpdateEnabled", false);
-
-    LastBuildId = toml::find_or<std::string>(data, "Build", "Id", "");
-    LastBuildType = toml::find_or<std::string>(data, "Build", "Type", "");
-    LastBuildModified = toml::find_or<std::string>(data, "Build", "Modified", "");
 
     BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", false);
     BackupInterval = toml::find_or<int>(data, "Backups", "BackupInterval", 10);
@@ -267,10 +259,6 @@ void SaveLauncherSettings() {
     data["shadUpdater"]["DefaultFolder"] = DefaultFolderString;
     data["shadUpdater"]["AutoUpdateVersionsEnabled"] = AutoUpdateVersionsEnabled;
     data["shadUpdater"]["AutoUpdateShadEnabled"] = AutoUpdateShadEnabled;
-
-    data["Build"]["Id"] = Config::LastBuildId;
-    data["Build"]["Type"] = Config::LastBuildType;
-    data["Build"]["Modified"] = Config::LastBuildModified;
 
     std::ofstream file(SettingsFile, std::ios::binary);
     file << data;

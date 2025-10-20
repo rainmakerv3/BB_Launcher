@@ -36,10 +36,6 @@ extern bool UnifiedInputConfig;
 extern std::string TrophyKey;
 extern std::string DefaultControllerID;
 
-extern std::string LastBuildId;
-extern std::string LastBuildType;
-extern std::string LastBuildModified;
-
 extern bool ShowEarnedTrophy;
 extern bool ShowNotEarnedTrophy;
 extern bool ShowHiddenTrophy;
