@@ -21,9 +21,11 @@ bool Config::ShowHiddenTrophy = false;
 
 std::string Config::UpdateChannel = "Nightly";
 bool Config::AutoUpdateShadEnabled = false;
+bool Config::ShowChangeLog = true;
 
-std::string Config::LastBuildHash = "";
-std::string Config::LastBuildBranch = "";
+std::string Config::DefaultFolderString = "";
+std::string Config::LastBuildId = "";
+std::string Config::LastBuildType = "";
 std::string Config::LastBuildModified = "";
 
 std::string Config::TrophyKey = "";
@@ -79,8 +81,8 @@ void LoadSettings() {
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
     AutoUpdateEnabled = toml::find_or<bool>(data, "Launcher", "AutoUpdateEnabled", false);
 
-    LastBuildHash = toml::find_or<std::string>(data, "Build", "Build", "");
-    LastBuildBranch = toml::find_or<std::string>(data, "Build", "Branch", "");
+    LastBuildId = toml::find_or<std::string>(data, "Build", "Id", "");
+    LastBuildType = toml::find_or<std::string>(data, "Build", "Type", "");
     LastBuildModified = toml::find_or<std::string>(data, "Build", "Modified", "");
 
     BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", false);
@@ -91,6 +93,7 @@ void LoadSettings() {
     ShowNotEarnedTrophy = toml::find_or<bool>(data, "Trophy", "ShowUnearned", true);
     ShowHiddenTrophy = toml::find_or<bool>(data, "Trophy", "ShowHidden", false);
 
+    DefaultFolderString = toml::find_or<std::string>(data, "shadUpdater", "DefaultFolder", "");
     UpdateChannel = toml::find_or<std::string>(data, "shadUpdater", "UpdateChannel", "");
     AutoUpdateShadEnabled =
         toml::find_or<bool>(data, "shadUpdater", "AutoUpdateShadEnabled", false);
@@ -256,15 +259,16 @@ void SaveLauncherSettings() {
     data["Backups"]["BackupInterval"] = BackupInterval;
     data["Backups"]["BackupNumber"] = BackupNumber;
 
-    data["shadUpdater"]["UpdateChannel"] = UpdateChannel;
-    data["shadUpdater"]["AutoUpdateShadEnabled"] = AutoUpdateShadEnabled;
-
     data["Trophy"]["ShowEarned"] = Config::ShowEarnedTrophy;
     data["Trophy"]["ShowUnearned"] = Config::ShowNotEarnedTrophy;
     data["Trophy"]["ShowHidden"] = Config::ShowHiddenTrophy;
 
-    data["Build"]["Build"] = Config::LastBuildHash;
-    data["Build"]["Branch"] = Config::LastBuildBranch;
+    data["shadUpdater"]["DefaultFolder"] = DefaultFolderString;
+    data["shadUpdater"]["UpdateChannel"] = UpdateChannel;
+    data["shadUpdater"]["AutoUpdateShadEnabled"] = AutoUpdateShadEnabled;
+
+    data["Build"]["Id"] = Config::LastBuildId;
+    data["Build"]["Type"] = Config::LastBuildType;
     data["Build"]["Modified"] = Config::LastBuildModified;
 
     std::ofstream file(SettingsFile, std::ios::binary);
@@ -418,8 +422,7 @@ std::string GetLastModifiedString(const std::filesystem::path& path) {
     if (!std::filesystem::exists(path))
         return "";
 
-    std::chrono::time_point shadWriteTime =
-        std::filesystem::last_write_time(Common::shadPs4Executable);
+    std::chrono::time_point shadWriteTime = std::filesystem::last_write_time(path);
 
 #if __APPLE__
     auto sec = std::chrono::duration_cast<std::chrono::seconds>(shadWriteTime.time_since_epoch());

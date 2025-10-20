@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+/*
+
 #include <QDir>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -297,3 +299,5 @@ void CheckShadUpdate::InstallUpdate(QString zipPath) {
 }
 
 CheckShadUpdate::~CheckShadUpdate() {}
+
+*/

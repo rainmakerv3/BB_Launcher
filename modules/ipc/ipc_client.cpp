@@ -23,7 +23,7 @@ void IpcClient::startEmulator(const QFileInfo& exe, const QStringList& args,
     process = new QProcess(this);
 
     connect(process, &QProcess::readyReadStandardError, this, [this] { onStderr(); });
-    connect(process, &QProcess::readyReadStandardOutput, this, [=, this] { onStdout(exe); });
+    connect(process, &QProcess::readyReadStandardOutput, this, [=, this] { onStdout(); });
     connect(process, &QProcess::finished, this, [this] { onProcessClosed(); });
 
     process->setProcessChannelMode(QProcess::SeparateChannels);
@@ -164,27 +164,8 @@ void IpcClient::onStderr() {
     }
 }
 
-void IpcClient::onStdout(const QFileInfo& exe) {
-    QString outputString = QString::fromUtf8(process->readAllStandardOutput());
-    printf("%s", outputString.toStdString().c_str());
-    std::string build;
-
-    if (outputString.contains("Revision")) {
-        int index = outputString.indexOf("Revision");
-        build = outputString.toStdString().substr(index + 9, 40);
-    }
-
-    if (outputString.contains("Branch")) {
-        int index = outputString.indexOf("Branch");
-        std::string branch = outputString.toStdString().substr(index + 7, 8);
-        if (branch.contains("main"))
-            branch = "main";
-
-        Config::LastBuildHash = build;
-        Config::LastBuildBranch = branch;
-        Config::LastBuildModified = Config::GetLastModifiedString(exe.filesystemAbsoluteFilePath());
-        Config::SaveLauncherSettings();
-    }
+void IpcClient::onStdout() {
+    printf("%s", process->readAllStandardOutput().toStdString().c_str());
 }
 
 void IpcClient::onProcessClosed() {

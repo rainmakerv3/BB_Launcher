@@ -7,7 +7,6 @@
 #include <QStandardPaths>
 
 #include "LauncherSettings.h"
-#include "ShadUpdate.h"
 #include "config.h"
 #include "formatting.h"
 #include "modules/Common.h"
@@ -37,8 +36,6 @@ LauncherSettings::LauncherSettings(QWidget* parent)
         ui->LightThemeRadioButton->setChecked(true);
     }
 
-    ui->shadChannelComboBox->setCurrentText(QString::fromStdString(UpdateChannel));
-    ui->shadUpdateCheckBox->setChecked(AutoUpdateShadEnabled);
     ui->UpdateCheckBox->setChecked(AutoUpdateEnabled);
     ui->SoundFixCheckBox->setChecked(SoundFixEnabled);
     ui->BackupSaveCheckBox->setChecked(BackupSaveEnabled);
@@ -71,39 +68,9 @@ LauncherSettings::LauncherSettings(QWidget* parent)
 #endif
 
     connect(ui->shortcutButton, &QPushButton::clicked, this, &LauncherSettings::CreateShortcut);
-
-    connect(ui->shadChannelComboBox, &QComboBox::currentIndexChanged, this, [this]() {
-        Config::UpdateChannel = ui->shadChannelComboBox->currentText().toStdString();
-    });
-
-    connect(ui->shadUpdateButton, &QPushButton::pressed, this, [this]() {
-        if (Config::GameRunning) {
-            QMessageBox::warning(this, "Cannot update",
-                                 "Cannot update shadPS4 while game is running");
-            return;
-        }
-
-        ui->shadUpdateButton->setEnabled(false);
-        ui->buttonBox->setEnabled(false);
-        SaveLauncherSettings();
-
-        CheckShadUpdate* shadUpdateWindow = new CheckShadUpdate(false, this);
-
-        QObject::connect(shadUpdateWindow, &CheckShadUpdate::DownloadProgressed,
-                         ui->DownloadProgressBar, &QProgressBar::setValue);
-
-        QObject::connect(shadUpdateWindow, &CheckShadUpdate::UpdateComplete, this, [this]() {
-            ui->shadUpdateButton->setEnabled(true);
-            ui->buttonBox->setEnabled(true);
-        });
-
-        shadUpdateWindow->exec();
-    });
 }
 
 void LauncherSettings::SetLauncherDefaults() {
-    ui->shadChannelComboBox->setCurrentText("Nightly");
-    ui->shadUpdateCheckBox->setChecked(false);
     ui->UpdateCheckBox->setChecked(false);
     ui->DarkThemeRadioButton->setChecked(true);
     ui->SoundFixCheckBox->setChecked(true);
@@ -145,11 +112,6 @@ void LauncherSettings::SaveSettings() {
     BackupSaveEnabled = ui->BackupSaveCheckBox->isChecked();
     BackupInterval = ui->BackupIntervalComboBox->currentText().toInt();
     BackupNumber = ui->BackupNumberComboBox->currentText().toInt();
-
-    UpdateChannel = ui->shadChannelComboBox->currentText().toStdString();
-    AutoUpdateShadEnabled = ui->shadUpdateCheckBox->isChecked();
-
-    QMessageBox::information(this, "test", QString::fromStdString(UpdateChannel));
 
     std::ofstream file(SettingsFile, std::ios::binary);
     file << data;

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1122</width>
-    <height>500</height>
+    <height>398</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
      <x>0</x>
      <y>0</y>
      <width>1121</width>
-     <height>500</height>
+     <height>391</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -41,53 +41,10 @@
       <x>0</x>
       <y>0</y>
       <width>1119</width>
-      <height>498</height>
+      <height>389</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="versionTabLayout">
-     <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_path">
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="QGroupBox" name="patchGroupBox">
-         <property name="title">
-          <string>Path to save versions</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_shadps4">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_patch" stretch="0,0">
-            <item>
-             <widget class="QLineEdit" name="currentVersionPath">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-              <property name="placeholderText">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="browse_versionPath">
-              <property name="text">
-               <string>Browse</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </widget>
-       </item>
-      </layout>
-     </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_installed_download">
        <item>
@@ -105,6 +62,72 @@
           <number>0</number>
          </property>
          <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QGroupBox" name="InstallGroupBox">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>8</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="title">
+              <string>Default Install Folder (optional)</string>
+             </property>
+             <layout class="QHBoxLayout" name="horizontalLayout_5">
+              <item>
+               <widget class="QPushButton" name="FolderSelectButton">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>9</pointsize>
+                  <bold>false</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Browse</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLineEdit" name="FolderLabel">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="font">
+                 <font>
+                  <pointsize>8</pointsize>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="cursor">
+                 <cursorShape>IBeamCursor</cursorShape>
+                </property>
+                <property name="readOnly">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
           <widget class="QLabel" name="label_installed">
            <property name="font">
             <font>
@@ -112,14 +135,14 @@
             </font>
            </property>
            <property name="text">
-            <string>Installed</string>
+            <string>Build Information</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QTreeWidget" name="installedTreeWidget">
            <property name="columnCount">
-            <number>3</number>
+            <number>5</number>
            </property>
            <column>
             <property name="text">
@@ -133,7 +156,17 @@
            </column>
            <column>
             <property name="text">
+             <string>Build ID</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
              <string>Path</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>Modified date</string>
             </property>
            </column>
           </widget>
@@ -151,16 +184,16 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="deleteVersionButton">
+            <widget class="QPushButton" name="removeVersionButton">
              <property name="text">
-              <string>Delete</string>
+              <string>Remove From List</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="checkChangesVersionButton">
+            <widget class="QPushButton" name="deleteVersionButton">
              <property name="text">
-              <string>Refresh List</string>
+              <string>Remove From List and Delete Folder</string>
              </property>
             </widget>
            </item>
@@ -180,7 +213,7 @@
          <item>
           <widget class="QPushButton" name="checkVersionDownloadButton">
            <property name="text">
-            <string>Refresh List</string>
+            <string>Refresh Version List</string>
            </property>
           </widget>
          </item>
@@ -211,6 +244,13 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="downloadVersionButton">
+           <property name="text">
+            <string>Download Version</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <layout class="QVBoxLayout" name="verticalLayout_check_update">
            <property name="topMargin">
             <number>0</number>
@@ -218,7 +258,7 @@
            <item>
             <widget class="QCheckBox" name="checkOnStartupCheckBox">
              <property name="text">
-              <string>Check for Pre-release updates at startup</string>
+              <string>Check pre-release updates at startup</string>
              </property>
             </widget>
            </item>
@@ -230,7 +270,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="updatePreButton">
+            <widget class="QPushButton" name="updateButton">
              <property name="text">
               <string>Check for Pre-release Updates</string>
              </property>
