@@ -117,6 +117,9 @@ set(PROJECT_SOURCES
     modules/TrophyManager.cpp
     modules/TrophyManager.h
     modules/TrophyManager.ui
+    modules/version_dialog.cpp
+    modules/version_dialog.h
+    modules/version_dialog.ui
     modules/ipc/ipc_client.cpp
     modules/ipc/ipc_client.h
     modules/TrophyDeps/aes.h
@@ -132,6 +135,8 @@ set(PROJECT_SOURCES
     settings/PSF/psf.cpp
     settings/PSF/psf.h
     settings/formatting.h
+    settings/ShadUpdate.h
+    settings/ShadUpdate.cpp
     settings/config.cpp
     settings/config.h
     settings/control_settings.cpp

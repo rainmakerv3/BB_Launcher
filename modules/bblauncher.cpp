@@ -18,6 +18,7 @@
 #include "settings/LauncherSettings.h"
 #include "settings/ShadCheatsPatches.h"
 #include "settings/ShadSettings.h"
+#include "settings/ShadUpdate.h"
 #include "settings/config.h"
 #include "settings/control_settings.h"
 #include "settings/hotkeys.h"
@@ -213,12 +214,12 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     if (Config::AutoUpdateEnabled) {
-        auto checkUpdate = new CheckUpdate(false);
+        auto checkUpdate = new CheckUpdate(false, this);
         checkUpdate->exec();
     }
 
     if (!noGUI && Config::AutoUpdateShadEnabled) {
-        auto checkShadUpdate = new CheckShadUpdate(true);
+        auto checkShadUpdate = new CheckShadUpdate(true, this);
         checkShadUpdate->exec();
     }
 
