@@ -34,17 +34,20 @@ extern int BackupNumber;
 extern bool AutoUpdateEnabled;
 extern bool UnifiedInputConfig;
 extern std::string TrophyKey;
-extern std::string UpdateChannel;
-extern bool AutoUpdateShadEnabled;
 extern std::string DefaultControllerID;
 
-extern std::string LastBuildHash;
-extern std::string LastBuildBranch;
+extern std::string LastBuildId;
+extern std::string LastBuildType;
 extern std::string LastBuildModified;
 
 extern bool ShowEarnedTrophy;
 extern bool ShowNotEarnedTrophy;
 extern bool ShowHiddenTrophy;
+
+extern std::string DefaultFolderString;
+extern std::string UpdateChannel;
+extern bool AutoUpdateShadEnabled;
+extern bool ShowChangeLog;
 
 extern bool GameRunning;
 

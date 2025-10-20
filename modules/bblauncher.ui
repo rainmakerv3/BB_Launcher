@@ -291,7 +291,7 @@
           </font>
          </property>
          <property name="title">
-          <string>shadPS4 Path</string>
+          <string>shadPS4 Build</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
           <item>
@@ -309,7 +309,7 @@
              </font>
             </property>
             <property name="text">
-             <string>Browse</string>
+             <string>Manage Builds</string>
             </property>
            </widget>
           </item>
