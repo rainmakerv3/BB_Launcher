@@ -3,6 +3,7 @@
 
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QProcessEnvironment>
 #include <QPushButton>
 #include <QStandardPaths>
 
