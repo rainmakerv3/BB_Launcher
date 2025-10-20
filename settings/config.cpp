@@ -19,7 +19,7 @@ bool Config::ShowEarnedTrophy = true;
 bool Config::ShowNotEarnedTrophy = true;
 bool Config::ShowHiddenTrophy = false;
 
-std::string Config::UpdateChannel = "Nightly";
+bool Config::AutoUpdateVersionsEnabled = true;
 bool Config::AutoUpdateShadEnabled = false;
 bool Config::ShowChangeLog = true;
 
@@ -94,7 +94,8 @@ void LoadSettings() {
     ShowHiddenTrophy = toml::find_or<bool>(data, "Trophy", "ShowHidden", false);
 
     DefaultFolderString = toml::find_or<std::string>(data, "shadUpdater", "DefaultFolder", "");
-    UpdateChannel = toml::find_or<std::string>(data, "shadUpdater", "UpdateChannel", "");
+    AutoUpdateVersionsEnabled =
+        toml::find_or<bool>(data, "shadUpdater", "AutoUpdateVersionsEnabled", true);
     AutoUpdateShadEnabled =
         toml::find_or<bool>(data, "shadUpdater", "AutoUpdateShadEnabled", false);
 
@@ -264,7 +265,7 @@ void SaveLauncherSettings() {
     data["Trophy"]["ShowHidden"] = Config::ShowHiddenTrophy;
 
     data["shadUpdater"]["DefaultFolder"] = DefaultFolderString;
-    data["shadUpdater"]["UpdateChannel"] = UpdateChannel;
+    data["shadUpdater"]["AutoUpdateVersionsEnabled"] = AutoUpdateVersionsEnabled;
     data["shadUpdater"]["AutoUpdateShadEnabled"] = AutoUpdateShadEnabled;
 
     data["Build"]["Id"] = Config::LastBuildId;
