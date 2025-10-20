@@ -329,26 +329,32 @@ void BBLauncher::StartBackupSave() {
 
 void BBLauncher::UpdateSettingsList() {
     using namespace Config;
-    QString SoundhackSetting = "60 FPS sound fix = " + QVariant(SoundFixEnabled).toString();
-    QString ThemeSetting = "Selected Theme = " + QString::fromStdString(theme);
+    QString SoundhackSetting = "60 FPS sound fix: " + QVariant(SoundFixEnabled).toString();
     QString BackupEnableSetting =
-        "Back up saves enabled = " + QVariant(BackupSaveEnabled).toString();
-    QString AutoUpdateSetting =
-        "Check updates on startup enabled = " + QVariant(AutoUpdateEnabled).toString();
+        "Back up saves enabled: " + QVariant(BackupSaveEnabled).toString();
+
+    QString AutoUpdateBblauncherSetting =
+        "Auto-update BBLauncher: " + QVariant(AutoUpdateEnabled).toString();
+    QString AutoUpdateShadSetting =
+        "Auto-update shadPS4 pre-release: " + QVariant(AutoUpdateShadEnabled).toString();
+    QString AutoUpdateVersionsSetting =
+        "Auto-update shadPS4 version list: " + QVariant(AutoUpdateVersionsEnabled).toString();
 
     QString BackupIntSetting;
     QString BackupNumSetting;
 
     if (BackupSaveEnabled) {
-        BackupIntSetting = "Backup Interval = " + QString::number(BackupInterval);
-        BackupNumSetting = "Backup Copies = " + QString::number(BackupNumber);
+        BackupIntSetting = "Backup interval: " + QString::number(BackupInterval);
+        BackupNumSetting = "Backup copies: " + QString::number(BackupNumber);
     } else {
-        BackupIntSetting = "Backup Interval = disabled";
-        BackupNumSetting = "Backup Copies = disabled";
+        BackupIntSetting = "Backup interval: disabled";
+        BackupNumSetting = "Backup copies: disabled";
     }
 
-    QStringList SettingStrings = {SoundhackSetting, ThemeSetting,     BackupEnableSetting,
-                                  BackupIntSetting, BackupNumSetting, AutoUpdateSetting};
+    QStringList SettingStrings = {
+        SoundhackSetting,         BackupEnableSetting,         BackupIntSetting,
+        BackupNumSetting,         AutoUpdateBblauncherSetting, AutoUpdateShadSetting,
+        AutoUpdateVersionsSetting};
 
     ui->SettingList->clear();
     ui->SettingList->addItems(SettingStrings);

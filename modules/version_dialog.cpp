@@ -59,7 +59,7 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
         CheckVersionsList(true);
     }
 
-    connect(ui->addCustomVersionButton, &QPushButton::clicked, this, [this]() {
+    connect(ui->addLocalVersionButton, &QPushButton::clicked, this, [this]() {
         QString exePath;
 #ifdef _WIN32
         exePath = QFileDialog::getOpenFileName(this, "Select ShadPS4 executable (ex. shadPS4.exe)",
@@ -86,7 +86,7 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
         std::filesystem::path path = Common::PathFromQString(exePath);
         Build build;
         build.path = std::string{fmt::UTF(path.u8string()).data};
-        build.type = "Custom";
+        build.type = "Local";
         build.id = "unknown";
         build.modified = Config::GetLastModifiedString(path);
         build.index = buildInfo.size();
@@ -94,7 +94,7 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
         buildInfo.push_back(build);
         SaveBuilds();
 
-        QMessageBox::information(this, tr("Success"), tr("Version added successfully."));
+        QMessageBox::information(this, tr("Success"), tr("Local build added successfully."));
         LoadInstalledList();
     });
 
@@ -236,13 +236,13 @@ void VersionDialog::CheckVersionsList(const bool showMessage) {
                     if (showMessage) {
                         QMessageBox::information(
                             this, tr("Version list update"),
-                            tr("No news, the release version list is already updated."));
+                            tr("No news, the downloadable version list is already updated."));
                     }
                 } else {
                     SaveDownloadCache(versionList);
-                    QMessageBox::information(this, tr("Version list update"),
-                                             tr("New shadPS4 release versions added "
-                                                "to the downloadable versions list."));
+                    QMessageBox::information(
+                        this, tr("Version list update"),
+                        tr("New shadPS4 versions added to the downloadable versions list."));
                 }
             }
         } else {
@@ -260,6 +260,27 @@ void VersionDialog::InstallSelectedVersion() {
         return;
     }
 
+    QTreeWidgetItem* item = ui->downloadTreeWidget->selectedItems().first();
+    QString versionName = item->text(0);
+    QString apiUrl;
+    if (versionName == "Pre-release") {
+        apiUrl = "https://api.github.com/repos/shadps4-emu/shadPS4/releases";
+        for (auto build : buildInfo) {
+            if (build.type == "Pre-release") {
+                QMessageBox::information(
+                    this, "Pre-release already downloaded.",
+                    "A pre-release version has already been downloaded. Only one designated "
+                    "pre-release can be present for auto-updater to function correctly. Other "
+                    "builds can be downloaded manually and added as a local build.");
+                return;
+            }
+        }
+    } else {
+        apiUrl = QString("https://api.github.com/repos/shadps4-emu/"
+                         "shadPS4/releases/tags/%1")
+                     .arg(versionName);
+    }
+
     QString defaultPath;
     if (QDir(ui->FolderLabel->text()).exists()) {
         defaultPath = ui->FolderLabel->text();
@@ -267,32 +288,11 @@ void VersionDialog::InstallSelectedVersion() {
         defaultPath = QDir::currentPath();
     }
 
-    QTreeWidgetItem* item = ui->downloadTreeWidget->selectedItems().first();
     QString downloadFolder =
         QFileDialog::getExistingDirectory(this, "Select Download Folder", defaultPath);
-
     if (downloadFolder.isEmpty()) {
         QMessageBox::information(this, "Error", "Download folder must be selected");
         return;
-    }
-
-    QString versionName = item->text(0);
-    QString apiUrl;
-    QString platform;
-
-#ifdef Q_OS_WIN
-    platform = "win64-sdl";
-#elif defined(Q_OS_LINUX)
-    platform = "linux-sdl";
-#elif defined(Q_OS_MAC)
-    platform = "macos-sdl";
-#endif
-    if (versionName == "Pre-release") {
-        apiUrl = "https://api.github.com/repos/shadps4-emu/shadPS4/releases";
-    } else {
-        apiUrl = QString("https://api.github.com/repos/shadps4-emu/"
-                         "shadPS4/releases/tags/%1")
-                     .arg(versionName);
     }
 
     { // Message yes/no
@@ -308,6 +308,14 @@ void VersionDialog::InstallSelectedVersion() {
     QNetworkAccessManager* manager = new QNetworkAccessManager(this);
     QNetworkRequest request(apiUrl);
     QNetworkReply* reply = manager->get(request);
+    QString platform;
+#ifdef Q_OS_WIN
+    platform = "win64-sdl";
+#elif defined(Q_OS_LINUX)
+    platform = "linux-sdl";
+#elif defined(Q_OS_MAC)
+    platform = "macos-sdl";
+#endif
 
     connect(reply, &QNetworkReply::finished, this,
             [this, reply, platform, versionName, downloadFolder]() {

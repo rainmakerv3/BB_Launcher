@@ -177,9 +177,9 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QPushButton" name="addCustomVersionButton">
+            <widget class="QPushButton" name="addLocalVersionButton">
              <property name="text">
-              <string>Add Custom</string>
+              <string>Add Local Build</string>
              </property>
             </widget>
            </item>
@@ -246,7 +246,7 @@
          <item>
           <widget class="QPushButton" name="downloadVersionButton">
            <property name="text">
-            <string>Download Version</string>
+            <string>Download Selected Version</string>
            </property>
           </widget>
          </item>
@@ -255,6 +255,13 @@
            <property name="topMargin">
             <number>0</number>
            </property>
+           <item>
+            <widget class="QCheckBox" name="showChangelogCheckBox">
+             <property name="text">
+              <string>Always Show Changelog</string>
+             </property>
+            </widget>
+           </item>
            <item>
             <widget class="QCheckBox" name="versionListUpdateCheckBox">
              <property name="text">
@@ -266,13 +273,6 @@
             <widget class="QCheckBox" name="checkOnStartupCheckBox">
              <property name="text">
               <string>Check pre-release updates at startup</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="showChangelogCheckBox">
-             <property name="text">
-              <string>Always Show Changelog</string>
              </property>
             </widget>
            </item>
