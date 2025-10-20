@@ -214,9 +214,14 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         checkUpdate->exec();
     }
 
-    if (!noGUI && Config::AutoUpdateShadEnabled) {
+    if (Config::AutoUpdateShadEnabled) {
         auto versionDialog = new VersionDialog(this);
         versionDialog->checkUpdatePre(false);
+    }
+
+    if (Config::AutoUpdateVersionsEnabled) {
+        auto versionDialog = new VersionDialog(this);
+        versionDialog->CheckVersionsList(false);
     }
 
     if (noGUI && noInstanceRunning)

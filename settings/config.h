@@ -45,7 +45,7 @@ extern bool ShowNotEarnedTrophy;
 extern bool ShowHiddenTrophy;
 
 extern std::string DefaultFolderString;
-extern std::string UpdateChannel;
+extern bool AutoUpdateVersionsEnabled;
 extern bool AutoUpdateShadEnabled;
 extern bool ShowChangeLog;
 

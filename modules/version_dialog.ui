@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1122</width>
-    <height>398</height>
+    <height>421</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -23,7 +23,7 @@
      <x>0</x>
      <y>0</y>
      <width>1121</width>
-     <height>391</height>
+     <height>421</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -41,7 +41,7 @@
       <x>0</x>
       <y>0</y>
       <width>1119</width>
-      <height>389</height>
+      <height>419</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="versionTabLayout">
@@ -233,7 +233,7 @@
            </property>
            <column>
             <property name="text">
-             <string>Version</string>
+             <string>Downloadable Versions</string>
             </property>
            </column>
            <item>
@@ -255,6 +255,13 @@
            <property name="topMargin">
             <number>0</number>
            </property>
+           <item>
+            <widget class="QCheckBox" name="versionListUpdateCheckBox">
+             <property name="text">
+              <string>Check version list updates at startup</string>
+             </property>
+            </widget>
+           </item>
            <item>
             <widget class="QCheckBox" name="checkOnStartupCheckBox">
              <property name="text">

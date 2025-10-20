@@ -30,6 +30,12 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
     ui->FolderLabel->setText(QString::fromStdString(Config::DefaultFolderString));
     ui->checkOnStartupCheckBox->setChecked(Config::AutoUpdateShadEnabled);
     ui->showChangelogCheckBox->setChecked(Config::ShowChangeLog);
+    ui->versionListUpdateCheckBox->setChecked(Config::AutoUpdateVersionsEnabled);
+
+    connect(ui->versionListUpdateCheckBox, &QCheckBox::toggled, this, [this](bool checked) {
+        Config::AutoUpdateVersionsEnabled = checked;
+        Config::SaveLauncherSettings();
+    });
 
     connect(ui->checkOnStartupCheckBox, &QCheckBox::toggled, this, [this](bool checked) {
         Config::AutoUpdateShadEnabled = checked;
@@ -50,7 +56,7 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
     if (!cachedVersions.isEmpty()) {
         PopulateDownloadTree(cachedVersions);
     } else {
-        DownloadListVersion();
+        CheckVersionsList(true);
     }
 
     connect(ui->addCustomVersionButton, &QPushButton::clicked, this, [this]() {
@@ -110,7 +116,7 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
             [this]() { InstallSelectedVersion(); });
 
     connect(ui->checkVersionDownloadButton, &QPushButton::clicked, this,
-            [this]() { DownloadListVersion(); });
+            [this]() { CheckVersionsList(true); });
 
     connect(ui->installedTreeWidget, &QTreeWidget::itemChanged, this,
             &VersionDialog::onItemChanged);
@@ -146,13 +152,13 @@ void VersionDialog::onItemChanged(QTreeWidgetItem* item, int column) {
     }
 }
 
-void VersionDialog::DownloadListVersion() {
+void VersionDialog::CheckVersionsList(const bool showMessage) {
     QNetworkAccessManager* manager = new QNetworkAccessManager(this);
     QUrl url("https://api.github.com/repos/shadps4-emu/shadPS4/tags");
     QNetworkRequest request(url);
     QNetworkReply* reply = manager->get(request);
 
-    connect(reply, &QNetworkReply::finished, this, [this, reply]() {
+    connect(reply, &QNetworkReply::finished, this, [this, reply, showMessage]() {
         if (reply->error() == QNetworkReply::NoError) {
             QByteArray response = reply->readAll();
             QJsonDocument doc = QJsonDocument::fromJson(response);
@@ -230,13 +236,16 @@ void VersionDialog::DownloadListVersion() {
 
                 QStringList cachedVersions = LoadDownloadCache();
                 if (cachedVersions == versionList) {
-                    QMessageBox::information(this, tr("Version list update"),
-                                             tr("No news, the version list is already updated."));
+                    if (showMessage) {
+                        QMessageBox::information(
+                            this, tr("Version list update"),
+                            tr("No news, the release version list is already updated."));
+                    }
                 } else {
                     SaveDownloadCache(versionList);
-                    QMessageBox::information(
-                        this, tr("Version list update"),
-                        tr("The latest versions have been added to the list for download."));
+                    QMessageBox::information(this, tr("Version list update"),
+                                             tr("New shadPS4 release versions added "
+                                                "to the downloadable versions list."));
                 }
             }
         } else {

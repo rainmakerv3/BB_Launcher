@@ -20,7 +20,7 @@ public:
     ~VersionDialog();
     void onItemChanged(QTreeWidgetItem* item, int column);
     void checkUpdatePre(const bool showMessage);
-    void DownloadListVersion();
+    void CheckVersionsList(const bool showMessage);
     void InstallSelectedVersion();
 
 private:
