@@ -29,6 +29,7 @@ void SetTheme(std::string theme);
 std::filesystem::path GetFoolproofKbmConfigFile(const std::string& game_id);
 std::string_view GetDefaultKeyboardConfig();
 void CreateSettingsFile();
+bool isReleaseOlder(int minorVersion, int majorVersion = 0);
 Build GetCurrentBuildInfo();
 
 void SaveShadSettings(ShadSettings settings, bool is_game_specific = false);

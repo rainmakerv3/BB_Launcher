@@ -4,6 +4,7 @@
 #include <fstream>
 #include <QMessageBox>
 #include <QProgressBar>
+
 #include "ModManager.h"
 #include "modules/ui_ModManager.h"
 #include "settings/config.h"

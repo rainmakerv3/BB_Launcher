@@ -104,23 +104,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             return;
 
         // Releases older than 0.9.0 will need to use the game serial as save folder
-        bool useOldSaveFolders = false;
-        Config::Build CurrentBuild = Config::GetCurrentBuildInfo();
-        if (CurrentBuild.type == "Release") {
-            static QRegularExpression versionRegex(R"(v\.?(\d+)\.(\d+)\.(\d+))");
-            QRegularExpressionMatch match =
-                versionRegex.match(QString::fromStdString(CurrentBuild.id));
-            if (match.hasMatch()) {
-                int major = match.captured(1).toInt();
-                int minor = match.captured(2).toInt();
-                int patch = match.captured(3).toInt();
-
-                if (major > 0)
-                    useOldSaveFolders = true;
-                if (major == 0 && minor < 9)
-                    useOldSaveFolders = true;
-            }
-        }
+        bool useOldSaveFolders = Config::isReleaseOlder(9);
 
         if (Common::game_serial == "CUSA03173" && !useOldSaveFolders) {
             if (!std::filesystem::exists(Common::SaveDir / "1" / "CUSA00207" / "SPRJ0005" /
@@ -314,22 +298,7 @@ void BBLauncher::StartBackupSave() {
     }
 
     // Releases older than 0.9.0 will need to use the game serial as save folder
-    bool useOldSaveFolders = false;
-    Config::Build CurrentBuild = Config::GetCurrentBuildInfo();
-    if (CurrentBuild.type == "Release") {
-        static QRegularExpression versionRegex(R"(v\.?(\d+)\.(\d+)\.(\d+))");
-        QRegularExpressionMatch match = versionRegex.match(QString::fromStdString(CurrentBuild.id));
-        if (match.hasMatch()) {
-            int major = match.captured(1).toInt();
-            int minor = match.captured(2).toInt();
-            int patch = match.captured(3).toInt();
-
-            if (major > 0)
-                useOldSaveFolders = true;
-            if (major == 0 && minor < 9)
-                useOldSaveFolders = true;
-        }
-    }
+    bool useOldSaveFolders = Config::isReleaseOlder(9);
 
     auto save_dir = Common::SaveDir / "1" / Common::game_serial;
     if (Common::game_serial == "CUSA03173" && !useOldSaveFolders)

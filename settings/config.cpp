@@ -3,6 +3,7 @@
 
 #include <QApplication>
 #include <QMessageBox>
+#include <QRegularExpression>
 
 #include "config.h"
 #include "formatting.h"
@@ -141,10 +142,13 @@ void LoadSettings() {
         if (shadData.contains("GUI")) {
             const toml::value& GUI = shadData.at("GUI");
             Common::SaveDir = toml::find_fs_path_or(GUI, "saveDataPath", {});
-            if (Common::SaveDir.empty()) {
-                Common::SaveDir = Common::GetShadUserDir() / "savedata";
-            }
         }
+    }
+
+    // Releases older than 0.6.0 do have have configurable save folder
+    bool noConfigurableSaveFolder = isReleaseOlder(6);
+    if (Common::SaveDir.empty() || noConfigurableSaveFolder) {
+        Common::SaveDir = Common::GetShadUserDir() / "savedata";
     }
 }
 
@@ -474,6 +478,28 @@ Build GetCurrentBuildInfo() {
     }
 
     return {};
+}
+
+bool isReleaseOlder(int minorVersion, int MajorVersion) {
+    bool isOlder = false;
+    Config::Build CurrentBuild = Config::GetCurrentBuildInfo();
+
+    if (CurrentBuild.type == "Release") {
+        static QRegularExpression versionRegex(R"(v\.?(\d+)\.(\d+)\.(\d+))");
+        QRegularExpressionMatch match = versionRegex.match(QString::fromStdString(CurrentBuild.id));
+        if (match.hasMatch()) {
+            int major = match.captured(1).toInt();
+            int minor = match.captured(2).toInt();
+            int patch = match.captured(3).toInt();
+
+            if (major > MajorVersion)
+                isOlder = true;
+            if (major == MajorVersion && minor < minorVersion)
+                isOlder = true;
+        }
+    }
+
+    return isOlder;
 }
 
 } // namespace Config

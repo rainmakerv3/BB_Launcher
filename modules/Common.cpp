@@ -3,6 +3,7 @@
 
 #include "Common.h"
 #include "scope_exit.h"
+#include "settings/config.h"
 
 #ifdef Q_OS_MAC
 #include <CoreFoundation/CFBundle.h>
@@ -58,7 +59,10 @@ std::filesystem::path GetShadUserDir() {
 #elif _WIN32
         TCHAR appdata[MAX_PATH] = {0};
         SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appdata);
-        user_dir = std::filesystem::path(appdata) / "shadPS4";
+
+        // Releases older than 0.7.0 do have global user folder
+        if (!Config::isReleaseOlder(7))
+            user_dir = std::filesystem::path(appdata) / "shadPS4";
 #endif
     }
     return user_dir;
