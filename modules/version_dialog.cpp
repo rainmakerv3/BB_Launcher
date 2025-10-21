@@ -279,6 +279,13 @@ void VersionDialog::InstallSelectedVersion() {
         apiUrl = QString("https://api.github.com/repos/shadps4-emu/"
                          "shadPS4/releases/tags/%1")
                      .arg(versionName);
+        for (auto build : buildInfo) {
+            if (build.id == versionName.toStdString()) {
+                QMessageBox::information(this, "Error",
+                                         "This version has already been downloaded.");
+                return;
+            }
+        }
     }
 
     QString defaultPath;
@@ -424,9 +431,8 @@ void VersionDialog::InstallSelectedVersion() {
                                 folderName = "Pre-release";
                                 buildId = release["tag_name"].toString().right(40);
                             } else {
-                                QString datePart = release["published_at"].toString().left(10);
-                                folderName = QString("%1 - %2").arg(releaseName, datePart);
-                                buildId = releaseName;
+                                folderName = release["tag_name"].toString();
+                                buildId = release["tag_name"].toString();
                             }
 
                             QString destFolder = QDir(userPath).filePath(folderName);
