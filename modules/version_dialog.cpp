@@ -627,13 +627,15 @@ void VersionDialog::PopulateDownloadTree(const QStringList& versions) {
 
 void VersionDialog::checkUpdatePre(const bool showMessage) {
     hasPreRelease = false;
-    preReleasePath = "";
+    preReleaseFolder = "";
     QString localHash = "";
 
     for (auto build : buildInfo) {
         if (build.type == "Pre-release") {
             hasPreRelease = true;
-            preReleasePath = QString::fromStdString(build.path);
+            std::filesystem::path preReleasePath = build.path;
+            std::filesystem::path preReleaseParentPath = preReleasePath.parent_path();
+            preReleaseFolder = QString::fromStdString(preReleaseParentPath.string());
             preReleaseIndex = build.index;
             localHash = QString::fromStdString(build.id);
             break;
@@ -702,7 +704,7 @@ void VersionDialog::checkUpdatePre(const bool showMessage) {
                             return;
                         }
 
-                        preReleasePath = path + "/Pre-release";
+                        preReleaseFolder = path + "/Pre-release";
                         installPreReleaseByTag(latestTag);
                     }
                     return;
@@ -958,12 +960,11 @@ void VersionDialog::showDownloadDialog(const QString& tagName, const QString& do
         }
 
         QByteArray data = reply->readAll();
-        QFileInfo fileInfo(preReleasePath);
-        QString PreReleaseFolder = fileInfo.isFile() ? fileInfo.absolutePath() : preReleasePath;
-        QString zipPath = QDir(PreReleaseFolder).filePath("temp_pre_release_download.zip");
+        QFileInfo fileInfo(preReleaseFolder);
+        QString zipPath = QDir(preReleaseFolder).filePath("temp_pre_release_download.zip");
 
         if (!fileInfo.exists())
-            std::filesystem::create_directory(PreReleaseFolder.toStdString());
+            std::filesystem::create_directory(preReleaseFolder.toStdString());
 
         QFile zipFile(zipPath);
         if (!zipFile.open(QIODevice::WriteOnly)) {
@@ -976,7 +977,7 @@ void VersionDialog::showDownloadDialog(const QString& tagName, const QString& do
         zipFile.write(data);
         zipFile.close();
 
-        QString destFolder = PreReleaseFolder;
+        QString destFolder = preReleaseFolder;
         QString scriptFilePath;
         QString scriptContent;
         QStringList args;
@@ -994,7 +995,7 @@ void VersionDialog::showDownloadDialog(const QString& tagName, const QString& do
                 .arg(destFolder)        // %1 - new destination folder
                 .arg(zipPath)           // %2 - zip path
                 .arg(scriptFilePath)    // %3 - script
-                .arg(PreReleaseFolder); // %4 - old folder
+                .arg(preReleaseFolder); // %4 - old folder
 
         process = "powershell.exe";
         args << "-ExecutionPolicy" << "Bypass" << "-File" << scriptFilePath;

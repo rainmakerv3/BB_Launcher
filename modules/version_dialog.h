@@ -50,7 +50,7 @@ private:
     void showDownloadDialog(const QString& tagName, const QString& downloadUrl);
 
     std::vector<Build> buildInfo = {};
-    QString preReleasePath;
+    QString preReleaseFolder;
     bool hasPreRelease = false;
     int preReleaseIndex;
 };
