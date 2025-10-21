@@ -39,14 +39,24 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     Config::LoadSettings();
 
     if (Common::shadPs4Executable == "" || !std::filesystem::exists(Common::shadPs4Executable)) {
-        QMessageBox::warning(
-            this, "No shadPS4 build selected",
-            "BBLauncher requires a selected shadPS4 build, you can download builds "
-            "with the 'Manage Builds' button");
+        QMessageBox::warning(this, "No shadPS4 build",
+                             "ShadPS4 build is either not selected or cannot be found. BBLauncher "
+                             "requires a valid shadPS4 build, you can download builds "
+                             "with the 'Manage Builds' button");
+        if (!std::filesystem::exists(Common::shadPs4Executable)) {
+            Common::shadPs4Executable = "";
+            Config::SaveLauncherSettings();
+        }
     }
 
     if (Common::installPath == "") {
         ui->ExeLabel->setText("no Bloodborne Folder selected (CUSA****)");
+    } else if (!std::filesystem::exists(Common::installPath)) {
+        QMessageBox::warning(this, "Selected Bloodborne folder not found",
+                             "Previously set Bloodborne folder cannot be found. It may have been "
+                             "moved or deleted. Bloodborne folder path will be reset.");
+        Common::installPath = "";
+        Config::SaveLauncherSettings();
     } else {
         QString installQString;
         Common::PathToQString(installQString, Common::installPath);
