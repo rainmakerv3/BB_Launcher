@@ -119,12 +119,12 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
 
     connect(ui->SavePathButton, &QPushButton::clicked, this, [this]() {
         QString initial_path;
-        Common::PathToQString(initial_path, Common::SaveDir);
+        Common::PathToQString(initial_path, Config::externalSaveDir);
         QString save_data_path_string =
             QFileDialog::getExistingDirectory(this, "Directory to save data", initial_path);
         auto file_path = Common::PathFromQString(save_data_path_string);
         if (!file_path.empty()) {
-            Common::SaveDir = file_path;
+            Config::externalSaveDir = file_path;
             ui->SavePathLineEdit->setText(save_data_path_string);
 
             std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
@@ -140,7 +140,8 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
                 return;
             }
 
-            shadData["GUI"]["saveDataPath"] = std::string{Common::PathToU8(Common::SaveDir)};
+            shadData["GUI"]["saveDataPath"] =
+                std::string{Common::PathToU8(Config::externalSaveDir)};
             std::ofstream file(Common::GetShadUserDir() / "config.toml", std::ios::binary);
             file << shadData;
             file.close();
@@ -263,7 +264,7 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->presentModeComboBox->setCurrentText(translatedText_PresentMode);
 
     QString save_data_path_string;
-    Common::PathToQString(save_data_path_string, Common::SaveDir);
+    Common::PathToQString(save_data_path_string, Config::externalSaveDir);
     ui->SavePathLineEdit->setText(save_data_path_string);
 
     ui->motionControlsCheckBox->setChecked(

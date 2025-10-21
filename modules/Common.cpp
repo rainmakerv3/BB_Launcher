@@ -28,7 +28,6 @@ namespace Common {
 std::string game_serial;
 std::filesystem::path installPath;
 std::filesystem::path installUpdatePath;
-std::filesystem::path SaveDir;
 std::filesystem::path shadPs4Executable;
 
 const char VERSION[] = "Release11.00";
@@ -83,6 +82,18 @@ std::filesystem::path GetBBLFilesPath() {
 #else
     path = std::filesystem::current_path() / "BBLauncher";
 #endif
+
+    return path;
+}
+
+std::filesystem::path GetSaveDir() {
+    std::filesystem::path path = Config::externalSaveDir;
+
+    // Releases older than 0.6.0 do have have configurable save folder
+    bool noConfigurableSaveFolder = Config::isReleaseOlder(6);
+    if (Config::externalSaveDir == "" || noConfigurableSaveFolder) {
+        path = Common::GetShadUserDir() / "savedata";
+    }
 
     return path;
 }

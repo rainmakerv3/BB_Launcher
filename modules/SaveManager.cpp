@@ -11,16 +11,16 @@
 SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveManager) {
     ui->setupUi(this);
     ui->SelectSaveComboBox->addItem("Current Save");
-    ExactSaveDir = Common::SaveDir / "1" / Common::game_serial / "SPRJ0005";
+    ExactSaveDir = Common::GetSaveDir() / "1" / Common::game_serial / "SPRJ0005";
 
     // Releases older than 0.9.0 will need to use the game serial as save folder
     bool useOldSaveFolders = Config::isReleaseOlder(9);
     Config::Build CurrentBuild = Config::GetCurrentBuildInfo();
 
     if (Common::game_serial == "CUSA03173" && !useOldSaveFolders)
-        ExactSaveDir = Common::SaveDir / "1" / "CUSA00207" / "SPRJ0005";
+        ExactSaveDir = Common::GetSaveDir() / "1" / "CUSA00207" / "SPRJ0005";
     if (Common::game_serial == "CUSA03023" && !useOldSaveFolders)
-        ExactSaveDir = Common::SaveDir / "1" / "CUSA01363" / "SPRJ0005";
+        ExactSaveDir = Common::GetSaveDir() / "1" / "CUSA01363" / "SPRJ0005";
 
     if (!std::filesystem::exists(BackupsDir)) {
         std::filesystem::create_directories(BackupsDir);

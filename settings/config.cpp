@@ -29,6 +29,7 @@ std::string Config::TrophyKey = "";
 bool Config::UnifiedInputConfig = true;
 std::string Config::DefaultControllerID = "";
 
+std::filesystem::path Config::externalSaveDir;
 bool Config::GameRunning = false;
 static std::string SelectedGamepad = "";
 
@@ -141,14 +142,8 @@ void LoadSettings() {
 
         if (shadData.contains("GUI")) {
             const toml::value& GUI = shadData.at("GUI");
-            Common::SaveDir = toml::find_fs_path_or(GUI, "saveDataPath", {});
+            Config::externalSaveDir = toml::find_fs_path_or(GUI, "saveDataPath", {});
         }
-    }
-
-    // Releases older than 0.6.0 do have have configurable save folder
-    bool noConfigurableSaveFolder = isReleaseOlder(6);
-    if (Common::SaveDir.empty() || noConfigurableSaveFolder) {
-        Common::SaveDir = Common::GetShadUserDir() / "savedata";
     }
 }
 

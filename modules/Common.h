@@ -21,11 +21,11 @@ std::string PathToU8(const std::filesystem::path& path);
 std::filesystem::path GetShadUserDir();
 std::filesystem::path GetCurrentPath();
 std::filesystem::path GetBBLFilesPath();
+std::filesystem::path GetSaveDir();
 
 extern std::string game_serial;
 extern std::filesystem::path installPath;
 extern std::filesystem::path installUpdatePath;
-extern std::filesystem::path SaveDir;
 extern std::filesystem::path shadPs4Executable;
 
 extern const char VERSION[];

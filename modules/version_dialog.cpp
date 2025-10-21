@@ -1010,7 +1010,7 @@ void VersionDialog::showDownloadDialog(const QString& tagName, const QString& do
                             .arg(destFolder)
                             .arg(zipPath)
                             .arg(scriptFilePath)
-                            .arg(PreReleaseFolder);
+                            .arg(preReleaseFolder);
         process = "bash";
         args << scriptFilePath;
 #endif
