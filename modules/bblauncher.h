@@ -42,6 +42,7 @@ private:
     void StartEmulator(std::filesystem::path path, QStringList args);
     std::vector<MemoryPatcher::PendingPatch> readPatches(std::string gameSerial,
                                                          std::string appVersion);
+    QString getPatchFile();
 
     Ui::BBLauncher* ui;
     std::shared_ptr<IpcClient> m_ipc_client = std::make_shared<IpcClient>();

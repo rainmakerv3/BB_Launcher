@@ -8,6 +8,8 @@
 #include <QTextBrowser>
 #include <QTreeWidget>
 
+#include "settings/config.h"
+
 namespace Ui {
 class VersionDialog;
 }
@@ -24,14 +26,6 @@ public:
     void InstallSelectedVersion();
 
 private:
-    struct Build {
-        std::string path;
-        std::string type;
-        std::string id;
-        std::string modified;
-        int index;
-    };
-
     Ui::VersionDialog* ui;
     QNetworkAccessManager* networkManager;
 
@@ -49,7 +43,7 @@ private:
     void installPreReleaseByTag(const QString& tagName);
     void showDownloadDialog(const QString& tagName, const QString& downloadUrl);
 
-    std::vector<Build> buildInfo = {};
+    std::vector<Config::Build> buildInfo = {};
     QString preReleaseFolder;
     bool hasPreRelease = false;
     int preReleaseIndex;

@@ -19,7 +19,6 @@
 #include <QVBoxLayout>
 
 #include "Common.h"
-#include "settings/config.h"
 #include "settings/formatting.h"
 #include "ui_version_dialog.h"
 #include "version_dialog.h"
@@ -84,7 +83,7 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
         }
 
         std::filesystem::path path = Common::PathFromQString(exePath);
-        Build build;
+        Config::Build build;
         build.path = std::string{fmt::UTF(path.u8string()).data};
         build.type = "Local";
         build.id = "unknown";
@@ -518,7 +517,7 @@ void VersionDialog::InstallSelectedVersion() {
                                             type = "Release";
                                         }
 
-                                        Build build;
+                                        Config::Build build;
                                         build.path = fullExePath.toStdString();
                                         build.type = type;
                                         build.id = buildId.toStdString();
@@ -1059,7 +1058,7 @@ void VersionDialog::showDownloadDialog(const QString& tagName, const QString& do
 
                 int buildIndex = hasPreRelease ? buildInfo.size() - 1 : buildInfo.size();
 
-                Build build;
+                Config::Build build;
                 build.path = fullExePath.toStdString();
                 build.type = "Pre-release";
                 build.id = tagName.right(40).toStdString();
@@ -1151,7 +1150,7 @@ void VersionDialog::GetBuildInfo() {
         if (arr.empty())
             break;
 
-        Build build;
+        Config::Build build;
         build.path = arr[0].as_string();
         build.type = arr[1].as_string();
         build.id = arr[2].as_string();

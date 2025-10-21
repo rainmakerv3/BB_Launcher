@@ -425,6 +425,57 @@ std::string GetLastModifiedString(const std::filesystem::path& path) {
     return shadModifiedStringUTC;
 }
 
+Build GetCurrentBuildInfo() {
+    toml::value data;
+    std::error_code error;
+
+    if (std::filesystem::exists(Config::SettingsFile, error)) {
+        try {
+            std::ifstream ifs;
+            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+            ifs.open(Config::SettingsFile, std::ios_base::binary);
+            data = toml::parse(
+                ifs, std::string{fmt::UTF(Config::SettingsFile.filename().u8string()).data});
+        } catch (const std::exception& ex) {
+            QMessageBox::critical(nullptr, "Filesystem error", ex.what());
+            return {};
+        }
+    } else {
+        if (error) {
+            QMessageBox::critical(nullptr, "Filesystem error",
+                                  QString::fromStdString(error.message()));
+        }
+    }
+
+    if (!data.contains("Builds")) {
+        // QMessageBox::critical(nullptr, "Error", "No saved build data found");
+        return {};
+    }
+
+    int buildCounter = 1;
+    while (true) {
+        const auto arr =
+            toml::find_or<toml::array>(data.at("Builds"), std::to_string(buildCounter), {});
+
+        if (arr.empty())
+            break;
+
+        Config::Build build;
+        build.path = arr[0].as_string();
+        build.type = arr[1].as_string();
+        build.id = arr[2].as_string();
+        build.modified = arr[3].as_string();
+        build.index = buildCounter - 1;
+
+        if (build.path == Common::shadPs4Executable)
+            return build;
+
+        buildCounter += 1;
+    }
+
+    return {};
+}
+
 } // namespace Config
 
 namespace GamepadSelect {

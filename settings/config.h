@@ -1,5 +1,6 @@
 // SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
 // SPDX-License-Identifier: GPL-3.0-or-later
+#pragma once
 
 #include <filesystem>
 #include <optional>
@@ -14,11 +15,21 @@ struct ShadSettings {
     std::optional<bool> useUnifiedInputConfig;
 };
 
+struct Build {
+    std::string path;
+    std::string type;
+    std::string id;
+    std::string modified;
+    int index;
+};
+
 void LoadSettings();
 void CreateSettingsFile();
 void SetTheme(std::string theme);
 std::filesystem::path GetFoolproofKbmConfigFile(const std::string& game_id);
 std::string_view GetDefaultKeyboardConfig();
+void CreateSettingsFile();
+Build GetCurrentBuildInfo();
 
 void SaveShadSettings(ShadSettings settings, bool is_game_specific = false);
 void SaveLauncherSettings();

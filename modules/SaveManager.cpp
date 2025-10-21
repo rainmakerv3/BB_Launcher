@@ -6,15 +6,35 @@
 
 #include "SaveManager.h"
 #include "modules/ui_SaveManager.h"
+#include "settings/config.h"
 
 SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveManager) {
     ui->setupUi(this);
     ui->SelectSaveComboBox->addItem("Current Save");
     ExactSaveDir = Common::SaveDir / "1" / Common::game_serial / "SPRJ0005";
 
-    if (Common::game_serial == "CUSA03173")
+    // Releases older than 0.9.0 will need to use the game serial as save folder
+    bool useOldSaveFolders = false;
+    Config::Build CurrentBuild = Config::GetCurrentBuildInfo();
+
+    if (CurrentBuild.type == "Release") {
+        static QRegularExpression versionRegex(R"(v\.?(\d+)\.(\d+)\.(\d+))");
+        QRegularExpressionMatch match = versionRegex.match(QString::fromStdString(CurrentBuild.id));
+        if (match.hasMatch()) {
+            int major = match.captured(1).toInt();
+            int minor = match.captured(2).toInt();
+            int patch = match.captured(3).toInt();
+
+            if (major > 0)
+                useOldSaveFolders = true;
+            if (major == 0 && minor < 9)
+                useOldSaveFolders = true;
+        }
+    }
+
+    if (Common::game_serial == "CUSA03173" && !useOldSaveFolders)
         ExactSaveDir = Common::SaveDir / "1" / "CUSA00207" / "SPRJ0005";
-    if (Common::game_serial == "CUSA03023")
+    if (Common::game_serial == "CUSA03023" && !useOldSaveFolders)
         ExactSaveDir = Common::SaveDir / "1" / "CUSA01363" / "SPRJ0005";
 
     if (!std::filesystem::exists(BackupsDir)) {

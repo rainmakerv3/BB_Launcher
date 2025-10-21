@@ -103,7 +103,26 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         if (!CheckBBInstall())
             return;
 
-        if (Common::game_serial == "CUSA03173") {
+        // Releases older than 0.9.0 will need to use the game serial as save folder
+        bool useOldSaveFolders = false;
+        Config::Build CurrentBuild = Config::GetCurrentBuildInfo();
+        if (CurrentBuild.type == "Release") {
+            static QRegularExpression versionRegex(R"(v\.?(\d+)\.(\d+)\.(\d+))");
+            QRegularExpressionMatch match =
+                versionRegex.match(QString::fromStdString(CurrentBuild.id));
+            if (match.hasMatch()) {
+                int major = match.captured(1).toInt();
+                int minor = match.captured(2).toInt();
+                int patch = match.captured(3).toInt();
+
+                if (major > 0)
+                    useOldSaveFolders = true;
+                if (major == 0 && minor < 9)
+                    useOldSaveFolders = true;
+            }
+        }
+
+        if (Common::game_serial == "CUSA03173" && !useOldSaveFolders) {
             if (!std::filesystem::exists(Common::SaveDir / "1" / "CUSA00207" / "SPRJ0005" /
                                          "userdata0010")) {
                 QMessageBox::warning(
@@ -111,7 +130,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
                     "Launch Bloodborne to generate saves before using Save Manager");
                 return;
             }
-        } else if (Common::game_serial == "CUSA03023") {
+        } else if (Common::game_serial == "CUSA03023" && !useOldSaveFolders) {
             if (!std::filesystem::exists(Common::SaveDir / "1" / "CUSA01363" / "SPRJ0005" /
                                          "userdata0010")) {
                 QMessageBox::warning(
@@ -258,8 +277,6 @@ void BBLauncher::BBSelectButton_isPressed() {
 }
 
 void BBLauncher::ShadSelectButton_isPressed() {
-    QString ShadLoc;
-
     auto BuildWindow = new VersionDialog(this);
 
     connect(BuildWindow, &QDialog::finished, this, [this]() {
@@ -296,10 +313,28 @@ void BBLauncher::StartBackupSave() {
         }
     }
 
+    // Releases older than 0.9.0 will need to use the game serial as save folder
+    bool useOldSaveFolders = false;
+    Config::Build CurrentBuild = Config::GetCurrentBuildInfo();
+    if (CurrentBuild.type == "Release") {
+        static QRegularExpression versionRegex(R"(v\.?(\d+)\.(\d+)\.(\d+))");
+        QRegularExpressionMatch match = versionRegex.match(QString::fromStdString(CurrentBuild.id));
+        if (match.hasMatch()) {
+            int major = match.captured(1).toInt();
+            int minor = match.captured(2).toInt();
+            int patch = match.captured(3).toInt();
+
+            if (major > 0)
+                useOldSaveFolders = true;
+            if (major == 0 && minor < 9)
+                useOldSaveFolders = true;
+        }
+    }
+
     auto save_dir = Common::SaveDir / "1" / Common::game_serial;
-    if (Common::game_serial == "CUSA03173")
+    if (Common::game_serial == "CUSA03173" && !useOldSaveFolders)
         save_dir = Common::SaveDir / "1" / "CUSA00207";
-    if (Common::game_serial == "CUSA03023")
+    if (Common::game_serial == "CUSA03023" && !useOldSaveFolders)
         save_dir = Common::SaveDir / "1" / "CUSA01363";
 
     auto backup_dir = BackupPath / "BACKUP1";
@@ -691,12 +726,118 @@ void BBLauncher::StartEmulator(std::filesystem::path path, QStringList args) {
         return;
     }
 
-    QStringList final_args{"--game", QString::fromStdWString(path.wstring())};
-    final_args.append(args);
+    // Releases older than 0.11.0 will active patch file appended
+    bool usePatchFile = false;
+    Config::Build CurrentBuild = Config::GetCurrentBuildInfo();
+    if (CurrentBuild.type == "Release") {
+        static QRegularExpression versionRegex(R"(v\.?(\d+)\.(\d+)\.(\d+))");
+        QRegularExpressionMatch match = versionRegex.match(QString::fromStdString(CurrentBuild.id));
+        if (match.hasMatch()) {
+            int major = match.captured(1).toInt();
+            int minor = match.captured(2).toInt();
+            int patch = match.captured(3).toInt();
+
+            if (major > 0)
+                usePatchFile = true;
+            if (major == 0 && minor < 11)
+                usePatchFile = true;
+        }
+    }
+
+    QStringList gameArgs{"--game", QString::fromStdWString(path.wstring())};
+    QStringList patchArgs{"--patch", getPatchFile()};
+    QStringList final_args;
+
+    if (!usePatchFile) {
+        final_args.append(args);
+        final_args.append(gameArgs);
+    } else {
+        final_args.append(args);
+        final_args.append(gameArgs);
+        final_args.append(patchArgs);
+    }
+
     QString workDir = fileInfo.absolutePath();
     m_ipc_client->startEmulator(fileInfo, final_args, workDir);
 
     Config::GameRunning = true;
+}
+
+QString BBLauncher::getPatchFile() {
+    QString patchDir;
+    Common::PathToQString(patchDir, (Common::GetShadUserDir() / "patches"));
+    QDir dir(patchDir);
+    QStringList folders = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    QString patchFile = "";
+
+    for (const QString& folder : folders) {
+        QString filesJsonPath = patchDir + "/" + folder + "/files.json";
+
+        QFile jsonFile(filesJsonPath);
+        if (!jsonFile.open(QIODevice::ReadOnly)) {
+            // LOG_ERROR(Loader, "Unable to open files.json for reading in repository {}",
+            //         folder.toStdString());
+            continue;
+        }
+        const QByteArray jsonData = jsonFile.readAll();
+        jsonFile.close();
+
+        const QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
+        const QJsonObject jsonObject = jsonDoc.object();
+        const QString serial = QString::fromStdString(Common::game_serial);
+        QString selectedFileName;
+
+        for (auto it = jsonObject.constBegin(); it != jsonObject.constEnd(); ++it) {
+            const QString filePath = it.key();
+            const QJsonArray idsArray = it.value().toArray();
+            if (idsArray.contains(QJsonValue(serial))) {
+                selectedFileName = filePath;
+                break;
+            }
+        }
+
+        const QString filePath = patchDir + "/" + folder + "/" + selectedFileName;
+        QFile file(filePath);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            // LOG_ERROR(Loader, "Unable to open the file for reading.");
+            continue;
+        }
+        const QByteArray xmlData = file.readAll();
+        file.close();
+
+        QXmlStreamReader xmlReader(xmlData);
+        bool isEnabled = false;
+        std::string currentPatchName;
+
+        while (!xmlReader.atEnd()) {
+            xmlReader.readNext();
+
+            if (!xmlReader.isStartElement()) {
+                continue;
+            }
+
+            if (xmlReader.name() == QStringLiteral("Metadata")) {
+                isEnabled = false;
+                for (const QXmlStreamAttribute& attr : xmlReader.attributes()) {
+                    if (attr.name() == QStringLiteral("isEnabled")) {
+                        isEnabled = (attr.value().toString() == "true");
+                        if (isEnabled) {
+                            patchFile = filePath;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (patchFile != "")
+                break;
+        }
+
+        if (patchFile != "")
+            break;
+    }
+
+    return patchFile;
 }
 
 BBLauncher::~BBLauncher() {
