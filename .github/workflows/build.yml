@@ -198,6 +198,7 @@ jobs:
         wget -q "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage"
         wget -q "https://github.com/linuxdeploy/linuxdeploy-plugin-checkrt/releases/download/continuous/linuxdeploy-plugin-checkrt-x86_64.sh"
         chmod +x linuxdeploy*.AppImage
+        ./linuxdeploy-x86_64.AppImage --appdir AppDir
         bash ./linuxdeploy-plugin-checkrt-x86_64.sh --appdir AppDir
         ./linuxdeploy-x86_64.AppImage --appdir AppDir -l "$GITHUB_WORKSPACE"/dist/libssl.so.3 -d "$GITHUB_WORKSPACE"/dist/BBLauncher.desktop  -e "$GITHUB_WORKSPACE"/build/BB_Launcher -i "$GITHUB_WORKSPACE"/dist/BBIcon.png --plugin qt
         ./linuxdeploy-x86_64.AppImage --appdir AppDir --output appimage
