@@ -177,8 +177,8 @@ jobs:
       with:
         version: 6.9.3
         arch: linux_gcc_64
-        modules: "qtimageformats"
-        tools: 'tools_qtcreator'
+        modules: "qtnetworkauth:
+        tools: 'tools_opensslv3_src'
         setup-python: false
         cache: true
 
