@@ -188,8 +188,14 @@ jobs:
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
-    - name: Run AppImage packaging script
-      run:  ./.github/linux-appimage-qt.sh
+    - name: Build AppImage
+      run: |
+        wget --no-verbose "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
+        wget --no-verbose "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage"
+        chmod +x linuxdeploy*.AppImage
+        ./linuxdeploy-x86_64.AppImage --appdir AppDir -l "$GITHUB_WORKSPACE"/dist/libssl.so.3 -d "$GITHUB_WORKSPACE"/dist/BBLauncher.desktop  -e "$GITHUB_WORKSPACE"/build/BB_Launcher -i "$GITHUB_WORKSPACE"/dist/BBIcon.png --plugin qt
+        ./linuxdeploy-x86_64.AppImage --appdir AppDir --output appimage
+        mv BB_Launcher-x86_64.AppImage BB_Launcher-qt.AppImage
 
     - name: Package and Upload Linux Qt artifact
       run: |
