@@ -2,7 +2,7 @@ name: Build and Prerelease
 
 on:
   push:
-    branches: [ "master", "linux-shortcut"]
+    branches: [ "**" ]
   pull_request:
     branches: [ "master" ]
 
@@ -170,7 +170,17 @@ jobs:
         sudo add-apt-repository 'deb http://apt.llvm.org/noble/ llvm-toolchain-noble-19 main'
 
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt install -y libx11-dev libxext-dev libwayland-dev libdecor-0-dev libxkbcommon-dev libglfw3-dev libgles2-mesa-dev libfuse2 clang-19 mold build-essential qt6-base-dev qt6-tools-dev qt6-multimedia-dev libasound2-dev libpulse-dev libopenal-dev libudev-dev
+      run: sudo apt-get update && sudo apt install -y libx11-dev libxext-dev libwayland-dev libdecor-0-dev libxkbcommon-dev libglfw3-dev libgles2-mesa-dev libfuse2 clang-19 mold build-essential libasound2-dev libpulse-dev libopenal-dev libudev-dev
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: 6.9.3
+        arch: linux_gcc_64
+        modules: "qtmultimedia"
+        tools: 'tools_generic tools_opensslv3_src'
+        setup-python: false
+        cache: true
 
     - name: Configure CMake
       run: cmake --fresh -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=clang-19 -DCMAKE_CXX_COMPILER=clang++-19 -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=mold"
@@ -178,8 +188,19 @@ jobs:
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
 
-    - name: Run AppImage packaging script
-      run:  ./.github/linux-appimage-qt.sh
+    - name: Build AppImage
+      run: |
+        export EXTRA_QT_PLUGINS="waylandcompositor"
+        export EXTRA_PLATFORM_PLUGINS="libqwayland-egl.so;libqwayland-generic.so"
+        wget -q "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
+        wget -q "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage"
+        wget -q "https://github.com/linuxdeploy/linuxdeploy-plugin-checkrt/releases/download/continuous/linuxdeploy-plugin-checkrt-x86_64.sh"
+        chmod +x linuxdeploy*.AppImage
+        ./linuxdeploy-x86_64.AppImage --appdir AppDir
+        bash ./linuxdeploy-plugin-checkrt-x86_64.sh --appdir AppDir
+        ./linuxdeploy-x86_64.AppImage --appdir AppDir -l "$GITHUB_WORKSPACE"/dist/libssl.so.3 -d "$GITHUB_WORKSPACE"/dist/BBLauncher.desktop  -e "$GITHUB_WORKSPACE"/build/BB_Launcher -i "$GITHUB_WORKSPACE"/dist/BBIcon.png --plugin qt
+        ./linuxdeploy-x86_64.AppImage --appdir AppDir --output appimage
+        mv BB_Launcher-x86_64.AppImage BB_Launcher-qt.AppImage
 
     - name: Package and Upload Linux Qt artifact
       run: |
