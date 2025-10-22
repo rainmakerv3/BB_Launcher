@@ -177,7 +177,7 @@ jobs:
       with:
         version: 6.9.3
         arch: linux_gcc_64
-        modules: "qtbase"
+        modules: "qtimageformats"
         tools: 'tools_qtcreator'
         setup-python: false
         cache: true
