@@ -4,7 +4,6 @@ fi
 
 export Qt6_DIR="/usr/lib/qt6"
 export PATH="$Qt6_DIR/bin:$PATH"
-export EXTRA_QT_PLUGINS="waylandcompositor"
 
 # Prepare Tools for building the AppImage
 wget -q https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage
