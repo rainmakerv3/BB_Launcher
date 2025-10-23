@@ -17,6 +17,7 @@
 #include <QTextStream>
 #include <QTimer>
 #include <QVBoxLayout>
+#include <qmicroz.h>
 
 #include "Common.h"
 #include "settings/formatting.h"
@@ -367,9 +368,8 @@ void VersionDialog::InstallSelectedVersion() {
                     return;
                 }
 
-                QString userPath = downloadFolder;
                 QString fileName = "temp_download_update.zip";
-                QString destinationPath = userPath + "/" + fileName;
+                QString zipPath = downloadFolder + "/" + fileName;
 
                 QNetworkAccessManager* downloadManager = new QNetworkAccessManager(this);
                 QNetworkRequest downloadRequest(downloadUrl);
@@ -395,7 +395,7 @@ void VersionDialog::InstallSelectedVersion() {
                                     static_cast<int>((bytesReceived * 100) / bytesTotal));
                         });
 
-                QFile* file = new QFile(destinationPath);
+                QFile* file = new QFile(zipPath);
                 if (!file->open(QIODevice::WriteOnly)) {
                     QMessageBox::warning(this, tr("Error"), tr("Could not save file."));
                     file->deleteLater();
@@ -407,22 +407,12 @@ void VersionDialog::InstallSelectedVersion() {
                         [file, downloadReply]() { file->write(downloadReply->readAll()); });
 
                 connect(downloadReply, &QNetworkReply::finished, this,
-                        [this, file, downloadReply, progressDialog, release, userPath, versionName,
+                        [this, file, downloadReply, progressDialog, release, zipPath, versionName,
                          downloadFolder]() {
                             file->flush();
                             file->close();
                             file->deleteLater();
                             downloadReply->deleteLater();
-
-                            QString releaseName = release["name"].toString();
-
-                            // Remove "shadPS4 " from the beginning, if it exists
-                            if (releaseName.startsWith("shadps4 ", Qt::CaseInsensitive)) {
-                                releaseName = releaseName.mid(8);
-                            }
-
-                            // Remove "codename" if it exists
-                            releaseName.replace(QRegularExpression("\\b[Cc]odename\\s+"), "");
 
                             QString buildId;
                             QString folderName;
@@ -434,106 +424,40 @@ void VersionDialog::InstallSelectedVersion() {
                                 buildId = release["tag_name"].toString();
                             }
 
-                            QString destFolder = QDir(userPath).filePath(folderName);
+                            QString destPath = downloadFolder + "/" + folderName;
+                            QMicroz::extract(zipPath, destPath);
+                            std::filesystem::remove(Common::PathFromQString(zipPath));
 
-                            // extract ZIP
-                            QString scriptFilePath;
-                            QString scriptContent;
-                            QStringList args;
-                            QString process;
+                            QMessageBox::information(
+                                this, tr("Confirm Download"),
+                                tr("Version %1 has been downloaded.").arg(versionName));
 
+                            std::string type =
+                                versionName == "Pre-release" ? "Pre-release" : "Release";
+                            QString exeName;
 #ifdef Q_OS_WIN
-                            scriptFilePath = userPath + "/extract_update.ps1";
-                            scriptContent = QString("New-Item -ItemType Directory -Path \"%1\" "
-                                                    "-Force\n"
-                                                    "Expand-Archive -Path \"%2\" "
-                                                    "-DestinationPath \"%1\" -Force\n"
-                                                    "Remove-Item -Force \"%2\"\n"
-                                                    "Remove-Item -Force \"%3\"\n"
-                                                    "cls\n")
-                                                .arg(destFolder)
-                                                .arg(userPath + "/temp_download_update.zip")
-                                                .arg(scriptFilePath);
-                            process = "powershell.exe";
-                            args << "-ExecutionPolicy" << "Bypass" << "-File" << scriptFilePath;
-#elif defined(Q_OS_LINUX) || defined(Q_OS_MACOS)
-                scriptFilePath = userPath + "/extract_update.sh";
-                scriptContent = QString("#!/bin/bash\n"
-                                        "mkdir -p \"%1\"\n"
-                                        "unzip -o \"%2\" -d \"%1\"\n"
-                                        "rm \"%2\"\n"
-                                        "rm \"%3\"\n"
-                                        "clear\n")
-                                    .arg(destFolder)
-                                    .arg(userPath + "/temp_download_update.zip")
-                                    .arg(scriptFilePath);
-                process = "bash";
-                args << scriptFilePath;
-#endif
-
-                            QFile scriptFile(scriptFilePath);
-                            if (scriptFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-                                QTextStream out(&scriptFile);
-#ifdef Q_OS_WIN
-                                scriptFile.write("\xEF\xBB\xBF"); // BOM
-#endif
-                                out << scriptContent;
-                                scriptFile.close();
-#if defined(Q_OS_LINUX) || defined(Q_OS_MACOS)
-                                scriptFile.setPermissions(QFile::ExeUser | QFile::ReadUser |
-                                                          QFile::WriteUser);
-#endif
-                                QProcess::startDetached(process, args);
-
-                                QTimer::singleShot(
-                                    4000, this,
-                                    [this, folderName, progressDialog, versionName, downloadFolder,
-                                     buildId]() {
-                                        progressDialog->close();
-                                        progressDialog->deleteLater();
-
-                                        QString userPath = downloadFolder;
-                                        QString fullPath = QDir(userPath).filePath(folderName);
-
-                                        QString exeName;
-#ifdef Q_OS_WIN
-                                        exeName = "/shadPS4.exe";
+                            exeName = "/shadPS4.exe";
 #elif defined(Q_OS_LINUX)
                             exeName = "/Shadps4-sdl.AppImage";
 #elif defined(Q_OS_MACOS)
                             exeName = "/shadps4";
 #endif
 
-                                        QString fullExePath = fullPath + exeName;
+                            QString fullExePath = destPath + exeName;
+                            Config::Build build;
+                            build.path = fullExePath.toStdString();
+                            build.type = type;
+                            build.id = buildId.toStdString();
+                            build.modified =
+                                Config::GetLastModifiedString(Common::PathFromQString(fullExePath));
+                            build.index = buildInfo.size();
 
-                                        QMessageBox::information(
-                                            this, tr("Confirm Download"),
-                                            tr("Version %1 has been downloaded.").arg(versionName));
+                            buildInfo.push_back(build);
+                            SaveBuilds();
+                            LoadInstalledList();
 
-                                        std::string type;
-                                        if (versionName == "Pre-release") {
-                                            type = "Pre-release";
-                                        } else {
-                                            type = "Release";
-                                        }
-
-                                        Config::Build build;
-                                        build.path = fullExePath.toStdString();
-                                        build.type = type;
-                                        build.id = buildId.toStdString();
-                                        build.modified = Config::GetLastModifiedString(
-                                            Common::PathFromQString(fullExePath));
-                                        build.index = buildInfo.size();
-
-                                        buildInfo.push_back(build);
-                                        SaveBuilds();
-                                        LoadInstalledList();
-                                    });
-                            } else {
-                                QMessageBox::warning(this, tr("Error"),
-                                                     tr("Failed to create zip extraction script") +
-                                                         QString(":\n%1").arg(scriptFilePath));
-                            }
+                            progressDialog->close();
+                            progressDialog->deleteLater();
                         });
                 reply->deleteLater();
             });
@@ -976,106 +900,47 @@ void VersionDialog::showDownloadDialog(const QString& tagName, const QString& do
         zipFile.write(data);
         zipFile.close();
 
-        QString destFolder = preReleaseFolder;
-        QString scriptFilePath;
-        QString scriptContent;
-        QStringList args;
-        QString process;
-
+        QString exeName;
 #ifdef Q_OS_WIN
-        scriptFilePath = destFolder + "/extract_pre_release.ps1";
-        scriptContent =
-            QString( // "Remove-Item -Recurse -Force \"%4\" -ErrorAction SilentlyContinue\n"
-                "New-Item -ItemType Directory -Path \"%1\" -Force\n"
-                "Expand-Archive -Path \"%2\" -DestinationPath \"%1\" -Force\n"
-                "Remove-Item -Force \"%2\"\n"
-                "Remove-Item -Force \"%3\"\n"
-                "cls\n")
-                .arg(destFolder)        // %1 - new destination folder
-                .arg(zipPath)           // %2 - zip path
-                .arg(scriptFilePath)    // %3 - script
-                .arg(preReleaseFolder); // %4 - old folder
-
-        process = "powershell.exe";
-        args << "-ExecutionPolicy" << "Bypass" << "-File" << scriptFilePath;
-#elif defined(Q_OS_LINUX) || defined(Q_OS_MACOS)
-        scriptFilePath = destFolder + "/extract_pre_release.sh";
-        scriptContent = QString("#!/bin/bash\n"
-                                // "rm -rf \"%4\"\n"
-                                "mkdir -p \"%1\"\n"
-                                "unzip -o \"%2\" -d \"%1\"\n"
-                                "rm \"%2\"\n"
-                                "rm \"%3\"\n"
-                                "clear\n")
-                            .arg(destFolder)
-                            .arg(zipPath)
-                            .arg(scriptFilePath)
-                            .arg(preReleaseFolder);
-        process = "bash";
-        args << scriptFilePath;
-#endif
-
-        QFile scriptFile(scriptFilePath);
-        if (scriptFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
-            QTextStream out(&scriptFile);
-#ifdef Q_OS_WIN
-            scriptFile.write("\xEF\xBB\xBF"); // BOM
-#endif
-            out << scriptContent;
-            scriptFile.close();
-
-#if defined(Q_OS_LINUX) || defined(Q_OS_MACOS)
-            scriptFile.setPermissions(QFile::ExeUser | QFile::ReadUser | QFile::WriteUser);
-#endif
-            QProcess::startDetached(process, args);
-
-            QTimer::singleShot(4000, this, [=, this]() {
-                progressBar->setValue(100);
-                dlg->close();
-                dlg->deleteLater();
-
-                if (!QDir(destFolder).exists()) {
-                    QMessageBox::critical(this, tr("Error"), tr("Extraction failure."));
-                    return;
-                }
-
-                QMessageBox::information(this, tr("Complete installation"),
-                                         tr("Pre-release updated successfully") + ":\n" + tagName);
-
-                QString exeName;
-#ifdef Q_OS_WIN
-                exeName = "/shadPS4.exe";
+        exeName = "/shadPS4.exe";
 #elif defined(Q_OS_LINUX)
-                exeName = "/Shadps4-sdl.AppImage";
+        exeName = "/Shadps4-sdl.AppImage";
 #elif defined(Q_OS_MACOS)
-                exeName = "/shadps4";
+        exeName = "/shadps4";
 #endif
 
-                QString fullExePath = destFolder + exeName;
+        QString fullExePath = preReleaseFolder + exeName;
+        std::filesystem::remove(Common::PathFromQString(fullExePath));
+        QMicroz::extract(zipPath, preReleaseFolder);
+        std::filesystem::remove(Common::PathFromQString(zipPath));
 
-                if (hasPreRelease)
-                    buildInfo.erase(buildInfo.begin() + preReleaseIndex);
+        if (hasPreRelease)
+            buildInfo.erase(buildInfo.begin() + preReleaseIndex);
 
-                int buildIndex = hasPreRelease ? buildInfo.size() - 1 : buildInfo.size();
+        int buildIndex = hasPreRelease ? buildInfo.size() - 1 : buildInfo.size();
 
-                Config::Build build;
-                build.path = fullExePath.toStdString();
-                build.type = "Pre-release";
-                build.id = tagName.right(40).toStdString();
-                build.modified = Config::GetLastModifiedString(fullExePath.toStdString());
-                build.index = buildIndex;
-                buildInfo.push_back(build);
+        Config::Build build;
+        build.path = fullExePath.toStdString();
+        build.type = "Pre-release";
+        build.id = tagName.right(40).toStdString();
+        build.modified = Config::GetLastModifiedString(build.path);
+        build.index = buildIndex;
 
-                SaveBuilds();
-                LoadInstalledList();
-            });
+        if (hasPreRelease) {
+            buildInfo.insert(buildInfo.begin() + preReleaseIndex, build);
         } else {
-            QMessageBox::warning(this, tr("Error"),
-                                 tr("Failed to create the update script file") + ":\n" +
-                                     scriptFilePath);
+            buildInfo.push_back(build);
         }
 
+        SaveBuilds();
+        LoadInstalledList();
+
+        QMessageBox::information(this, tr("Complete installation"),
+                                 tr("Pre-release updated successfully") + ":\n" + tagName);
+
         reply->deleteLater();
+        dlg->close();
+        dlg->deleteLater();
     });
 }
 
