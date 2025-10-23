@@ -157,19 +157,11 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
         connect(ui->RCASSlider, &QSlider::valueChanged, this,
                 [this](int value) { m_ipc_client->setRcasAttenuation(value); });
 
-#if (QT_VERSION < QT_VERSION_CHECK(6, 7, 0))
-        connect(ui->FSRCheckBox, &QCheckBox::stateChanged, this,
-                [this](int state) { m_ipc_client->setFsr(state); });
-
-        connect(ui->RCASCheckBox, &QCheckBox::stateChanged, this,
-                [this](int state) { m_ipc_client->setRcas(state); });
-#else
         connect(ui->FSRCheckBox, &QCheckBox::checkStateChanged, this,
                 [this](Qt::CheckState state) { m_ipc_client->setFsr(state); });
 
         connect(ui->RCASCheckBox, &QCheckBox::checkStateChanged, this,
                 [this](Qt::CheckState state) { m_ipc_client->setRcas(state); });
-#endif
     }
 
     // Descriptions
