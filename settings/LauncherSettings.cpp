@@ -59,14 +59,8 @@ LauncherSettings::LauncherSettings(QWidget* parent)
     connect(ui->buttonBox->button(QDialogButtonBox::RestoreDefaults), &QPushButton::pressed, this,
             &LauncherSettings::SetLauncherDefaults);
 
-#if (QT_VERSION < QT_VERSION_CHECK(6, 7, 0))
-    connect(ui->BackupSaveCheckBox, &QCheckBox::stateChanged, this,
-            &LauncherSettings::OnBackupStateChanged);
-
-#else
     connect(ui->BackupSaveCheckBox, &QCheckBox::checkStateChanged, this,
             &LauncherSettings::OnBackupStateChanged);
-#endif
 
     connect(ui->shortcutButton, &QPushButton::clicked, this, &LauncherSettings::CreateShortcut);
 }

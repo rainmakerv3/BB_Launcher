@@ -85,8 +85,7 @@ endif()
 
 add_subdirectory(externals)
 
-find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets Network)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -168,22 +167,9 @@ set(PROJECT_SOURCES
     ${RESOURCE_FILES}
 )
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(BB_Launcher
-        ${PROJECT_SOURCES}
-        ${RESOURCEFOLDER}
-    )
-else()
-    if(ANDROID)
-        add_library(BB_Launcher SHARED
-            ${PROJECT_SOURCES}
-        )
-    else()
-        add_executable(BB_Launcher
-            ${PROJECT_SOURCES}
-        )
-    endif()
-endif()
+qt_add_executable(BB_Launcher
+    ${PROJECT_SOURCES}
+)
 
 if (WIN32)
     target_sources(BB_Launcher PRIVATE dist/bblauncher.rc)
@@ -195,14 +181,6 @@ target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 pugixml::pugix
 
 if (APPLE)
     target_link_libraries(BB_Launcher PRIVATE date::date-tz)
-endif()
-
-# Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
-# If you are developing for iOS or macOS you should consider setting an
-# explicit, fixed bundle identifier manually though.
-
-if(${QT_VERSION} VERSION_LESS 6.1.0)
-  set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.BB_Launcher)
 endif()
 
 set_target_properties(BB_Launcher PROPERTIES
