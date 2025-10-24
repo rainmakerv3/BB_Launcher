@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright 2025 shadPS4 Emulator Project
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+#include <fstream>
 #include <QDir>
 #include <QFileDialog>
 #include <QInputDialog>
@@ -17,6 +18,7 @@
 #include <QTextStream>
 #include <QTimer>
 #include <QVBoxLayout>
+#include <nlohmann/json.hpp>
 #include <qmicroz.h>
 
 #include "Common.h"
@@ -60,10 +62,17 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
     }
 
     connect(ui->addLocalVersionButton, &QPushButton::clicked, this, [this]() {
+        QString defaultPath;
+        if (QDir(ui->FolderLabel->text()).exists()) {
+            defaultPath = ui->FolderLabel->text();
+        } else {
+            defaultPath = QDir::currentPath();
+        }
+
         QString exePath;
 #ifdef _WIN32
         exePath = QFileDialog::getOpenFileName(this, "Select ShadPS4 executable (ex. shadPS4.exe)",
-                                               QDir::homePath(), "Executables (*.exe)");
+                                               defaultPath, "Executables (*.exe)");
 #elif defined(__linux__)
 
     exePath = QFileDialog::getOpenFileName(
@@ -83,11 +92,18 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
             return;
         }
 
+        bool ok;
+        QString version_name = QInputDialog::getText(
+            this, "Version name", tr("Enter a name for this build."), QLineEdit::Normal, "", &ok);
+        if (!ok || version_name.trimmed().isEmpty())
+            return;
+        version_name = version_name.trimmed();
+
         std::filesystem::path path = Common::PathFromQString(exePath);
         Config::Build build;
         build.path = std::string{fmt::UTF(path.u8string()).data};
         build.type = "Local";
-        build.id = "unknown";
+        build.id = version_name.toStdString();
         build.modified = Config::GetLastModifiedString(path);
         build.index = buildInfo.size();
 
@@ -111,6 +127,8 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
             Config::SaveLauncherSettings();
         }
     });
+
+    connect(ui->loadJsonButton, &QPushButton::clicked, this, [this]() { loadJson(); });
 
     connect(ui->downloadVersionButton, &QPushButton::clicked, this,
             [this]() { InstallSelectedVersion(); });
@@ -146,6 +164,111 @@ void VersionDialog::onItemChanged(QTreeWidgetItem* item, int column) {
         } else {
             item->setSelected(false);
         }
+    }
+}
+
+void VersionDialog::loadJson() {
+    QString jsonPath =
+        QFileDialog::getOpenFileName(this, "Select ShadPS4 versions.json file", QDir::homePath(),
+                                     "shadPS4 versions json file (versions.json)");
+
+    if (jsonPath.isEmpty())
+        return;
+
+    nlohmann::json data;
+    std::ifstream ifs(Common::PathFromQString(jsonPath));
+
+    try {
+        ifs >> data;
+    } catch (const std::exception& ex) {
+        fmt::print(stderr, "VersionManager: Failed to parse JSON: {}\n", ex.what());
+        return;
+    }
+
+    if (!data.is_array()) {
+        fmt::print(stderr, "VersionManager: Invalid JSON format (expected array)\n");
+        return;
+    }
+
+    bool newBuildFound = false;
+    for (const auto& entry : data) {
+        if (!entry.is_object()) {
+            fmt::print(stderr, "VersionManager: Skipping invalid entry (not an object)\n");
+            continue;
+        }
+
+        bool alreadyExists = false;
+        bool conflictingPrerelease = false;
+        std::string name = entry.value("name", std::string("no name"));
+        std::filesystem::path buildPath = entry.value("path", std::string(""));
+        const int size = buildInfo.size();
+
+        std::string type;
+        if (entry.value("type", -1) == 0) {
+            type = "Release";
+        } else if (entry.value("type", -1) == 1) {
+            type = "Pre-release";
+        } else if (entry.value("type", -1) == 2) {
+            type = "Local";
+        }
+
+        if (type == "Pre-release") {
+            for (auto build : buildInfo) {
+                if (build.type == "Pre-release") {
+                    QMessageBox::information(
+                        this, "Pre-release already exists.",
+                        "The build " + QString::fromStdString(buildPath.string()) +
+                            " is a pre-release, but a pre-release already exists. BB_Launcher can "
+                            "only set one pre-release for auto-updates to function. Other builds "
+                            "can be set as local builds instead.");
+                    conflictingPrerelease = true;
+                    break;
+                }
+            }
+        }
+
+        for (auto build : buildInfo) {
+            if (build.path == buildPath) {
+                QMessageBox::information(this, "Build already added.",
+                                         "The build " + QString::fromStdString(buildPath.string()) +
+                                             " is already loaded. It will not be added.");
+                alreadyExists = true;
+                break;
+            }
+        }
+
+        if (alreadyExists || conflictingPrerelease) {
+            continue;
+        } else {
+            newBuildFound = true;
+        }
+
+        std::string modifiedString = "unknown";
+        if (std::filesystem::exists(buildPath)) {
+            modifiedString = Config::GetLastModifiedString(buildPath);
+        }
+
+        std::string id;
+        if (type == "Release" || type == "Local") {
+            id = name;
+        } else if (type == "Pre-release") {
+            std::string folderName = buildPath.parent_path().string();
+            id = folderName.substr(folderName.length() - 40, 40);
+        }
+
+        Config::Build b{
+            .path = std::string{fmt::UTF(buildPath.u8string()).data},
+            .type = type,
+            .id = id,
+            .modified = modifiedString,
+            .index = size,
+        };
+        buildInfo.push_back(b);
+    }
+
+    if (newBuildFound) {
+        SaveBuilds();
+        LoadInstalledList();
     }
 }
 
@@ -470,10 +593,21 @@ void VersionDialog::LoadInstalledList() {
 
     for (int i = 0; i < buildInfo.size(); i++) {
         QTreeWidgetItem* item = new QTreeWidgetItem(ui->installedTreeWidget);
+
+        QString id;
+        if (buildInfo[i].type == "Release") {
+            id = QString::fromStdString(buildInfo[i].id).left(8);
+        } else if (buildInfo[i].type == "Pre-release") {
+            id = QString::fromStdString(buildInfo[i].id).left(7);
+        } else {
+            id = QString::fromStdString(buildInfo[i].id);
+        }
+
         item->setText(1, QString::fromStdString(buildInfo[i].type));
-        item->setText(2, QString::fromStdString(buildInfo[i].id));
+        item->setText(2, id);
         item->setText(3, QString::fromStdString(buildInfo[i].path));
         item->setText(4, QString::fromStdString(buildInfo[i].modified));
+
         if (buildInfo[i].path == Common::shadPs4Executable.string()) {
             item->setCheckState(0, Qt::Checked);
         } else {
@@ -485,7 +619,7 @@ void VersionDialog::LoadInstalledList() {
     ui->installedTreeWidget->resizeColumnToContents(1);
     ui->installedTreeWidget->resizeColumnToContents(2);
     ui->installedTreeWidget->setColumnWidth(1, ui->installedTreeWidget->columnWidth(1) + 10);
-    ui->installedTreeWidget->setColumnWidth(2, 110);
+    ui->installedTreeWidget->setColumnWidth(2, ui->installedTreeWidget->columnWidth(2) + 10);
 }
 
 QStringList VersionDialog::LoadDownloadCache() {

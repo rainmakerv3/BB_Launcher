@@ -30,3 +30,8 @@
 	path = externals/vulkan-headers
 	url = https://github.com/KhronosGroup/Vulkan-Headers.git
 	shallow = true
+[submodule "externals/json"]
+	path = externals/json
+	url = https://github.com/nlohmann/json
+	branch = develop
+	shallow = true

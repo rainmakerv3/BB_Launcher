@@ -177,6 +177,13 @@
             <number>0</number>
            </property>
            <item>
+            <widget class="QPushButton" name="loadJsonButton">
+             <property name="text">
+              <string>Load shadPS4 JSON File</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="addLocalVersionButton">
              <property name="text">
               <string>Add Local Build</string>

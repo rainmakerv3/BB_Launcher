@@ -33,6 +33,10 @@ endif()
 # microz
 add_subdirectory(microz)
 
+#nlohmann json 
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+add_subdirectory(json)
+
 #volk
 add_subdirectory(volk)
 

@@ -177,7 +177,7 @@ endif()
 
 target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network)
-target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 pugixml::pugixml SDL3::SDL3 Vulkan::Headers qmicroz volk_headers)
+target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 pugixml::pugixml SDL3::SDL3 Vulkan::Headers qmicroz volk_headers nlohmann_json::nlohmann_json)
 
 if (APPLE)
     target_link_libraries(BB_Launcher PRIVATE date::date-tz)
