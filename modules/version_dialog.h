@@ -29,6 +29,7 @@ private:
     Ui::VersionDialog* ui;
     QNetworkAccessManager* networkManager;
 
+    void loadJson();
     void GetBuildInfo();
     void SaveBuilds();
     void LoadInstalledList();
