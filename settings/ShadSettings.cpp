@@ -32,6 +32,11 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
         ui->tabWidgetSettings->setTabVisible(1, false);
     }
 
+    // hide old version settings for new versions
+    if (!Config::isReleaseOlder(11)) {
+        ui->oldVersionsGroupBox->setVisible(false);
+    }
+
     ui->buttonBox->button(QDialogButtonBox::StandardButton::Save)->setFocus();
 
     ui->consoleLanguageComboBox->addItems(languageNames);
@@ -265,6 +270,8 @@ void ShadSettings::LoadValuesFromConfig() {
         toml::find_or<std::string>(data, "GPU", "FullscreenMode", "Windowed")));
     ui->backgroundControllerCheckBox->setChecked(
         toml::find_or<bool>(data, "Input", "backgroundControllerInput", false));
+
+    ui->vblankDividerSpinBox->setValue(toml::find_or<int>(data, "GPU", "vblankDivider", 1));
 }
 
 void ShadSettings::OnCursorStateChanged(int index) {
@@ -370,6 +377,11 @@ void ShadSettings::SaveSettings() {
         if (error) {
             // handle
         }
+    }
+
+    // Save old release settings
+    if (Config::isReleaseOlder(11)) {
+        data["GPU"]["vblankDivider"] = ui->vblankDividerSpinBox->value();
     }
 
     if (is_game_specific) {
