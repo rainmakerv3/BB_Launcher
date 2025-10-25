@@ -57,7 +57,7 @@ jobs:
     - name: Setup Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: 6.9.3
+        version: 6.10.0
         host: windows
         target: desktop
         arch: win64_msvc2022_64
@@ -132,7 +132,7 @@ jobs:
     - name: Setup Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: 6.9.3
+        version: 6.10.0
         host: mac
         target: desktop
         arch: clang_64
@@ -175,7 +175,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: 6.9.3
+        version: 6.10.0
         arch: linux_gcc_64
         modules: "qtmultimedia"
         tools: 'tools_generic tools_opensslv3_src'
@@ -190,12 +190,16 @@ jobs:
 
     - name: Build AppImage
       run: |
+        export Qt6_DIR="/usr/lib/qt6"
+        export PATH="$Qt6_DIR/bin:$PATH"
         export EXTRA_QT_PLUGINS="waylandcompositor"
-        export EXTRA_PLATFORM_PLUGINS="libqwayland-egl.so;libqwayland-generic.so"
+        export EXTRA_PLATFORM_PLUGINS="libqwayland.so"
         wget -q "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
         wget -q "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage"
         wget -q "https://github.com/linuxdeploy/linuxdeploy-plugin-checkrt/releases/download/continuous/linuxdeploy-plugin-checkrt-x86_64.sh"
-        chmod +x linuxdeploy*.AppImage
+        chmod a+x linuxdeploy-x86_64.AppImage
+        chmod a+x linuxdeploy-plugin-qt-x86_64.AppImage
+        chmod a+x linuxdeploy-plugin-checkrt-x86_64.sh
         ./linuxdeploy-x86_64.AppImage --appdir AppDir
         bash ./linuxdeploy-plugin-checkrt-x86_64.sh --appdir AppDir
         ./linuxdeploy-x86_64.AppImage --appdir AppDir -d "$GITHUB_WORKSPACE"/dist/BBLauncher.desktop  -e "$GITHUB_WORKSPACE"/build/BB_Launcher -i "$GITHUB_WORKSPACE"/dist/BBIcon.png --plugin qt
