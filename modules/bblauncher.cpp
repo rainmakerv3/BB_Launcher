@@ -204,11 +204,23 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->KBMButton, &QPushButton::clicked, this, [this]() {
+        if (Config::isReleaseOlder(7)) {
+            QMessageBox::warning(this, "Old release not supported",
+                                 "Releases older than v0.7.0 do not support input remapping");
+            return;
+        }
+
         KBMSettings* KBMWindow = new KBMSettings(m_ipc_client, this);
         KBMWindow->exec();
     });
 
     connect(ui->ControllerButton, &QPushButton::clicked, this, [this]() {
+        if (Config::isReleaseOlder(7)) {
+            QMessageBox::warning(this, "Old release not supported",
+                                 "Releases older than v0.7.0 do not support input remapping");
+            return;
+        }
+
         ControlSettings* RemapWindow = new ControlSettings(m_ipc_client, this);
         RemapWindow->exec();
     });
@@ -225,6 +237,12 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->HotkeyButton, &QPushButton::clicked, this, [this]() {
+        if (Config::isReleaseOlder(11)) {
+            QMessageBox::warning(this, "Old release not supported",
+                                 "Releases older than v0.11.0 do not support custom hotkeys");
+            return;
+        }
+
         Hotkeys* HKWindow = new Hotkeys(m_ipc_client, this);
         HKWindow->exec();
     });
