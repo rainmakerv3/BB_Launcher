@@ -58,7 +58,7 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
     if (!cachedVersions.isEmpty()) {
         PopulateDownloadTree(cachedVersions);
     } else {
-        CheckVersionsList(true);
+        CheckVersionsList(false);
     }
 
     connect(ui->addLocalVersionButton, &QPushButton::clicked, this, [this]() {

@@ -170,6 +170,13 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         if (!CheckBBInstall())
             return;
 
+        if (Config::isReleaseOlder(11)) {
+            QMessageBox::warning(
+                this, "Old release not supported",
+                "Releases older than v0.11.0 do not support game-specific configs");
+            return;
+        }
+
         std::string filename = Common::game_serial + ".toml";
         std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
 
