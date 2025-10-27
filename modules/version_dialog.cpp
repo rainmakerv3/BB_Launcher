@@ -20,6 +20,7 @@
 #include <QVBoxLayout>
 #include <nlohmann/json.hpp>
 #include <qmicroz.h>
+#include <sys/stat.h>
 
 #include "Common.h"
 #include "settings/formatting.h"
@@ -567,6 +568,17 @@ void VersionDialog::InstallSelectedVersion() {
 #endif
 
                             QString fullExePath = destPath + exeName;
+                            std::filesystem::remove(Common::PathFromQString(zipPath));
+#ifndef Q_OS_WIN
+                            mode_t permissions = S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
+                            if (chmod(fullExePath.toStdString().c_str(), permissions) != 0) {
+                                QMessageBox::information(this, "Error setting permissions",
+                                                         "Could not set access permissions for " + fullExePath +
+                                                             ". Set permissions manually before launching.");
+                            }
+#endif
+
+
                             Config::Build build;
                             build.path = fullExePath.toStdString();
                             build.type = type;
@@ -1047,6 +1059,15 @@ void VersionDialog::showDownloadDialog(const QString& tagName, const QString& do
         std::filesystem::remove(Common::PathFromQString(fullExePath));
         QMicroz::extract(zipPath, preReleaseFolder);
         std::filesystem::remove(Common::PathFromQString(zipPath));
+
+#ifndef Q_OS_WIN
+        mode_t permissions = S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
+        if (chmod(fullExePath.toStdString().c_str(), permissions) != 0) {
+            QMessageBox::information(this, "Error setting permissions",
+                                     "Could not set access permissions for " + fullExePath +
+                                         ". Set permissions manually before launching.");
+        }
+#endif
 
         if (hasPreRelease)
             buildInfo.erase(buildInfo.begin() + preReleaseIndex);
