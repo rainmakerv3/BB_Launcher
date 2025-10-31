@@ -1334,19 +1334,6 @@ void CheatsPatches::uncheckAllCheatCheckBoxes() {
     showErrorMessage = true;
 }
 
-void CheatsPatches::SceUpdateChecker(const std::string sceItem, std::filesystem::path& gameItem,
-                                     std::filesystem::path& update_folder,
-                                     std::filesystem::path& patch_folder,
-                                     std::filesystem::path& game_folder) {
-    if (std::filesystem::exists(update_folder / "sce_sys" / sceItem)) {
-        gameItem = update_folder / "sce_sys" / sceItem;
-    } else if (std::filesystem::exists(patch_folder / "sce_sys" / sceItem)) {
-        gameItem = patch_folder / "sce_sys" / sceItem;
-    } else {
-        gameItem = game_folder / "sce_sys" / sceItem;
-    }
-}
-
 std::string CheatsPatches::getGameVersion() {
     std::filesystem::path gamePath = Common::installPath;
     std::filesystem::path filePath = gamePath;
@@ -1355,7 +1342,8 @@ std::string CheatsPatches::getGameVersion() {
     game_update_path += "-UPDATE";
     std::filesystem::path game_patch_path = filePath;
     game_patch_path += "-patch";
-    SceUpdateChecker("param.sfo", param_sfo_path, game_update_path, game_patch_path, gamePath);
+    PSFdata::SceUpdateChecker("param.sfo", param_sfo_path, game_update_path, game_patch_path,
+                              gamePath);
     std::string version;
 
     PSF psf;

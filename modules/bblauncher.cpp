@@ -16,6 +16,7 @@
 #include "modules/TrophyManager.h"
 #include "modules/ui_bblauncher.h"
 #include "settings/LauncherSettings.h"
+#include "settings/PSF/psf.h"
 #include "settings/ShadCheatsPatches.h"
 #include "settings/ShadSettings.h"
 #include "settings/config.h"
@@ -104,26 +105,13 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             return;
 
         // Releases older than 0.9.0 will need to use the game serial as save folder
-        bool useOldSaveFolders = Config::isReleaseOlder(9);
+        std::string savePath = Config::isReleaseOlder(9)
+                                   ? Common::game_serial
+                                   : PSFdata::getSavePath(Common::installPath);
+        std::filesystem::path saveFile =
+            Common::GetSaveDir() / "1" / savePath / "SPRJ0005" / "userdata0010";
 
-        if (Common::game_serial == "CUSA03173" && !useOldSaveFolders) {
-            if (!std::filesystem::exists(Common::GetSaveDir() / "1" / "CUSA00207" / "SPRJ0005" /
-                                         "userdata0010")) {
-                QMessageBox::warning(
-                    this, "No saves detected",
-                    "Launch Bloodborne to generate saves before using Save Manager");
-                return;
-            }
-        } else if (Common::game_serial == "CUSA03023" && !useOldSaveFolders) {
-            if (!std::filesystem::exists(Common::GetSaveDir() / "1" / "CUSA01363" / "SPRJ0005" /
-                                         "userdata0010")) {
-                QMessageBox::warning(
-                    this, "No saves detected",
-                    "Launch Bloodborne to generate saves before using Save Manager");
-                return;
-            }
-        } else if (!std::filesystem::exists(Common::GetSaveDir() / "1" / Common::game_serial /
-                                            "SPRJ0005" / "userdata0010")) {
+        if (!std::filesystem::exists(saveFile)) {
             QMessageBox::warning(this, "No saves detected",
                                  "Launch Bloodborne to generate saves before using Save Manager");
             return;
@@ -323,13 +311,9 @@ void BBLauncher::StartBackupSave() {
     }
 
     // Releases older than 0.9.0 will need to use the game serial as save folder
-    bool useOldSaveFolders = Config::isReleaseOlder(9);
-
-    auto save_dir = Common::GetSaveDir() / "1" / Common::game_serial;
-    if (Common::game_serial == "CUSA03173" && !useOldSaveFolders)
-        save_dir = Common::GetSaveDir() / "1" / "CUSA00207";
-    if (Common::game_serial == "CUSA03023" && !useOldSaveFolders)
-        save_dir = Common::GetSaveDir() / "1" / "CUSA01363";
+    std::string savePath =
+        Config::isReleaseOlder(9) ? Common::game_serial : PSFdata::getSavePath(Common::installPath);
+    std::filesystem::path save_dir = Common::GetSaveDir() / "1" / savePath / "SPRJ0005";
 
     auto backup_dir = BackupPath / "BACKUP1";
 

@@ -102,3 +102,39 @@ private:
     [[nodiscard]] std::pair<std::vector<Entry>::const_iterator, size_t> FindEntry(
         std::string_view key) const;
 };
+
+namespace PSFdata {
+
+inline void SceUpdateChecker(const std::string sceItem, std::filesystem::path& gameItem,
+                             std::filesystem::path& update_folder,
+                             std::filesystem::path& patch_folder,
+                             std::filesystem::path& game_folder) {
+    if (std::filesystem::exists(update_folder / "sce_sys" / sceItem)) {
+        gameItem = update_folder / "sce_sys" / sceItem;
+    } else if (std::filesystem::exists(patch_folder / "sce_sys" / sceItem)) {
+        gameItem = patch_folder / "sce_sys" / sceItem;
+    } else {
+        gameItem = game_folder / "sce_sys" / sceItem;
+    }
+}
+
+inline std::string getSavePath(std::filesystem::path gamePath) {
+    std::filesystem::path param_sfo_path;
+    std::filesystem::path game_update_path = gamePath;
+    game_update_path += "-UPDATE";
+    std::filesystem::path game_patch_path = gamePath;
+    game_patch_path += "-patch";
+    SceUpdateChecker("param.sfo", param_sfo_path, game_update_path, game_patch_path, gamePath);
+
+    PSF psf;
+    if (psf.Open(param_sfo_path)) {
+
+        if (const auto save_dir = psf.GetString("INSTALL_DIR_SAVEDATA"); save_dir.has_value()) {
+            return std::string{save_dir->begin(), save_dir->end()};
+        }
+    }
+
+    return Common::game_serial;
+}
+
+} // namespace PSFdata
