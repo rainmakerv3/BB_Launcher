@@ -11,6 +11,7 @@
 std::string Config::theme = "Dark";
 bool Config::SoundFixEnabled = true;
 bool Config::AutoUpdateEnabled = false;
+bool Config::PortableFolderinLauncherFolder = false;
 
 bool Config::BackupSaveEnabled = false;
 int Config::BackupInterval = 10;
@@ -78,6 +79,8 @@ void LoadSettings() {
     theme = toml::find_or<std::string>(data, "Launcher", "Theme", "Dark");
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
     AutoUpdateEnabled = toml::find_or<bool>(data, "Launcher", "AutoUpdateEnabled", false);
+    PortableFolderinLauncherFolder =
+        toml::find_or<bool>(data, "Launcher", "PortableFolderinLauncherFolder", false);
 
     BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", false);
     BackupInterval = toml::find_or<int>(data, "Backups", "BackupInterval", 10);
@@ -246,6 +249,7 @@ void SaveLauncherSettings() {
     data["Launcher"]["AutoUpdateEnabled"] = AutoUpdateEnabled;
     data["Launcher"]["installPath"] = std::string{fmt::UTF(Common::installPath.u8string()).data};
     data["Launcher"]["shadPath"] = std::string{fmt::UTF(Common::shadPs4Executable.u8string()).data};
+    data["Launcher"]["PortableFolderinLauncherFolder"] = PortableFolderinLauncherFolder;
 
     data["Backups"]["BackupSaveEnabled"] = BackupSaveEnabled;
     data["Backups"]["BackupInterval"] = BackupInterval;

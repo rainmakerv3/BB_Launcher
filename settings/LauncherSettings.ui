@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>591</width>
-    <height>566</height>
+    <height>629</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>10</y>
      <width>565</width>
-     <height>547</height>
+     <height>609</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -142,6 +142,29 @@
         </layout>
        </widget>
       </item>
+      <item>
+       <widget class="QGroupBox" name="ThemeGroupBox_2">
+        <property name="title">
+         <string>Set Portable (&quot;user&quot;) Folder Location</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_8">
+         <item>
+          <widget class="QRadioButton" name="PortableBuildRadioButton">
+           <property name="text">
+            <string> In selected build folder (default)</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="PortableLauncherRadioButton">
+           <property name="text">
+            <string>In BBLauncher folder</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
      </layout>
     </item>
     <item>
@@ -177,7 +200,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
 &lt;p style=&quot; margin-top:6px; margin-bottom:6px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;60 FPS Sound Fix:&lt;/span&gt;&lt;/p&gt;
 &lt;p style=&quot; margin-top:6px; margin-bottom:6px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Fixes some sounds not working after a crash when the 60 FPS patch is enabled.&lt;/p&gt;
 &lt;p style=&quot; margin-top:6px; margin-bottom:6px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Backup Saves:&lt;/span&gt;&lt;/p&gt;
-&lt;p style=&quot; margin-top:6px; margin-bottom:6px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Automatically transfers Bloodborne saves to backup folders in the BBLauncher/Backups folder. BACKUP1 will always be the newest, then BACKUP2 and so on. You can restore backups folders from the Save Manager.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p style=&quot; margin-top:6px; margin-bottom:6px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Automatically transfers Bloodborne saves to backup folders in the BBLauncher/Backups folder. BACKUP1 will always be the newest, then BACKUP2 and so on. You can restore backups folders from the Save Manager.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Set Portable (&amp;quot;user&amp;quot;) Folder Location&lt;/span&gt;&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;Set which location BBLauncher should read the shadPS4 portable settings folder in&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="acceptRichText">
             <bool>false</bool>

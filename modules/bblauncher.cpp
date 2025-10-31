@@ -363,6 +363,9 @@ void BBLauncher::UpdateSettingsList() {
     QString AutoUpdateVersionsSetting =
         "Auto-update shadPS4 version list: " + QVariant(AutoUpdateVersionsEnabled).toString();
 
+    QString Location = PortableFolderinLauncherFolder ? "Launcher Folder" : "Build Folder";
+    QString PortableFolderSetting = "Portable Folder Location: " + Location;
+
     QString BackupIntSetting;
     QString BackupNumSetting;
 
@@ -374,10 +377,10 @@ void BBLauncher::UpdateSettingsList() {
         BackupNumSetting = "Backup copies: disabled";
     }
 
-    QStringList SettingStrings = {
-        SoundhackSetting,         BackupEnableSetting,         BackupIntSetting,
-        BackupNumSetting,         AutoUpdateBblauncherSetting, AutoUpdateShadSetting,
-        AutoUpdateVersionsSetting};
+    QStringList SettingStrings = {SoundhackSetting,      PortableFolderSetting,
+                                  BackupEnableSetting,   BackupIntSetting,
+                                  BackupNumSetting,      AutoUpdateBblauncherSetting,
+                                  AutoUpdateShadSetting, AutoUpdateVersionsSetting};
 
     ui->SettingList->clear();
     ui->SettingList->addItems(SettingStrings);

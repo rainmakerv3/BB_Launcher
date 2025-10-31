@@ -37,6 +37,12 @@ LauncherSettings::LauncherSettings(QWidget* parent)
         ui->LightThemeRadioButton->setChecked(true);
     }
 
+    if (PortableFolderinLauncherFolder) {
+        ui->PortableLauncherRadioButton->setChecked(true);
+    } else {
+        ui->PortableBuildRadioButton->setChecked(true);
+    }
+
     ui->UpdateCheckBox->setChecked(AutoUpdateEnabled);
     ui->SoundFixCheckBox->setChecked(SoundFixEnabled);
     ui->BackupSaveCheckBox->setChecked(BackupSaveEnabled);
@@ -101,6 +107,7 @@ void LauncherSettings::SaveSettings() {
         theme = "Light";
     }
 
+    PortableFolderinLauncherFolder = ui->PortableLauncherRadioButton->isChecked();
     SoundFixEnabled = ui->SoundFixCheckBox->isChecked();
     AutoUpdateEnabled = ui->UpdateCheckBox->isChecked();
 
@@ -113,6 +120,7 @@ void LauncherSettings::SaveSettings() {
     file.close();
 
     Config::SetTheme(theme);
+    Config::SaveLauncherSettings();
 }
 
 void LauncherSettings::OnBackupStateChanged() {

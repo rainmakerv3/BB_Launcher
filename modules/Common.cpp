@@ -43,7 +43,11 @@ std::filesystem::path GetCurrentPath() {
 }
 
 std::filesystem::path GetShadUserDir() {
-    auto user_dir = Common::shadPs4Executable.parent_path() / "user";
+    std::filesystem::path user_dir;
+    Config::PortableFolderinLauncherFolder
+        ? user_dir = Common::GetCurrentPath() / "user"
+        : user_dir = Common::shadPs4Executable.parent_path() / "user";
+
     if (!std::filesystem::exists(user_dir)) {
 #ifdef __APPLE__
         user_dir =
