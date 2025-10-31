@@ -235,6 +235,7 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->popUpDurationSpinBox->setValue(
         toml::find_or<double>(data, "General", "trophyNotificationDuration", 6.0));
 
+    ui->showSplashCheckBox->setChecked(toml::find_or<bool>(data, "General", "showSplash", false));
     ui->discordRPCCheckbox->setChecked(
         toml::find_or<bool>(data, "General", "enableDiscordRPC", false));
     ui->DevkitCheckBox->setChecked(toml::find_or<bool>(data, "General", "isDevKit", false));
@@ -405,6 +406,7 @@ void ShadSettings::SaveSettings() {
     data["General"]["logType"] = ui->logTypeComboBox->currentText().toStdString();
     data["General"]["userName"] = ui->userNameLineEdit->text().toStdString();
     data["General"]["volumeSlider"] = ui->volumeSlider->value();
+    data["General"]["showSplash"] = ui->showSplashCheckBox->isChecked();
 
     data["Input"]["cursorState"] = ui->hideCursorComboBox->currentIndex();
     data["Input"]["cursorHideTimeout"] = ui->idleTimeoutSpinBox->value();
