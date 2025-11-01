@@ -1,14 +1,14 @@
-cmake_minimum_required(VERSION 3.24)
+cmake_minimum_required(VERSION 3.30)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
+
+project(BB_Launcher LANGUAGES CXX)
 
 if(APPLE)
     enable_language(OBJC)
     set(CMAKE_OSX_DEPLOYMENT_TARGET 14)
 endif()
-
-project(BB_Launcher LANGUAGES CXX)
 
 option(FORCE_UAC "Requires running as Admin on Windows" ON)
 
