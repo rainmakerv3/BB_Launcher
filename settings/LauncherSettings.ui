@@ -151,7 +151,7 @@
          <item>
           <widget class="QRadioButton" name="PortableBuildRadioButton">
            <property name="text">
-            <string> In selected build folder (default)</string>
+            <string>In selected build folder (default)</string>
            </property>
           </widget>
          </item>
