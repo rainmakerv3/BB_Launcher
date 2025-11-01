@@ -70,6 +70,10 @@ string(TIMESTAMP BUILD_DATE "%Y-%m-%d %H:%M:%S")
 
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/settings/updater/BuildInfo.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/settings/updater/BuildInfo.cpp" @ONLY)
 
+if(WIN32 AND NOT CMAKE_PREFIX_PATH)
+    include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/DetectQtInstallation.cmake")
+endif ()
+
 find_package(toml11 4.2.0 CONFIG)
 find_package(pugixml 1.14 CONFIG)
 find_package(fmt 10.2.0 CONFIG)

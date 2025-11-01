@@ -435,6 +435,4 @@ FodyWeavers.xsd
 .vscode/launch.json
 .vscode/extensions.json
 *.code-workspace
-**/CMakeUserPresets.json
-CMakePresets.json
 /compile_commands.json
