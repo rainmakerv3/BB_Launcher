@@ -19,7 +19,7 @@ void PathToQString(QString& result, const std::filesystem::path& path);
 std::filesystem::path PathFromQString(const QString& path);
 std::string PathToU8(const std::filesystem::path& path);
 std::filesystem::path GetShadUserDir();
-std::filesystem::path GetCurrentPath();
+std::filesystem::path GetCurrentPath(bool getLinuxFilename = false);
 std::filesystem::path GetBBLFilesPath();
 std::filesystem::path GetSaveDir();
 

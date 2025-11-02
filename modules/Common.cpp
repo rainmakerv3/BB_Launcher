@@ -1,6 +1,9 @@
 // SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <QCoreApplication>
+#include <QProcessEnvironment>
+
 #include "Common.h"
 #include "scope_exit.h"
 #include "settings/config.h"
@@ -32,10 +35,25 @@ std::filesystem::path shadPs4Executable;
 
 const char VERSION[] = "Release11.02";
 
-std::filesystem::path GetCurrentPath() {
+std::filesystem::path GetCurrentPath(bool getLinuxFileName) {
     std::filesystem::path currentPath;
 #if defined(__APPLE__)
     currentPath = Common::GetBundleParentDirectory();
+
+#elif defined(linux)
+    char* appdir_env = std::getenv("APPDIR");
+    QString appPath;
+
+    if (appdir_env != nullptr) {
+        appPath = QProcessEnvironment::systemEnvironment().value(QStringLiteral("APPIMAGE"));
+        getLinuxFileName ? currentPath = Common::PathFromQString(appPath)
+                         : currentPath = Common::PathFromQString(appPath).parent_path();
+    } else {
+        getLinuxFileName ? appPath = QCoreApplication::applicationFilePath()
+                         : appPath = QCoreApplication::applicationDirPath();
+        currentPath = Common::PathFromQString(appPath);
+    }
+
 #else
     currentPath = std::filesystem::current_path();
 #endif
@@ -43,10 +61,10 @@ std::filesystem::path GetCurrentPath() {
 }
 
 std::filesystem::path GetShadUserDir() {
-    std::filesystem::path user_dir;
-    Config::PortableFolderinLauncherFolder
-        ? user_dir = Common::GetCurrentPath() / "user"
-        : user_dir = Common::shadPs4Executable.parent_path() / "user";
+    std::filesystem::path userPath = Config::PortableFolderinLauncherFolder
+                                         ? Common::GetCurrentPath()
+                                         : Common::shadPs4Executable.parent_path();
+    auto user_dir = userPath / "user";
 
     if (!std::filesystem::exists(user_dir)) {
 #ifdef __APPLE__
