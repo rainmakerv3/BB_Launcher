@@ -27,6 +27,7 @@ private slots:
     void BBSelectButton_isPressed();
     void ShadSelectButton_isPressed();
     void onGameClosed();
+    void PrintLog(QString entry, std::string type);
 
 private:
     static void StartBackupSave();

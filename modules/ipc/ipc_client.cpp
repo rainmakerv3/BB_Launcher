@@ -22,8 +22,8 @@ void IpcClient::startEmulator(const QFileInfo& exe, const QStringList& args,
     }
     process = new QProcess(this);
 
-    connect(process, &QProcess::readyReadStandardError, this, [this] { onStderr(); });
     connect(process, &QProcess::readyReadStandardOutput, this, [=, this] { onStdout(); });
+    connect(process, &QProcess::readyReadStandardError, this, [this] { onStderr(); });
     connect(process, &QProcess::finished, this, [this] { onProcessClosed(); });
 
     process->setProcessChannelMode(QProcess::SeparateChannels);
@@ -172,7 +172,23 @@ void IpcClient::onStderr() {
 }
 
 void IpcClient::onStdout() {
-    printf("%s", process->readAllStandardOutput().toStdString().c_str());
+    std::string type = "";
+    QString entry;
+    while (process->canReadLine()) {
+        entry = process->readLine().trimmed();
+    }
+
+    if (entry.contains("<Warning>")) {
+        type = "Warning";
+    } else if (entry.contains("<Critical>")) {
+        type = "Critical";
+    } else if (entry.contains("<Error>")) {
+        type = "Error";
+    } else if (entry.contains("<Info>")) {
+        type = "Info";
+    }
+
+    emit LogEntrySent(entry, type);
 }
 
 void IpcClient::onProcessClosed() {

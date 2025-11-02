@@ -31,6 +31,10 @@ std::string convertValueToHex(const std::string type, const std::string valueStr
 
 class IpcClient : public QObject {
     Q_OBJECT
+
+signals:
+    void LogEntrySent(QString entry, std::string type);
+
 public:
     explicit IpcClient(QObject* parent = nullptr);
     void startEmulator(const QFileInfo& exe, const QStringList& args,

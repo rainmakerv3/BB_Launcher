@@ -192,7 +192,7 @@ set_target_properties(BB_Launcher PROPERTIES
     MACOSX_BUNDLE_SHORT_VERSION_STRING "5.1"
     MACOSX_BUNDLE TRUE
     MACOSX_BUNDLE_ICON_FILE "BBIcon.icns"
-#   WIN32_EXECUTABLE TRUE
+    WIN32_EXECUTABLE TRUE
 )
 
 set_source_files_properties(dist/BBIcon.icns PROPERTIES

@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QProcess>
+#include <QScrollBar>
 
 #include "bblauncher.h"
 #include "modules/Common.h"
@@ -37,6 +38,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     m_ipc_client->startGameFunc = [this]() { RunGame(); };
 
     ui->setupUi(this);
+
     Config::LoadSettings();
 
     if (Common::shadPs4Executable == "" || !std::filesystem::exists(Common::shadPs4Executable)) {
@@ -71,6 +73,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     this->setFixedSize(this->width(), this->height());
     this->statusBar()->setSizeGripEnabled(false);
     QApplication::setStyle("Fusion");
+    ui->logTextEdit->setStyleSheet("QTextEdit {background-color: black;}");
 
     std::string versionstring(Common::VERSION);
     setWindowTitle(("BBLauncher " + QString::fromStdString(versionstring).right(5)));
@@ -79,6 +82,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     UpdateModList();
     UpdateIcons();
 
+    QObject::connect(m_ipc_client.get(), &IpcClient::LogEntrySent, this, &BBLauncher::PrintLog);
     connect(ui->BBSelectButton, &QPushButton::pressed, this, &BBLauncher::BBSelectButton_isPressed);
     connect(ui->ShadSelectButton, &QPushButton::pressed, this,
             &BBLauncher::ShadSelectButton_isPressed);
@@ -149,7 +153,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
                                        " not found. Run shadPS4 once to generate it."));
             return;
         }
-        
+
         ShadSettings* ShadSettingsWindow = new ShadSettings(m_ipc_client, false, this);
         ShadSettingsWindow->exec();
     });
@@ -252,6 +256,22 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
 
     if (noGUI && noInstanceRunning)
         StartGameWithArgs({});
+}
+
+void BBLauncher::PrintLog(QString entry, std::string type) {
+    QColor color;
+    if (type == "Warning") {
+        color = Qt::yellow;
+    } else if (type == "Critical" || type == "Error") {
+        color = Qt::red;
+    } else {
+        color = Qt::white;
+    }
+
+    ui->logTextEdit->setTextColor(color);
+    ui->logTextEdit->append(entry);
+    QScrollBar* sb = ui->logTextEdit->verticalScrollBar();
+    sb->setValue(sb->maximum());
 }
 
 void BBLauncher::BBSelectButton_isPressed() {
