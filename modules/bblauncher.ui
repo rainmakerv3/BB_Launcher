@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1075</width>
+    <width>1044</width>
     <height>678</height>
    </rect>
   </property>
@@ -28,13 +28,13 @@
      <rect>
       <x>560</x>
       <y>40</y>
-      <width>151</width>
+      <width>161</width>
       <height>101</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>13</pointsize>
+      <pointsize>16</pointsize>
       <bold>true</bold>
      </font>
     </property>
@@ -313,7 +313,7 @@
      <rect>
       <x>20</x>
       <y>360</y>
-      <width>711</width>
+      <width>701</width>
       <height>291</height>
      </rect>
     </property>
@@ -334,9 +334,9 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <widget class="QWidget" name="horizontalLayoutWidget_2">
     <property name="geometry">
      <rect>
-      <x>780</x>
+      <x>740</x>
       <y>10</y>
-      <width>281</width>
+      <width>291</width>
       <height>641</height>
      </rect>
     </property>
