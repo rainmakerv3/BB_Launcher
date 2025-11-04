@@ -1,6 +1,8 @@
 #include "QAnsiTextEdit.h"
 #include <QtCore/QDebug>
 
+// clang-format off
+
 //
 //
 //

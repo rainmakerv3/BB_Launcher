@@ -187,15 +187,13 @@ void IpcClient::onStdout() {
             color = ESC "[1;35m";
         } else if (entry.contains("<Error>")) {
             color = ESC "[1;31m";
+        } else {
+            color = ESC "[0;37m";
         }
 
-        entry = color + entry;
+        entry = (color + entry);
 #endif
-        emit LogEntrySent(entry);
-
-#ifdef Q_OS_WIN
-        emit LogEntrySent(ESC "[0m");
-#endif
+        emit LogEntrySent(entry.trimmed());
     }
 
 #undef ESC

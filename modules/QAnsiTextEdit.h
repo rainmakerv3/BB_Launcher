@@ -7,6 +7,8 @@
 #include <QtCore/QString>
 #include <QtCore/QList>
 
+// clang-format off
+
 class QAnsiTextEditFormattedText {
     public:
         QAnsiTextEditFormattedText() = default;

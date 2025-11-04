@@ -79,6 +79,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     QPalette palette = logDisplay->palette();
     palette.setColor(QPalette::Base, Qt::black);
     logDisplay->setPalette(palette);
+    logDisplay->setReadOnly(true);
 
     std::string versionstring(Common::VERSION);
     setWindowTitle(("BBLauncher " + QString::fromStdString(versionstring).right(5)));
