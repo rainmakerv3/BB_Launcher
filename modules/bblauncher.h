@@ -6,6 +6,7 @@
 #include <filesystem>
 #include <QMainWindow>
 
+#include "modules/QAnsiTextEdit.h"
 #include "modules/ipc/ipc_client.h"
 
 namespace Ui {
@@ -27,7 +28,7 @@ private slots:
     void BBSelectButton_isPressed();
     void ShadSelectButton_isPressed();
     void onGameClosed();
-    void PrintLog(QString entry, std::string type);
+    void PrintLog(QString entry);
 
 private:
     static void StartBackupSave();
@@ -46,6 +47,7 @@ private:
     QString getPatchFile();
 
     Ui::BBLauncher* ui;
+    QAnsiTextEdit* logDisplay;
     std::shared_ptr<IpcClient> m_ipc_client = std::make_shared<IpcClient>();
 
     std::filesystem::path shadPs4Directory;

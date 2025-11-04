@@ -172,23 +172,33 @@ void IpcClient::onStderr() {
 }
 
 void IpcClient::onStdout() {
-    std::string type = "";
-    QString entry;
-    while (process->canReadLine()) {
-        entry = process->readLine().trimmed();
+    QByteArray data = process->readAllStandardOutput();
+    QString dataString = QString::fromUtf8(data);
+    QStringList lines = dataString.split('\n');
+#define ESC "\x1b"
+    for (QString& entry : lines) {
+
+#ifdef Q_OS_WIN
+        const char* color = "";
+
+        if (entry.contains("<Warning>")) {
+            color = ESC "[1;33m";
+        } else if (entry.contains("<Critical>")) {
+            color = ESC "[1;35m";
+        } else if (entry.contains("<Error>")) {
+            color = ESC "[1;31m";
+        }
+
+        entry = color + entry;
+#endif
+        emit LogEntrySent(entry);
+
+#ifdef Q_OS_WIN
+        emit LogEntrySent(ESC "[0m");
+#endif
     }
 
-    if (entry.contains("<Warning>")) {
-        type = "Warning";
-    } else if (entry.contains("<Critical>")) {
-        type = "Critical";
-    } else if (entry.contains("<Error>")) {
-        type = "Error";
-    } else if (entry.contains("<Info>")) {
-        type = "Info";
-    }
-
-    emit LogEntrySent(entry, type);
+#undef ESC
 }
 
 void IpcClient::onProcessClosed() {

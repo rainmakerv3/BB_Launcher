@@ -111,9 +111,11 @@ set(PROJECT_SOURCES
     modules/ModManager.h
     modules/ModManager.cpp
     modules/ModManager.ui
-    modules/SaveManager.h
+    modules/QAnsiTextEdit.cpp
+    modules/QAnsiTextEdit.h
     modules/RunGuard.cpp
     modules/RunGuard.h
+    modules/SaveManager.h
     modules/SaveManager.cpp
     modules/SaveManager.ui
     modules/scope_exit.h

@@ -33,7 +33,7 @@ class IpcClient : public QObject {
     Q_OBJECT
 
 signals:
-    void LogEntrySent(QString entry, std::string type);
+    void LogEntrySent(QString entry);
 
 public:
     explicit IpcClient(QObject* parent = nullptr);

@@ -38,6 +38,8 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     m_ipc_client->startGameFunc = [this]() { RunGame(); };
 
     ui->setupUi(this);
+    logDisplay = new QAnsiTextEdit(this);
+    ui->logLayout->addWidget(logDisplay);
 
     Config::LoadSettings();
 
@@ -73,7 +75,10 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     this->setFixedSize(this->width(), this->height());
     this->statusBar()->setSizeGripEnabled(false);
     QApplication::setStyle("Fusion");
-    ui->logTextEdit->setStyleSheet("QTextEdit {background-color: black;}");
+
+    QPalette palette = logDisplay->palette();
+    palette.setColor(QPalette::Base, Qt::black);
+    logDisplay->setPalette(palette);
 
     std::string versionstring(Common::VERSION);
     setWindowTitle(("BBLauncher " + QString::fromStdString(versionstring).right(5)));
@@ -258,19 +263,9 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         StartGameWithArgs({});
 }
 
-void BBLauncher::PrintLog(QString entry, std::string type) {
-    QColor color;
-    if (type == "Warning") {
-        color = Qt::yellow;
-    } else if (type == "Critical" || type == "Error") {
-        color = Qt::red;
-    } else {
-        color = Qt::white;
-    }
-
-    ui->logTextEdit->setTextColor(color);
-    ui->logTextEdit->append(entry);
-    QScrollBar* sb = ui->logTextEdit->verticalScrollBar();
+void BBLauncher::PrintLog(QString entry) {
+    logDisplay->appendAnsiText(entry);
+    QScrollBar* sb = logDisplay->verticalScrollBar();
     sb->setValue(sb->maximum());
 }
 
