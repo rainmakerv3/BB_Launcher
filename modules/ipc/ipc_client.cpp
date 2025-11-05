@@ -56,6 +56,11 @@ void IpcClient::resumeGame() {
 }
 
 void IpcClient::stopEmulator() {
+    if (!Config::GameRunning) {
+        QMessageBox::information(nullptr, "BBLauncher", "No runnning game to stop");
+        return;
+    }
+
     writeLine("STOP");
 }
 
@@ -65,6 +70,11 @@ void IpcClient::restartEmulator() {
 }
 
 void IpcClient::toggleFullscreen() {
+    if (!Config::GameRunning) {
+        QMessageBox::information(nullptr, "BBLauncher", "No runnning game to toggle fullscreen");
+        return;
+    }
+
     writeLine("TOGGLE_FULLSCREEN");
 }
 
@@ -191,7 +201,7 @@ void IpcClient::onStdout() {
             color = ESC "[0;37m";
         }
 
-        entry = (color + entry);
+        entry = color + entry;
 #endif
         emit LogEntrySent(entry.trimmed());
     }

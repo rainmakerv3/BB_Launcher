@@ -94,6 +94,11 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             &BBLauncher::ShadSelectButton_isPressed);
     connect(ui->LaunchButton, &QPushButton::pressed, this,
             [this]() { BBLauncher::StartGameWithArgs({}); });
+    connect(ui->StopButton, &QPushButton::clicked, this,
+            [this]() { m_ipc_client->stopEmulator(); });
+    connect(ui->RestartButton, &QPushButton::clicked, this, &BBLauncher::RestartEmulator);
+    connect(ui->FullscreenButton, &QPushButton::clicked, this,
+            [this]() { m_ipc_client->toggleFullscreen(); });
 
     connect(ui->TrophyButton, &QPushButton::pressed, this, [this]() {
         QString trophyPath, gameTrpPath;
@@ -458,11 +463,25 @@ void BBLauncher::UpdateIcons() {
     ui->HotkeyButton->setIcon(QIcon(":hotkey.png"));
     ui->HotkeyButton->setIconSize(QSize(48, 48));
 
+    ui->LaunchButton->setIcon(QIcon(":play_icon.png"));
+    ui->LaunchButton->setIconSize(QSize(36, 36));
+    ui->StopButton->setIcon(QIcon(":stop_icon.png"));
+    ui->StopButton->setIconSize(QSize(36, 36));
+    ui->FullscreenButton->setIcon(QIcon(":fullscreen_icon.png"));
+    ui->FullscreenButton->setIconSize(QSize(36, 36));
+    ui->RestartButton->setIcon(QIcon(":restart_game_icon.png"));
+    ui->RestartButton->setIconSize(QSize(36, 36));
+
     if (Config::theme == "Dark") {
         ui->ControllerButton->setIcon(RecolorIcon(ui->ControllerButton->icon(), false));
         ui->KBMButton->setIcon(RecolorIcon(ui->KBMButton->icon(), false));
         ui->ModFolderButton->setIcon(RecolorIcon(ui->ModFolderButton->icon(), false));
         ui->HotkeyButton->setIcon(RecolorIcon(ui->HotkeyButton->icon(), false));
+
+        ui->LaunchButton->setIcon(RecolorIcon(ui->LaunchButton->icon(), false));
+        ui->StopButton->setIcon(RecolorIcon(ui->StopButton->icon(), false));
+        ui->RestartButton->setIcon(RecolorIcon(ui->RestartButton->icon(), false));
+        ui->FullscreenButton->setIcon(RecolorIcon(ui->FullscreenButton->icon(), false));
     }
 }
 
@@ -496,6 +515,11 @@ void BBLauncher::RunGame() {
 }
 
 void BBLauncher::RestartEmulator() {
+    if (!Config::GameRunning) {
+        QMessageBox::information(nullptr, "BBLauncher", "No runnning game to restart");
+        return;
+    }
+
     QString exe;
     Common::PathToQString(exe, Common::shadPs4Executable);
     QStringList args{"--game",

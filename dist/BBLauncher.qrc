@@ -1,16 +1,20 @@
 <RCC>
 	<qresource prefix="/">
 		<file>BBicon2.ico</file>
-                <file>controller_icon.png</file>
+        <file>controller_icon.png</file>
 		<file>keyboard.png</file>
 		<file>mod_folder.png</file>
 		<file>ps4_controller.png</file>
-                <file>bronze.png</file>
-                <file>gold.png</file>
-                <file>platinum.png</file>
-                <file>silver.png</file>
-                <file>achieved.png</file>
-                <file>KBM.png</file>
+        <file>bronze.png</file>
+        <file>gold.png</file>
+        <file>platinum.png</file>
+        <file>silver.png</file>
+        <file>achieved.png</file>
+        <file>KBM.png</file>
 		<file>hotkey.png</file>
+        <file>restart_game_icon.png</file>
+        <file>play_icon.png</file>
+        <file>stop_icon.png</file>
+        <file>fullscreen_icon.png</file>
 	</qresource>
 </RCC>
