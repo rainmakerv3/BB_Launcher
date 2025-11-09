@@ -468,7 +468,6 @@ Build GetCurrentBuildInfo() {
         build.type = arr[1].as_string();
         build.id = arr[2].as_string();
         build.modified = arr[3].as_string();
-        build.index = buildCounter - 1;
 
         if (build.path == Common::shadPs4Executable)
             return build;

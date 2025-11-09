@@ -106,7 +106,6 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
         build.type = "Local";
         build.id = version_name.toStdString();
         build.modified = Config::GetLastModifiedString(path);
-        build.index = buildInfo.size();
 
         buildInfo.push_back(build);
         SaveBuilds();
@@ -262,7 +261,6 @@ void VersionDialog::loadJson() {
             .type = type,
             .id = id,
             .modified = modifiedString,
-            .index = size,
         };
         buildInfo.push_back(b);
     }
@@ -585,8 +583,6 @@ void VersionDialog::InstallSelectedVersion() {
                             build.id = buildId.toStdString();
                             build.modified =
                                 Config::GetLastModifiedString(Common::PathFromQString(fullExePath));
-                            build.index = buildInfo.size();
-
                             buildInfo.push_back(build);
                             SaveBuilds();
                             LoadInstalledList();
@@ -600,8 +596,49 @@ void VersionDialog::InstallSelectedVersion() {
 
 void VersionDialog::LoadInstalledList() {
     ui->installedTreeWidget->clear();
-    ui->installedTreeWidget->setColumnCount(5);
-    ui->installedTreeWidget->setColumnHidden(4, true);
+
+    std::sort(buildInfo.begin(), buildInfo.end(), [](const auto& a, const auto& b) {
+        auto getOrder = [](std::string type) {
+            if (type == "Pre-release") {
+                return 0;
+            } else if (type == "Release") {
+                return 1;
+            } else if (type == "Local") {
+                return 2;
+            }
+            return 3;
+        };
+
+        int orderA = getOrder(a.type);
+        int orderB = getOrder(b.type);
+
+        if (orderA != orderB)
+            return orderA < orderB;
+
+        if (a.type == "Release") {
+            static QRegularExpression versionRegex("^v\\.([0-9]+)\\.([0-9]+)\\.([0-9]+)$");
+            QRegularExpressionMatch matchA = versionRegex.match(QString::fromStdString(a.id));
+            QRegularExpressionMatch matchB = versionRegex.match(QString::fromStdString(b.id));
+
+            if (matchA.hasMatch() && matchB.hasMatch()) {
+                int majorA = matchA.captured(1).toInt();
+                int minorA = matchA.captured(2).toInt();
+                int patchA = matchA.captured(3).toInt();
+                int majorB = matchB.captured(1).toInt();
+                int minorB = matchB.captured(2).toInt();
+                int patchB = matchB.captured(3).toInt();
+
+                if (majorA != majorB)
+                    return majorA > majorB;
+                if (minorA != minorB)
+                    return minorA > minorB;
+                return patchA > patchB;
+            }
+        }
+
+        return QString::fromStdString(a.id).compare(QString::fromStdString(b.id),
+                                                    Qt::CaseInsensitive) < 0;
+    });
 
     for (int i = 0; i < buildInfo.size(); i++) {
         QTreeWidgetItem* item = new QTreeWidgetItem(ui->installedTreeWidget);
@@ -627,6 +664,8 @@ void VersionDialog::LoadInstalledList() {
         }
     }
 
+    ui->installedTreeWidget->setColumnCount(5);
+    ui->installedTreeWidget->setColumnHidden(4, true);
     ui->installedTreeWidget->resizeColumnToContents(0);
     ui->installedTreeWidget->resizeColumnToContents(1);
     ui->installedTreeWidget->resizeColumnToContents(2);
@@ -705,7 +744,6 @@ void VersionDialog::checkUpdatePre(const bool showMessage) {
             std::filesystem::path preReleasePath = build.path;
             std::filesystem::path preReleaseParentPath = preReleasePath.parent_path();
             preReleaseFolder = QString::fromStdString(preReleaseParentPath.string());
-            preReleaseIndex = build.index;
             localHash = QString::fromStdString(build.id);
             break;
         }
@@ -1070,23 +1108,15 @@ void VersionDialog::showDownloadDialog(const QString& tagName, const QString& do
 #endif
 
         if (hasPreRelease)
-            buildInfo.erase(buildInfo.begin() + preReleaseIndex);
-
-        int buildIndex = hasPreRelease ? buildInfo.size() - 1 : buildInfo.size();
+            buildInfo.erase(buildInfo.begin());
 
         Config::Build build;
         build.path = fullExePath.toStdString();
         build.type = "Pre-release";
         build.id = tagName.right(40).toStdString();
         build.modified = Config::GetLastModifiedString(build.path);
-        build.index = buildIndex;
 
-        if (hasPreRelease) {
-            buildInfo.insert(buildInfo.begin() + preReleaseIndex, build);
-        } else {
-            buildInfo.push_back(build);
-        }
-
+        buildInfo.insert(buildInfo.begin(), build);
         SaveBuilds();
         LoadInstalledList();
 
@@ -1175,7 +1205,6 @@ void VersionDialog::GetBuildInfo() {
         build.type = arr[1].as_string();
         build.id = arr[2].as_string();
         build.modified = arr[3].as_string();
-        build.index = buildCounter - 1;
 
         if (std::filesystem::exists(build.path)) {
             buildInfo.push_back(build);

@@ -20,7 +20,6 @@ struct Build {
     std::string type;
     std::string id;
     std::string modified;
-    int index;
 };
 
 void LoadSettings();
