@@ -106,12 +106,12 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
         build.type = "Local";
         build.id = version_name.toStdString();
         build.modified = Config::GetLastModifiedString(path);
-
         buildInfo.push_back(build);
+
+        LoadInstalledList();
         SaveBuilds();
 
         QMessageBox::information(this, tr("Success"), tr("Local build added successfully."));
-        LoadInstalledList();
     });
 
     connect(ui->removeVersionButton, &QPushButton::clicked, this, [this]() { RemoveItem(false); });
@@ -266,8 +266,8 @@ void VersionDialog::loadJson() {
     }
 
     if (newBuildFound) {
-        SaveBuilds();
         LoadInstalledList();
+        SaveBuilds();
     }
 }
 
@@ -584,8 +584,8 @@ void VersionDialog::InstallSelectedVersion() {
                             build.modified =
                                 Config::GetLastModifiedString(Common::PathFromQString(fullExePath));
                             buildInfo.push_back(build);
-                            SaveBuilds();
                             LoadInstalledList();
+                            SaveBuilds();
 
                             progressDialog->close();
                             progressDialog->deleteLater();
@@ -1117,8 +1117,8 @@ void VersionDialog::showDownloadDialog(const QString& tagName, const QString& do
         build.modified = Config::GetLastModifiedString(build.path);
 
         buildInfo.insert(buildInfo.begin(), build);
-        SaveBuilds();
         LoadInstalledList();
+        SaveBuilds();
 
         QMessageBox::information(this, tr("Complete installation"),
                                  tr("Pre-release updated successfully") + ":\n" + tagName);
@@ -1259,7 +1259,7 @@ void VersionDialog::RemoveItem(bool alsoDelete) {
         }
 
         buildInfo.erase(buildInfo.begin() + ui->installedTreeWidget->currentIndex().row());
-        SaveBuilds();
         LoadInstalledList();
+        SaveBuilds();
     }
 }
