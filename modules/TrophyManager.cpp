@@ -178,17 +178,10 @@ void TrophyViewer::PopulateTrophyWidget(QString title) {
         typeitem->setFlags(typeitem->flags() & ~Qt::ItemIsEditable);
         tableWidget->setItem(row, 5, typeitem);
 
-        if (trpUnlocked[row] == "unlocked") {
-            QTableWidgetItem* achieveditem = new QTableWidgetItem();
-            QImage achieved_icon =
-                QImage(":/achieved.png")
-                    .scaled(QSize(64, 64), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-            achieveditem->setData(Qt::DecorationRole, achieved_icon);
-            achieveditem->setFlags(achieveditem->flags() & ~Qt::ItemIsEditable);
-            tableWidget->setItem(row, 0, achieveditem);
-        } else {
-            SetTableItem(tableWidget, row, 0, "");
-        }
+        QImage lock_icon;
+        trpUnlocked[row] == "unlocked" ? lock_icon = QImage(":/unlocked.png")
+                                       : lock_icon = QImage(":/locked.png");
+        SetTableIcon(tableWidget, row, 0, lock_icon);
 
         std::string detailString = trophyDetails[row].toStdString();
         std::size_t newline_pos = 0;
@@ -223,6 +216,14 @@ void TrophyViewer::PopulateTrophyWidget(QString title) {
     QVBoxLayout* tablayout = new QVBoxLayout();
     tablayout->addWidget(tableWidget);
     ui->ViewerTab->setLayout(tablayout);
+}
+
+void TrophyViewer::SetTableIcon(QTableWidget* parent, int row, int column, QImage icon) {
+    QImage resized_icon = icon.scaled(QSize(64, 64), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    QLabel* lbl_item = new QLabel();
+    lbl_item->setPixmap(QPixmap::fromImage(resized_icon));
+    lbl_item->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    parent->setCellWidget(row, column, lbl_item);
 }
 
 void TrophyViewer::SetTableItem(QTableWidget* parent, int row, int column, QString str) {
@@ -328,9 +329,6 @@ void TrophyViewer::UnlockTrophy() {
     for (pugi::xml_node& node : trophyconf.children()) {
         int current_trophy_id = node.attribute("id").as_int();
         bool current_trophy_unlockstate = node.attribute("unlockstate").as_bool();
-        const char* current_trophy_name = node.child("name").text().as_string();
-        std::string_view current_trophy_description = node.child("detail").text().as_string();
-        std::string_view current_trophy_type = node.attribute("ttype").value();
 
         if (std::string_view(node.name()) == "trophy") {
             if (current_trophy_id == ID) {
@@ -356,20 +354,15 @@ void TrophyViewer::UnlockTrophy() {
             }
         }
     }
-    doc.save_file((trophy_dir / "trophy00" / "Xml" / "TROP.XML").native().c_str());
 
+    doc.save_file((trophy_dir / "trophy00" / "Xml" / "TROP.XML").native().c_str());
     RefreshValues(trophyFolder);
 
-    QTableWidgetItem* achieveditem = new QTableWidgetItem();
-    QImage achieved_icon =
-        QImage(":/achieved.png")
-            .scaled(QSize(64, 64), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-    achieveditem->setData(Qt::DecorationRole, achieved_icon);
-    achieveditem->setFlags(achieveditem->flags() & ~Qt::ItemIsEditable);
-    tableWidget->setItem(ID, 0, achieveditem);
-
+    QImage unlocked_icon = QImage(":/unlocked.png");
+    SetTableIcon(tableWidget, ID, 0, unlocked_icon);
     SetTableItem(tableWidget, ID, 4, trpTimeUnlocked[ID]);
 
+    updateTableFilters();
     ui->LockStatusLabel->setText("unlocked");
     QMessageBox::information(this, "Trophy Unlocked", trophyNames[ID] + " unlocked");
 }
@@ -396,8 +389,6 @@ void TrophyViewer::LockTrophy() {
     for (pugi::xml_node& node : trophyconf.children()) {
         int current_trophy_id = node.attribute("id").as_int();
         bool current_trophy_unlockstate = node.attribute("unlockstate").as_bool();
-        const char* current_trophy_name = node.child("name").text().as_string();
-        std::string_view current_trophy_description = node.child("detail").text().as_string();
         std::string_view current_trophy_type = node.attribute("ttype").value();
 
         if (current_trophy_type == "P")
@@ -423,11 +414,15 @@ void TrophyViewer::LockTrophy() {
             }
         }
     }
-    doc.save_file((trophy_dir / "trophy00" / "Xml" / "TROP.XML").native().c_str());
 
+    doc.save_file((trophy_dir / "trophy00" / "Xml" / "TROP.XML").native().c_str());
     RefreshValues(trophyFolder);
-    SetTableItem(tableWidget, ID, 0, "");
+
+    QImage locked_icon = QImage(":/locked.png");
+    SetTableIcon(tableWidget, ID, 0, locked_icon);
     SetTableItem(tableWidget, ID, 4, "");
+
+    updateTableFilters();
     ui->LockStatusLabel->setText("locked");
     QMessageBox::information(this, "Trophy Locked", trophyNames[ID] + " locked");
 }
@@ -457,11 +452,7 @@ void TrophyViewer::LockAllTrophies() {
     auto trophyconf = doc.child("trophyconf");
 
     for (pugi::xml_node& node : trophyconf.children()) {
-        int current_trophy_id = node.attribute("id").as_int();
         bool current_trophy_unlockstate = node.attribute("unlockstate").as_bool();
-        const char* current_trophy_name = node.child("name").text().as_string();
-        std::string_view current_trophy_description = node.child("detail").text().as_string();
-        std::string_view current_trophy_type = node.attribute("ttype").value();
         if (std::string_view(node.name()) == "trophy") {
             if (current_trophy_unlockstate) {
                 if (node.attribute("unlockstate").empty()) {
@@ -476,13 +467,17 @@ void TrophyViewer::LockAllTrophies() {
             }
         }
     }
-    doc.save_file((trophy_dir / "trophy00" / "Xml" / "TROP.XML").native().c_str());
 
+    doc.save_file((trophy_dir / "trophy00" / "Xml" / "TROP.XML").native().c_str());
     RefreshValues(trophyFolder);
+
+    QImage locked_icon = QImage(":/locked.png");
     for (int i = 0; i < 40; i++) {
-        SetTableItem(tableWidget, i, 0, "locked");
+        SetTableIcon(tableWidget, i, 0, locked_icon);
         SetTableItem(tableWidget, i, 4, "");
     }
+
+    updateTableFilters();
     ui->LockStatusLabel->setText("locked");
     QMessageBox::information(this, "Trophies Reset", "All trophies locked");
 }
