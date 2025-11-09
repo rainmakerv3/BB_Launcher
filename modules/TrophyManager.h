@@ -42,6 +42,7 @@ private:
     Ui::TrophyViewer* ui;
     void PopulateTrophyWidget(QString title);
     void SetTableItem(QTableWidget* parent, int row, int column, QString str);
+    void SetTableIcon(QTableWidget* parent, int row, int column, QImage icon);
     void UpdateStats();
     bool RefreshValues(QString title);
 
