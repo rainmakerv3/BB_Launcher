@@ -1,0 +1,148 @@
+[
+    {
+        "classes": [
+            {
+                "className": "AudioGenerator",
+                "lineNumber": 75,
+                "object": true,
+                "qualifiedClassName": "AudioGenerator",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 122,
+                        "name": "done",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "buffer",
+                                "type": "QAudioBuffer"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 123,
+                        "name": "audioBufferCreated",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "lineNumber": 126,
+                        "name": "nextBuffer",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "audiogenerationutils_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "TestVideoSink",
+                "lineNumber": 29,
+                "object": true,
+                "qualifiedClassName": "TestVideoSink",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "frame",
+                                "type": "QVideoFrame"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 62,
+                        "name": "videoFrameChangedSync",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "frame",
+                                "type": "QVideoFrame"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 48,
+                        "name": "addVideoFrame",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QVideoSink"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "testvideosink_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "VideoGenerator",
+                "lineNumber": 35,
+                "object": true,
+                "qualifiedClassName": "VideoGenerator",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 51,
+                        "name": "done",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "frame",
+                                "type": "QVideoFrame"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 52,
+                        "name": "frameCreated",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "lineNumber": 55,
+                        "name": "nextFrame",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "framegenerator_p.h",
+        "outputRevision": 69
+    }
+]

@@ -4,6 +4,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 project(BB_Launcher LANGUAGES CXX)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 if(APPLE)
     enable_language(OBJC)
@@ -88,6 +89,10 @@ if (NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR NOT MSVC)
 endif()
 
 add_subdirectory(externals)
+
+if (WIN32)
+    set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/qtstatic")
+endif()
 
 find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
 

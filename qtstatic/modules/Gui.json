@@ -1,0 +1,26 @@
+{
+    "schema_version": 2,
+    "name": "Gui",
+    "repository": "qtbase",
+    "version": "6.10.0",
+    "plugin_types": ["accessiblebridge", "platforms", "platforms/darwin", "xcbglintegrations", "platformthemes", "platforminputcontexts", "generic", "iconengines", "imageformats", "egldeviceintegrations"],
+    "qpa": {
+        "platforms": ["windows"],
+        "default_platform": "windows"
+    },
+    "platforms": [
+        {
+            "name": "Windows",
+            "version": "10.0.26200",
+            "compiler_id": "MSVC",
+            "compiler_version": "19.44.35219.0",
+            "targets": [
+                {
+                    "static": true,
+                    "architecture": "x86_64",
+                    "abi": "x86_64-little_endian-lp64"
+                }
+            ]
+        }
+    ]
+}
