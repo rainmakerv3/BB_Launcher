@@ -7,7 +7,6 @@
 *.core
 *.moc
 *.o
-*.obj
 *.orig
 *.rej
 *.so
@@ -62,7 +61,6 @@ CMakeLists.txt.user*
 # Binaries
 # --------
 *.dll
-*.exe
 
 # Build results
 [Dd]ebug/
@@ -126,7 +124,6 @@ StyleCopReport.xml
 *_h.h
 *.ilk
 *.meta
-*.obj
 *.iobj
 *.pch
 *.pdb
@@ -282,7 +279,6 @@ _pkginfo.txt
 !?*.[Cc]ache/
 
 # Others
-ClientBin/
 ~$*
 *~
 *.dbmdl

@@ -1,0 +1,5 @@
+#ifndef QT_QTMULTIMEDIATESTLIB_MODULE_H
+#define QT_QTMULTIMEDIATESTLIB_MODULE_H
+#include <QtMultimediaTestLib/QtMultimediaTestLibDepends>
+#include "qtmultimediatestlibversion.h"
+#endif

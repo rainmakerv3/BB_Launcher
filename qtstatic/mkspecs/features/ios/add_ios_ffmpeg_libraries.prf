@@ -1,0 +1,23 @@
+# Copyright (C) 2025 The Qt Company Ltd.
+# SPDX-License-Identifier: BSD-3-Clause
+
+FFMPEG_FRAMEWORKS_PATH = $$[QT_INSTALL_LIBS]/ffmpeg
+FFMPEG_XCFRAMEWORKS = $$files($$FFMPEG_FRAMEWORKS_PATH/*.xcframework)
+
+!macx-xcode {
+    return()
+}
+
+isEmpty(FFMPEG_XCFRAMEWORKS) {
+    warning("The project requests linking against Qt-provided FFmpeg libraries, but none were found in the Qt installation. Expected location: $${FFMPEG_FRAMEWORKS_PATH}")
+    return()
+}
+
+ffmpeg_frameworks.files =
+ffmpeg_frameworks.path = Frameworks
+QMAKE_BUNDLE_DATA += ffmpeg_frameworks
+
+for(xcframework, FFMPEG_XCFRAMEWORKS) {
+    LIBS += $$xcframework
+    ffmpeg_frameworks.files += $$xcframework
+}

@@ -4,6 +4,7 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 project(BB_Launcher LANGUAGES CXX)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 if(APPLE)
     enable_language(OBJC)
@@ -73,6 +74,13 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/settings/updater/BuildInfo.cpp.in" "
 if(WIN32 AND NOT CMAKE_PREFIX_PATH)
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/DetectQtInstallation.cmake")
 endif ()
+
+if (WIN32)
+    set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/qtstatic")
+    set(Qt6_DIR "CMAKE_CURRENT_SOURCE_DIR}/qtstatic/lib/cmake/Qt6")
+    set(Qt6Widgets_DIR "CMAKE_CURRENT_SOURCE_DIR}/qtstatic/lib/cmake/Qt6Widgets")
+    set(Qt6Network_DIR "CMAKE_CURRENT_SOURCE_DIR}/qtstatic/lib/cmake/Qt6Network")
+endif()
 
 find_package(toml11 4.2.0 CONFIG)
 find_package(pugixml 1.14 CONFIG)

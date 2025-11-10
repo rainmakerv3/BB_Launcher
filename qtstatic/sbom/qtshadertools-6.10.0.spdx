@@ -1,0 +1,505 @@
+SPDXVersion: SPDX-2.3
+DataLicense: CC0-1.0
+SPDXID: SPDXRef-DOCUMENT
+DocumentName: qtshadertools-6.10.0
+DocumentNamespace: https://qt.io/spdxdocs/qtshadertools-6.10.0
+Creator: Organization: TheQtCompany
+Creator: Tool: Qt Build System
+CreatorComment: <text>This SPDX document was created from CMake 4.1.2, using the qt
+build system from https://code.qt.io/cgit/qt/qtbase.git/tree/cmake/QtPublicSbomHelpers.cmake</text>
+Created: 2025-11-10T08:43:39Z
+ExternalDocumentRef: DocumentRef-qtbase https://qt.io/spdxdocs/qtbase-6.10.0 SHA1: c6eca1494166c46f4b34a0715214d18be6f0d77f
+
+PackageName: MSVC
+SPDXID: SPDXRef-compiler
+PackageVersion: 19.44.35219.0
+PackageDownloadLocation: NOASSERTION
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+PackageSupplier: Organization: Anonymous
+FilesAnalyzed: false
+PackageSummary: <text>The compiler as identified by CMake, running on Windows (AMD64)</text>
+PrimaryPackagePurpose: APPLICATION
+Relationship: SPDXRef-compiler BUILD_DEPENDENCY_OF SPDXRef-Package-qtshadertools
+RelationshipComment: <text>SPDXRef-Package-qtshadertools is built by compiler MSVC version 19.44.35219.0</text>
+
+PackageName: qtshadertools
+SPDXID: SPDXRef-Package-qtshadertools
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtshadertools:6.10.0:*:*:*:*:*:*:*
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtshadertools@6.10.0
+PackageVersion: 6.10.0
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtshadertools@6.10.0
+PackageSupplier: Organization: TheQtCompany
+PackageDownloadLocation: git://code.qt.io/qt/qtshadertools.git
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: Copyright (C) The Qt Company Ltd. and other contributors.
+PackageHomePage: https://qt.io
+PackageComment: <text>Built by CMake 4.1.2 with Release configuration for Windows (AMD64)
+qtshadertools was configured with:
+    qt6/configure -prefix D:\qtlibs -static -static-runtime -release -skip qt3d -skip qt5compat -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdeclarative -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qthttpserver -skip qtimageformats -skip qtlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtnetworkauth -skip qtopcua -skip qtpositioning -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwayland -skip qtwebchannel -skip qtwebengine -skip qtwebsockets -skip qtwebview -skip qtactiveqt
+</text>
+FilesAnalyzed: false
+BuiltDate: 2025-11-10T08:43:39Z
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-qtshadertools
+
+PackageName: BundledGlslang_Spirv
+SPDXID: SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Spirv
+PackageDownloadLocation: https://github.com/KhronosGroup/glslang
+PackageVersion: 15.1.0
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: BSD-3-Clause AND LicenseRef-MIT-Khronos-old AND Apache-2.0 AND GPL-3.0-or-later WITH Bison-exception-2.2 AND AML-glslang
+PackageLicenseDeclared: NOASSERTION
+ExternalRef: PACKAGE-MANAGER purl pkg:github/KhronosGroup/glslang@15.1.0
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtshadertools?library_name=BundledGlslang_Spirv#src/glslang
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtshadertools-BundledGlslang_Spirv?vcs_url=https://code.qt.io/qt/qtshadertools.git&library_name=BundledGlslang_Spirv#src/glslang
+PackageCopyrightText: <text>Copyright (c) 2017, 2019 ARM Limited
+Copyright (c) 2002-2005 3 Dlabs Inc. Ltd.
+Copyright (c) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+Copyright (c) 2014-2018 Google, Inc.
+Copyright (c) 2002 NVIDIA Corporation
+Copyright (c) 2002-2010 The ANGLE Project
+Copyright (c) 2014-2019 The Khronos Group Inc.</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: BundledGlslang_Spirv
+CMake exported target name: Qt6::BundledGlslang_Spirv
+Contained in CMake package: Qt6BundledGlslang_Spirv
+    Information extracted from:
+     /src_dir/qtshadertools/src/3rdparty/glslang/qt_attribution.json
+    Entry index: 0
+    Id: glslang
+    Name: glslang
+    Description: An OpenGL and OpenGL ES shader front end and validator.
+    Qt usage: Compile GLSL to SPIR-V.
+    License: BSD 3-Clause "New" or "Revised" License, and MIT Khronos - old variant, and Apache License 2.0, and GNU General Public License v3.0 or later with Bison exception 2.2, and AML glslang variant License
+    License file: LICENSE.txt
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtshadertools:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: 4daddb66ac71006ea005abd3c3724fb8612b26fc
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Spirv DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
+Relationship: SPDXRef-Package-qtshadertools CONTAINS SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Spirv
+
+FileName: ./lib/Qt6BundledGlslang_Spirv.lib
+SPDXID: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Spirv
+FileType: BINARY
+FileChecksum: SHA1: e4e26d78c9128b4e7d21504a80bc7572618d8a7f
+LicenseConcluded: BSD-3-Clause AND LicenseRef-MIT-Khronos-old AND Apache-2.0 AND GPL-3.0-or-later WITH Bison-exception-2.2 AND AML-glslang
+FileCopyrightText: <text>Copyright (c) 2017, 2019 ARM Limited
+Copyright (c) 2002-2005 3 Dlabs Inc. Ltd.
+Copyright (c) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+Copyright (c) 2014-2018 Google, Inc.
+Copyright (c) 2002 NVIDIA Corporation
+Copyright (c) 2002-2010 The ANGLE Project
+Copyright (c) 2014-2019 The Khronos Group Inc.</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Spirv CONTAINS SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Spirv
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Spirv GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/SPIRV/GlslangToSpv.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Spirv GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/SPIRV/InReadableOrder.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Spirv GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/SPIRV/Logger.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Spirv GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/SPIRV/SPVRemapper.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Spirv GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/SPIRV/SpvBuilder.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Spirv GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/SPIRV/SpvPostProcess.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Spirv GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/SPIRV/SpvTools.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Spirv GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/SPIRV/disassemble.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Spirv GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/SPIRV/doc.cpp
+
+PackageName: BundledGlslang_Osdependent
+SPDXID: SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Osdependent
+PackageDownloadLocation: https://github.com/KhronosGroup/glslang
+PackageVersion: 15.1.0
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: BSD-3-Clause AND LicenseRef-MIT-Khronos-old AND Apache-2.0 AND GPL-3.0-or-later WITH Bison-exception-2.2 AND AML-glslang
+PackageLicenseDeclared: NOASSERTION
+ExternalRef: PACKAGE-MANAGER purl pkg:github/KhronosGroup/glslang@15.1.0
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtshadertools?library_name=BundledGlslang_Osdependent#src/glslang
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtshadertools-BundledGlslang_Osdependent?vcs_url=https://code.qt.io/qt/qtshadertools.git&library_name=BundledGlslang_Osdependent#src/glslang
+PackageCopyrightText: <text>Copyright (c) 2017, 2019 ARM Limited
+Copyright (c) 2002-2005 3 Dlabs Inc. Ltd.
+Copyright (c) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+Copyright (c) 2014-2018 Google, Inc.
+Copyright (c) 2002 NVIDIA Corporation
+Copyright (c) 2002-2010 The ANGLE Project
+Copyright (c) 2014-2019 The Khronos Group Inc.</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: BundledGlslang_Osdependent
+CMake exported target name: Qt6::BundledGlslang_Osdependent
+Contained in CMake package: Qt6BundledGlslang_Osdependent
+    Information extracted from:
+     /src_dir/qtshadertools/src/3rdparty/glslang/qt_attribution.json
+    Entry index: 0
+    Id: glslang
+    Name: glslang
+    Description: An OpenGL and OpenGL ES shader front end and validator.
+    Qt usage: Compile GLSL to SPIR-V.
+    License: BSD 3-Clause "New" or "Revised" License, and MIT Khronos - old variant, and Apache License 2.0, and GNU General Public License v3.0 or later with Bison exception 2.2, and AML glslang variant License
+    License file: LICENSE.txt
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtshadertools:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: a53f3110c00a773b7d60a608f3ddff22fcb03ff9
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Osdependent DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
+Relationship: SPDXRef-Package-qtshadertools CONTAINS SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Osdependent
+
+FileName: ./lib/Qt6BundledGlslang_Osdependent.lib
+SPDXID: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Osdependent
+FileType: BINARY
+FileChecksum: SHA1: 556f1bbc88473aa9b3837efcabe92f4eb78e47e8
+LicenseConcluded: BSD-3-Clause AND LicenseRef-MIT-Khronos-old AND Apache-2.0 AND GPL-3.0-or-later WITH Bison-exception-2.2 AND AML-glslang
+FileCopyrightText: <text>Copyright (c) 2017, 2019 ARM Limited
+Copyright (c) 2002-2005 3 Dlabs Inc. Ltd.
+Copyright (c) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+Copyright (c) 2014-2018 Google, Inc.
+Copyright (c) 2002 NVIDIA Corporation
+Copyright (c) 2002-2010 The ANGLE Project
+Copyright (c) 2014-2019 The Khronos Group Inc.</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Osdependent CONTAINS SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Osdependent
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Osdependent GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/OSDependent/Windows/ossource.cpp
+
+PackageName: BundledGlslang_Glslang
+SPDXID: SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Glslang
+PackageDownloadLocation: https://github.com/KhronosGroup/glslang
+PackageVersion: 15.1.0
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: BSD-3-Clause AND LicenseRef-MIT-Khronos-old AND Apache-2.0 AND GPL-3.0-or-later WITH Bison-exception-2.2 AND AML-glslang
+PackageLicenseDeclared: NOASSERTION
+ExternalRef: PACKAGE-MANAGER purl pkg:github/KhronosGroup/glslang@15.1.0
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtshadertools?library_name=BundledGlslang_Glslang#src/glslang
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtshadertools-BundledGlslang_Glslang?vcs_url=https://code.qt.io/qt/qtshadertools.git&library_name=BundledGlslang_Glslang#src/glslang
+PackageCopyrightText: <text>Copyright (c) 2017, 2019 ARM Limited
+Copyright (c) 2002-2005 3 Dlabs Inc. Ltd.
+Copyright (c) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+Copyright (c) 2014-2018 Google, Inc.
+Copyright (c) 2002 NVIDIA Corporation
+Copyright (c) 2002-2010 The ANGLE Project
+Copyright (c) 2014-2019 The Khronos Group Inc.</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: BundledGlslang_Glslang
+CMake exported target name: Qt6::BundledGlslang_Glslang
+Contained in CMake package: Qt6BundledGlslang_Glslang
+    Information extracted from:
+     /src_dir/qtshadertools/src/3rdparty/glslang/qt_attribution.json
+    Entry index: 0
+    Id: glslang
+    Name: glslang
+    Description: An OpenGL and OpenGL ES shader front end and validator.
+    Qt usage: Compile GLSL to SPIR-V.
+    License: BSD 3-Clause "New" or "Revised" License, and MIT Khronos - old variant, and Apache License 2.0, and GNU General Public License v3.0 or later with Bison exception 2.2, and AML glslang variant License
+    License file: LICENSE.txt
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtshadertools:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: 58fdb581d6d9910e61fd7eb98c394aa04c9d429a
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Glslang DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
+Relationship: SPDXRef-Package-qtshadertools CONTAINS SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Glslang
+
+FileName: ./lib/Qt6BundledGlslang_Glslang.lib
+SPDXID: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang
+FileType: BINARY
+FileChecksum: SHA1: a1454c1134f65a7f067e1ebe33d5d9793dae1375
+LicenseConcluded: BSD-3-Clause AND LicenseRef-MIT-Khronos-old AND Apache-2.0 AND GPL-3.0-or-later WITH Bison-exception-2.2 AND AML-glslang
+FileCopyrightText: <text>Copyright (c) 2017, 2019 ARM Limited
+Copyright (c) 2002-2005 3 Dlabs Inc. Ltd.
+Copyright (c) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+Copyright (c) 2014-2018 Google, Inc.
+Copyright (c) 2002 NVIDIA Corporation
+Copyright (c) 2002-2010 The ANGLE Project
+Copyright (c) 2014-2019 The Khronos Group Inc.</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Glslang CONTAINS SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/GenericCodeGen/CodeGen.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/GenericCodeGen/Link.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/Constant.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/InfoSink.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/Initialize.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/IntermTraverse.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/Intermediate.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/ParseContextBase.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/ParseHelper.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/PoolAlloc.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/RemoveTree.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/Scan.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/ShaderLang.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/SpirvIntrinsics.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/SymbolTable.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/Versions.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/attribute.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/glslang_tab.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/intermOut.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/iomapper.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/limits.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/linkValidate.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/parseConst.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/preprocessor/Pp.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/preprocessor/PpAtom.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/preprocessor/PpContext.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/preprocessor/PpScanner.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/preprocessor/PpTokens.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/propagateNoContraction.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/MachineIndependent/reflection.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/glslang/glslang/ResourceLimits/ResourceLimits.cpp
+
+PackageName: BundledSpirv_Cross
+SPDXID: SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledSpirv-Cross
+PackageDownloadLocation: https://github.com/KhronosGroup/SPIRV-Cross
+PackageVersion: ebe2aa0cd80f5eb5cd8a605da604cacf72205f3b
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: Apache-2.0 AND LicenseRef-MIT-Khronos-old
+PackageLicenseDeclared: NOASSERTION
+ExternalRef: PACKAGE-MANAGER purl pkg:github/KhronosGroup/SPIRV-Cross@ebe2aa0cd80f5eb5cd8a605da604cacf72205f3b
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtshadertools?library_name=BundledSpirv_Cross#src/SPIRV-Cross
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtshadertools-BundledSpirv_Cross?vcs_url=https://code.qt.io/qt/qtshadertools.git&library_name=BundledSpirv_Cross#src/SPIRV-Cross
+PackageCopyrightText: <text>Copyright 2015-2020 Arm Limited
+Copyright (c) 2014-2019 The Khronos Group Inc.
+Copyright 2019-2020 Hans-Kristian Arntzen
+Copyright 2016-2020 Robert Konrad
+Copyright 2016-2020 The Brenwill Workshop Ltd.
+Copyright 2018-2020 Bradley Austin Davis
+</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: BundledSpirv_Cross
+CMake exported target name: Qt6::BundledSpirv_Cross
+Contained in CMake package: Qt6BundledSpirv_Cross
+    Information extracted from:
+     /src_dir/qtshadertools/src/3rdparty/SPIRV-Cross/qt_attribution.json
+    Entry index: 0
+    Id: spirvcross
+    Name: SPIRV-Cross
+    Description: A practical tool and library for performing reflection on SPIR-V and disassembling SPIR-V back to high level languages.
+    Qt usage: Shader code generation.
+    License: Apache License 2.0 and MIT Khronos - old variant
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtshadertools:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: 917d202b5b23b3a0ba33afe512fcc25fdae9e09e
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledSpirv-Cross DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
+Relationship: SPDXRef-Package-qtshadertools CONTAINS SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledSpirv-Cross
+
+FileName: ./lib/Qt6BundledSpirv_Cross.lib
+SPDXID: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledSpirv-Cross
+FileType: BINARY
+FileChecksum: SHA1: 8836c71e174d78cbfddcc11a89c34acdc34170a9
+LicenseConcluded: Apache-2.0 AND LicenseRef-MIT-Khronos-old
+FileCopyrightText: <text>Copyright 2015-2020 Arm Limited
+Copyright (c) 2014-2019 The Khronos Group Inc.
+Copyright 2019-2020 Hans-Kristian Arntzen
+Copyright 2016-2020 Robert Konrad
+Copyright 2016-2020 The Brenwill Workshop Ltd.
+Copyright 2018-2020 Bradley Austin Davis
+</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledSpirv-Cross CONTAINS SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledSpirv-Cross
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledSpirv-Cross GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/SPIRV-Cross/spirv_cfg.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledSpirv-Cross GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/SPIRV-Cross/spirv_cpp.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledSpirv-Cross GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/SPIRV-Cross/spirv_cross.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledSpirv-Cross GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/SPIRV-Cross/spirv_cross_c.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledSpirv-Cross GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/SPIRV-Cross/spirv_cross_parsed_ir.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledSpirv-Cross GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/SPIRV-Cross/spirv_cross_util.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledSpirv-Cross GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/SPIRV-Cross/spirv_glsl.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledSpirv-Cross GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/SPIRV-Cross/spirv_hlsl.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledSpirv-Cross GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/SPIRV-Cross/spirv_msl.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledSpirv-Cross GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/SPIRV-Cross/spirv_parser.cpp
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledSpirv-Cross GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/3rdparty/SPIRV-Cross/spirv_reflect.cpp
+
+PackageName: ShaderTools
+SPDXID: SPDXRef-Package-qtshadertools-qt-module-ShaderTools
+PackageDownloadLocation: git://code.qt.io/qt/qtshadertools.git
+PackageVersion: 6.10.0
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+PackageLicenseDeclared: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtshadertools?library_name=ShaderTools#src/shadertools
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtshadertools-ShaderTools?vcs_url=https://code.qt.io/qt/qtshadertools.git&library_name=ShaderTools#src/shadertools
+PackageCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: ShaderTools
+CMake exported target name: Qt6::ShaderTools
+Contained in CMake package: Qt6ShaderTools
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtshadertools:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: 424f89a89f82e693afa7356334779225a3c2a341
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtshadertools-qt-module-ShaderTools DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
+Relationship: SPDXRef-Package-qtshadertools-qt-module-ShaderTools DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
+Relationship: SPDXRef-Package-qtshadertools-qt-module-ShaderTools DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
+Relationship: SPDXRef-Package-qtshadertools-qt-module-ShaderTools DEPENDS_ON SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledSpirv-Cross
+Relationship: SPDXRef-Package-qtshadertools-qt-module-ShaderTools DEPENDS_ON SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Glslang
+Relationship: SPDXRef-Package-qtshadertools-qt-module-ShaderTools DEPENDS_ON SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Spirv
+Relationship: SPDXRef-Package-qtshadertools-qt-module-ShaderTools DEPENDS_ON SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Osdependent
+Relationship: SPDXRef-Package-qtshadertools CONTAINS SPDXRef-Package-qtshadertools-qt-module-ShaderTools
+
+FileName: ./lib/Qt6ShaderTools.lib
+SPDXID: SPDXRef-PackagedFile-qt-module-ShaderTools
+FileType: BINARY
+FileChecksum: SHA1: 166f292b04eac98c155174390f399bdb5f2fa364
+LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtshadertools-qt-module-ShaderTools CONTAINS SPDXRef-PackagedFile-qt-module-ShaderTools
+Relationship: SPDXRef-PackagedFile-qt-module-ShaderTools GENERATED_FROM NOASSERTION
+RelationshipComment: D:/Github/qt-6.10.0/static/qtbase/include/QtShaderTools/qtshadertoolsexports.h
+Relationship: SPDXRef-PackagedFile-qt-module-ShaderTools GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/shadertools/qshaderbaker.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-ShaderTools GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/shadertools/qshaderbaker.h
+Relationship: SPDXRef-PackagedFile-qt-module-ShaderTools GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/shadertools/qshaderrewriter.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-ShaderTools GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/shadertools/qshaderrewriter_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-ShaderTools GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/shadertools/qspirvcompiler.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-ShaderTools GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/shadertools/qspirvcompiler_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-ShaderTools GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/shadertools/qspirvshader.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-ShaderTools GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/shadertools/qspirvshader_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-ShaderTools GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/shadertools/qspirvshaderremap.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-ShaderTools GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/shadertools/qspirvshaderremap_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-ShaderTools GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/shadertools/qtshadertoolsglobal.h
+Relationship: SPDXRef-PackagedFile-qt-module-ShaderTools GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/src/shadertools/qtshadertoolsglobal_p.h
+
+PackageName: qsb
+SPDXID: SPDXRef-Package-qtshadertools-qt-tool-qsb
+PackageDownloadLocation: git://code.qt.io/qt/qtshadertools.git
+PackageVersion: 6.10.0
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+PackageLicenseDeclared: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtshadertools?library_name=qsb#tools/qsb
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtshadertools-qsb?vcs_url=https://code.qt.io/qt/qtshadertools.git&library_name=qsb#tools/qsb
+PackageCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+PrimaryPackagePurpose: APPLICATION
+PackageComment: <text>
+CMake target name: qsb
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtshadertools:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: dbe0191ee3ca5f23b5750694970202f8920d2092
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtshadertools-qt-tool-qsb DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
+Relationship: SPDXRef-Package-qtshadertools-qt-tool-qsb DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
+Relationship: SPDXRef-Package-qtshadertools-qt-tool-qsb DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformCommonInternal
+Relationship: SPDXRef-Package-qtshadertools-qt-tool-qsb DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
+Relationship: SPDXRef-Package-qtshadertools-qt-tool-qsb DEPENDS_ON SPDXRef-Package-qtshadertools-qt-module-ShaderTools
+Relationship: SPDXRef-Package-qtshadertools CONTAINS SPDXRef-Package-qtshadertools-qt-tool-qsb
+
+FileName: ./bin/qsb.exe
+SPDXID: SPDXRef-PackagedFile-qt-tool-qsb
+FileType: BINARY
+FileChecksum: SHA1: d4f805b2aafb52aa1e491285d4a28fcb625bc25b
+LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
+FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtshadertools-qt-tool-qsb CONTAINS SPDXRef-PackagedFile-qt-tool-qsb
+Relationship: SPDXRef-PackagedFile-qt-tool-qsb GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/tools/qsb/D:/Github/qt-6.10.0/static/qtshadertools/tools/qsb/qsb_resource.rc
+Relationship: SPDXRef-PackagedFile-qt-tool-qsb GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtshadertools/tools/qsb/qsb.cpp
+Relationship: SPDXRef-PackagedFile-qt-tool-qsb GENERATED_FROM NOASSERTION
+RelationshipComment: /build_dir/qtshadertools/tools/qsb/qsb_longpath.manifest
+
+LicenseID: LicenseRef-MIT-Khronos-old
+ExtractedText: <text>Copyright (c) 2014-2020 The Khronos Group Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and/or associated documentation files (the "Materials"),
+to deal in the Materials without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Materials, and to permit persons to whom the
+Materials are furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Materials.
+
+MODIFICATIONS TO THIS FILE MAY MEAN IT NO LONGER ACCURATELY REFLECTS KHRONOS
+STANDARDS. THE UNMODIFIED, NORMATIVE VERSIONS OF KHRONOS SPECIFICATIONS AND
+HEADER INFORMATION ARE LOCATED AT https://www.khronos.org/registry/
+
+THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM,OUT OF OR IN CONNECTION WITH THE MATERIALS OR THE USE OR OTHER DEALINGS
+IN THE MATERIALS.
+</text>
+
+LicenseID: LicenseRef-Qt-Commercial
+ExtractedText: <text>Licensees holding valid commercial Qt licenses may use this software in
+accordance with the the terms contained in a written agreement between
+you and The Qt Company. Alternatively, the terms and conditions that were
+accepted by the licensee when buying and/or downloading the
+software do apply.
+
+For the latest licensing terms and conditions, see https://www.qt.io/terms-conditions.
+For further information use the contact form at https://www.qt.io/contact-us.
+</text>

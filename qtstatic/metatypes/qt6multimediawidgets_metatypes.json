@@ -1,0 +1,253 @@
+[
+    {
+        "classes": [
+            {
+                "className": "QGraphicsVideoItem",
+                "lineNumber": 17,
+                "methods": [
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "isConst": true,
+                        "lineNumber": 29,
+                        "name": "videoSink",
+                        "returnType": "QVideoSink*"
+                    }
+                ],
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 20,
+                        "name": "aspectRatioMode",
+                        "read": "aspectRatioMode",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "Qt::AspectRatioMode",
+                        "user": false,
+                        "write": "setAspectRatioMode"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 21,
+                        "name": "offset",
+                        "read": "offset",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QPointF",
+                        "user": false,
+                        "write": "setOffset"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 22,
+                        "name": "size",
+                        "read": "size",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QSizeF",
+                        "user": false,
+                        "write": "setSize"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 23,
+                        "name": "nativeSize",
+                        "notify": "nativeSizeChanged",
+                        "read": "nativeSize",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QSizeF",
+                        "user": false
+                    },
+                    {
+                        "constant": true,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "lineNumber": 24,
+                        "name": "videoSink",
+                        "read": "videoSink",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QVideoSink*",
+                        "user": false
+                    }
+                ],
+                "qualifiedClassName": "QGraphicsVideoItem",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "size",
+                                "type": "QSizeF"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 54,
+                        "name": "nativeSizeChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "type": "QVideoFrame"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 64,
+                        "name": "_q_present",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QGraphicsObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qgraphicsvideoitem.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QVideoWidget",
+                "lineNumber": 16,
+                "methods": [
+                    {
+                        "access": "public",
+                        "index": 4,
+                        "isConst": true,
+                        "lineNumber": 26,
+                        "name": "videoSink",
+                        "returnType": "QVideoSink*"
+                    }
+                ],
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 19,
+                        "name": "fullScreen",
+                        "notify": "fullScreenChanged",
+                        "read": "isFullScreen",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "setFullScreen"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 20,
+                        "name": "aspectRatioMode",
+                        "notify": "aspectRatioModeChanged",
+                        "read": "aspectRatioMode",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "Qt::AspectRatioMode",
+                        "user": false,
+                        "write": "setAspectRatioMode"
+                    }
+                ],
+                "qualifiedClassName": "QVideoWidget",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "fullScreen",
+                                "type": "bool"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 41,
+                        "name": "fullScreenChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "mode",
+                                "type": "Qt::AspectRatioMode"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 42,
+                        "name": "aspectRatioModeChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "fullScreen",
+                                "type": "bool"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 37,
+                        "name": "setFullScreen",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "mode",
+                                "type": "Qt::AspectRatioMode"
+                            }
+                        ],
+                        "index": 3,
+                        "lineNumber": 38,
+                        "name": "setAspectRatioMode",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QWidget"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qvideowidget.h",
+        "outputRevision": 69
+    }
+]

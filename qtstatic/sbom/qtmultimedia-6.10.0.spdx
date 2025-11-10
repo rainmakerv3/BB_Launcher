@@ -1,0 +1,1489 @@
+SPDXVersion: SPDX-2.3
+DataLicense: CC0-1.0
+SPDXID: SPDXRef-DOCUMENT
+DocumentName: qtmultimedia-6.10.0
+DocumentNamespace: https://qt.io/spdxdocs/qtmultimedia-6.10.0
+Creator: Organization: TheQtCompany
+Creator: Tool: Qt Build System
+CreatorComment: <text>This SPDX document was created from CMake 4.1.2, using the qt
+build system from https://code.qt.io/cgit/qt/qtbase.git/tree/cmake/QtPublicSbomHelpers.cmake</text>
+Created: 2025-11-10T08:43:40Z
+ExternalDocumentRef: DocumentRef-qtbase https://qt.io/spdxdocs/qtbase-6.10.0 SHA1: c6eca1494166c46f4b34a0715214d18be6f0d77f
+
+PackageName: MSVC
+SPDXID: SPDXRef-compiler
+PackageVersion: 19.44.35219.0
+PackageDownloadLocation: NOASSERTION
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+PackageSupplier: Organization: Anonymous
+FilesAnalyzed: false
+PackageSummary: <text>The compiler as identified by CMake, running on Windows (AMD64)</text>
+PrimaryPackagePurpose: APPLICATION
+Relationship: SPDXRef-compiler BUILD_DEPENDENCY_OF SPDXRef-Package-qtmultimedia
+RelationshipComment: <text>SPDXRef-Package-qtmultimedia is built by compiler MSVC version 19.44.35219.0</text>
+
+PackageName: qtmultimedia
+SPDXID: SPDXRef-Package-qtmultimedia
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtmultimedia@6.10.0
+PackageVersion: 6.10.0
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtmultimedia@6.10.0
+PackageSupplier: Organization: TheQtCompany
+PackageDownloadLocation: git://code.qt.io/qt/qtmultimedia.git
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: Copyright (C) The Qt Company Ltd. and other contributors.
+PackageHomePage: https://qt.io
+PackageComment: <text>Built by CMake 4.1.2 with Release configuration for Windows (AMD64)
+qtmultimedia was configured with:
+    qt6/configure -prefix D:\qtlibs -static -static-runtime -release -skip qt3d -skip qt5compat -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdeclarative -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qthttpserver -skip qtimageformats -skip qtlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtnetworkauth -skip qtopcua -skip qtpositioning -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwayland -skip qtwebchannel -skip qtwebengine -skip qtwebsockets -skip qtwebview -skip qtactiveqt
+</text>
+FilesAnalyzed: false
+BuiltDate: 2025-11-10T08:43:40Z
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-qtmultimedia
+
+PackageName: BundledTLSF_Attribution_tlfs
+SPDXID: SPDXRef-Package-qtmultimedia-qt-3rdparty-sources-BundledTLSF-Attribution-tlfs
+PackageDownloadLocation: https://github.com/mattconte/tlsf.git
+PackageVersion: v3.1
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: NOASSERTION
+ExternalRef: PACKAGE-MANAGER purl pkg:github.com/mattconte/tlsf@deff9ab509341f264addbd3c8ada533678591905
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtmultimedia?library_name=BundledTLSF_Attribution_tlfs#src/3rdparty/tlsf
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtmultimedia-BundledTLSF_Attribution_tlfs?vcs_url=https://code.qt.io/qt/qtmultimedia.git&library_name=BundledTLSF_Attribution_tlfs#src/3rdparty/tlsf
+PackageCopyrightText: <text>Copyright (c) 2006-2016, Matthew Conte</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: BundledTLSF_Attribution_tlfs
+    Information extracted from:
+     /src_dir/qtmultimedia/src/3rdparty/tlsf/qt_attribution.json
+    Entry index: 0
+    Id: tlfs
+    Name: Two-Level Segregated Fit
+    Description: O(1) arena allocator, suitable for use on real-time threads
+    Qt usage: Used in the QSoundEffect player.
+    License: BSD 3-Clause "New" or "Revised" License
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
+FilesAnalyzed: false
+Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia-qt-3rdparty-sources-BundledTLSF-Attribution-tlfs
+
+PackageName: BundledTLSF
+SPDXID: SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledTLSF
+PackageDownloadLocation: https://github.com/mattconte/tlsf.git
+PackageVersion: v3.1
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: NOASSERTION
+ExternalRef: PACKAGE-MANAGER purl pkg:github.com/mattconte/tlsf@deff9ab509341f264addbd3c8ada533678591905
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtmultimedia?library_name=BundledTLSF#src/3rdparty/tlsf
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtmultimedia-BundledTLSF?vcs_url=https://code.qt.io/qt/qtmultimedia.git&library_name=BundledTLSF#src/3rdparty/tlsf
+PackageCopyrightText: <text>Copyright (c) 2006-2016, Matthew Conte</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: BundledTLSF
+CMake exported target name: Qt6::BundledTLSF
+Contained in CMake package: Qt6BundledTLSF
+    Information extracted from:
+     /src_dir/qtmultimedia/src/3rdparty/tlsf/qt_attribution.json
+    Entry index: 0
+    Id: tlfs
+    Name: Two-Level Segregated Fit
+    Description: O(1) arena allocator, suitable for use on real-time threads
+    Qt usage: Used in the QSoundEffect player.
+    License: BSD 3-Clause "New" or "Revised" License
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: c6a6a1ab6e93b469b9acd1b19d0a8f3a66be39c7
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledTLSF DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
+Relationship: SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledTLSF DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
+Relationship: SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledTLSF DEPENDS_ON SPDXRef-Package-qtmultimedia-qt-3rdparty-sources-BundledTLSF-Attribution-tlfs
+Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledTLSF
+
+FileName: ./lib/Qt6BundledTLSF.lib
+SPDXID: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledTLSF
+FileType: BINARY
+FileChecksum: SHA1: ae3ab1ae54c7fa198fc1e72f3ce0a64eab618cdc
+LicenseConcluded: BSD-3-Clause
+FileCopyrightText: <text>Copyright (c) 2006-2016, Matthew Conte</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledTLSF CONTAINS SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledTLSF
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledTLSF GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/tlsf/tlsf.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledTLSF GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/tlsf/tlsf.cpp
+
+PackageName: Multimedia_Attribution_dr_libs
+SPDXID: SPDXRef-Package-qtmultimedia-qt-3rdparty-sources-Multimedia-Attribution-dr-libs
+PackageDownloadLocation: https://github.com/mackron/dr_libs
+PackageVersion: 0.13.17
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: MIT-0
+PackageLicenseDeclared: NOASSERTION
+ExternalRef: PACKAGE-MANAGER purl pkg:github/mackron/dr_libs@wav-0.13.17
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtmultimedia?library_name=Multimedia_Attribution_dr_libs#src/multimedia
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtmultimedia-Multimedia_Attribution_dr_libs?vcs_url=https://code.qt.io/qt/qtmultimedia.git&library_name=Multimedia_Attribution_dr_libs#src/multimedia
+PackageCopyrightText: NOASSERTION
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: Multimedia_Attribution_dr_libs
+    Information extracted from:
+     /src_dir/qtmultimedia/src/3rdparty/dr_libs/qt_attribution.json
+    Entry index: 0
+    Id: dr_libs
+    Name: DR Libs
+    Description: Public domain, single file audio decoding libraries for C and C++
+    Qt usage: Wave file decoder for QSoundEffect
+    License: MIT No Attribution
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
+FilesAnalyzed: false
+Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia-qt-3rdparty-sources-Multimedia-Attribution-dr-libs
+
+PackageName: Multimedia
+SPDXID: SPDXRef-Package-qtmultimedia-qt-module-Multimedia
+PackageDownloadLocation: git://code.qt.io/qt/qtmultimedia.git
+PackageVersion: 6.10.0
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+PackageLicenseDeclared: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtmultimedia?library_name=Multimedia#src/multimedia
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtmultimedia-Multimedia?vcs_url=https://code.qt.io/qt/qtmultimedia.git&library_name=Multimedia#src/multimedia
+PackageCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: Multimedia
+CMake exported target name: Qt6::Multimedia
+Contained in CMake package: Qt6Multimedia
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: abded3579ba47ba2dc1c7bc50f7990a1c3b4e032
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-Multimedia DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-Multimedia DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-Multimedia DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Concurrent
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-Multimedia DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-Multimedia DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Network
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-Multimedia DEPENDS_ON SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledTLSF
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-Multimedia DEPENDS_ON SPDXRef-Package-qtmultimedia-qt-3rdparty-sources-Multimedia-Attribution-dr-libs
+Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia-qt-module-Multimedia
+
+FileName: ./lib/Qt6Multimedia.lib
+SPDXID: SPDXRef-PackagedFile-qt-module-Multimedia
+FileType: BINARY
+FileChecksum: SHA1: a0ab0eca79d7179bb569791efeab8a44bcc92433
+LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-Multimedia CONTAINS SPDXRef-PackagedFile-qt-module-Multimedia
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: D:/Github/qt-6.10.0/static/qtbase/include/QtMultimedia/qtmultimediaexports.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qautoresetevent_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/q_pmr_emulation_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qmemory_resource_tlsf_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qmemory_resource_tlsf.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qtaudio.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qtaudio.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudio.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiobuffer.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiobuffer.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiobuffer_support_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiodecoder.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiodecoder.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiodecoder_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiodevice.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiodevice.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiodevice_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudioinput.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudioinput.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiobufferinput.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiobufferinput.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiobufferoutput.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiobufferoutput.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiobufferoutput_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiooutput.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiooutput.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudioformat.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudioformat.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudioformat_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiohelpers.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiohelpers_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudioringbuffer_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiosource.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiosource.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiosink.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiosink.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiosystem.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiosystem_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiosystem_platform_stream_support.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudiosystem_platform_stream_support_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudio_alignment_support_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudio_platform_implementation_support_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudio_qiodevice_support_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudio_qspan_support_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudio_rtsan_support_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qsamplecache_p.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qsamplecache_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qsoundeffect.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qsoundeffect.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qsoundeffectwithplayer.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qsoundeffectwithplayer_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qsoundeffectsynchronous.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qsoundeffectsynchronous_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qsoundeffect_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qrtaudioengine.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qrtaudioengine_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qwavedecoder.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qwavedecoder.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/camera/qcamera.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/camera/qcamera.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/camera/qcamera_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/camera/qcameradevice.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/camera/qcameradevice.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/camera/qcameradevice_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/camera/qimagecapture.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/camera/qimagecapture.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/compat/removed_api.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qgstreamer_platformspecificinterface.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qgstreamer_platformspecificinterface_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformaudiodecoder.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformaudiodecoder_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformaudioinput_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformaudiooutput_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformaudioresampler_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformcamera.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformcamera_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformcapturablewindows_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformimagecapture.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformimagecapture_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformmediacapture.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformmediacapture_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformaudiodevices.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformaudiodevices_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformmediaformatinfo.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformmediaformatinfo_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformmediaintegration.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformmediaintegration_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformmediaplayer.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformmediaplayer_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformmediaplugin.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformmediaplugin_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformmediarecorder.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformmediarecorder_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformsurfacecapture.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformsurfacecapture_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformvideodevices.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformvideodevices_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformvideosink.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformvideosink_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformvideosource.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformvideosource_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformvideoframeinput.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformvideoframeinput_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformaudiobufferinput.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/platform/qplatformaudiobufferinput_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/playback/qmediaplayer.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/playback/qmediaplayer.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/playback/qmediaplayer_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/playback/qplaybackoptions.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/playback/qplaybackoptions.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmultimedia_enum_to_string_converter_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmediadevices.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmediadevices.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmediaformat.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmediaformat.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmediametadata.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmediametadata.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmediastoragelocation.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmediastoragelocation_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmediatimerange.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmediatimerange.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmultimediautils.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmultimediautils_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmultimedia_ranges_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qvideotransformation.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qvideotransformation_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmediaframeinput.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmediaframeinput_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmultimedia_assume_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qtmultimediaglobal.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qtmultimediaglobal_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qerrorinfo_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qcachedvalue_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qmediainputencoderinterface_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qrhivaluemapper.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qrhivaluemapper_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qthreadlocalrhi.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qthreadlocalrhi_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/recording/qmediacapturesession.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/recording/qmediacapturesession.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/recording/qmediacapturesession_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/recording/qmediarecorder.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/recording/qmediarecorder.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/recording/qmediarecorder_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/recording/qscreencapture.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/recording/qscreencapture.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/recording/qwindowcapture.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/recording/qwindowcapture.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/recording/qcapturablewindow.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/recording/qcapturablewindow.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/recording/qcapturablewindow_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/recording/qvideoframeinput.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/recording/qvideoframeinput.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qsharedhandle_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/qtaggedtime_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qabstractvideobuffer.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qabstractvideobuffer.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qhwvideobuffer.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qhwvideobuffer_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qmemoryvideobuffer.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qmemoryvideobuffer_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qimagevideobuffer.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qimagevideobuffer_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideoframe.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideoframe.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideoframe_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideosink.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideosink.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideotexturehelper.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideotexturehelper_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideoframetexturefromsource.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideoframetexturefromsource_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideoframetexturepool.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideoframetexturepool_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideoframeconversionhelper.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideoframeconversionhelper_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideooutputorientationhandler.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideooutputorientationhandler_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideoframeconverter.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideoframeconverter_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideoframeformat.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideoframeformat.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideowindow.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideowindow_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qtvideo.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qtvideo.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/shaders/qrhitextureformats_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /build_dir/qtmultimedia/src/multimedia/qtmultimedia-config.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /build_dir/qtmultimedia/src/multimedia/qtmultimedia-config_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qaudio_dr_wav.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/dr_libs/dr_wav.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideoframeconversionhelper_sse2.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideoframeconversionhelper_ssse3.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/video/qvideoframeconversionhelper_avx2.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qautoresetevent_win32_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/audio/qautoresetevent_win32.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qcominitializer.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qcominitializer_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qcomtaskresource_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindows_propertystore.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindows_propertystore_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindows_wasapi_warmup_client.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindows_wasapi_warmup_client_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsaudiodevice.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsaudiodevice_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsaudiodevices.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsaudiodevices_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsaudiosink.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsaudiosink_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsaudiosource.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsaudiosource_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsaudioutils.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsaudioutils_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsmediafoundation.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsmediafoundation_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsmultimediautils.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsmultimediautils_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsresampler.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsresampler_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsvideodevices.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwindowsvideodevices_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwmf_support.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/windows/qwmf_support_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/shaders/texturecomponent.glsl
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/shaders/colortransfer.glsl
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/shaders/colorconvert.glsl
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/shaders/uniformbuffer.glsl
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimedia/shaders/hdrtonemapper.glsl
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /build_dir/qtmultimedia/src/multimedia/.qt/rcc/qrc_qtmultimedia_shaders.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /build_dir/qtmultimedia/src/multimedia/.qt/rcc/qrc_qtmultimedia_shaders_linear.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /build_dir/qtmultimedia/src/multimedia/.qt/rcc/qrc_qtmultimedia_shaders_gl_macos.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-Multimedia GENERATED_FROM NOASSERTION
+RelationshipComment: /build_dir/qtmultimedia/src/multimedia/.qt/rcc/qrc_qtmultimedia_shaders_gl_macos_linear.cpp
+
+PackageName: BundledResonanceAudio_Attribution_pffft
+SPDXID: SPDXRef-Package-qtmultimedia-qt-3rdparty-sources-BundledResonanceAudio-Attribution-pffft
+PackageDownloadLocation: https://bitbucket.org/jpommier/pffft/get/02fe7715a5bf.zip
+PackageVersion: 02fe7715a5bf8bfd914681c53429600f94e0f536
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: BSD-3-Clause
+PackageLicenseDeclared: NOASSERTION
+ExternalRef: PACKAGE-MANAGER purl pkg:github/resonance-audio/resonance-audio@02fe7715a5bf8bfd914681c53429600f94e0f536
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtmultimedia?library_name=BundledResonanceAudio_Attribution_pffft#src/resonance-audio
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtmultimedia-BundledResonanceAudio_Attribution_pffft?vcs_url=https://code.qt.io/qt/qtmultimedia.git&library_name=BundledResonanceAudio_Attribution_pffft#src/resonance-audio
+PackageCopyrightText: <text>Copyright (c) 2013 Julien Pommier <pommier@modartt.com>
+Copyright (c) 2004 the University Corporation for Atmospheric Research 'UCAR'
+</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: BundledResonanceAudio_Attribution_pffft
+    Information extracted from:
+     /src_dir/qtmultimedia/src/3rdparty/pffft/qt_attribution.json
+    Entry index: 0
+    Id: pffft
+    Name: pffft
+    Description: A pretty fast FFT.
+    Qt usage: Used to support spatial audio.
+    License: BSD 3-Clause "New" or "Revised" License
+    License file: LICENSE
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
+FilesAnalyzed: false
+Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia-qt-3rdparty-sources-BundledResonanceAudio-Attribution-pffft
+
+PackageName: BundledResonanceAudio_Attribution_eigen
+SPDXID: SPDXRef-Package-qtmultimedia-qt-3rdparty-sources-BundledResonanceAudio-Attribution-eigen
+PackageDownloadLocation: https://gitlab.com/libeigen/eigen/-/archive/3.4.0/eigen-3.4.0.tar.bz2
+PackageVersion: 3.4.0
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: MPL-2.0 AND BSD-3-Clause
+PackageLicenseDeclared: NOASSERTION
+ExternalRef: PACKAGE-MANAGER purl pkg:github/eigen-mirror/eigen@3.4.0
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtmultimedia?library_name=BundledResonanceAudio_Attribution_eigen#src/resonance-audio
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtmultimedia-BundledResonanceAudio_Attribution_eigen?vcs_url=https://code.qt.io/qt/qtmultimedia.git&library_name=BundledResonanceAudio_Attribution_eigen#src/resonance-audio
+PackageCopyrightText: <text>Copyright (c) 2012 Alexey Korepanov <kaikaikai@yandex.ru>
+Copyright (c) 2020 Antonio Sanchez <cantonios@google.com>
+Copyright (c) 2020 Arm Limited and Contributors
+Copyright (c) 2006-2011 Benoit Jacob <jacob.benoit.1@gmail.com>
+Copyright (c) 2014-2016 Benoit Steiner (benoit.steiner.goog@gmail.com)
+Copyright (c) 16 BfToF32Even (c) Packet4f
+Copyright (c) 16 BfToF32Odd (c) Packet4f
+Copyright (c) 2021 C. Antonio Sanchez <cantonios@google.com>
+Copyright (c) 2021 Chip Kerchner (chip.kerchner@ibm.com)
+Copyright (c) 2009 Claire Maurice
+Copyright (c) 2017 Codeplay Software Limited
+Copyright (c) 2016 Eugene Brevdo <ebrevdo@gmail.com>
+Copyright (c) 2020 Everton Constantino (everton.constantino@ibm.com)
+Copyright (c) 2016 Fabian Giesen
+Copyright (c) 2008-2019 Gael Guennebaud <gael.guennebaud@inria.fr>
+Copyright (c) 2013 Gauthier Brun <brun.gauthier@gmail.com>
+Copyright (c) 2010-2013 Hauke Heibel <hauke.heibel@gmail.com>
+Copyright (c) 2009 Hauke Heibel <hauke.heibel@gmail.com>
+Copyright (c) 2001, 2010, 2011 Intel Corporation
+Copyright (c) 2013 Jean Ceccato <jean.ceccato@ensimag.fr>
+Copyright (c) 2010-2012 Jitse Niesen <jitse@maths.leeds.ac.uk>
+Copyright (c) 2013 Jitse Niesen <jitse@maths.leeds.ac.uk>
+Copyright (c) 2007 Julien Pommier
+Copyright (c) 2009 Keir Mierle <mierle@gmail.com>
+Copyright (c) 2009 Kenneth Riddile <kfriddile@yahoo.com>
+Copyright (c) 2008-2016 Konstantinos Margaritis <markos@freevec.org>
+Copyright (c) 2009 Mathieu Gautier <mathieu.gautier@cea.fr>
+Copyright (c) 2007 Michael Olbrich <michael.olbrich@gmx.net>
+Copyright (c) 2021 NVIDIA CORPORATION.
+Copyright (c) 2013 Nicolas Carre <nicolas.carre@ensimag.fr>
+Copyright (c) 2014-2015 Open Source Robotics Foundation
+Copyright (c) 2013 Pavel Holoborodko <pavel@holoborodko.com>
+Copyright (c) 2014, 2016 Pedro Gonnet (pedro.gonnet@gmail.com)
+Copyright (c) 2013 Pierre Zoppitelli <pierre.zoppitelli@ensimag.fr>
+Copyright (c) 2016, 2018, 2019 Rasmus Munk Larsen (rmlarsen@google.com)
+Copyright (c) 2009 Ricard Marxer <email@ricardmarxer.com>
+Copyright (c) 2009 Rohit Garg <rpg.314@gmail.com>
+Copyright (c) 2017 The TensorFlow Authors
+Copyright (c) 2010 Thomas Capricelli <orzel@freehackers.org>
+Copyright (c) 2011 Timothy E. Holy tim.holy@gmail.com
+Copyright (c) 2016 Tobias Wood <tobias@spinicist.org.uk>
+Copyright (c) 2010 Vincent Lejeune
+Copyright (c) 2018 Wave Computing, Inc.
+Copyright (c) 2011-2014 Willow Garage, Inc.
+Copyright (c) 2014 yoco <peter.xiau@gmail.com>
+</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: BundledResonanceAudio_Attribution_eigen
+    Information extracted from:
+     /src_dir/qtmultimedia/src/3rdparty/eigen/qt_attribution.json
+    Entry index: 0
+    Id: eigen
+    Name: Eigen
+    Description: The Eigen C++ linear algebra library.
+    Qt usage: Used for mathematics to support spatial audio.
+    License: Mozilla Public License 2.0 and BSD 3-Clause "New" or "Revised" License
+    License file: LICENSE
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
+FilesAnalyzed: false
+Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia-qt-3rdparty-sources-BundledResonanceAudio-Attribution-eigen
+
+PackageName: BundledResonanceAudio
+SPDXID: SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledResonanceAudio
+PackageDownloadLocation: https://github.com/resonance-audio/resonance-audio/tree/e225aedb5ec76ca6a0fe7079c0b84dbcbb490553
+PackageVersion: e225aedb5ec76ca6a0fe7079c0b84dbcbb490553
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: Apache-2.0
+PackageLicenseDeclared: NOASSERTION
+ExternalRef: PACKAGE-MANAGER purl pkg:github/resonance-audio/resonance-audio@e225aedb5ec76ca6a0fe7079c0b84dbcbb490553
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtmultimedia?library_name=BundledResonanceAudio#src/resonance-audio
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtmultimedia-BundledResonanceAudio?vcs_url=https://code.qt.io/qt/qtmultimedia.git&library_name=BundledResonanceAudio#src/resonance-audio
+PackageCopyrightText: <text>Copyright (c) 2015, 2017, 2018 Google Inc.
+</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: BundledResonanceAudio
+CMake exported target name: Qt6::BundledResonanceAudio
+Contained in CMake package: Qt6BundledResonanceAudio
+    Information extracted from:
+     /src_dir/qtmultimedia/src/3rdparty/resonance-audio/qt_attribution.json
+    Entry index: 0
+    Id: resonance-audio
+    Name: Resonance Audio
+    Description: 3D audio support.
+    Qt usage: Used to implement spatial audio.
+    License: Apache License 2.0
+    License file: LICENSE
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: d00f2eee52bdd6446379d1f011e1acf99e9917af
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledResonanceAudio DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
+Relationship: SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledResonanceAudio DEPENDS_ON SPDXRef-Package-qtmultimedia-qt-3rdparty-sources-BundledResonanceAudio-Attribution-pffft
+Relationship: SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledResonanceAudio DEPENDS_ON SPDXRef-Package-qtmultimedia-qt-3rdparty-sources-BundledResonanceAudio-Attribution-eigen
+Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledResonanceAudio
+
+FileName: ./lib/Qt6BundledResonanceAudio.lib
+SPDXID: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio
+FileType: BINARY
+FileChecksum: SHA1: 02f5aa06bb351ca73be14b37c380480c849a8871
+LicenseConcluded: Apache-2.0
+FileCopyrightText: <text>Copyright (c) 2015, 2017, 2018 Google Inc.
+</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledResonanceAudio CONTAINS SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/platforms/common/utils.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/platforms/common/utils.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/ambisonics/ambisonic_binaural_decoder.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/ambisonics/ambisonic_binaural_decoder.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/ambisonics/ambisonic_codec.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/ambisonics/ambisonic_codec_impl.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/ambisonics/ambisonic_lookup_table.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/ambisonics/ambisonic_lookup_table.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/ambisonics/ambisonic_spread_coefficients.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/ambisonics/associated_legendre_polynomials_generator.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/ambisonics/associated_legendre_polynomials_generator.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/ambisonics/foa_rotator.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/ambisonics/foa_rotator.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/ambisonics/hoa_rotator.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/ambisonics/hoa_rotator.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/ambisonics/stereo_from_soundfield_converter.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/ambisonics/stereo_from_soundfield_converter.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/ambisonics/utils.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/api/binaural_surround_renderer.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/api/binaural_surround_renderer.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/api/resonance_audio_api.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/api/resonance_audio_api.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/aligned_allocator.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/audio_buffer.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/audio_buffer.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/channel_view.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/channel_view.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/constants_and_types.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/integral_types.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/logging.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/misc_math.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/misc_math.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/object_transform.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/simd_macros.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/simd_utils.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/simd_utils.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/source_parameters.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/spherical_angle.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/spherical_angle.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/base/unique_ptr_wrapper.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/config/global_config.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/config/source_config.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/config/source_config.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/biquad_filter.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/biquad_filter.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/channel_converter.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/channel_converter.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/circular_buffer.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/circular_buffer.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/delay_filter.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/delay_filter.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/distance_attenuation.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/distance_attenuation.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/fft_manager.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/fft_manager.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/filter_coefficient_generators.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/filter_coefficient_generators.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/fir_filter.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/fir_filter.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/gain.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/gain.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/gain_mixer.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/gain_mixer.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/gain_processor.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/gain_processor.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/mixer.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/mixer.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/mono_pole_filter.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/mono_pole_filter.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/multi_channel_iir.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/multi_channel_iir.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/near_field_processor.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/near_field_processor.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/occlusion_calculator.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/occlusion_calculator.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/partitioned_fft_filter.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/partitioned_fft_filter.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/reflection.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/reflections_processor.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/reflections_processor.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/resampler.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/resampler.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/reverb_onset_compensator.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/reverb_onset_compensator.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/reverb_onset_update_processor.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/reverb_onset_update_processor.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/sh_hrir_creator.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/sh_hrir_creator.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/shoe_box_room.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/shoe_box_room.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/spectral_reverb.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/spectral_reverb.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/spectral_reverb_constants_and_tables.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/stereo_panner.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/stereo_panner.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/utils.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/dsp/utils.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/ambisonic_binaural_decoder_node.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/ambisonic_binaural_decoder_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/ambisonic_mixing_encoder_node.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/ambisonic_mixing_encoder_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/binaural_surround_renderer_impl.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/binaural_surround_renderer_impl.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/buffered_source_node.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/buffered_source_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/foa_rotator_node.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/foa_rotator_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/gain_mixer_node.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/gain_mixer_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/gain_node.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/gain_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/graph_manager.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/graph_manager.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/graph_manager_config.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/hoa_rotator_node.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/hoa_rotator_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/mixer_node.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/mixer_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/mono_from_soundfield_node.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/mono_from_soundfield_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/near_field_effect_node.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/near_field_effect_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/occlusion_node.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/occlusion_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/reflections_node.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/reflections_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/resonance_audio_api_impl.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/resonance_audio_api_impl.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/reverb_node.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/reverb_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/source_graph_config.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/source_parameters_manager.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/source_parameters_manager.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/stereo_mixing_panner_node.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/stereo_mixing_panner_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/graph/system_settings.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/node/node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/node/processing_node.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/node/processing_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/node/publisher_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/node/sink_node.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/node/sink_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/node/source_node.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/node/source_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/node/subscriber_node.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/platforms/common/room_effects_utils.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/platforms/common/room_effects_utils.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/buffer_crossfader.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/buffer_crossfader.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/buffer_partitioner.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/buffer_partitioner.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/buffer_unpartitioner.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/buffer_unpartitioner.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/lockless_task_queue.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/lockless_task_queue.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/planar_interleaved_conversion.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/planar_interleaved_conversion.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/pseudoinverse.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/sample_type_conversion.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/sample_type_conversion.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/semi_lockless_fifo.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/sum_and_difference_processor.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/sum_and_difference_processor.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/threadsafe_fifo.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/wav.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/wav.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/wav_reader.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/resonance_audio/utils/wav_reader.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/pffft/pffft.c
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/pffft/pffft.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/third_party/SADIE_hrtf_database/generated/hrtf_assets.cc
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/3rdparty/resonance-audio/third_party/SADIE_hrtf_database/generated/hrtf_assets.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/resonance-audio/resonance_audio.h
+Relationship: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/resonance-audio/resonance_audio.cpp
+
+PackageName: SpatialAudio
+SPDXID: SPDXRef-Package-qtmultimedia-qt-module-SpatialAudio
+PackageDownloadLocation: git://code.qt.io/qt/qtmultimedia.git
+PackageVersion: 6.10.0
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+PackageLicenseDeclared: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtmultimedia?library_name=SpatialAudio#src/spatialaudio
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtmultimedia-SpatialAudio?vcs_url=https://code.qt.io/qt/qtmultimedia.git&library_name=SpatialAudio#src/spatialaudio
+PackageCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: SpatialAudio
+CMake exported target name: Qt6::SpatialAudio
+Contained in CMake package: Qt6SpatialAudio
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: e604f80748e26c56f31b0ca006773d00c411b6b8
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-SpatialAudio DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-SpatialAudio DEPENDS_ON SPDXRef-Package-qtmultimedia-qt-module-Multimedia
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-SpatialAudio DEPENDS_ON SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledResonanceAudio
+Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia-qt-module-SpatialAudio
+
+FileName: ./lib/Qt6SpatialAudio.lib
+SPDXID: SPDXRef-PackagedFile-qt-module-SpatialAudio
+FileType: BINARY
+FileChecksum: SHA1: ffdf2d9d355e5df3d9d0a2c6d989f034eb86ee89
+LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-SpatialAudio CONTAINS SPDXRef-PackagedFile-qt-module-SpatialAudio
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: D:/Github/qt-6.10.0/static/qtbase/include/QtSpatialAudio/qtspatialaudioexports.h
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qambisonicdecoder.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qambisonicdecoder_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qambisonicdecoderdata_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qaudioengine.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qaudioengine.h
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qaudioengine_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qaudiolistener.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qaudiolistener.h
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qaudioroom.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qaudioroom.h
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qaudioroom_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qspatialsound.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qspatialsound.h
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qspatialsound_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qambientsound.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qambientsound.h
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qambientsound_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qtspatialaudioglobal.h
+Relationship: SPDXRef-PackagedFile-qt-module-SpatialAudio GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/spatialaudio/qtspatialaudioglobal_p.h
+
+PackageName: MultimediaWidgets
+SPDXID: SPDXRef-Package-qtmultimedia-qt-module-MultimediaWidgets
+PackageDownloadLocation: git://code.qt.io/qt/qtmultimedia.git
+PackageVersion: 6.10.0
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+PackageLicenseDeclared: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtmultimedia?library_name=MultimediaWidgets#src/multimediawidgets
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtmultimedia-MultimediaWidgets?vcs_url=https://code.qt.io/qt/qtmultimedia.git&library_name=MultimediaWidgets#src/multimediawidgets
+PackageCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: MultimediaWidgets
+CMake exported target name: Qt6::MultimediaWidgets
+Contained in CMake package: Qt6MultimediaWidgets
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: f1ba4ca15eee7b5fb3724ecb83d29de8d5b46e29
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-MultimediaWidgets DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Widgets
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-MultimediaWidgets DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-MultimediaWidgets DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-MultimediaWidgets DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-MultimediaWidgets DEPENDS_ON SPDXRef-Package-qtmultimedia-qt-module-Multimedia
+Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia-qt-module-MultimediaWidgets
+
+FileName: ./lib/Qt6MultimediaWidgets.lib
+SPDXID: SPDXRef-PackagedFile-qt-module-MultimediaWidgets
+FileType: BINARY
+FileChecksum: SHA1: 8097f127c893389026be4e926cbeb04760eec167
+LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-MultimediaWidgets CONTAINS SPDXRef-PackagedFile-qt-module-MultimediaWidgets
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaWidgets GENERATED_FROM NOASSERTION
+RelationshipComment: D:/Github/qt-6.10.0/static/qtbase/include/QtMultimediaWidgets/qtmultimediawidgetsexports.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaWidgets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediawidgets/qtmultimediawidgetsglobal.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaWidgets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediawidgets/qvideowidget.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaWidgets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediawidgets/qvideowidget.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaWidgets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediawidgets/qvideowidget_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaWidgets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediawidgets/qgraphicsvideoitem.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaWidgets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediawidgets/qgraphicsvideoitem.h
+
+PackageName: QWindowsMediaPlugin
+SPDXID: SPDXRef-Package-qtmultimedia-qt-plugin-QWindowsMediaPlugin
+PackageDownloadLocation: git://code.qt.io/qt/qtmultimedia.git
+PackageVersion: 6.10.0
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+PackageLicenseDeclared: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtmultimedia?library_name=QWindowsMediaPlugin#src/plugins/multimedia/windows
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtmultimedia-QWindowsMediaPlugin?vcs_url=https://code.qt.io/qt/qtmultimedia.git&library_name=QWindowsMediaPlugin#src/plugins/multimedia/windows
+PackageCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: QWindowsMediaPlugin
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: d73fc856fedaabacb9ce272c04d41b768ac15d5b
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtmultimedia-qt-plugin-QWindowsMediaPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
+Relationship: SPDXRef-Package-qtmultimedia-qt-plugin-QWindowsMediaPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Concurrent
+Relationship: SPDXRef-Package-qtmultimedia-qt-plugin-QWindowsMediaPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformPluginInternal
+Relationship: SPDXRef-Package-qtmultimedia-qt-plugin-QWindowsMediaPlugin DEPENDS_ON SPDXRef-Package-qtmultimedia-qt-module-Multimedia
+Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia-qt-plugin-QWindowsMediaPlugin
+
+FileName: ./plugins/multimedia/windowsmediaplugin.lib
+SPDXID: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin
+FileType: BINARY
+FileChecksum: SHA1: cd6e12ae9c04d2ddf177aa7be25e9f2deb876ed1
+LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtmultimedia-qt-plugin-QWindowsMediaPlugin CONTAINS SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/common/mfmetadata.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/common/mfmetadata_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/decoder/mfaudiodecodercontrol.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/decoder/mfaudiodecodercontrol_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/decoder/mfdecodersourcereader.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/decoder/mfdecodersourcereader_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/decoder/mfdecodersourcereadercallback.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/decoder/mfdecodersourcereadercallback_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/evr/evrcustompresenter.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/evr/evrcustompresenter_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/evr/evrd3dpresentengine.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/evr/evrd3dpresentengine_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/evr/evrhelpers.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/evr/evrhelpers_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/evr/evrvideowindowcontrol.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/evr/evrvideowindowcontrol_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/mfstream.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/mfstream_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/player/mfactivate.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/player/mfactivate_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/player/mfevrvideowindowcontrol.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/player/mfevrvideowindowcontrol_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/player/mfplayercontrol.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/player/mfplayercontrol_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/player/mfplayersession.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/player/mfplayersession_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/player/mfvideorenderercontrol.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/player/mfvideorenderercontrol_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/mediacapture/qwindowscamera.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/mediacapture/qwindowscamera_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/mediacapture/qwindowsimagecapture.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/mediacapture/qwindowsimagecapture_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/mediacapture/qwindowsmediacapture.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/mediacapture/qwindowsmediacapture_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/mediacapture/qwindowsmediadevicereader.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/mediacapture/qwindowsmediadevicereader_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/mediacapture/qwindowsmediadevicesession.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/mediacapture/qwindowsmediadevicesession_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/mediacapture/qwindowsmediaencoder.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/mediacapture/qwindowsmediaencoder_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/qwindowsformatinfo.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/qwindowsformatinfo_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/qwindowsintegration.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/qwindowsintegration_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/sourceresolver.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/plugins/multimedia/windows/sourceresolver_p.h
+
+PackageName: MultimediaTestLibPrivate
+SPDXID: SPDXRef-Package-qtmultimedia-qt-module-MultimediaTestLibPrivate
+PackageDownloadLocation: git://code.qt.io/qt/qtmultimedia.git
+PackageVersion: 6.10.0
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only
+PackageLicenseDeclared: LicenseRef-Qt-Commercial OR GPL-3.0-only
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtmultimedia?library_name=MultimediaTestLibPrivate#src/multimediatestlib
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtmultimedia-MultimediaTestLibPrivate?vcs_url=https://code.qt.io/qt/qtmultimedia.git&library_name=MultimediaTestLibPrivate#src/multimediatestlib
+PackageCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: MultimediaTestLibPrivate
+CMake exported target name: Qt6::MultimediaTestLib
+Contained in CMake package: Qt6MultimediaTestLibPrivate
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: 5740208313c8279d278422af228b7bcee5f16078
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-MultimediaTestLibPrivate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-MultimediaTestLibPrivate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-MultimediaTestLibPrivate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-MultimediaTestLibPrivate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Test
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-MultimediaTestLibPrivate DEPENDS_ON SPDXRef-Package-qtmultimedia-qt-module-Multimedia
+Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia-qt-module-MultimediaTestLibPrivate
+
+FileName: ./lib/Qt6MultimediaTestLib.lib
+SPDXID: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate
+FileType: BINARY
+FileChecksum: SHA1: 6290cfbb835c4b36b56ae7ccf2fd43b8a6af7d1d
+LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only
+FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtmultimedia-qt-module-MultimediaTestLibPrivate CONTAINS SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/audiogenerationutils_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/capturesessionfixture_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/capturesessionfixture.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/framegenerator_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/framegenerator.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/mediabackendutils_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/mediafileselector_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/formatutils_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/formatutils.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/mediainfo_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/multimedia_debug_support_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/osdetection_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/testvideosink_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/qcolorutil_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/qcolorutil.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/qfileutil_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/qfileutil.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/qscopedenvironmentvariable_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/qsequentialfileadaptor_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/qsinewavevalidator_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/qsinewavevalidator.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtmultimedia/src/multimediatestlib/qmockiodevice_p.h
+
+LicenseID: LicenseRef-Qt-Commercial
+ExtractedText: <text>Licensees holding valid commercial Qt licenses may use this software in
+accordance with the the terms contained in a written agreement between
+you and The Qt Company. Alternatively, the terms and conditions that were
+accepted by the licensee when buying and/or downloading the
+software do apply.
+
+For the latest licensing terms and conditions, see https://www.qt.io/terms-conditions.
+For further information use the contact form at https://www.qt.io/contact-us.
+</text>
