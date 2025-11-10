@@ -7,8 +7,8 @@ Creator: Organization: TheQtCompany
 Creator: Tool: Qt Build System
 CreatorComment: <text>This SPDX document was created from CMake 4.1.2, using the qt
 build system from https://code.qt.io/cgit/qt/qtbase.git/tree/cmake/QtPublicSbomHelpers.cmake</text>
-Created: 2025-11-10T08:43:40Z
-ExternalDocumentRef: DocumentRef-qtbase https://qt.io/spdxdocs/qtbase-6.10.0 SHA1: c6eca1494166c46f4b34a0715214d18be6f0d77f
+Created: 2025-11-10T12:28:13Z
+ExternalDocumentRef: DocumentRef-qtbase https://qt.io/spdxdocs/qtbase-6.10.0 SHA1: 331cdf6e1ee55b808ca0916788c380634f7b2b09
 
 PackageName: MSVC
 SPDXID: SPDXRef-compiler
@@ -38,10 +38,10 @@ PackageCopyrightText: Copyright (C) The Qt Company Ltd. and other contributors.
 PackageHomePage: https://qt.io
 PackageComment: <text>Built by CMake 4.1.2 with Release configuration for Windows (AMD64)
 qtmultimedia was configured with:
-    qt6/configure -prefix D:\qtlibs -static -static-runtime -release -skip qt3d -skip qt5compat -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdeclarative -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qthttpserver -skip qtimageformats -skip qtlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtnetworkauth -skip qtopcua -skip qtpositioning -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwayland -skip qtwebchannel -skip qtwebengine -skip qtwebsockets -skip qtwebview -skip qtactiveqt
+    qt6/configure -prefix D:\Github\BB_Launcher\qtstatic -feature-relocatable -static -static-runtime -release -skip qt3d -skip qt5compat -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdeclarative -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qthttpserver -skip qtimageformats -skip qtlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtnetworkauth -skip qtopcua -skip qtpositioning -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwayland -skip qtwebchannel -skip qtwebengine -skip qtwebsockets -skip qtwebview -skip qtactiveqt
 </text>
 FilesAnalyzed: false
-BuiltDate: 2025-11-10T08:43:40Z
+BuiltDate: 2025-11-10T12:28:13Z
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-qtmultimedia
 
 PackageName: BundledTLSF_Attribution_tlfs
@@ -99,7 +99,7 @@ Contained in CMake package: Qt6BundledTLSF
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: c6a6a1ab6e93b469b9acd1b19d0a8f3a66be39c7
+PackageVerificationCode: d254ef950077c9abaedaaaa8960f8c5539d389fa
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledTLSF DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledTLSF DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
@@ -109,7 +109,7 @@ Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia
 FileName: ./lib/Qt6BundledTLSF.lib
 SPDXID: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledTLSF
 FileType: BINARY
-FileChecksum: SHA1: ae3ab1ae54c7fa198fc1e72f3ce0a64eab618cdc
+FileChecksum: SHA1: 1c788f94ff01c7c2764b88ad7afcba15908021d2
 LicenseConcluded: BSD-3-Clause
 FileCopyrightText: <text>Copyright (c) 2006-2016, Matthew Conte</text>
 LicenseInfoInFile: NOASSERTION
@@ -165,7 +165,7 @@ Contained in CMake package: Qt6Multimedia
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: abded3579ba47ba2dc1c7bc50f7990a1c3b4e032
+PackageVerificationCode: 6f89e7b27d6c67369b7c81c20622395004b19a61
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtmultimedia-qt-module-Multimedia DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qtmultimedia-qt-module-Multimedia DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
@@ -179,7 +179,7 @@ Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia
 FileName: ./lib/Qt6Multimedia.lib
 SPDXID: SPDXRef-PackagedFile-qt-module-Multimedia
 FileType: BINARY
-FileChecksum: SHA1: a0ab0eca79d7179bb569791efeab8a44bcc92433
+FileChecksum: SHA1: a8bd5786e1a62b692930ba50f1888483db07c5b2
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -783,7 +783,7 @@ Contained in CMake package: Qt6BundledResonanceAudio
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: d00f2eee52bdd6446379d1f011e1acf99e9917af
+PackageVerificationCode: 0275dfa280123ebfb0637ab9511ad187e370e64b
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledResonanceAudio DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
 Relationship: SPDXRef-Package-qtmultimedia-qt-bundled-3rdparty-module-BundledResonanceAudio DEPENDS_ON SPDXRef-Package-qtmultimedia-qt-3rdparty-sources-BundledResonanceAudio-Attribution-pffft
@@ -793,7 +793,7 @@ Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia
 FileName: ./lib/Qt6BundledResonanceAudio.lib
 SPDXID: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledResonanceAudio
 FileType: BINARY
-FileChecksum: SHA1: 02f5aa06bb351ca73be14b37c380480c849a8871
+FileChecksum: SHA1: e180027302b50865e978cbccac34a8e13917a57f
 LicenseConcluded: Apache-2.0
 FileCopyrightText: <text>Copyright (c) 2015, 2017, 2018 Google Inc.
 </text>
@@ -1166,7 +1166,7 @@ Contained in CMake package: Qt6SpatialAudio
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: e604f80748e26c56f31b0ca006773d00c411b6b8
+PackageVerificationCode: f52a42d6a7c1e00f63788c8743839ef2a6cf2336
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtmultimedia-qt-module-SpatialAudio DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
 Relationship: SPDXRef-Package-qtmultimedia-qt-module-SpatialAudio DEPENDS_ON SPDXRef-Package-qtmultimedia-qt-module-Multimedia
@@ -1176,7 +1176,7 @@ Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia
 FileName: ./lib/Qt6SpatialAudio.lib
 SPDXID: SPDXRef-PackagedFile-qt-module-SpatialAudio
 FileType: BINARY
-FileChecksum: SHA1: ffdf2d9d355e5df3d9d0a2c6d989f034eb86ee89
+FileChecksum: SHA1: 15978ddae60e8517b75f93aa69262d520bcea74c
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -1240,7 +1240,7 @@ Contained in CMake package: Qt6MultimediaWidgets
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: f1ba4ca15eee7b5fb3724ecb83d29de8d5b46e29
+PackageVerificationCode: 9631af89ec54beddad24fbc9e67fb57bea9be898
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtmultimedia-qt-module-MultimediaWidgets DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Widgets
 Relationship: SPDXRef-Package-qtmultimedia-qt-module-MultimediaWidgets DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
@@ -1252,7 +1252,7 @@ Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia
 FileName: ./lib/Qt6MultimediaWidgets.lib
 SPDXID: SPDXRef-PackagedFile-qt-module-MultimediaWidgets
 FileType: BINARY
-FileChecksum: SHA1: 8097f127c893389026be4e926cbeb04760eec167
+FileChecksum: SHA1: b404b4f1c4899293122a99eb5408e380e06f4508
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -1288,7 +1288,7 @@ CMake target name: QWindowsMediaPlugin
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: d73fc856fedaabacb9ce272c04d41b768ac15d5b
+PackageVerificationCode: a96f8b98c47ae4d39f333f8f7313a3dc8df6333e
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtmultimedia-qt-plugin-QWindowsMediaPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qtmultimedia-qt-plugin-QWindowsMediaPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Concurrent
@@ -1299,7 +1299,7 @@ Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia
 FileName: ./plugins/multimedia/windowsmediaplugin.lib
 SPDXID: SPDXRef-PackagedFile-qt-plugin-QWindowsMediaPlugin
 FileType: BINARY
-FileChecksum: SHA1: cd6e12ae9c04d2ddf177aa7be25e9f2deb876ed1
+FileChecksum: SHA1: 383a97ea6da6ade8e3e23e7f93435594158dba7a
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -1415,7 +1415,7 @@ Contained in CMake package: Qt6MultimediaTestLibPrivate
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtmultimedia:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 5740208313c8279d278422af228b7bcee5f16078
+PackageVerificationCode: 7afa93c8a46dc2554820107d6c4cefca7ba3bf01
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtmultimedia-qt-module-MultimediaTestLibPrivate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
 Relationship: SPDXRef-Package-qtmultimedia-qt-module-MultimediaTestLibPrivate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
@@ -1427,7 +1427,7 @@ Relationship: SPDXRef-Package-qtmultimedia CONTAINS SPDXRef-Package-qtmultimedia
 FileName: ./lib/Qt6MultimediaTestLib.lib
 SPDXID: SPDXRef-PackagedFile-qt-module-MultimediaTestLibPrivate
 FileType: BINARY
-FileChecksum: SHA1: 6290cfbb835c4b36b56ae7ccf2fd43b8a6af7d1d
+FileChecksum: SHA1: 4654f732ee0e47d9084f54ca4aa05ec029d80a0a
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION

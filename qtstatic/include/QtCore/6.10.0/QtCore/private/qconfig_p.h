@@ -126,7 +126,7 @@
 
 #define QT_FEATURE_dlopen -1
 
-#define QT_FEATURE_relocatable -1
+#define QT_FEATURE_relocatable 1
 
 #define QT_FEATURE_intelcet 1
 

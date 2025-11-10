@@ -7,8 +7,8 @@ Creator: Organization: TheQtCompany
 Creator: Tool: Qt Build System
 CreatorComment: <text>This SPDX document was created from CMake 4.1.2, using the qt
 build system from https://code.qt.io/cgit/qt/qtbase.git/tree/cmake/QtPublicSbomHelpers.cmake</text>
-Created: 2025-11-10T08:43:46Z
-ExternalDocumentRef: DocumentRef-qtbase https://qt.io/spdxdocs/qtbase-6.10.0 SHA1: c6eca1494166c46f4b34a0715214d18be6f0d77f
+Created: 2025-11-10T12:28:18Z
+ExternalDocumentRef: DocumentRef-qtbase https://qt.io/spdxdocs/qtbase-6.10.0 SHA1: 331cdf6e1ee55b808ca0916788c380634f7b2b09
 
 PackageName: MSVC
 SPDXID: SPDXRef-compiler
@@ -38,10 +38,10 @@ PackageCopyrightText: Copyright (C) The Qt Company Ltd. and other contributors.
 PackageHomePage: https://qt.io
 PackageComment: <text>Built by CMake 4.1.2 with Release configuration for Windows (AMD64)
 qttools was configured with:
-    qt6/configure -prefix D:\qtlibs -static -static-runtime -release -skip qt3d -skip qt5compat -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdeclarative -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qthttpserver -skip qtimageformats -skip qtlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtnetworkauth -skip qtopcua -skip qtpositioning -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwayland -skip qtwebchannel -skip qtwebengine -skip qtwebsockets -skip qtwebview -skip qtactiveqt
+    qt6/configure -prefix D:\Github\BB_Launcher\qtstatic -feature-relocatable -static -static-runtime -release -skip qt3d -skip qt5compat -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdeclarative -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qthttpserver -skip qtimageformats -skip qtlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtnetworkauth -skip qtopcua -skip qtpositioning -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwayland -skip qtwebchannel -skip qtwebengine -skip qtwebsockets -skip qtwebview -skip qtactiveqt
 </text>
 FilesAnalyzed: false
-BuiltDate: 2025-11-10T08:43:46Z
+BuiltDate: 2025-11-10T12:28:18Z
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-qttools
 
 PackageName: UiPlugin
@@ -86,7 +86,7 @@ Contained in CMake package: Qt6UiTools
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 883a6c428cfbfdfb9cd583937bc12d2136a85fea
+PackageVerificationCode: a63ed2df24f9efe887acda55c37e63582ead1126
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-module-UiTools DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
 Relationship: SPDXRef-Package-qttools-qt-module-UiTools DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-OpenGL
@@ -100,7 +100,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-module
 FileName: ./lib/Qt6UiTools.lib
 SPDXID: SPDXRef-PackagedFile-qt-module-UiTools
 FileType: BINARY
-FileChecksum: SHA1: 209c9b2312e3f5b744a9cc028d6bf885b034b4ee
+FileChecksum: SHA1: 234626f307f6ae7d57f4259d11d23fd6a3383e66
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -179,7 +179,7 @@ CMake target name: lconvert
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: cb48c9b146a84b0b2a887fb1c8d81090b0c83a0a
+PackageVerificationCode: 6d1752109e80fca4de515a26126fd2cf31991e5a
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-tool-lconvert DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-tool-lconvert DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
@@ -189,7 +189,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-tool-l
 FileName: ./bin/lconvert.exe
 SPDXID: SPDXRef-PackagedFile-qt-tool-lconvert
 FileType: BINARY
-FileChecksum: SHA1: b8082802d43e66b6a7fa4ecdd962139be57e18fe
+FileChecksum: SHA1: fc2d4a36921db78fa5b3153074f9446d5a5d6d8c
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -241,7 +241,7 @@ CMake target name: lprodump
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 27809e041e6dd8a4cb5cf31709ab52b85b40945c
+PackageVerificationCode: 678da7e7ff716e162c67939ae8afaa6ef9357fda
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-tool-lprodump DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-tool-lprodump DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
@@ -251,7 +251,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-tool-l
 FileName: ./bin/lprodump.exe
 SPDXID: SPDXRef-PackagedFile-qt-tool-lprodump
 FileType: BINARY
-FileChecksum: SHA1: 88ab2dbc0516a74aa86719726fc26ab9a89a220f
+FileChecksum: SHA1: 261f4034856bf4e4c5929e1bb329556ede3e5f4c
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -323,7 +323,7 @@ CMake target name: lrelease
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: add51441bfaa0fba9057a97673f7b2979a5d8f30
+PackageVerificationCode: 72057dad1e956604df4ef925e33aaa1b1716e3e5
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-tool-lrelease DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-tool-lrelease DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
@@ -333,7 +333,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-tool-l
 FileName: ./bin/lrelease.exe
 SPDXID: SPDXRef-PackagedFile-qt-tool-lrelease
 FileType: BINARY
-FileChecksum: SHA1: 319827087e1f7ff5726ab7fdb6119884b8afee03
+FileChecksum: SHA1: 2f3a69cc63144aaa27b8aae22e5a9f5d41e612cb
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -393,7 +393,7 @@ CMake target name: lrelease-pro
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 6fa34f59e1c8cd94c01da6d569308a7ef3f15b3f
+PackageVerificationCode: 34615ea673b4a0046dfa2377076963c1778ef104
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-tool-lrelease-pro DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
 Relationship: SPDXRef-Package-qttools-qt-tool-lrelease-pro DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformCommonInternal
@@ -403,7 +403,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-tool-l
 FileName: ./bin/lrelease-pro.exe
 SPDXID: SPDXRef-PackagedFile-qt-tool-lrelease-pro
 FileType: BINARY
-FileChecksum: SHA1: bf5bb4aab83ee979c743025241f48e9250899914
+FileChecksum: SHA1: b68e622f3b56112ecd4260ee5e5510c7e03d61a3
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -435,7 +435,7 @@ CMake target name: lupdate
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 25c5fae9a7abd9a7977b5ece0714ce390d36cd44
+PackageVerificationCode: 5b0a1025cab17a3983190087394925e68a5d3879
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-tool-lupdate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-tool-lupdate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
@@ -446,7 +446,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-tool-l
 FileName: ./bin/lupdate.exe
 SPDXID: SPDXRef-PackagedFile-qt-tool-lupdate
 FileType: BINARY
-FileChecksum: SHA1: 72f04a4365db9cc318274e09613be208a51b82aa
+FileChecksum: SHA1: aba05f3e79976138a36f4851e39a6e9969b0056f
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -532,7 +532,7 @@ CMake target name: lupdate-pro
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 1ae4ee21c71f8db0f1151cc2a20454393faa04bf
+PackageVerificationCode: 0dcc8af540580a77835a2c48fba24eb9355badd0
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-tool-lupdate-pro DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
 Relationship: SPDXRef-Package-qttools-qt-tool-lupdate-pro DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformCommonInternal
@@ -542,7 +542,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-tool-l
 FileName: ./bin/lupdate-pro.exe
 SPDXID: SPDXRef-PackagedFile-qt-tool-lupdate-pro
 FileType: BINARY
-FileChecksum: SHA1: 6f4e6a7060022cc43cfafee5435b39d16087f5fb
+FileChecksum: SHA1: 1047d23420d8740ae5b8bed56e97da496942fd77
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -597,7 +597,7 @@ Contained in CMake package: Qt6Designer
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: c15a71919dae2ae7d970c63464cf14f98901bc10
+PackageVerificationCode: cb202661f8ec06f476d863704b1459ce4d06da3d
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-module-Designer DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-module-Designer DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
@@ -612,7 +612,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-module
 FileName: ./lib/Qt6Designer.lib
 SPDXID: SPDXRef-PackagedFile-qt-module-Designer
 FileType: BINARY
-FileChecksum: SHA1: f4938dc38213c2d0850d3f6adacfd0d867a99dfa
+FileChecksum: SHA1: fadd3f41433e393a127543c4cc5567d4e860ff3c
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -1244,7 +1244,7 @@ Contained in CMake package: Qt6DesignerComponentsPrivate
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 99c5fcf207c408b0c4f3c9772d1247bb1d9a9ddc
+PackageVerificationCode: 89ef56401b74bc0daeb983d107f247b3f199035a
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-module-DesignerComponentsPrivate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Xml
 Relationship: SPDXRef-Package-qttools-qt-module-DesignerComponentsPrivate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
@@ -1257,7 +1257,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-module
 FileName: ./lib/Qt6DesignerComponents.lib
 SPDXID: SPDXRef-PackagedFile-qt-module-DesignerComponentsPrivate
 FileType: BINARY
-FileChecksum: SHA1: 2415059a5356ca64beed9f976521dfde4d652109
+FileChecksum: SHA1: a89c1a01bc76c1b55c8c9e62cb6b270239861ae8
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -1649,7 +1649,7 @@ CMake target name: designer
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: a382ea6dcd24856ec65e6dbd54ff534408ca499f
+PackageVerificationCode: a5b3b19da10f58ff1eae93dd1a1b22dfe8445d85
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-app-designer DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-app-designer DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
@@ -1666,7 +1666,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-app-de
 FileName: ./bin/designer.exe
 SPDXID: SPDXRef-PackagedFile-qt-app-designer
 FileType: BINARY
-FileChecksum: SHA1: 0df4ab472032a380451f1edf334f9d7e4bd0fd49
+FileChecksum: SHA1: c81533b307b6c9dc2eaf802bf9df268ebdbc6a0a
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -1774,7 +1774,7 @@ CMake target name: pixeltool
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: a39b4a8f281ead484fddf647d4397e8d3473c155
+PackageVerificationCode: 3836d3c9da29ac6c0ee9fd1b5099c46dc401b11b
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-app-pixeltool DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-app-pixeltool DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
@@ -1786,7 +1786,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-app-pi
 FileName: ./bin/pixeltool.exe
 SPDXID: SPDXRef-PackagedFile-qt-app-pixeltool
 FileType: BINARY
-FileChecksum: SHA1: a1078637715b9023196912811f612a021d560c62
+FileChecksum: SHA1: 6cc06d926de160e9da0ba6945ac9cbad8335ffe0
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -1818,7 +1818,7 @@ Contained in CMake package: Qt6Help
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 56c225d6d944795b74a3b317a17b10c19fa0eaa6
+PackageVerificationCode: c29ff0c6cb179a8633dbe8b24ea3e56481e1b2b4
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-module-Help DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-module-Help DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
@@ -1831,7 +1831,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-module
 FileName: ./lib/Qt6Help.lib
 SPDXID: SPDXRef-PackagedFile-qt-module-Help
 FileType: BINARY
-FileChecksum: SHA1: c8d5789754124543f26c47663837e2f7ee87d547
+FileChecksum: SHA1: 21c45aa6f8f28a27f2852947bf3a18336ba9b921
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -2009,7 +2009,7 @@ CMake target name: assistant
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: f161185ce597f08f25b2a0189755e1adda44279e
+PackageVerificationCode: fc32358d08d60627cdfb74aafe17be5144bfe3c0
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-app-assistant DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
 Relationship: SPDXRef-Package-qttools-qt-app-assistant DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Network
@@ -2027,7 +2027,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-app-as
 FileName: ./bin/assistant.exe
 SPDXID: SPDXRef-PackagedFile-qt-app-assistant
 FileType: BINARY
-FileChecksum: SHA1: cb490717598bc4a824e972ea1d2e98a3a581183c
+FileChecksum: SHA1: 85296498a336c41a8f070a68af2e7002bd62831e
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -2217,7 +2217,7 @@ CMake target name: qhelpgenerator
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: f5e0e0a67a70dc9134ad2ee510df14711281ed50
+PackageVerificationCode: 5e8b92889ebc28639aed5a77cb323bf3edd6c10e
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-tool-qhelpgenerator DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
 Relationship: SPDXRef-Package-qttools-qt-tool-qhelpgenerator DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
@@ -2231,7 +2231,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-tool-q
 FileName: ./bin/qhelpgenerator.exe
 SPDXID: SPDXRef-PackagedFile-qt-tool-qhelpgenerator
 FileType: BINARY
-FileChecksum: SHA1: 26b826719f255168cb89749e9702ebe6a6c7fc23
+FileChecksum: SHA1: 106b5ee239650bd0dea318a7b03ea414e53b4979
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -2281,7 +2281,7 @@ CMake target name: qtattributionsscanner
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 7d3d3e339817e71056d1ebe4a40a002813d0c79c
+PackageVerificationCode: 77ae84544f94faef3bd524f1ee0c7df631400bfb
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-tool-qtattributionsscanner DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
 Relationship: SPDXRef-Package-qttools-qt-tool-qtattributionsscanner DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformCommonInternal
@@ -2291,7 +2291,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-tool-q
 FileName: ./bin/qtattributionsscanner.exe
 SPDXID: SPDXRef-PackagedFile-qt-tool-qtattributionsscanner
 FileType: BINARY
-FileChecksum: SHA1: 789f7ec72fd01723565d0febae510623df06e73c
+FileChecksum: SHA1: 9cb5b2d648d7084d5508b66d1e1459f961997c2a
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -2339,7 +2339,7 @@ CMake target name: qtplugininfo
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 255797836d7164918a301ef12536632e4e7683e5
+PackageVerificationCode: 0ba9ac78ccb0401279ce7783e4e7e5f23bddba27
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-app-qtplugininfo DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformAppInternal
 Relationship: SPDXRef-Package-qttools-qt-app-qtplugininfo DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformCommonInternal
@@ -2349,7 +2349,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-app-qt
 FileName: ./bin/qtplugininfo.exe
 SPDXID: SPDXRef-PackagedFile-qt-app-qtplugininfo
 FileType: BINARY
-FileChecksum: SHA1: 996af9d9f3b6cf330bbf0eb9bda32041c12134d5
+FileChecksum: SHA1: d2b8b26ea276762d839a3ba8163130cec970ba0f
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -2447,7 +2447,7 @@ CMake target name: qdbus
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 5be0ee341fc90267b9aa6da79785e4024181739b
+PackageVerificationCode: 9ad4093135aeba85ae53229adb0836bca1b961d9
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-app-qdbus DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-DBus
 Relationship: SPDXRef-Package-qttools-qt-app-qdbus DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Xml
@@ -2459,7 +2459,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-app-qd
 FileName: ./bin/qdbus.exe
 SPDXID: SPDXRef-PackagedFile-qt-app-qdbus
 FileType: BINARY
-FileChecksum: SHA1: 9a13791d5e1c4fb52b0cbfea9a3d66c49f39eacc
+FileChecksum: SHA1: bfa5b884be603992331d554c866a18e0f02cb2a7
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -2485,7 +2485,7 @@ CMake target name: qdbusviewer
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 7d4994480392eb82143c22bf338cb4ba47ec20b9
+PackageVerificationCode: 05f1243e910eeb8146790d238b9e24c5c2794775
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-app-qdbusviewer DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-DBus
 Relationship: SPDXRef-Package-qttools-qt-app-qdbusviewer DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
@@ -2499,7 +2499,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-app-qd
 FileName: ./bin/qdbusviewer.exe
 SPDXID: SPDXRef-PackagedFile-qt-app-qdbusviewer
 FileType: BINARY
-FileChecksum: SHA1: 8d63432301cf25e5a975943a3f601e26047ddcda
+FileChecksum: SHA1: e2f4f408ba49b6b50a8e50e4bd03109a1973b55a
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -2551,7 +2551,7 @@ CMake target name: qtdiag
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: e6541532e47be2654bfc1dda91c86c12835dfc36
+PackageVerificationCode: c5bae39b871800b323fb3778f0d82f07ff0ed9eb
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-app-qtdiag DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-app-qtdiag DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformAppInternal
@@ -2565,7 +2565,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-app-qt
 FileName: ./bin/qtdiag.exe
 SPDXID: SPDXRef-PackagedFile-qt-app-qtdiag
 FileType: BINARY
-FileChecksum: SHA1: 18f64ec30b49291738fd83144ceb5c3b4ff44000
+FileChecksum: SHA1: 94093ead0cc2b988eecb771ad6a0d4fcdb8c09e5
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION

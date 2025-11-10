@@ -45,7 +45,7 @@ endfunction()
 if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT AND
         NOT QT_BUILD_INTERNALS_NO_FORCE_SET_INSTALL_PREFIX
         AND NOT QT_SUPERBUILD)
-    set(qtbi_orig_prefix "D:/qtlibs")
+    set(qtbi_orig_prefix "D:/Github/BB_Launcher/qtstatic")
     set(qtbi_orig_staging_prefix "")
     qt_internal_new_prefix(qtbi_new_prefix
         "${QT_BUILD_INTERNALS_RELOCATABLE_INSTALL_PREFIX}"
