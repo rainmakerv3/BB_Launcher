@@ -16,6 +16,7 @@
 ControlSettings::ControlSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
     : QDialog(parent), m_ipc_client(ipc_client), ui(new Ui::ControlSettings) {
     ui->setupUi(this);
+    this->setFixedWidth(this->width());
     ui->PerGameCheckBox->setChecked(!Config::UnifiedInputConfig);
 
     SDL_InitSubSystem(SDL_INIT_GAMEPAD);

@@ -11,6 +11,7 @@
 
 SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveManager) {
     ui->setupUi(this);
+    this->setFixedSize(this->width(), this->height());
     ui->SelectSaveComboBox->addItem("Current Save");
 
     // Releases older than 0.9.0 will need to use the game serial as save folder

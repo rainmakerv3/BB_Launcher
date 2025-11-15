@@ -27,6 +27,7 @@ EditorDialog::EditorDialog(QWidget* parent) : QDialog(parent) {
 
     setWindowTitle("Edit Keyboard + Mouse and Controller input bindings");
     resize(600, 400);
+    this->setFixedSize(this->width(), this->height());
 
     // Create the editor widget
     editor = new QPlainTextEdit(this);

@@ -22,6 +22,7 @@ KBMSettings::KBMSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
     : QDialog(parent), m_ipc_client(ipc_client), ui(new Ui::KBMSettings) {
 
     ui->setupUi(this);
+    this->setFixedWidth(this->width());
     ui->PerGameCheckBox->setChecked(!Config::UnifiedInputConfig);
     ui->TextEditorButton->setFocus();
     this->setFocusPolicy(Qt::StrongFocus);

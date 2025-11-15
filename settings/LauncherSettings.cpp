@@ -25,6 +25,8 @@
 LauncherSettings::LauncherSettings(QWidget* parent)
     : QDialog(parent), ui(new Ui::LauncherSettings) {
     ui->setupUi(this);
+    this->setFixedSize(this->width(), this->height());
+
     using namespace Config;
 
     ui->BackupIntervalComboBox->addItems(BackupFreqList);

@@ -16,6 +16,7 @@ Hotkeys::Hotkeys(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
     : QDialog(parent), m_ipc_client(ipc_client), ui(new Ui::Hotkeys) {
 
     ui->setupUi(this);
+    this->setFixedSize(this->width(), this->height());
 
     SDL_InitSubSystem(SDL_INIT_GAMEPAD);
     SDL_InitSubSystem(SDL_INIT_EVENTS);

@@ -13,6 +13,7 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
     ui->setupUi(this);
     ui->progressBar->setMinimum(0);
     ui->progressBar->setValue(0);
+    this->setFixedSize(this->width(), this->height());
 
     if (Config::theme == "Dark") {
         ui->ActiveModList->setStyleSheet(

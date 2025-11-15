@@ -29,6 +29,7 @@
 
 VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::VersionDialog) {
     ui->setupUi(this);
+    this->setFixedSize(this->width(), this->height());
 
     ui->FolderLabel->setText(QString::fromStdString(Config::DefaultFolderString));
     ui->checkOnStartupCheckBox->setChecked(Config::AutoUpdateShadEnabled);
