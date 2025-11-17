@@ -116,6 +116,9 @@ set(PROJECT_SOURCES
     modules/bblauncher.ui
     modules/Common.cpp
     modules/Common.h
+    modules/ModDownloader.h
+    modules/ModDownloader.cpp
+    modules/ModDownloader.ui
     modules/ModManager.h
     modules/ModManager.cpp
     modules/ModManager.ui

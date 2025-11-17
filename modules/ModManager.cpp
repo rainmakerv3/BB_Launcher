@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QProgressBar>
 
+#include "ModDownloader.h"
 #include "ModManager.h"
 #include "modules/ui_ModManager.h"
 #include "settings/config.h"
@@ -54,6 +55,12 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
     ui->ModHelpLabel->setOpenExternalLinks(true);
 
     RefreshLists();
+
+    connect(ui->pushButton, &QPushButton::pressed, this, [this]() {
+        ModDownloader* Downloader = new ModDownloader(this);
+        Downloader->exec();
+        RefreshLists();
+    });
 
     connect(ui->ActivateButton, &QPushButton::pressed, this, &ModManager::ActivateButton_isPressed);
     connect(ui->DeactivateButton, &QPushButton::pressed, this,

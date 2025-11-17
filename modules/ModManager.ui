@@ -16,10 +16,10 @@
   <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>30</y>
-     <width>651</width>
-     <height>501</height>
+     <x>3</x>
+     <y>10</y>
+     <width>691</width>
+     <height>481</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -294,6 +294,19 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>68</x>
+     <y>500</y>
+     <width>561</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Download Recommended Mods from Nexus Mods (Nexus Premium members only)</string>
+   </property>
   </widget>
  </widget>
  <resources/>
