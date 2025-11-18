@@ -8,6 +8,7 @@
 #include "config.h"
 #include "formatting.h"
 
+std::string Config::ApiKey = "";
 std::string Config::theme = "Dark";
 bool Config::SoundFixEnabled = true;
 bool Config::AutoUpdateEnabled = false;
@@ -76,6 +77,7 @@ void LoadSettings() {
         return;
     }
 
+    ApiKey = toml::find_or<std::string>(data, "Launcher", "ApiKey", "");
     theme = toml::find_or<std::string>(data, "Launcher", "Theme", "Dark");
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
     AutoUpdateEnabled = toml::find_or<bool>(data, "Launcher", "AutoUpdateEnabled", false);
@@ -244,6 +246,7 @@ void SaveLauncherSettings() {
         }
     }
 
+    data["Launcher"]["ApiKey"] = ApiKey;
     data["Launcher"]["Theme"] = theme;
     data["Launcher"]["SoundFixEnabled"] = SoundFixEnabled;
     data["Launcher"]["AutoUpdateEnabled"] = AutoUpdateEnabled;

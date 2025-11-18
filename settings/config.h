@@ -47,6 +47,7 @@ extern bool AutoUpdateEnabled;
 extern bool UnifiedInputConfig;
 extern std::string TrophyKey;
 extern std::string DefaultControllerID;
+extern std::string ApiKey;
 
 extern bool ShowEarnedTrophy;
 extern bool ShowNotEarnedTrophy;

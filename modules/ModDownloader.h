@@ -16,7 +16,19 @@ public:
     ~ModDownloader();
 
 private:
-    Ui::ModDownloader* ui;
+    bool ValidateApi();
+    void LoadModInfo(int modId);
+    void GetModFiles(int modId);
+    void GetModImage(QUrl url);
+    void DownloadFile(int fileId, int ModId, QString modFilename);
+    void StartDownload(QString url, QString modFilename);
+    QString BbcodeToHtml(QString BbcodeString);
 
+    Ui::ModDownloader* ui;
     QNetworkAccessManager* manager;
+    QString apiKey;
+    QStringList fileList;
+    std::vector<int> fileIdList;
+
+    QMap<int, int> modIDmap;
 };
