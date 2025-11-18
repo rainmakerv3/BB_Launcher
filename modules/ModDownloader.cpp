@@ -31,19 +31,20 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     apiKey = QString::fromStdString(Config::ApiKey);
     ui->apiLineEdit->setText(apiKey);
 
-    modIDmap = {{0, 109},  // Vertex Explosion Mod
-                {1, 70},   // 60 fps Cutscene Fix
-                {2, 41},   // Sfx Fix Mods
-                {3, 114},  // Cloth physics mods
-                {4, 30},   // Xbox Controller Icons
-                {5, 162},  // Disable FXAA
-                {6, 102},  // Performance Drawparams
-                {7, 223},  // Stake of Marika
-                {8, 107},  // More Options at Lamps
-                {9, 6},    // Great One Beast Restored
-                {10, 206}, // Estus Vial and Bullet
-                {11, 156}, // Jump on L3
-                {12, 19}}; // Bloodborne Enhanced
+    modIDmap = {{0, 109},   // Vertex Explosion Mod
+                {1, 70},    // 60 fps Cutscene Fix
+                {2, 41},    // Sfx Fix Mods
+                {3, 114},   // Cloth physics mods
+                {4, 30},    // Xbox Controller Icons
+                {5, 162},   // Disable FXAA
+                {6, 102},   // Performance Drawparams
+                {7, 223},   // Stake of Marika
+                {8, 107},   // More Options at Lamps
+                {9, 6},     // Great One Beast Restored
+                {10, 206},  // Estus Vial and Bullet
+                {11, 156},  // Jump on L3
+                {12, 19},   // Bloodborne Enhanced
+                {13, 182}}; // 4k Upscaled UI
 
     ui->modComboBox->addItem("Vertex Explosion Mod");
     ui->modComboBox->addItem("60 fps Cutscene Fix");
@@ -58,6 +59,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     ui->modComboBox->addItem("Estus Vial and Bullet");
     ui->modComboBox->addItem("Jump on L3");
     ui->modComboBox->addItem("Bloodborne Enhanced");
+    // ui->modComboBox->addItem("4K Upscaled UI");
 
     if (apiKey.isEmpty()) {
         ui->validApiLabel->setStyleSheet("color: red;");
@@ -108,6 +110,12 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         }
 
         DownloadFile(fileIdList[fileIndex], modIDmap[modIndex], modFilename);
+    });
+
+    connect(ui->fileListWidget, &QListWidget::itemClicked, this, [this]() {
+        int fileIndex = ui->fileListWidget->currentRow();
+        fileDescList[fileIndex].isEmpty() ? ui->fileDesc->setText("No description")
+                                          : ui->fileDesc->setHtml(fileDescList[fileIndex]);
     });
 }
 
@@ -271,6 +279,7 @@ void ModDownloader::GetModFiles(int modId) {
 
     fileIdList.clear();
     fileList.clear();
+    fileDescList.clear();
 
     QNetworkReply* reply = manager->get(request);
     connect(reply, &QNetworkReply::finished, [=, this]() {
@@ -292,6 +301,8 @@ void ModDownloader::GetModFiles(int modId) {
                         fileList.push_back(
                             QString::fromStdString(element.at("name").get<std::string>()));
                         fileIdList.push_back(element.at("file_id").get<int>());
+                        fileDescList.push_back(BbcodeToHtml(
+                            QString::fromStdString(element.at("description").get<std::string>())));
                     }
                 }
             }
@@ -366,8 +377,12 @@ void ModDownloader::StartDownload(QString url, QString modFilename) {
                     progressBar->setValue(static_cast<int>((bytesReceived * 100) / bytesTotal));
             });
 
-    QString fileName = "/downloaded_mod.zip";
-    QString zipPath = QDir::currentPath() + fileName;
+    QString zipPath;
+    Common::PathToQString(zipPath, Common::GetBBLFilesPath() / "Temp" / "downloaded_mod.zip");
+
+    QString tempPath;
+    Common::PathToQString(tempPath, Common::GetBBLFilesPath() / "Temp" / "Download");
+    std::filesystem::create_directories(Common::GetBBLFilesPath() / "Temp" / "Download");
 
     QFile* file = new QFile(zipPath);
     if (!file->open(QIODevice::WriteOnly)) {
@@ -386,8 +401,6 @@ void ModDownloader::StartDownload(QString url, QString modFilename) {
             file->close();
             downloadReply->deleteLater();
 
-            QString tempPath = QDir::currentPath() + "/Temp";
-            std::filesystem::create_directories(Common::PathFromQString(tempPath));
             QMicroz::extract(zipPath, tempPath);
 
             std::string folderName = modFilename.toStdString();
@@ -470,6 +483,9 @@ QString ModDownloader::BbcodeToHtml(QString BbcodeString) {
     BbcodeString.replace(QRegularExpression("<li>(.*?)(?=<li>|</ul>|$)",
                                             QRegularExpression::DotMatchesEverythingOption),
                          "<li>\\1</li>");
+
+    QRegularExpression imgRegex("\\[img\\](.+?)\\[\\/img\\]");
+    BbcodeString.replace(imgRegex, "<img src=\"\\1\">");
 
     return BbcodeString;
 }

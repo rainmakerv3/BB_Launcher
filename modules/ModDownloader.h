@@ -29,6 +29,7 @@ private:
     QString apiKey;
     QStringList fileList;
     std::vector<int> fileIdList;
+    QStringList fileDescList;
 
     QMap<int, int> modIDmap;
 };
