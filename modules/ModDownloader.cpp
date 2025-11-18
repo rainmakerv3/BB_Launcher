@@ -31,17 +31,19 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     apiKey = QString::fromStdString(Config::ApiKey);
     ui->apiLineEdit->setText(apiKey);
 
-    modIDmap = {{0, 109},   // Vertex Explosion Mod
-                {1, 70},    // 60 fps Cutscene Fix
-                {2, 41},    // Sfx Fix Mods
-                {3, 114},   // Cloth physics mods
-                {4, 30},    // Xbox Controller Icons
-                {5, 162},   // Disable FXAA
-                {6, 102},   // Performance Drawparams
-                {7, 223},   // Stake of Marika
-                {8, 107},   // More Options at Lamps
-                {9, 6},     // Great One Beast Restored
-                {10, 206}}; // Estus Vial and Bullet
+    modIDmap = {{0, 109},  // Vertex Explosion Mod
+                {1, 70},   // 60 fps Cutscene Fix
+                {2, 41},   // Sfx Fix Mods
+                {3, 114},  // Cloth physics mods
+                {4, 30},   // Xbox Controller Icons
+                {5, 162},  // Disable FXAA
+                {6, 102},  // Performance Drawparams
+                {7, 223},  // Stake of Marika
+                {8, 107},  // More Options at Lamps
+                {9, 6},    // Great One Beast Restored
+                {10, 206}, // Estus Vial and Bullet
+                {11, 156}, // Jump on L3
+                {12, 19}}; // Bloodborne Enhanced
 
     ui->modComboBox->addItem("Vertex Explosion Mod");
     ui->modComboBox->addItem("60 fps Cutscene Fix");
@@ -54,6 +56,8 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     ui->modComboBox->addItem("More Options at Lamps");
     ui->modComboBox->addItem("Great One Beast Restored");
     ui->modComboBox->addItem("Estus Vial and Bullet");
+    ui->modComboBox->addItem("Jump on L3");
+    ui->modComboBox->addItem("Bloodborne Enhanced");
 
     if (apiKey.isEmpty()) {
         ui->validApiLabel->setStyleSheet("color: red;");
@@ -83,6 +87,12 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     connect(ui->downloadButton, &QPushButton::pressed, this, [this]() {
         if (ui->fileListWidget->selectedItems().size() == 0) {
             QMessageBox::information(this, "No file selected", "Select a file for download first");
+            return;
+        }
+
+        if (ui->fileListWidget->currentItem()->text().contains("Patcher Only")) {
+            QMessageBox::information(this, "Non-compatible mod",
+                                     "For Bloodborne Enhanced, use the full package file");
             return;
         }
 
@@ -381,42 +391,30 @@ void ModDownloader::StartDownload(QString url, QString modFilename) {
             QMicroz::extract(zipPath, tempPath);
 
             std::string folderName = modFilename.toStdString();
-            std::filesystem::path folderPath;
-            bool hasBBfolder = false;
+            std::filesystem::path folderPath = "";
             const std::vector<std::string> BBFolders = {
                 "dvdroot_ps4", "action", "chr",    "event", "facegen", "map",   "menu",
                 "movie",       "msg",    "mtd",    "obj",   "other",   "param", "paramdef",
                 "parts",       "remo",   "script", "sfx",   "shader",  "sound"};
 
             for (const auto& entry :
-                 std::filesystem::directory_iterator(Common::PathFromQString(tempPath))) {
+                 std::filesystem::recursive_directory_iterator(Common::PathFromQString(tempPath))) {
                 if (entry.is_directory()) {
                     folderName = entry.path().filename().string();
-                    folderPath = entry.path();
+                    folderPath = entry.path().parent_path();
                     if (std::find(BBFolders.begin(), BBFolders.end(), folderName) !=
                         BBFolders.end()) {
-                        hasBBfolder = true;
                         break;
                     }
                 }
             }
 
             std::filesystem::path newPath = Common::ModPath / modFilename.toStdString();
-            if (hasBBfolder) {
-                folderName = modFilename.toStdString();
-                if (folderName == "dvdroot_ps4") {
-                    std::filesystem::rename(folderPath, newPath);
-                } else {
-                    std::filesystem::rename(Common::PathFromQString(tempPath), newPath);
-                }
-            } else {
-                std::filesystem::rename(folderPath, newPath);
-            }
-
+            std::filesystem::rename(folderPath, newPath);
             QMessageBox::information(
                 this, tr("Confirm Download"),
                 tr("%1 has been downloaded. You can activate it using the mod manager")
-                    .arg(folderName));
+                    .arg(modFilename.toStdString()));
 
             progressDialog->close();
             progressDialog->deleteLater();
