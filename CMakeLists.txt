@@ -147,8 +147,6 @@ set(PROJECT_SOURCES
     settings/PSF/psf.cpp
     settings/PSF/psf.h
     settings/formatting.h
-    settings/ShadUpdate.h
-    settings/ShadUpdate.cpp
     settings/config.cpp
     settings/config.h
     settings/control_settings.cpp
