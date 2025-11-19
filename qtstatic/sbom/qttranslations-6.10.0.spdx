@@ -5,13 +5,13 @@ DocumentName: qttranslations-6.10.0
 DocumentNamespace: https://qt.io/spdxdocs/qttranslations-6.10.0
 Creator: Organization: TheQtCompany
 Creator: Tool: Qt Build System
-CreatorComment: <text>This SPDX document was created from CMake 4.1.2, using the qt
+CreatorComment: <text>This SPDX document was created from CMake 3.31.9, using the qt
 build system from https://code.qt.io/cgit/qt/qtbase.git/tree/cmake/QtPublicSbomHelpers.cmake</text>
-Created: 2025-11-10T12:28:24Z
+Created: 2025-11-19T03:49:11Z
 
 PackageName: MSVC
 SPDXID: SPDXRef-compiler
-PackageVersion: 19.44.35219.0
+PackageVersion: 19.44.35211.0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
 PackageLicenseDeclared: NOASSERTION
@@ -21,7 +21,7 @@ FilesAnalyzed: false
 PackageSummary: <text>The compiler as identified by CMake, running on Windows (AMD64)</text>
 PrimaryPackagePurpose: APPLICATION
 Relationship: SPDXRef-compiler BUILD_DEPENDENCY_OF SPDXRef-Package-qttranslations
-RelationshipComment: <text>SPDXRef-Package-qttranslations is built by compiler MSVC version 19.44.35219.0</text>
+RelationshipComment: <text>SPDXRef-Package-qttranslations is built by compiler MSVC version 19.44.35211.0</text>
 
 PackageName: qttranslations
 SPDXID: SPDXRef-Package-qttranslations
@@ -35,12 +35,12 @@ PackageLicenseConcluded: NOASSERTION
 PackageLicenseDeclared: NOASSERTION
 PackageCopyrightText: Copyright (C) The Qt Company Ltd. and other contributors.
 PackageHomePage: https://qt.io
-PackageComment: <text>Built by CMake 4.1.2 with Release configuration for Windows (AMD64)
+PackageComment: <text>Built by CMake 3.31.9 with Release configuration for Windows (AMD64)
 qttranslations was configured with:
-    qt6/configure -prefix D:\Github\BB_Launcher\qtstatic -feature-relocatable -static -static-runtime -release -skip qt3d -skip qt5compat -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdeclarative -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qthttpserver -skip qtimageformats -skip qtlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtnetworkauth -skip qtopcua -skip qtpositioning -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwayland -skip qtwebchannel -skip qtwebengine -skip qtwebsockets -skip qtwebview -skip qtactiveqt
+    qt6/configure -static -static-runtime -prefix D:\Github\BB_Launcher\qtstatic -skip qt3d -skip qt5compat -skip qtactiveqt -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdeclarative -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qhttpserver -skip qlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtnetworkauth -skip qtopcua -skip qtpositioning -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwebchannel -skip qtwebview -skip tests -skip qtwebengine -release
 </text>
 FilesAnalyzed: false
-BuiltDate: 2025-11-10T12:28:24Z
+BuiltDate: 2025-11-19T03:49:11Z
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-qttranslations
 
 PackageName: Translations

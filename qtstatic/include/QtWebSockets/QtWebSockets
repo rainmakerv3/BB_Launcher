@@ -1,0 +1,11 @@
+#ifndef QT_QTWEBSOCKETS_MODULE_H
+#define QT_QTWEBSOCKETS_MODULE_H
+#include <QtWebSockets/QtWebSocketsDepends>
+#include "qmaskgenerator.h"
+#include "qtwebsocketsversion.h"
+#include "qwebsocket.h"
+#include "qwebsocketcorsauthenticator.h"
+#include "qwebsockethandshakeoptions.h"
+#include "qwebsocketprotocol.h"
+#include "qwebsocketserver.h"
+#endif

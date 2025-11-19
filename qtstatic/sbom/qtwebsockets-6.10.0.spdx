@@ -1,0 +1,152 @@
+SPDXVersion: SPDX-2.3
+DataLicense: CC0-1.0
+SPDXID: SPDXRef-DOCUMENT
+DocumentName: qtwebsockets-6.10.0
+DocumentNamespace: https://qt.io/spdxdocs/qtwebsockets-6.10.0
+Creator: Organization: TheQtCompany
+Creator: Tool: Qt Build System
+CreatorComment: <text>This SPDX document was created from CMake 3.31.9, using the qt
+build system from https://code.qt.io/cgit/qt/qtbase.git/tree/cmake/QtPublicSbomHelpers.cmake</text>
+Created: 2025-11-19T03:48:56Z
+ExternalDocumentRef: DocumentRef-qtbase https://qt.io/spdxdocs/qtbase-6.10.0 SHA1: 77d26cc8d0a6466a911df7f9a32c4b9d1165b62c
+
+PackageName: MSVC
+SPDXID: SPDXRef-compiler
+PackageVersion: 19.44.35211.0
+PackageDownloadLocation: NOASSERTION
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+PackageSupplier: Organization: Anonymous
+FilesAnalyzed: false
+PackageSummary: <text>The compiler as identified by CMake, running on Windows (AMD64)</text>
+PrimaryPackagePurpose: APPLICATION
+Relationship: SPDXRef-compiler BUILD_DEPENDENCY_OF SPDXRef-Package-qtwebsockets
+RelationshipComment: <text>SPDXRef-Package-qtwebsockets is built by compiler MSVC version 19.44.35211.0</text>
+
+PackageName: qtwebsockets
+SPDXID: SPDXRef-Package-qtwebsockets
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtwebsockets:6.10.0:*:*:*:*:*:*:*
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtwebsockets@6.10.0
+PackageVersion: 6.10.0
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtwebsockets@6.10.0
+PackageSupplier: Organization: TheQtCompany
+PackageDownloadLocation: git://code.qt.io/qt/qtwebsockets.git
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: Copyright (C) The Qt Company Ltd. and other contributors.
+PackageHomePage: https://qt.io
+PackageComment: <text>Built by CMake 3.31.9 with Release configuration for Windows (AMD64)
+qtwebsockets was configured with:
+    qt6/configure -static -static-runtime -prefix D:\Github\BB_Launcher\qtstatic -skip qt3d -skip qt5compat -skip qtactiveqt -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdeclarative -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qhttpserver -skip qlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtnetworkauth -skip qtopcua -skip qtpositioning -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwebchannel -skip qtwebview -skip tests -skip qtwebengine -release
+</text>
+FilesAnalyzed: false
+BuiltDate: 2025-11-19T03:48:56Z
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-qtwebsockets
+
+PackageName: WebSockets
+SPDXID: SPDXRef-Package-qtwebsockets-qt-module-WebSockets
+PackageDownloadLocation: git://code.qt.io/qt/qtwebsockets.git
+PackageVersion: 6.10.0
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+PackageLicenseDeclared: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtwebsockets?library_name=WebSockets#src/websockets
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtwebsockets-WebSockets?vcs_url=https://code.qt.io/qt/qtwebsockets.git&library_name=WebSockets#src/websockets
+PackageCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: WebSockets
+CMake exported target name: Qt6::WebSockets
+Contained in CMake package: Qt6WebSockets
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtwebsockets:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: f3a45d3d86e3807d1fb473bfdf70f15d10aa8aa1
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtwebsockets-qt-module-WebSockets DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
+Relationship: SPDXRef-Package-qtwebsockets-qt-module-WebSockets DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Network
+Relationship: SPDXRef-Package-qtwebsockets-qt-module-WebSockets DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
+Relationship: SPDXRef-Package-qtwebsockets CONTAINS SPDXRef-Package-qtwebsockets-qt-module-WebSockets
+
+FileName: ./lib/Qt6WebSockets.lib
+SPDXID: SPDXRef-PackagedFile-qt-module-WebSockets
+FileType: BINARY
+FileChecksum: SHA1: 95e3570d638e882714ba68695c8fabc8f4ec8d9c
+LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtwebsockets-qt-module-WebSockets CONTAINS SPDXRef-PackagedFile-qt-module-WebSockets
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: D:/Github/qtstatic/qtbase/include/QtWebSockets/qtwebsocketsexports.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qdefaultmaskgenerator_p.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qdefaultmaskgenerator_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qmaskgenerator.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qmaskgenerator.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocket.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocket.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocket_p.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocket_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocketcorsauthenticator.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocketcorsauthenticator.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocketcorsauthenticator_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocketdataprocessor.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocketdataprocessor_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocketframe.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocketframe_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsockethandshakeoptions.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsockethandshakeoptions.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsockethandshakeoptions_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsockethandshakerequest.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsockethandshakerequest_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsockethandshakeresponse.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsockethandshakeresponse_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocketprotocol.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocketprotocol.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocketprotocol_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsockets_global.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocketserver.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocketserver.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocketserver_p.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebSockets GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebsockets/src/websockets/qwebsocketserver_p.h
+
+LicenseID: LicenseRef-Qt-Commercial
+ExtractedText: <text>Licensees holding valid commercial Qt licenses may use this software in
+accordance with the the terms contained in a written agreement between
+you and The Qt Company. Alternatively, the terms and conditions that were
+accepted by the licensee when buying and/or downloading the
+software do apply.
+
+For the latest licensing terms and conditions, see https://www.qt.io/terms-conditions.
+For further information use the contact form at https://www.qt.io/contact-us.
+</text>

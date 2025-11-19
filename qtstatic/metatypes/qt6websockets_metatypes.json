@@ -1,0 +1,791 @@
+[
+    {
+        "classes": [
+            {
+                "className": "QWebSocket",
+                "lineNumber": 31,
+                "object": true,
+                "qualifiedClassName": "QWebSocket",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 118,
+                        "name": "aboutToClose",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 1,
+                        "lineNumber": 119,
+                        "name": "connected",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "lineNumber": 120,
+                        "name": "disconnected",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "state",
+                                "type": "QAbstractSocket::SocketState"
+                            }
+                        ],
+                        "index": 3,
+                        "lineNumber": 121,
+                        "name": "stateChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "proxy",
+                                "type": "QNetworkProxy"
+                            },
+                            {
+                                "name": "pAuthenticator",
+                                "type": "QAuthenticator*"
+                            }
+                        ],
+                        "index": 4,
+                        "lineNumber": 123,
+                        "name": "proxyAuthenticationRequired",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "authenticator",
+                                "type": "QAuthenticator*"
+                            }
+                        ],
+                        "index": 5,
+                        "lineNumber": 125,
+                        "name": "authenticationRequired",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 6,
+                        "lineNumber": 126,
+                        "name": "readChannelFinished",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "frame",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "isLastFrame",
+                                "type": "bool"
+                            }
+                        ],
+                        "index": 7,
+                        "lineNumber": 127,
+                        "name": "textFrameReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "frame",
+                                "type": "QByteArray"
+                            },
+                            {
+                                "name": "isLastFrame",
+                                "type": "bool"
+                            }
+                        ],
+                        "index": 8,
+                        "lineNumber": 128,
+                        "name": "binaryFrameReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "message",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 9,
+                        "lineNumber": 129,
+                        "name": "textMessageReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "message",
+                                "type": "QByteArray"
+                            }
+                        ],
+                        "index": 10,
+                        "lineNumber": 130,
+                        "name": "binaryMessageReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "error",
+                                "type": "QAbstractSocket::SocketError"
+                            }
+                        ],
+                        "index": 11,
+                        "lineNumber": 133,
+                        "name": "error",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "error",
+                                "type": "QAbstractSocket::SocketError"
+                            }
+                        ],
+                        "index": 12,
+                        "lineNumber": 135,
+                        "name": "errorOccurred",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "elapsedTime",
+                                "type": "quint64"
+                            },
+                            {
+                                "name": "payload",
+                                "type": "QByteArray"
+                            }
+                        ],
+                        "index": 13,
+                        "lineNumber": 136,
+                        "name": "pong",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "bytes",
+                                "type": "qint64"
+                            }
+                        ],
+                        "index": 14,
+                        "lineNumber": 137,
+                        "name": "bytesWritten",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "error",
+                                "type": "QSslError"
+                            }
+                        ],
+                        "index": 15,
+                        "lineNumber": 140,
+                        "name": "peerVerifyError",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "errors",
+                                "type": "QList<QSslError>"
+                            }
+                        ],
+                        "index": 16,
+                        "lineNumber": 141,
+                        "name": "sslErrors",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "authenticator",
+                                "type": "QSslPreSharedKeyAuthenticator*"
+                            }
+                        ],
+                        "index": 17,
+                        "lineNumber": 142,
+                        "name": "preSharedKeyAuthenticationRequired",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "level",
+                                "type": "QSsl::AlertLevel"
+                            },
+                            {
+                                "name": "type",
+                                "type": "QSsl::AlertType"
+                            },
+                            {
+                                "name": "description",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 18,
+                        "lineNumber": 143,
+                        "name": "alertSent",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "level",
+                                "type": "QSsl::AlertLevel"
+                            },
+                            {
+                                "name": "type",
+                                "type": "QSsl::AlertType"
+                            },
+                            {
+                                "name": "description",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 19,
+                        "lineNumber": 144,
+                        "name": "alertReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "error",
+                                "type": "QSslError"
+                            }
+                        ],
+                        "index": 20,
+                        "lineNumber": 145,
+                        "name": "handshakeInterruptedOnError",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "closeCode",
+                                "type": "QWebSocketProtocol::CloseCode"
+                            },
+                            {
+                                "name": "reason",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 21,
+                        "lineNumber": 103,
+                        "name": "close",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "closeCode",
+                                "type": "QWebSocketProtocol::CloseCode"
+                            }
+                        ],
+                        "index": 22,
+                        "isCloned": true,
+                        "lineNumber": 103,
+                        "name": "close",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 23,
+                        "isCloned": true,
+                        "lineNumber": 103,
+                        "name": "close",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 24,
+                        "lineNumber": 107,
+                        "name": "open",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "request",
+                                "type": "QNetworkRequest"
+                            }
+                        ],
+                        "index": 25,
+                        "lineNumber": 108,
+                        "name": "open",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "options",
+                                "type": "QWebSocketHandshakeOptions"
+                            }
+                        ],
+                        "index": 26,
+                        "lineNumber": 109,
+                        "name": "open",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "request",
+                                "type": "QNetworkRequest"
+                            },
+                            {
+                                "name": "options",
+                                "type": "QWebSocketHandshakeOptions"
+                            }
+                        ],
+                        "index": 27,
+                        "lineNumber": 110,
+                        "name": "open",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "payload",
+                                "type": "QByteArray"
+                            }
+                        ],
+                        "index": 28,
+                        "lineNumber": 112,
+                        "name": "ping",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 29,
+                        "isCloned": true,
+                        "lineNumber": 112,
+                        "name": "ping",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 30,
+                        "lineNumber": 114,
+                        "name": "ignoreSslErrors",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qwebsocket.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QWebSocketDataProcessor",
+                "lineNumber": 35,
+                "object": true,
+                "qualifiedClassName": "QWebSocketDataProcessor",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "data",
+                                "type": "QByteArray"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 55,
+                        "name": "pingReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "data",
+                                "type": "QByteArray"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 56,
+                        "name": "pongReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "closeCode",
+                                "type": "QWebSocketProtocol::CloseCode"
+                            },
+                            {
+                                "name": "closeReason",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 57,
+                        "name": "closeReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "frame",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "lastFrame",
+                                "type": "bool"
+                            }
+                        ],
+                        "index": 3,
+                        "lineNumber": 58,
+                        "name": "textFrameReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "frame",
+                                "type": "QByteArray"
+                            },
+                            {
+                                "name": "lastFrame",
+                                "type": "bool"
+                            }
+                        ],
+                        "index": 4,
+                        "lineNumber": 59,
+                        "name": "binaryFrameReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "message",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 5,
+                        "lineNumber": 60,
+                        "name": "textMessageReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "message",
+                                "type": "QByteArray"
+                            }
+                        ],
+                        "index": 6,
+                        "lineNumber": 61,
+                        "name": "binaryMessageReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "code",
+                                "type": "QWebSocketProtocol::CloseCode"
+                            },
+                            {
+                                "name": "description",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 7,
+                        "lineNumber": 62,
+                        "name": "errorEncountered",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "pIoDevice",
+                                "type": "QIODevice*"
+                            }
+                        ],
+                        "index": 8,
+                        "lineNumber": 65,
+                        "name": "process",
+                        "returnType": "bool"
+                    },
+                    {
+                        "access": "public",
+                        "index": 9,
+                        "lineNumber": 66,
+                        "name": "clear",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qwebsocketdataprocessor_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QWebSocketHandshakeResponse",
+                "lineNumber": 29,
+                "object": true,
+                "qualifiedClassName": "QWebSocketHandshakeResponse",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qwebsockethandshakeresponse_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QWebSocketServer",
+                "enums": [
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 38,
+                        "name": "SslMode",
+                        "values": [
+                            "SecureMode",
+                            "NonSecureMode"
+                        ]
+                    }
+                ],
+                "lineNumber": 31,
+                "object": true,
+                "qualifiedClassName": "QWebSocketServer",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "socketError",
+                                "type": "QAbstractSocket::SocketError"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 115,
+                        "name": "acceptError",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "closeCode",
+                                "type": "QWebSocketProtocol::CloseCode"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 116,
+                        "name": "serverError",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "pAuthenticator",
+                                "type": "QWebSocketCorsAuthenticator*"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 119,
+                        "name": "originAuthenticationRequired",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "lineNumber": 120,
+                        "name": "newConnection",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "error",
+                                "type": "QSslError"
+                            }
+                        ],
+                        "index": 4,
+                        "lineNumber": 122,
+                        "name": "peerVerifyError",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "errors",
+                                "type": "QList<QSslError>"
+                            }
+                        ],
+                        "index": 5,
+                        "lineNumber": 123,
+                        "name": "sslErrors",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "authenticator",
+                                "type": "QSslPreSharedKeyAuthenticator*"
+                            }
+                        ],
+                        "index": 6,
+                        "lineNumber": 124,
+                        "name": "preSharedKeyAuthenticationRequired",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "level",
+                                "type": "QSsl::AlertLevel"
+                            },
+                            {
+                                "name": "type",
+                                "type": "QSsl::AlertType"
+                            },
+                            {
+                                "name": "description",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 7,
+                        "lineNumber": 125,
+                        "name": "alertSent",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "level",
+                                "type": "QSsl::AlertLevel"
+                            },
+                            {
+                                "name": "type",
+                                "type": "QSsl::AlertType"
+                            },
+                            {
+                                "name": "description",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 8,
+                        "lineNumber": 126,
+                        "name": "alertReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "error",
+                                "type": "QSslError"
+                            }
+                        ],
+                        "index": 9,
+                        "lineNumber": 127,
+                        "name": "handshakeInterruptedOnError",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 10,
+                        "lineNumber": 129,
+                        "name": "closed",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qwebsocketserver.h",
+        "outputRevision": 69
+    }
+]

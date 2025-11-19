@@ -1,0 +1,6 @@
+#ifndef QT_QTJSONRPC_MODULE_H
+#define QT_QTJSONRPC_MODULE_H
+#include <QtJsonRpc/QtJsonRpcDepends>
+#include "qtjsonrpcglobal.h"
+#include "qtjsonrpcversion.h"
+#endif

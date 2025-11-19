@@ -5,14 +5,14 @@ DocumentName: qttools-6.10.0
 DocumentNamespace: https://qt.io/spdxdocs/qttools-6.10.0
 Creator: Organization: TheQtCompany
 Creator: Tool: Qt Build System
-CreatorComment: <text>This SPDX document was created from CMake 4.1.2, using the qt
+CreatorComment: <text>This SPDX document was created from CMake 3.31.9, using the qt
 build system from https://code.qt.io/cgit/qt/qtbase.git/tree/cmake/QtPublicSbomHelpers.cmake</text>
-Created: 2025-11-10T12:28:18Z
-ExternalDocumentRef: DocumentRef-qtbase https://qt.io/spdxdocs/qtbase-6.10.0 SHA1: 331cdf6e1ee55b808ca0916788c380634f7b2b09
+Created: 2025-11-19T03:49:07Z
+ExternalDocumentRef: DocumentRef-qtbase https://qt.io/spdxdocs/qtbase-6.10.0 SHA1: 77d26cc8d0a6466a911df7f9a32c4b9d1165b62c
 
 PackageName: MSVC
 SPDXID: SPDXRef-compiler
-PackageVersion: 19.44.35219.0
+PackageVersion: 19.44.35211.0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
 PackageLicenseDeclared: NOASSERTION
@@ -22,7 +22,7 @@ FilesAnalyzed: false
 PackageSummary: <text>The compiler as identified by CMake, running on Windows (AMD64)</text>
 PrimaryPackagePurpose: APPLICATION
 Relationship: SPDXRef-compiler BUILD_DEPENDENCY_OF SPDXRef-Package-qttools
-RelationshipComment: <text>SPDXRef-Package-qttools is built by compiler MSVC version 19.44.35219.0</text>
+RelationshipComment: <text>SPDXRef-Package-qttools is built by compiler MSVC version 19.44.35211.0</text>
 
 PackageName: qttools
 SPDXID: SPDXRef-Package-qttools
@@ -36,12 +36,12 @@ PackageLicenseConcluded: NOASSERTION
 PackageLicenseDeclared: NOASSERTION
 PackageCopyrightText: Copyright (C) The Qt Company Ltd. and other contributors.
 PackageHomePage: https://qt.io
-PackageComment: <text>Built by CMake 4.1.2 with Release configuration for Windows (AMD64)
+PackageComment: <text>Built by CMake 3.31.9 with Release configuration for Windows (AMD64)
 qttools was configured with:
-    qt6/configure -prefix D:\Github\BB_Launcher\qtstatic -feature-relocatable -static -static-runtime -release -skip qt3d -skip qt5compat -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdeclarative -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qthttpserver -skip qtimageformats -skip qtlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtnetworkauth -skip qtopcua -skip qtpositioning -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwayland -skip qtwebchannel -skip qtwebengine -skip qtwebsockets -skip qtwebview -skip qtactiveqt
+    qt6/configure -static -static-runtime -prefix D:\Github\BB_Launcher\qtstatic -skip qt3d -skip qt5compat -skip qtactiveqt -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdeclarative -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qhttpserver -skip qlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtnetworkauth -skip qtopcua -skip qtpositioning -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwebchannel -skip qtwebview -skip tests -skip qtwebengine -release
 </text>
 FilesAnalyzed: false
-BuiltDate: 2025-11-10T12:28:18Z
+BuiltDate: 2025-11-19T03:49:07Z
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-qttools
 
 PackageName: UiPlugin
@@ -86,7 +86,7 @@ Contained in CMake package: Qt6UiTools
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: a63ed2df24f9efe887acda55c37e63582ead1126
+PackageVerificationCode: 7424f98fbb6d876e059e5e6ea69fd57667fc5d78
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-module-UiTools DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
 Relationship: SPDXRef-Package-qttools-qt-module-UiTools DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-OpenGL
@@ -100,7 +100,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-module
 FileName: ./lib/Qt6UiTools.lib
 SPDXID: SPDXRef-PackagedFile-qt-module-UiTools
 FileType: BINARY
-FileChecksum: SHA1: 234626f307f6ae7d57f4259d11d23fd6a3383e66
+FileChecksum: SHA1: 332a32fc8d8eff81aa684293f1865fdf9862b09d
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -179,7 +179,7 @@ CMake target name: lconvert
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 6d1752109e80fca4de515a26126fd2cf31991e5a
+PackageVerificationCode: 8cabd7038189847e20f8c0f06fb0a7314d4e094f
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-tool-lconvert DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-tool-lconvert DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
@@ -189,13 +189,13 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-tool-l
 FileName: ./bin/lconvert.exe
 SPDXID: SPDXRef-PackagedFile-qt-tool-lconvert
 FileType: BINARY
-FileChecksum: SHA1: fc2d4a36921db78fa5b3153074f9446d5a5d6d8c
+FileChecksum: SHA1: 597e0345cc31dabc2aa569852996fbdf51012936
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
 Relationship: SPDXRef-Package-qttools-qt-tool-lconvert CONTAINS SPDXRef-PackagedFile-qt-tool-lconvert
 Relationship: SPDXRef-PackagedFile-qt-tool-lconvert GENERATED_FROM NOASSERTION
-RelationshipComment: /src_dir/qttools/src/linguist/lconvert/D:/Github/qt-6.10.0/static/qttools/src/linguist/lconvert/lconvert_resource.rc
+RelationshipComment: /src_dir/qttools/src/linguist/lconvert/D:/Github/qtstatic/qttools/src/linguist/lconvert/lconvert_resource.rc
 Relationship: SPDXRef-PackagedFile-qt-tool-lconvert GENERATED_FROM NOASSERTION
 RelationshipComment: /src_dir/qttools/src/linguist/shared/numerus.cpp
 Relationship: SPDXRef-PackagedFile-qt-tool-lconvert GENERATED_FROM NOASSERTION
@@ -241,7 +241,7 @@ CMake target name: lprodump
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 678da7e7ff716e162c67939ae8afaa6ef9357fda
+PackageVerificationCode: 52ec77ee80cf805119056fa75c0a5c9990376f23
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-tool-lprodump DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-tool-lprodump DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
@@ -251,13 +251,13 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-tool-l
 FileName: ./bin/lprodump.exe
 SPDXID: SPDXRef-PackagedFile-qt-tool-lprodump
 FileType: BINARY
-FileChecksum: SHA1: 261f4034856bf4e4c5929e1bb329556ede3e5f4c
+FileChecksum: SHA1: 3ba3585de44e5196b9b49180a2574a8fb610eda7
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
 Relationship: SPDXRef-Package-qttools-qt-tool-lprodump CONTAINS SPDXRef-PackagedFile-qt-tool-lprodump
 Relationship: SPDXRef-PackagedFile-qt-tool-lprodump GENERATED_FROM NOASSERTION
-RelationshipComment: /src_dir/qttools/src/linguist/lprodump/D:/Github/qt-6.10.0/static/qttools/src/linguist/lprodump/lprodump_resource.rc
+RelationshipComment: /src_dir/qttools/src/linguist/lprodump/D:/Github/qtstatic/qttools/src/linguist/lprodump/lprodump_resource.rc
 Relationship: SPDXRef-PackagedFile-qt-tool-lprodump GENERATED_FROM NOASSERTION
 RelationshipComment: /src_dir/qttools/src/linguist/shared/ioutils.cpp
 Relationship: SPDXRef-PackagedFile-qt-tool-lprodump GENERATED_FROM NOASSERTION
@@ -323,7 +323,7 @@ CMake target name: lrelease
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 72057dad1e956604df4ef925e33aaa1b1716e3e5
+PackageVerificationCode: b7ee0bbfae759ca304f93cfa5332d3b820ffe6ac
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-tool-lrelease DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-tool-lrelease DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
@@ -333,13 +333,13 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-tool-l
 FileName: ./bin/lrelease.exe
 SPDXID: SPDXRef-PackagedFile-qt-tool-lrelease
 FileType: BINARY
-FileChecksum: SHA1: 2f3a69cc63144aaa27b8aae22e5a9f5d41e612cb
+FileChecksum: SHA1: 2c5c7971783394b702ff0f04e36511e4dc9761b5
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
 Relationship: SPDXRef-Package-qttools-qt-tool-lrelease CONTAINS SPDXRef-PackagedFile-qt-tool-lrelease
 Relationship: SPDXRef-PackagedFile-qt-tool-lrelease GENERATED_FROM NOASSERTION
-RelationshipComment: /src_dir/qttools/src/linguist/lrelease/D:/Github/qt-6.10.0/static/qttools/src/linguist/lrelease/lrelease_resource.rc
+RelationshipComment: /src_dir/qttools/src/linguist/lrelease/D:/Github/qtstatic/qttools/src/linguist/lrelease/lrelease_resource.rc
 Relationship: SPDXRef-PackagedFile-qt-tool-lrelease GENERATED_FROM NOASSERTION
 RelationshipComment: /src_dir/qttools/src/linguist/shared/numerus.cpp
 Relationship: SPDXRef-PackagedFile-qt-tool-lrelease GENERATED_FROM NOASSERTION
@@ -393,7 +393,7 @@ CMake target name: lrelease-pro
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 34615ea673b4a0046dfa2377076963c1778ef104
+PackageVerificationCode: 8a1a1150b52d499a182b1087190e57e1060a1c4d
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-tool-lrelease-pro DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
 Relationship: SPDXRef-Package-qttools-qt-tool-lrelease-pro DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformCommonInternal
@@ -403,13 +403,13 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-tool-l
 FileName: ./bin/lrelease-pro.exe
 SPDXID: SPDXRef-PackagedFile-qt-tool-lrelease-pro
 FileType: BINARY
-FileChecksum: SHA1: b68e622f3b56112ecd4260ee5e5510c7e03d61a3
+FileChecksum: SHA1: 527bfc7dc96abe6fb73c61d3824599fedd612b68
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
 Relationship: SPDXRef-Package-qttools-qt-tool-lrelease-pro CONTAINS SPDXRef-PackagedFile-qt-tool-lrelease-pro
 Relationship: SPDXRef-PackagedFile-qt-tool-lrelease-pro GENERATED_FROM NOASSERTION
-RelationshipComment: /src_dir/qttools/src/linguist/lrelease-pro/D:/Github/qt-6.10.0/static/qttools/src/linguist/lrelease-pro/lrelease-pro_resource.rc
+RelationshipComment: /src_dir/qttools/src/linguist/lrelease-pro/D:/Github/qtstatic/qttools/src/linguist/lrelease-pro/lrelease-pro_resource.rc
 Relationship: SPDXRef-PackagedFile-qt-tool-lrelease-pro GENERATED_FROM NOASSERTION
 RelationshipComment: /src_dir/qttools/src/linguist/shared/runqttool.cpp
 Relationship: SPDXRef-PackagedFile-qt-tool-lrelease-pro GENERATED_FROM NOASSERTION
@@ -435,7 +435,7 @@ CMake target name: lupdate
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 5b0a1025cab17a3983190087394925e68a5d3879
+PackageVerificationCode: 668fa11c7b806cc67be26ce92d2268977f998646
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-tool-lupdate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-tool-lupdate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
@@ -446,13 +446,13 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-tool-l
 FileName: ./bin/lupdate.exe
 SPDXID: SPDXRef-PackagedFile-qt-tool-lupdate
 FileType: BINARY
-FileChecksum: SHA1: aba05f3e79976138a36f4851e39a6e9969b0056f
+FileChecksum: SHA1: a83c0bb28b651ec8cb420237ab321e4e99b1fdc2
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
 Relationship: SPDXRef-Package-qttools-qt-tool-lupdate CONTAINS SPDXRef-PackagedFile-qt-tool-lupdate
 Relationship: SPDXRef-PackagedFile-qt-tool-lupdate GENERATED_FROM NOASSERTION
-RelationshipComment: /src_dir/qttools/src/linguist/lupdate/D:/Github/qt-6.10.0/static/qttools/src/linguist/lupdate/lupdate_resource.rc
+RelationshipComment: /src_dir/qttools/src/linguist/lupdate/D:/Github/qtstatic/qttools/src/linguist/lupdate/lupdate_resource.rc
 Relationship: SPDXRef-PackagedFile-qt-tool-lupdate GENERATED_FROM NOASSERTION
 RelationshipComment: /src_dir/qttools/src/linguist/shared/numerus.cpp
 Relationship: SPDXRef-PackagedFile-qt-tool-lupdate GENERATED_FROM NOASSERTION
@@ -532,7 +532,7 @@ CMake target name: lupdate-pro
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 0dcc8af540580a77835a2c48fba24eb9355badd0
+PackageVerificationCode: a14248a95bf2bc17dcbfa57f6d82e55b93fdb421
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-tool-lupdate-pro DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
 Relationship: SPDXRef-Package-qttools-qt-tool-lupdate-pro DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformCommonInternal
@@ -542,13 +542,13 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-tool-l
 FileName: ./bin/lupdate-pro.exe
 SPDXID: SPDXRef-PackagedFile-qt-tool-lupdate-pro
 FileType: BINARY
-FileChecksum: SHA1: 1047d23420d8740ae5b8bed56e97da496942fd77
+FileChecksum: SHA1: b73c038b437d5589a5be42e2c2837ef4d24f37b1
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
 Relationship: SPDXRef-Package-qttools-qt-tool-lupdate-pro CONTAINS SPDXRef-PackagedFile-qt-tool-lupdate-pro
 Relationship: SPDXRef-PackagedFile-qt-tool-lupdate-pro GENERATED_FROM NOASSERTION
-RelationshipComment: /src_dir/qttools/src/linguist/lupdate-pro/D:/Github/qt-6.10.0/static/qttools/src/linguist/lupdate-pro/lupdate-pro_resource.rc
+RelationshipComment: /src_dir/qttools/src/linguist/lupdate-pro/D:/Github/qtstatic/qttools/src/linguist/lupdate-pro/lupdate-pro_resource.rc
 Relationship: SPDXRef-PackagedFile-qt-tool-lupdate-pro GENERATED_FROM NOASSERTION
 RelationshipComment: /src_dir/qttools/src/linguist/shared/runqttool.cpp
 Relationship: SPDXRef-PackagedFile-qt-tool-lupdate-pro GENERATED_FROM NOASSERTION
@@ -597,7 +597,7 @@ Contained in CMake package: Qt6Designer
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: cb202661f8ec06f476d863704b1459ce4d06da3d
+PackageVerificationCode: 6bb6d2b2ee3cb560c4fb88c07687a987aef32a95
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-module-Designer DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-module-Designer DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
@@ -612,7 +612,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-module
 FileName: ./lib/Qt6Designer.lib
 SPDXID: SPDXRef-PackagedFile-qt-module-Designer
 FileType: BINARY
-FileChecksum: SHA1: fadd3f41433e393a127543c4cc5567d4e860ff3c
+FileChecksum: SHA1: 49ff02634a3b7e37693fafa087b43ad4866565c5
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -1244,7 +1244,7 @@ Contained in CMake package: Qt6DesignerComponentsPrivate
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 89ef56401b74bc0daeb983d107f247b3f199035a
+PackageVerificationCode: 868a6d3174b3f4ef3a2a0af087e43afede32593d
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-module-DesignerComponentsPrivate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Xml
 Relationship: SPDXRef-Package-qttools-qt-module-DesignerComponentsPrivate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
@@ -1257,7 +1257,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-module
 FileName: ./lib/Qt6DesignerComponents.lib
 SPDXID: SPDXRef-PackagedFile-qt-module-DesignerComponentsPrivate
 FileType: BINARY
-FileChecksum: SHA1: a89c1a01bc76c1b55c8c9e62cb6b270239861ae8
+FileChecksum: SHA1: 2c6ffbcc407aad4d44a64712f72b62964a7ec703
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -1649,7 +1649,7 @@ CMake target name: designer
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: a5b3b19da10f58ff1eae93dd1a1b22dfe8445d85
+PackageVerificationCode: dbc3c7ba33f3ab206e5aa05a4f72a55d80bc0fb4
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-app-designer DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-app-designer DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
@@ -1666,7 +1666,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-app-de
 FileName: ./bin/designer.exe
 SPDXID: SPDXRef-PackagedFile-qt-app-designer
 FileType: BINARY
-FileChecksum: SHA1: c81533b307b6c9dc2eaf802bf9df268ebdbc6a0a
+FileChecksum: SHA1: 382b95f6806e004c6138b9c0f58ae647ee4cc504
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -1756,7 +1756,7 @@ RelationshipComment: /build_dir/qttools/src/designer/src/designer/.qt/rcc/qrc_de
 Relationship: SPDXRef-PackagedFile-qt-app-designer GENERATED_FROM NOASSERTION
 RelationshipComment: /build_dir/qttools/src/designer/src/designer/.qt/rcc/qrc_qttoolbardialog.cpp
 Relationship: SPDXRef-PackagedFile-qt-app-designer GENERATED_FROM NOASSERTION
-RelationshipComment: /src_dir/qttools/src/designer/src/designer/D:/Github/qt-6.10.0/static/qttools/src/designer/src/designer/designer_resource.rc
+RelationshipComment: /src_dir/qttools/src/designer/src/designer/D:/Github/qtstatic/qttools/src/designer/src/designer/designer_resource.rc
 
 PackageName: pixeltool
 SPDXID: SPDXRef-Package-qttools-qt-app-pixeltool
@@ -1774,7 +1774,7 @@ CMake target name: pixeltool
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 3836d3c9da29ac6c0ee9fd1b5099c46dc401b11b
+PackageVerificationCode: 949a5e44c8dcc7f56ca1071e5686402b44ed11f8
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-app-pixeltool DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-app-pixeltool DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
@@ -1786,7 +1786,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-app-pi
 FileName: ./bin/pixeltool.exe
 SPDXID: SPDXRef-PackagedFile-qt-app-pixeltool
 FileType: BINARY
-FileChecksum: SHA1: 6cc06d926de160e9da0ba6945ac9cbad8335ffe0
+FileChecksum: SHA1: 407529c69c18bb86faaa392d145ef7f8d64c42d8
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -1798,7 +1798,7 @@ RelationshipComment: /src_dir/qttools/src/pixeltool/qpixeltool.cpp
 Relationship: SPDXRef-PackagedFile-qt-app-pixeltool GENERATED_FROM NOASSERTION
 RelationshipComment: /src_dir/qttools/src/pixeltool/qpixeltool.h
 Relationship: SPDXRef-PackagedFile-qt-app-pixeltool GENERATED_FROM NOASSERTION
-RelationshipComment: /src_dir/qttools/src/pixeltool/D:/Github/qt-6.10.0/static/qttools/src/pixeltool/pixeltool_resource.rc
+RelationshipComment: /src_dir/qttools/src/pixeltool/D:/Github/qtstatic/qttools/src/pixeltool/pixeltool_resource.rc
 
 PackageName: Help
 SPDXID: SPDXRef-Package-qttools-qt-module-Help
@@ -1818,7 +1818,7 @@ Contained in CMake package: Qt6Help
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: c29ff0c6cb179a8633dbe8b24ea3e56481e1b2b4
+PackageVerificationCode: 3fb4cf8d3427e777f1a480ea5a7f059b1bed03b3
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-module-Help DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-module-Help DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
@@ -1831,7 +1831,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-module
 FileName: ./lib/Qt6Help.lib
 SPDXID: SPDXRef-PackagedFile-qt-module-Help
 FileType: BINARY
-FileChecksum: SHA1: 21c45aa6f8f28a27f2852947bf3a18336ba9b921
+FileChecksum: SHA1: 83a5bfa0512a281ac25393a9a0ea9d6c0757a0c7
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -1929,9 +1929,9 @@ RelationshipComment: /src_dir/qttools/src/assistant/help/qfilternamedialog.ui
 Relationship: SPDXRef-PackagedFile-qt-module-Help GENERATED_FROM NOASSERTION
 RelationshipComment: /src_dir/qttools/src/assistant/help/qhelpfiltersettingswidget.ui
 Relationship: SPDXRef-PackagedFile-qt-module-Help GENERATED_FROM NOASSERTION
-RelationshipComment: /build_dir/qttools/src/assistant/help/.qt/fe2711/ui_qfilternamedialog.h
+RelationshipComment: /build_dir/qttools/src/assistant/help/.qt/b84052/ui_qfilternamedialog.h
 Relationship: SPDXRef-PackagedFile-qt-module-Help GENERATED_FROM NOASSERTION
-RelationshipComment: /build_dir/qttools/src/assistant/help/.qt/f25392/ui_qhelpfiltersettingswidget.h
+RelationshipComment: /build_dir/qttools/src/assistant/help/.qt/11a978/ui_qhelpfiltersettingswidget.h
 Relationship: SPDXRef-PackagedFile-qt-module-Help GENERATED_FROM NOASSERTION
 RelationshipComment: /build_dir/qttools/src/assistant/help/.qt/rcc/qrc_helpsystem.cpp
 
@@ -2009,7 +2009,7 @@ CMake target name: assistant
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: fc32358d08d60627cdfb74aafe17be5144bfe3c0
+PackageVerificationCode: c27c0a5ddba505aa5f940c32a09df3d26b6ed31f
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-app-assistant DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
 Relationship: SPDXRef-Package-qttools-qt-app-assistant DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Network
@@ -2027,7 +2027,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-app-as
 FileName: ./bin/assistant.exe
 SPDXID: SPDXRef-PackagedFile-qt-app-assistant
 FileType: BINARY
-FileChecksum: SHA1: 85296498a336c41a8f070a68af2e7002bd62831e
+FileChecksum: SHA1: f055d385fcdd7f1bc71da8a66cfc298c10281636
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -2179,17 +2179,17 @@ RelationshipComment: /src_dir/qttools/src/assistant/assistant/xbelsupport.cpp
 Relationship: SPDXRef-PackagedFile-qt-app-assistant GENERATED_FROM NOASSERTION
 RelationshipComment: /src_dir/qttools/src/assistant/assistant/xbelsupport.h
 Relationship: SPDXRef-PackagedFile-qt-app-assistant GENERATED_FROM NOASSERTION
-RelationshipComment: /build_dir/qttools/src/assistant/assistant/.qt/9201d1/ui_bookmarkdialog.h
+RelationshipComment: /build_dir/qttools/src/assistant/assistant/.qt/9a2c09/ui_bookmarkdialog.h
 Relationship: SPDXRef-PackagedFile-qt-app-assistant GENERATED_FROM NOASSERTION
-RelationshipComment: /build_dir/qttools/src/assistant/assistant/.qt/ffc941/ui_bookmarkmanagerwidget.h
+RelationshipComment: /build_dir/qttools/src/assistant/assistant/.qt/cb73ce/ui_bookmarkmanagerwidget.h
 Relationship: SPDXRef-PackagedFile-qt-app-assistant GENERATED_FROM NOASSERTION
-RelationshipComment: /build_dir/qttools/src/assistant/assistant/.qt/8c7980/ui_bookmarkwidget.h
+RelationshipComment: /build_dir/qttools/src/assistant/assistant/.qt/b9b680/ui_bookmarkwidget.h
 Relationship: SPDXRef-PackagedFile-qt-app-assistant GENERATED_FROM NOASSERTION
-RelationshipComment: /build_dir/qttools/src/assistant/assistant/.qt/08fb31/ui_helpdocsettingswidget.h
+RelationshipComment: /build_dir/qttools/src/assistant/assistant/.qt/2a889b/ui_helpdocsettingswidget.h
 Relationship: SPDXRef-PackagedFile-qt-app-assistant GENERATED_FROM NOASSERTION
-RelationshipComment: /build_dir/qttools/src/assistant/assistant/.qt/69754d/ui_preferencesdialog.h
+RelationshipComment: /build_dir/qttools/src/assistant/assistant/.qt/61ee2d/ui_preferencesdialog.h
 Relationship: SPDXRef-PackagedFile-qt-app-assistant GENERATED_FROM NOASSERTION
-RelationshipComment: /build_dir/qttools/src/assistant/assistant/.qt/8e7036/ui_topicchooser.h
+RelationshipComment: /build_dir/qttools/src/assistant/assistant/.qt/4ceeee/ui_topicchooser.h
 Relationship: SPDXRef-PackagedFile-qt-app-assistant GENERATED_FROM NOASSERTION
 RelationshipComment: /build_dir/qttools/src/assistant/assistant/.qt/rcc/qrc_assistant_images.cpp
 Relationship: SPDXRef-PackagedFile-qt-app-assistant GENERATED_FROM NOASSERTION
@@ -2199,7 +2199,7 @@ RelationshipComment: /src_dir/qttools/src/assistant/assistant/stdinlistener_win.
 Relationship: SPDXRef-PackagedFile-qt-app-assistant GENERATED_FROM NOASSERTION
 RelationshipComment: /src_dir/qttools/src/assistant/assistant/stdinlistener_win.h
 Relationship: SPDXRef-PackagedFile-qt-app-assistant GENERATED_FROM NOASSERTION
-RelationshipComment: /src_dir/qttools/src/assistant/assistant/D:/Github/qt-6.10.0/static/qttools/src/assistant/assistant/assistant_resource.rc
+RelationshipComment: /src_dir/qttools/src/assistant/assistant/D:/Github/qtstatic/qttools/src/assistant/assistant/assistant_resource.rc
 
 PackageName: qhelpgenerator
 SPDXID: SPDXRef-Package-qttools-qt-tool-qhelpgenerator
@@ -2217,7 +2217,7 @@ CMake target name: qhelpgenerator
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 5e8b92889ebc28639aed5a77cb323bf3edd6c10e
+PackageVerificationCode: 7b028db546b92b77533234e4fa57f62d5200e4cf
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-tool-qhelpgenerator DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
 Relationship: SPDXRef-Package-qttools-qt-tool-qhelpgenerator DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
@@ -2231,13 +2231,13 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-tool-q
 FileName: ./bin/qhelpgenerator.exe
 SPDXID: SPDXRef-PackagedFile-qt-tool-qhelpgenerator
 FileType: BINARY
-FileChecksum: SHA1: 106b5ee239650bd0dea318a7b03ea414e53b4979
+FileChecksum: SHA1: 83d14bbc2d517c788ee00e898320586998b8a3b1
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
 Relationship: SPDXRef-Package-qttools-qt-tool-qhelpgenerator CONTAINS SPDXRef-PackagedFile-qt-tool-qhelpgenerator
 Relationship: SPDXRef-PackagedFile-qt-tool-qhelpgenerator GENERATED_FROM NOASSERTION
-RelationshipComment: /src_dir/qttools/src/assistant/qhelpgenerator/D:/Github/qt-6.10.0/static/qttools/src/assistant/qhelpgenerator/qhelpgenerator_resource.rc
+RelationshipComment: /src_dir/qttools/src/assistant/qhelpgenerator/D:/Github/qtstatic/qttools/src/assistant/qhelpgenerator/qhelpgenerator_resource.rc
 Relationship: SPDXRef-PackagedFile-qt-tool-qhelpgenerator GENERATED_FROM NOASSERTION
 RelationshipComment: /src_dir/qttools/src/assistant/shared/collectionconfiguration.cpp
 Relationship: SPDXRef-PackagedFile-qt-tool-qhelpgenerator GENERATED_FROM NOASSERTION
@@ -2281,7 +2281,7 @@ CMake target name: qtattributionsscanner
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 77ae84544f94faef3bd524f1ee0c7df631400bfb
+PackageVerificationCode: f93191618671524bafbf1a9ba9a55b2c7293dd82
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-tool-qtattributionsscanner DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
 Relationship: SPDXRef-Package-qttools-qt-tool-qtattributionsscanner DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformCommonInternal
@@ -2291,13 +2291,13 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-tool-q
 FileName: ./bin/qtattributionsscanner.exe
 SPDXID: SPDXRef-PackagedFile-qt-tool-qtattributionsscanner
 FileType: BINARY
-FileChecksum: SHA1: 9cb5b2d648d7084d5508b66d1e1459f961997c2a
+FileChecksum: SHA1: 755b200ab5aeb6699f62df2051d8fabb474e23f4
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
 Relationship: SPDXRef-Package-qttools-qt-tool-qtattributionsscanner CONTAINS SPDXRef-PackagedFile-qt-tool-qtattributionsscanner
 Relationship: SPDXRef-PackagedFile-qt-tool-qtattributionsscanner GENERATED_FROM NOASSERTION
-RelationshipComment: /src_dir/qttools/src/qtattributionsscanner/D:/Github/qt-6.10.0/static/qttools/src/qtattributionsscanner/qtattributionsscanner_resource.rc
+RelationshipComment: /src_dir/qttools/src/qtattributionsscanner/D:/Github/qtstatic/qttools/src/qtattributionsscanner/qtattributionsscanner_resource.rc
 Relationship: SPDXRef-PackagedFile-qt-tool-qtattributionsscanner GENERATED_FROM NOASSERTION
 RelationshipComment: /src_dir/qttools/src/qtattributionsscanner/jsongenerator.cpp
 Relationship: SPDXRef-PackagedFile-qt-tool-qtattributionsscanner GENERATED_FROM NOASSERTION
@@ -2339,7 +2339,7 @@ CMake target name: qtplugininfo
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 0ba9ac78ccb0401279ce7783e4e7e5f23bddba27
+PackageVerificationCode: fe7c7e644de23b690b6a1fd0c84f3b12fd1ec08b
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-app-qtplugininfo DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformAppInternal
 Relationship: SPDXRef-Package-qttools-qt-app-qtplugininfo DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformCommonInternal
@@ -2349,7 +2349,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-app-qt
 FileName: ./bin/qtplugininfo.exe
 SPDXID: SPDXRef-PackagedFile-qt-app-qtplugininfo
 FileType: BINARY
-FileChecksum: SHA1: d2b8b26ea276762d839a3ba8163130cec970ba0f
+FileChecksum: SHA1: bf7a3a17d822df8122ef4aa431ffe4aef0170623
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -2357,7 +2357,7 @@ Relationship: SPDXRef-Package-qttools-qt-app-qtplugininfo CONTAINS SPDXRef-Packa
 Relationship: SPDXRef-PackagedFile-qt-app-qtplugininfo GENERATED_FROM NOASSERTION
 RelationshipComment: /src_dir/qttools/src/qtplugininfo/qtplugininfo.cpp
 Relationship: SPDXRef-PackagedFile-qt-app-qtplugininfo GENERATED_FROM NOASSERTION
-RelationshipComment: /src_dir/qttools/src/qtplugininfo/D:/Github/qt-6.10.0/static/qttools/src/qtplugininfo/qtplugininfo_resource.rc
+RelationshipComment: /src_dir/qttools/src/qtplugininfo/D:/Github/qtstatic/qttools/src/qtplugininfo/qtplugininfo_resource.rc
 
 PackageName: QDocCatchPrivate
 SPDXID: SPDXRef-Package-qttools-qt-bundled-3rdparty-module-QDocCatchPrivate
@@ -2447,7 +2447,7 @@ CMake target name: qdbus
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 9ad4093135aeba85ae53229adb0836bca1b961d9
+PackageVerificationCode: 49d03e7eeb313944a0307095b78ed19b8a692ca3
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-app-qdbus DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-DBus
 Relationship: SPDXRef-Package-qttools-qt-app-qdbus DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Xml
@@ -2459,7 +2459,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-app-qd
 FileName: ./bin/qdbus.exe
 SPDXID: SPDXRef-PackagedFile-qt-app-qdbus
 FileType: BINARY
-FileChecksum: SHA1: bfa5b884be603992331d554c866a18e0f02cb2a7
+FileChecksum: SHA1: 4f032031f7ace36b963617fd7514ff6df112ed9b
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -2467,7 +2467,7 @@ Relationship: SPDXRef-Package-qttools-qt-app-qdbus CONTAINS SPDXRef-PackagedFile
 Relationship: SPDXRef-PackagedFile-qt-app-qdbus GENERATED_FROM NOASSERTION
 RelationshipComment: /src_dir/qttools/src/qdbus/qdbus/qdbus.cpp
 Relationship: SPDXRef-PackagedFile-qt-app-qdbus GENERATED_FROM NOASSERTION
-RelationshipComment: /src_dir/qttools/src/qdbus/qdbus/D:/Github/qt-6.10.0/static/qttools/src/qdbus/qdbus/qdbus_resource.rc
+RelationshipComment: /src_dir/qttools/src/qdbus/qdbus/D:/Github/qtstatic/qttools/src/qdbus/qdbus/qdbus_resource.rc
 
 PackageName: qdbusviewer
 SPDXID: SPDXRef-Package-qttools-qt-app-qdbusviewer
@@ -2485,7 +2485,7 @@ CMake target name: qdbusviewer
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 05f1243e910eeb8146790d238b9e24c5c2794775
+PackageVerificationCode: 06242429c2d8c75f5abf69ed9570613d7078b877
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-app-qdbusviewer DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-DBus
 Relationship: SPDXRef-Package-qttools-qt-app-qdbusviewer DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
@@ -2499,7 +2499,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-app-qd
 FileName: ./bin/qdbusviewer.exe
 SPDXID: SPDXRef-PackagedFile-qt-app-qdbusviewer
 FileType: BINARY
-FileChecksum: SHA1: e2f4f408ba49b6b50a8e50e4bd03109a1973b55a
+FileChecksum: SHA1: 615f3e839d0d433572d750799ea3d10e3eef309b
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -2533,7 +2533,7 @@ RelationshipComment: /src_dir/qttools/src/qdbus/qdbusviewer/servicesproxymodel.h
 Relationship: SPDXRef-PackagedFile-qt-app-qdbusviewer GENERATED_FROM NOASSERTION
 RelationshipComment: /build_dir/qttools/src/qdbus/qdbusviewer/.qt/rcc/qrc_qdbusviewer.cpp
 Relationship: SPDXRef-PackagedFile-qt-app-qdbusviewer GENERATED_FROM NOASSERTION
-RelationshipComment: /src_dir/qttools/src/qdbus/qdbusviewer/D:/Github/qt-6.10.0/static/qttools/src/qdbus/qdbusviewer/qdbusviewer_resource.rc
+RelationshipComment: /src_dir/qttools/src/qdbus/qdbusviewer/D:/Github/qtstatic/qttools/src/qdbus/qdbusviewer/qdbusviewer_resource.rc
 
 PackageName: qtdiag
 SPDXID: SPDXRef-Package-qttools-qt-app-qtdiag
@@ -2551,7 +2551,7 @@ CMake target name: qtdiag
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qttools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: c5bae39b871800b323fb3778f0d82f07ff0ed9eb
+PackageVerificationCode: 770f148f3e40b12e64da09307b76b1a482f044bc
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qttools-qt-app-qtdiag DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qttools-qt-app-qtdiag DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformAppInternal
@@ -2565,7 +2565,7 @@ Relationship: SPDXRef-Package-qttools CONTAINS SPDXRef-Package-qttools-qt-app-qt
 FileName: ./bin/qtdiag.exe
 SPDXID: SPDXRef-PackagedFile-qt-app-qtdiag
 FileType: BINARY
-FileChecksum: SHA1: 94093ead0cc2b988eecb771ad6a0d4fcdb8c09e5
+FileChecksum: SHA1: 88f315a5b8251cba293308d9728afda8772103ec
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -2577,7 +2577,7 @@ RelationshipComment: /src_dir/qttools/src/qtdiag/qtdiag.cpp
 Relationship: SPDXRef-PackagedFile-qt-app-qtdiag GENERATED_FROM NOASSERTION
 RelationshipComment: /src_dir/qttools/src/qtdiag/qtdiag.h
 Relationship: SPDXRef-PackagedFile-qt-app-qtdiag GENERATED_FROM NOASSERTION
-RelationshipComment: /src_dir/qttools/src/qtdiag/D:/Github/qt-6.10.0/static/qttools/src/qtdiag/qtdiag_resource.rc
+RelationshipComment: /src_dir/qttools/src/qtdiag/D:/Github/qtstatic/qttools/src/qtdiag/qtdiag_resource.rc
 
 LicenseID: LicenseRef-Qt-Commercial
 ExtractedText: <text>Licensees holding valid commercial Qt licenses may use this software in

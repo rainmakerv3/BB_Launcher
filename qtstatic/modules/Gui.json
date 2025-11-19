@@ -13,7 +13,7 @@
             "name": "Windows",
             "version": "10.0.26200",
             "compiler_id": "MSVC",
-            "compiler_version": "19.44.35219.0",
+            "compiler_version": "19.44.35211.0",
             "targets": [
                 {
                     "static": true,

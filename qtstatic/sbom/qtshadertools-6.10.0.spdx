@@ -5,14 +5,14 @@ DocumentName: qtshadertools-6.10.0
 DocumentNamespace: https://qt.io/spdxdocs/qtshadertools-6.10.0
 Creator: Organization: TheQtCompany
 Creator: Tool: Qt Build System
-CreatorComment: <text>This SPDX document was created from CMake 4.1.2, using the qt
+CreatorComment: <text>This SPDX document was created from CMake 3.31.9, using the qt
 build system from https://code.qt.io/cgit/qt/qtbase.git/tree/cmake/QtPublicSbomHelpers.cmake</text>
-Created: 2025-11-10T12:28:09Z
-ExternalDocumentRef: DocumentRef-qtbase https://qt.io/spdxdocs/qtbase-6.10.0 SHA1: 331cdf6e1ee55b808ca0916788c380634f7b2b09
+Created: 2025-11-19T03:49:01Z
+ExternalDocumentRef: DocumentRef-qtbase https://qt.io/spdxdocs/qtbase-6.10.0 SHA1: 77d26cc8d0a6466a911df7f9a32c4b9d1165b62c
 
 PackageName: MSVC
 SPDXID: SPDXRef-compiler
-PackageVersion: 19.44.35219.0
+PackageVersion: 19.44.35211.0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
 PackageLicenseDeclared: NOASSERTION
@@ -22,7 +22,7 @@ FilesAnalyzed: false
 PackageSummary: <text>The compiler as identified by CMake, running on Windows (AMD64)</text>
 PrimaryPackagePurpose: APPLICATION
 Relationship: SPDXRef-compiler BUILD_DEPENDENCY_OF SPDXRef-Package-qtshadertools
-RelationshipComment: <text>SPDXRef-Package-qtshadertools is built by compiler MSVC version 19.44.35219.0</text>
+RelationshipComment: <text>SPDXRef-Package-qtshadertools is built by compiler MSVC version 19.44.35211.0</text>
 
 PackageName: qtshadertools
 SPDXID: SPDXRef-Package-qtshadertools
@@ -36,12 +36,12 @@ PackageLicenseConcluded: NOASSERTION
 PackageLicenseDeclared: NOASSERTION
 PackageCopyrightText: Copyright (C) The Qt Company Ltd. and other contributors.
 PackageHomePage: https://qt.io
-PackageComment: <text>Built by CMake 4.1.2 with Release configuration for Windows (AMD64)
+PackageComment: <text>Built by CMake 3.31.9 with Release configuration for Windows (AMD64)
 qtshadertools was configured with:
-    qt6/configure -prefix D:\Github\BB_Launcher\qtstatic -feature-relocatable -static -static-runtime -release -skip qt3d -skip qt5compat -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdeclarative -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qthttpserver -skip qtimageformats -skip qtlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtnetworkauth -skip qtopcua -skip qtpositioning -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwayland -skip qtwebchannel -skip qtwebengine -skip qtwebsockets -skip qtwebview -skip qtactiveqt
+    qt6/configure -static -static-runtime -prefix D:\Github\BB_Launcher\qtstatic -skip qt3d -skip qt5compat -skip qtactiveqt -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdeclarative -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qhttpserver -skip qlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtnetworkauth -skip qtopcua -skip qtpositioning -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwebchannel -skip qtwebview -skip tests -skip qtwebengine -release
 </text>
 FilesAnalyzed: false
-BuiltDate: 2025-11-10T12:28:09Z
+BuiltDate: 2025-11-19T03:49:01Z
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-qtshadertools
 
 PackageName: BundledGlslang_Spirv
@@ -78,7 +78,7 @@ Contained in CMake package: Qt6BundledGlslang_Spirv
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtshadertools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 72a2ba4a25ad090cd1887691a5325e0c9fad0e8a
+PackageVerificationCode: 7770abd3fab75afab00ff68837917761530464b6
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Spirv DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
 Relationship: SPDXRef-Package-qtshadertools CONTAINS SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Spirv
@@ -86,7 +86,7 @@ Relationship: SPDXRef-Package-qtshadertools CONTAINS SPDXRef-Package-qtshadertoo
 FileName: ./lib/Qt6BundledGlslang_Spirv.lib
 SPDXID: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Spirv
 FileType: BINARY
-FileChecksum: SHA1: ddd3180dff236da5f5acb3dc6de38d593d573faa
+FileChecksum: SHA1: 4a397863307db1766055606946dafd1d886c4f02
 LicenseConcluded: BSD-3-Clause AND LicenseRef-MIT-Khronos-old AND Apache-2.0 AND GPL-3.0-or-later WITH Bison-exception-2.2 AND AML-glslang
 FileCopyrightText: <text>Copyright (c) 2017, 2019 ARM Limited
 Copyright (c) 2002-2005 3 Dlabs Inc. Ltd.
@@ -150,7 +150,7 @@ Contained in CMake package: Qt6BundledGlslang_Osdependent
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtshadertools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: d6caac9bbe1ab947986034aa186d871296448424
+PackageVerificationCode: 0d773f798a235178b1f1f8c3d9a6b6491ad009b8
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Osdependent DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
 Relationship: SPDXRef-Package-qtshadertools CONTAINS SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Osdependent
@@ -158,7 +158,7 @@ Relationship: SPDXRef-Package-qtshadertools CONTAINS SPDXRef-Package-qtshadertoo
 FileName: ./lib/Qt6BundledGlslang_Osdependent.lib
 SPDXID: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Osdependent
 FileType: BINARY
-FileChecksum: SHA1: 253b7f3bf67cfb040d167fbe4d460e15318b5c2a
+FileChecksum: SHA1: 8af953791cdbece871978aaadb71ec1bdbdab99b
 LicenseConcluded: BSD-3-Clause AND LicenseRef-MIT-Khronos-old AND Apache-2.0 AND GPL-3.0-or-later WITH Bison-exception-2.2 AND AML-glslang
 FileCopyrightText: <text>Copyright (c) 2017, 2019 ARM Limited
 Copyright (c) 2002-2005 3 Dlabs Inc. Ltd.
@@ -206,7 +206,7 @@ Contained in CMake package: Qt6BundledGlslang_Glslang
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtshadertools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: ce6ff76720682c5e71d09e3c2278a84d6999542f
+PackageVerificationCode: 24999a5131427019ad7d3af29c7723cb09d86c05
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Glslang DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
 Relationship: SPDXRef-Package-qtshadertools CONTAINS SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledGlslang-Glslang
@@ -214,7 +214,7 @@ Relationship: SPDXRef-Package-qtshadertools CONTAINS SPDXRef-Package-qtshadertoo
 FileName: ./lib/Qt6BundledGlslang_Glslang.lib
 SPDXID: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledGlslang-Glslang
 FileType: BINARY
-FileChecksum: SHA1: 34a243951f5b5336ced29c4d570fb5a5da476b76
+FileChecksum: SHA1: 3d05feabc0262d3183a1ed73ba7f3cd324fa5eb1
 LicenseConcluded: BSD-3-Clause AND LicenseRef-MIT-Khronos-old AND Apache-2.0 AND GPL-3.0-or-later WITH Bison-exception-2.2 AND AML-glslang
 FileCopyrightText: <text>Copyright (c) 2017, 2019 ARM Limited
 Copyright (c) 2002-2005 3 Dlabs Inc. Ltd.
@@ -321,7 +321,7 @@ Contained in CMake package: Qt6BundledSpirv_Cross
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtshadertools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: da8d53e93284505df0e9ddc8bb05a937ee8d2248
+PackageVerificationCode: aefe4c6c771ae3b378a255f2a50944a8fa3641d2
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledSpirv-Cross DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
 Relationship: SPDXRef-Package-qtshadertools CONTAINS SPDXRef-Package-qtshadertools-qt-bundled-3rdparty-module-BundledSpirv-Cross
@@ -329,7 +329,7 @@ Relationship: SPDXRef-Package-qtshadertools CONTAINS SPDXRef-Package-qtshadertoo
 FileName: ./lib/Qt6BundledSpirv_Cross.lib
 SPDXID: SPDXRef-PackagedFile-qt-bundled-3rdparty-module-BundledSpirv-Cross
 FileType: BINARY
-FileChecksum: SHA1: 34fb9a84296951aa7de2dd7d9f8b8b8654c19b36
+FileChecksum: SHA1: 1cb1727470227601e35cbb6aca81ca74c4e021a9
 LicenseConcluded: Apache-2.0 AND LicenseRef-MIT-Khronos-old
 FileCopyrightText: <text>Copyright 2015-2020 Arm Limited
 Copyright (c) 2014-2019 The Khronos Group Inc.
@@ -381,7 +381,7 @@ Contained in CMake package: Qt6ShaderTools
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtshadertools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: b7b798bdb348f17d8e7ed623042e290750ab26a5
+PackageVerificationCode: 7a917fe54e350b6e715ec8b03b7a08228e543738
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtshadertools-qt-module-ShaderTools DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
 Relationship: SPDXRef-Package-qtshadertools-qt-module-ShaderTools DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
@@ -395,13 +395,13 @@ Relationship: SPDXRef-Package-qtshadertools CONTAINS SPDXRef-Package-qtshadertoo
 FileName: ./lib/Qt6ShaderTools.lib
 SPDXID: SPDXRef-PackagedFile-qt-module-ShaderTools
 FileType: BINARY
-FileChecksum: SHA1: 55de00f1386053f04b4807538c1389f5543fb16d
+FileChecksum: SHA1: 1a0cd42bcf60982d69041ca2f336850d692d40c7
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
 Relationship: SPDXRef-Package-qtshadertools-qt-module-ShaderTools CONTAINS SPDXRef-PackagedFile-qt-module-ShaderTools
 Relationship: SPDXRef-PackagedFile-qt-module-ShaderTools GENERATED_FROM NOASSERTION
-RelationshipComment: D:/Github/qt-6.10.0/static/qtbase/include/QtShaderTools/qtshadertoolsexports.h
+RelationshipComment: D:/Github/qtstatic/qtbase/include/QtShaderTools/qtshadertoolsexports.h
 Relationship: SPDXRef-PackagedFile-qt-module-ShaderTools GENERATED_FROM NOASSERTION
 RelationshipComment: /src_dir/qtshadertools/src/shadertools/qshaderbaker.cpp
 Relationship: SPDXRef-PackagedFile-qt-module-ShaderTools GENERATED_FROM NOASSERTION
@@ -443,7 +443,7 @@ CMake target name: qsb
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtshadertools:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: e40dda33997bd59ffaa2dc79abc23504e60606ad
+PackageVerificationCode: 2f7f07b0b3530a5cb8f504d0c208a76d161e7ddf
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtshadertools-qt-tool-qsb DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
 Relationship: SPDXRef-Package-qtshadertools-qt-tool-qsb DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformToolInternal
@@ -455,13 +455,13 @@ Relationship: SPDXRef-Package-qtshadertools CONTAINS SPDXRef-Package-qtshadertoo
 FileName: ./bin/qsb.exe
 SPDXID: SPDXRef-PackagedFile-qt-tool-qsb
 FileType: BINARY
-FileChecksum: SHA1: f4fa8b4e8e5661e61793622609e4e47b57cf4ad0
+FileChecksum: SHA1: 055db8beeb480139fc3354c5247c6b8bbf30119e
 LicenseConcluded: LicenseRef-Qt-Commercial OR GPL-3.0-only WITH Qt-GPL-exception-1.0
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
 Relationship: SPDXRef-Package-qtshadertools-qt-tool-qsb CONTAINS SPDXRef-PackagedFile-qt-tool-qsb
 Relationship: SPDXRef-PackagedFile-qt-tool-qsb GENERATED_FROM NOASSERTION
-RelationshipComment: /src_dir/qtshadertools/tools/qsb/D:/Github/qt-6.10.0/static/qtshadertools/tools/qsb/qsb_resource.rc
+RelationshipComment: /src_dir/qtshadertools/tools/qsb/D:/Github/qtstatic/qtshadertools/tools/qsb/qsb_resource.rc
 Relationship: SPDXRef-PackagedFile-qt-tool-qsb GENERATED_FROM NOASSERTION
 RelationshipComment: /src_dir/qtshadertools/tools/qsb/qsb.cpp
 Relationship: SPDXRef-PackagedFile-qt-tool-qsb GENERATED_FROM NOASSERTION

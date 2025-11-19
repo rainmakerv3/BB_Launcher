@@ -1,0 +1,707 @@
+[
+    {
+        "classes": [
+            {
+                "className": "QLspSpecification",
+                "enums": [
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 36,
+                        "name": "TraceValue",
+                        "values": [
+                            "Off",
+                            "Messages",
+                            "Verbose"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 39,
+                        "name": "ErrorCodes",
+                        "values": [
+                            "ParseError",
+                            "InvalidRequest",
+                            "MethodNotFound",
+                            "InvalidParams",
+                            "InternalError",
+                            "jsonrpcReservedErrorRangeStart",
+                            "serverErrorStart",
+                            "ServerNotInitialized",
+                            "UnknownErrorCode",
+                            "jsonrpcReservedErrorRangeEnd",
+                            "serverErrorEnd",
+                            "lspReservedErrorRangeStart",
+                            "ContentModified",
+                            "RequestCancelled",
+                            "lspReservedErrorRangeEnd"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 67,
+                        "name": "DiagnosticSeverity",
+                        "values": [
+                            "Error",
+                            "Warning",
+                            "Information",
+                            "Hint"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 70,
+                        "name": "DiagnosticTag",
+                        "values": [
+                            "Unnecessary",
+                            "Deprecated"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 73,
+                        "name": "ResourceOperationKind",
+                        "values": [
+                            "Create",
+                            "Rename",
+                            "Delete"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 76,
+                        "name": "FailureHandlingKind",
+                        "values": [
+                            "Abort",
+                            "Transactional",
+                            "TextOnlyTransactional",
+                            "Undo"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 79,
+                        "name": "MarkupKind",
+                        "values": [
+                            "PlainText",
+                            "Markdown"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 82,
+                        "name": "InitializeErrorCode",
+                        "values": [
+                            "UnknownProtocolVersion"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 85,
+                        "name": "MessageType",
+                        "values": [
+                            "Error",
+                            "Warning",
+                            "Info",
+                            "Log"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 88,
+                        "name": "WatchKind",
+                        "values": [
+                            "Create",
+                            "Change",
+                            "Delete"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 91,
+                        "name": "FileChangeType",
+                        "values": [
+                            "Created",
+                            "Changed",
+                            "Deleted"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 94,
+                        "name": "FileOperationPatternKind",
+                        "values": [
+                            "File",
+                            "Folder"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 97,
+                        "name": "TextDocumentSyncKind",
+                        "values": [
+                            "None",
+                            "Full",
+                            "Incremental"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 100,
+                        "name": "TextDocumentSaveReason",
+                        "values": [
+                            "Manual",
+                            "AfterDelay",
+                            "FocusOut"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 103,
+                        "name": "CompletionTriggerKind",
+                        "values": [
+                            "Invoked",
+                            "TriggerCharacter",
+                            "TriggerForIncompleteCompletions"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 110,
+                        "name": "InsertTextFormat",
+                        "values": [
+                            "PlainText",
+                            "Snippet"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 113,
+                        "name": "CompletionItemTag",
+                        "values": [
+                            "Deprecated"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 116,
+                        "name": "InsertTextMode",
+                        "values": [
+                            "AsIs",
+                            "AdjustIndentation"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 119,
+                        "name": "CompletionItemKind",
+                        "values": [
+                            "Text",
+                            "Method",
+                            "Function",
+                            "Constructor",
+                            "Field",
+                            "Variable",
+                            "Class",
+                            "Interface",
+                            "Module",
+                            "Property",
+                            "Unit",
+                            "Value",
+                            "Enum",
+                            "Keyword",
+                            "Snippet",
+                            "Color",
+                            "File",
+                            "Reference",
+                            "Folder",
+                            "EnumMember",
+                            "Constant",
+                            "Struct",
+                            "Event",
+                            "Operator",
+                            "TypeParameter"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 148,
+                        "name": "SignatureHelpTriggerKind",
+                        "values": [
+                            "Invoked",
+                            "TriggerCharacter",
+                            "ContentChange"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 151,
+                        "name": "DocumentHighlightKind",
+                        "values": [
+                            "Text",
+                            "Read",
+                            "Write"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 154,
+                        "name": "SymbolKind",
+                        "values": [
+                            "File",
+                            "Module",
+                            "Namespace",
+                            "Package",
+                            "Class",
+                            "Method",
+                            "Property",
+                            "Field",
+                            "Constructor",
+                            "Enum",
+                            "Interface",
+                            "Function",
+                            "Variable",
+                            "Constant",
+                            "String",
+                            "Number",
+                            "Boolean",
+                            "Array",
+                            "Object",
+                            "Key",
+                            "Null",
+                            "EnumMember",
+                            "Struct",
+                            "Event",
+                            "Operator",
+                            "TypeParameter"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 184,
+                        "name": "SymbolTag",
+                        "values": [
+                            "Deprecated"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 187,
+                        "name": "CodeActionKind",
+                        "values": [
+                            "Empty",
+                            "QuickFix",
+                            "Refactor",
+                            "RefactorExtract",
+                            "RefactorInline",
+                            "RefactorRewrite",
+                            "Source",
+                            "SourceOrganizeImports"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 199,
+                        "name": "PrepareSupportDefaultBehavior",
+                        "values": [
+                            "Identifier"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 202,
+                        "name": "FoldingRangeKind",
+                        "values": [
+                            "Comment",
+                            "Imports",
+                            "Region"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 205,
+                        "name": "SemanticTokenTypes",
+                        "values": [
+                            "Namespace",
+                            "Type",
+                            "Class",
+                            "Enum",
+                            "Interface",
+                            "Struct",
+                            "TypeParameter",
+                            "Parameter",
+                            "Variable",
+                            "Property",
+                            "EnumMember",
+                            "Event",
+                            "Function",
+                            "Method",
+                            "Macro",
+                            "Keyword",
+                            "Modifier",
+                            "Comment",
+                            "String",
+                            "Number",
+                            "Regexp",
+                            "Operator"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 231,
+                        "name": "SemanticTokenModifiers",
+                        "values": [
+                            "Declaration",
+                            "Definition",
+                            "Readonly",
+                            "Static",
+                            "Deprecated",
+                            "Abstract",
+                            "Async",
+                            "Modification",
+                            "Documentation",
+                            "DefaultLibrary"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 245,
+                        "name": "TokenFormat",
+                        "values": [
+                            "Relative"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 248,
+                        "name": "UniquenessLevel",
+                        "values": [
+                            "Document",
+                            "Project",
+                            "Group",
+                            "Scheme",
+                            "Global"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 251,
+                        "name": "MonikerKind",
+                        "values": [
+                            "Import",
+                            "Export",
+                            "Local"
+                        ]
+                    }
+                ],
+                "lineNumber": 33,
+                "namespace": true,
+                "qualifiedClassName": "QLspSpecification"
+            }
+        ],
+        "inputFile": "qlanguageserverspectypes_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QLspNotifySignals",
+                "lineNumber": 24,
+                "object": true,
+                "qualifiedClassName": "QLspNotifySignals",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::CancelParamsType"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 31,
+                        "name": "receivedCancelNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::InitializedParamsType"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 32,
+                        "name": "receivedInitializedNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::ExitParamsType"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 34,
+                        "name": "receivedExitNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::LogTraceParamsType"
+                            }
+                        ],
+                        "index": 3,
+                        "lineNumber": 35,
+                        "name": "receivedLogTraceNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::SetTraceParamsType"
+                            }
+                        ],
+                        "index": 4,
+                        "lineNumber": 36,
+                        "name": "receivedSetTraceNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::ShowMessageParamsType"
+                            }
+                        ],
+                        "index": 5,
+                        "lineNumber": 37,
+                        "name": "receivedShowMessageNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::LogMessageParamsType"
+                            }
+                        ],
+                        "index": 6,
+                        "lineNumber": 40,
+                        "name": "receivedLogMessageNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::WorkDoneProgressCancelParamsType"
+                            }
+                        ],
+                        "index": 7,
+                        "lineNumber": 41,
+                        "name": "receivedWorkDoneProgressCancelNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::TelemetryEventParamsType"
+                            }
+                        ],
+                        "index": 8,
+                        "lineNumber": 43,
+                        "name": "receivedTelemetryEventNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::DidChangeWorkspaceFoldersParamsType"
+                            }
+                        ],
+                        "index": 9,
+                        "lineNumber": 45,
+                        "name": "receivedDidChangeWorkspaceFoldersNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::DidChangeConfigurationParamsType"
+                            }
+                        ],
+                        "index": 10,
+                        "lineNumber": 47,
+                        "name": "receivedDidChangeConfigurationNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::DidChangeWatchedFilesParamsType"
+                            }
+                        ],
+                        "index": 11,
+                        "lineNumber": 49,
+                        "name": "receivedDidChangeWatchedFilesNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::CreateFilesParamsType"
+                            }
+                        ],
+                        "index": 12,
+                        "lineNumber": 51,
+                        "name": "receivedCreateFilesNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::RenameFilesParamsType"
+                            }
+                        ],
+                        "index": 13,
+                        "lineNumber": 53,
+                        "name": "receivedRenameFilesNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::DeleteFilesParamsType"
+                            }
+                        ],
+                        "index": 14,
+                        "lineNumber": 55,
+                        "name": "receivedDeleteFilesNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::DidOpenTextDocumentParamsType"
+                            }
+                        ],
+                        "index": 15,
+                        "lineNumber": 57,
+                        "name": "receivedDidOpenTextDocumentNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::DidChangeTextDocumentParamsType"
+                            }
+                        ],
+                        "index": 16,
+                        "lineNumber": 59,
+                        "name": "receivedDidChangeTextDocumentNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::WillSaveTextDocumentParamsType"
+                            }
+                        ],
+                        "index": 17,
+                        "lineNumber": 61,
+                        "name": "receivedWillSaveTextDocumentNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::DidSaveTextDocumentParamsType"
+                            }
+                        ],
+                        "index": 18,
+                        "lineNumber": 63,
+                        "name": "receivedDidSaveTextDocumentNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::DidCloseTextDocumentParamsType"
+                            }
+                        ],
+                        "index": 19,
+                        "lineNumber": 65,
+                        "name": "receivedDidCloseTextDocumentNotification",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QLspSpecification::Notifications::PublishDiagnosticsParamsType"
+                            }
+                        ],
+                        "index": 20,
+                        "lineNumber": 67,
+                        "name": "receivedPublishDiagnosticsNotification",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qlspnotifysignals_p.h",
+        "outputRevision": 69
+    }
+]

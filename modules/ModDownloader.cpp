@@ -224,7 +224,7 @@ void ModDownloader::LoadModInfo(int modId) {
                 if (item.key() == "picture_url") {
                     QString url2 = QString::fromStdString(item.value().get<std::string>());
                     QUrl imageUrl(url2);
-                    // GetModImage(url2); TODO
+                    GetModImage(url2);
                 }
 
                 if (item.key() == "description") {
