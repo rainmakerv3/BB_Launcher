@@ -105,10 +105,6 @@ set(CMAKE_AUTORCC ON)
 
 qt_add_resources(RESOURCE_FILES dist/BBLauncher.qrc)
 
-if (UNIX AND NOT APPLE)
-    find_package(OpenSSL REQUIRED)
-endif()
-
 set(PROJECT_SOURCES
     main.cpp
     modules/bblauncher.cpp
@@ -216,14 +212,9 @@ if (WIN32 AND FORCE_UAC)
     add_definitions(-DFORCE_UAC)
 endif()
 
-if (UNIX AND NOT APPLE)
-    target_link_libraries(BB_Launcher PRIVATE ${OPENSSL_LIBRARIES})
-endif()
-
 install(TARGETS BB_Launcher BUNDLE DESTINATION .)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     install(FILES "dist/BBLauncher.desktop" DESTINATION "share/applications")
-    install(FILES "dist/libssl.so.3" DESTINATION "usr/lib")
     install(FILES "dist/BBIcon.png" DESTINATION "share/icons/hicolor/512x512/apps")
 endif()
