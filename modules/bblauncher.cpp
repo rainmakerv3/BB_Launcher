@@ -334,7 +334,7 @@ void BBLauncher::StartBackupSave() {
     // Releases older than 0.9.0 will need to use the game serial as save folder
     std::string savePath =
         Config::isReleaseOlder(9) ? Common::game_serial : PSFdata::getSavePath(Common::installPath);
-    std::filesystem::path save_dir = Common::GetSaveDir() / "1" / savePath / "SPRJ0005";
+    std::filesystem::path save_dir = Common::GetSaveDir() / "1" / savePath;
 
     auto backup_dir = BackupPath / "BACKUP1";
 
