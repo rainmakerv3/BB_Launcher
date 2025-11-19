@@ -55,7 +55,7 @@ jobs:
         submodules: recursive
 
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DFORCE_UAC=ON -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qtstatic -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DFORCE_UAC=ON -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qtstatic -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: Deploy and Package
@@ -78,7 +78,7 @@ jobs:
         submodules: recursive
 
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DFORCE_UAC=OFF -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qtstatic -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DFORCE_UAC=OFF -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qtstatic -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: Deploy and Package
