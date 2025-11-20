@@ -23,6 +23,7 @@ using json = nlohmann::json;
 ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModDownloader) {
     ui->setupUi(this);
     ui->downloadButton->setFocus();
+    this->setFixedSize(this->width(), this->height());
 
     manager = new QNetworkAccessManager(this);
     ui->linkLabel->setText(
