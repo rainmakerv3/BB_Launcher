@@ -338,9 +338,9 @@ void ModDownloader::GetModFiles(int modId) {
                         fileDescList.push_back(BbcodeToHtml(
                             QString::fromStdString(element.at("description").get<std::string>())));
 
-                        if (element.at("name").get<std::string>().ends_with("zip")) {
+                        if (element.at("file_name").get<std::string>().ends_with("zip")) {
                             fileTypeList.push_back("zip");
-                        } else if (element.at("name").get<std::string>().ends_with("7z")) {
+                        } else if (element.at("file_name").get<std::string>().ends_with("7z")) {
                             fileTypeList.push_back("7z");
                         } else {
                             fileTypeList.push_back("unknown");
