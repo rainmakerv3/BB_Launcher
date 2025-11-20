@@ -75,12 +75,12 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     if (sevenzipPath.empty()) {
         if (std::filesystem::exists("C:/Program Files/7-zip/7z.exe")) {
             sevenzipPath = "C:/Program Files/7-zip/7z.exe";
-        } else if (std::filesystem::exists("/usr/bin/7z/7z")) {
-            sevenzipPath = "/usr/bin/7z/7z";
+        } else if (std::filesystem::exists("/usr/bin/7z")) {
+            sevenzipPath = "/usr/bin/7z";
         } else if (std::filesystem::exists("/usr/bin/p7zip/7z")) {
             sevenzipPath = "/usr/bin/p7zip/7z";
-        } else if (std::filesystem::exists("/usr/local/bin/7z/7z")) {
-            sevenzipPath = "/usr/local/bin/7z/7z";
+        } else if (std::filesystem::exists("/usr/local/bin/7z")) {
+            sevenzipPath = "/usr/local/bin/7z";
         } else if (std::filesystem::exists("/usr/local/bin/p7zip/7z")) {
             sevenzipPath = "/usr/local/bin/p7zip/7z";
         }
