@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1120</width>
-    <height>682</height>
+    <height>697</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -261,7 +261,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <x>10</x>
      <y>540</y>
      <width>831</width>
-     <height>121</height>
+     <height>141</height>
     </rect>
    </property>
    <property name="title">
@@ -315,13 +315,20 @@ li.checked::marker { content: &quot;\2612&quot;; }
       </property>
      </widget>
     </item>
+    <item>
+     <widget class="QLabel" name="linkLabel">
+      <property name="text">
+       <string>API Key Link</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>990</x>
-     <y>620</y>
+     <x>1000</x>
+     <y>530</y>
      <width>101</width>
      <height>51</height>
     </rect>
@@ -339,18 +346,48 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <set>QDialogButtonBox::StandardButton::Close</set>
    </property>
   </widget>
-  <widget class="QLabel" name="linkLabel">
+  <widget class="QGroupBox" name="groupBox_5">
    <property name="geometry">
     <rect>
      <x>850</x>
-     <y>600</y>
-     <width>91</width>
-     <height>20</height>
+     <y>579</y>
+     <width>251</width>
+     <height>101</height>
     </rect>
    </property>
-   <property name="text">
-    <string>API Key Link</string>
+   <property name="title">
+    <string>7Zip</string>
    </property>
+   <property name="alignment">
+    <set>Qt::AlignmentFlag::AlignCenter</set>
+   </property>
+   <property name="flat">
+    <bool>true</bool>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_8">
+    <item>
+     <widget class="QLabel" name="zipLabel">
+      <property name="font">
+       <font>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>No 7Zip Exectuable Set (required for mods compressed in 7z format)</string>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="zipButton">
+      <property name="text">
+       <string>Locate 7Zip Binary/Executable</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

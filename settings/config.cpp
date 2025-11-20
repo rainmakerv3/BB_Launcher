@@ -8,6 +8,7 @@
 #include "config.h"
 #include "formatting.h"
 
+std::filesystem::path Config::SevenZipPath;
 std::string Config::ApiKey = "";
 std::string Config::theme = "Dark";
 bool Config::SoundFixEnabled = true;
@@ -101,6 +102,7 @@ void LoadSettings() {
     if (data.contains("Launcher")) {
         const toml::value& launcher = data.at("Launcher");
 
+        SevenZipPath = toml::find_fs_path_or(launcher, "SevenZipPath", {});
         Common::installPath = toml::find_fs_path_or(launcher, "installPath", {});
         Common::shadPs4Executable = toml::find_fs_path_or(launcher, "shadPath", {});
     }
@@ -246,6 +248,7 @@ void SaveLauncherSettings() {
         }
     }
 
+    data["Launcher"]["SevenZipPath"] = std::string{fmt::UTF(SevenZipPath.u8string()).data};
     data["Launcher"]["ApiKey"] = ApiKey;
     data["Launcher"]["Theme"] = theme;
     data["Launcher"]["SoundFixEnabled"] = SoundFixEnabled;

@@ -48,6 +48,7 @@ extern bool UnifiedInputConfig;
 extern std::string TrophyKey;
 extern std::string DefaultControllerID;
 extern std::string ApiKey;
+extern std::filesystem::path SevenZipPath;
 
 extern bool ShowEarnedTrophy;
 extern bool ShowNotEarnedTrophy;

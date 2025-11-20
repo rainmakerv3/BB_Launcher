@@ -3,10 +3,12 @@
 
 #include <QDir>
 #include <QFile>
+#include <QFileDialog>
 #include <QMessageBox>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QProcess>
 #include <QProgressBar>
 #include <nlohmann/json.hpp>
 #include <qmicroz.h>
@@ -59,7 +61,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     ui->modComboBox->addItem("Estus Vial and Bullet");
     ui->modComboBox->addItem("Jump on L3");
     ui->modComboBox->addItem("Bloodborne Enhanced");
-    // ui->modComboBox->addItem("4K Upscaled UI");
+    ui->modComboBox->addItem("4K Upscaled UI");
 
     if (apiKey.isEmpty()) {
         ui->validApiLabel->setStyleSheet("color: red;");
@@ -68,6 +70,30 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         if (ValidateApi())
             LoadModInfo(109);
     }
+
+    sevenzipPath = Config::SevenZipPath;
+    if (sevenzipPath.empty()) {
+        if (std::filesystem::exists("C:/Program Files/7-zip/7z.exe")) {
+            sevenzipPath = "C:/Program Files/7-zip/7z.exe";
+        } else if (std::filesystem::exists("/usr/bin/7z/7z")) {
+            sevenzipPath = "/usr/bin/7z/7z";
+        } else if (std::filesystem::exists("/usr/bin/p7zip/7z")) {
+            sevenzipPath = "/usr/bin/p7zip/7z";
+        } else if (std::filesystem::exists("/usr/local/bin/7z/7z")) {
+            sevenzipPath = "/usr/local/bin/7z/7z";
+        } else if (std::filesystem::exists("/usr/local/bin/p7zip/7z")) {
+            sevenzipPath = "/usr/local/bin/p7zip/7z";
+        }
+    }
+
+    if (sevenzipPath.empty()) {
+        ui->zipLabel->setStyleSheet("color: red;");
+    } else {
+        ui->zipLabel->setText("Valid 7zip binary detected. 7z mod files can be downloaded");
+        ui->zipLabel->setStyleSheet("color: green;");
+    }
+
+    connect(ui->zipButton, &QPushButton::pressed, this, &ModDownloader::SetSevenzipPath);
 
     connect(ui->modComboBox, &QComboBox::currentIndexChanged, this, [this]() {
         int index = ui->modComboBox->currentIndex();
@@ -101,6 +127,13 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         int modIndex = ui->modComboBox->currentIndex();
         int fileIndex = ui->fileListWidget->currentRow();
         QString modFilename = ui->fileListWidget->currentItem()->text();
+
+        if (fileTypeList[fileIndex] == "7z" && sevenzipPath.empty()) {
+            QMessageBox::warning(this, "Error",
+                                 "Selected file is a 7z file. Valid 7zip must be set to "
+                                 "download. Aborting...");
+            return;
+        }
 
         if (std::filesystem::exists(Common::ModPath / modFilename.toStdString())) {
             QMessageBox::information(this, tr("Mod already exists"),
@@ -303,6 +336,14 @@ void ModDownloader::GetModFiles(int modId) {
                         fileIdList.push_back(element.at("file_id").get<int>());
                         fileDescList.push_back(BbcodeToHtml(
                             QString::fromStdString(element.at("description").get<std::string>())));
+
+                        if (element.at("name").get<std::string>().ends_with("zip")) {
+                            fileTypeList.push_back("zip");
+                        } else if (element.at("name").get<std::string>().ends_with("7z")) {
+                            fileTypeList.push_back("7z");
+                        } else {
+                            fileTypeList.push_back("unknown");
+                        }
                     }
                 }
             }
@@ -378,7 +419,7 @@ void ModDownloader::StartDownload(QString url, QString modFilename) {
             });
 
     QString zipPath;
-    Common::PathToQString(zipPath, Common::GetBBLFilesPath() / "Temp" / "downloaded_mod.zip");
+    Common::PathToQString(zipPath, Common::GetBBLFilesPath() / "Temp" / "downloaded_mod.tmp");
 
     QString tempPath;
     Common::PathToQString(tempPath, Common::GetBBLFilesPath() / "Temp" / "Download");
@@ -401,7 +442,25 @@ void ModDownloader::StartDownload(QString url, QString modFilename) {
             file->close();
             downloadReply->deleteLater();
 
-            QMicroz::extract(zipPath, tempPath);
+            QString newZipPath;
+            Common::PathToQString(newZipPath,
+                                  Common::GetBBLFilesPath() / "Temp" / "downloaded_mod.tmp");
+
+            bool is7z = false;
+            QString filenameFromUrl = downloadReply->request().url().fileName();
+            if (filenameFromUrl.right(3) == "zip") {
+                newZipPath = newZipPath.replace("tmp", "zip");
+            } else if (filenameFromUrl.right(2) == "7z") {
+                newZipPath = newZipPath.replace("tmp", "7z");
+                is7z = true;
+            }
+
+            QFile::rename(zipPath, newZipPath);
+            if (is7z) {
+                extract7z(newZipPath, tempPath);
+            } else {
+                QMicroz::extract(newZipPath, tempPath);
+            }
 
             std::string folderName = modFilename.toStdString();
             std::filesystem::path folderPath = "";
@@ -432,7 +491,7 @@ void ModDownloader::StartDownload(QString url, QString modFilename) {
             progressDialog->close();
             progressDialog->deleteLater();
             QDir(tempPath).removeRecursively();
-            QFile::remove(zipPath);
+            QFile::remove(newZipPath);
         } else {
             QMessageBox::warning(
                 this, tr("Error"),
@@ -488,6 +547,42 @@ QString ModDownloader::BbcodeToHtml(QString BbcodeString) {
     BbcodeString.replace(imgRegex, "<img src=\"\\1\">");
 
     return BbcodeString;
+}
+
+void ModDownloader::extract7z(QString inpath, QString outpath) {
+    QProcess* sevenZipProcess = new QProcess(this);
+
+    QString processPath;
+    Common::PathToQString(processPath, sevenzipPath);
+
+    QStringList arguments;
+    arguments << "x";
+    arguments << QDir::toNativeSeparators(inpath);
+    arguments << "-o" + QDir::toNativeSeparators(outpath);
+
+    sevenZipProcess->start(processPath, arguments);
+    sevenZipProcess->waitForFinished();
+}
+
+void ModDownloader::SetSevenzipPath() {
+    QString exePath;
+#ifdef _WIN32
+    exePath = QFileDialog::getOpenFileName(this, "Select ShadPS4 executable (ex. shadPS4.exe)",
+                                           QDir::currentPath(), "Executables (7z.exe)");
+#else
+    exePath = QFileDialog::getOpenFileName(this, "Select 7-zip binary", QDir::homePath(),
+                                           "7z Binary (7z*)");
+#endif
+
+    if (exePath.isEmpty()) {
+        return;
+    } else {
+        sevenzipPath = Common::PathFromQString(exePath);
+        ui->zipLabel->setText("Valid 7zip binary detected. 7z mod files can be downloaded");
+        ui->zipLabel->setStyleSheet("color: green;");
+        Config::SevenZipPath = sevenzipPath;
+        Config::SaveLauncherSettings();
+    }
 }
 
 ModDownloader::~ModDownloader() {}
