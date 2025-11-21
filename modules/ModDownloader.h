@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <QDialog>
 #include <QNetworkAccessManager>
+#include <QWebEngineDownloadRequest>
 
 namespace Ui {
 class ModDownloader;
@@ -21,15 +22,18 @@ private:
     void LoadModInfo(int modId);
     void GetModFiles(int modId);
     void GetModImage(QUrl url);
-    void DownloadFile(int fileId, int ModId, QString modFilename);
-    void StartDownload(QString url, QString modFilename);
+    void DownloadFileRegular(int fileId, int ModId, QString modFilename);
+    void DownloadFilePremium(int fileId, int ModId, QString modFilename);
+    void StartDownload(QString url, QString modFilename, bool isPremium);
     void SetSevenzipPath();
     QString BbcodeToHtml(QString BbcodeString);
     void extract7z(QString inpath, QString outpath);
+    void processClickedDownload(QString idString, QString expiredString);
 
     Ui::ModDownloader* ui;
     QNetworkAccessManager* manager;
     QString apiKey;
+    bool isApiKeyPremium = false;
     std::filesystem::path sevenzipPath{};
 
     QStringList fileList;

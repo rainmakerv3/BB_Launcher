@@ -4,7 +4,6 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 project(BB_Launcher LANGUAGES CXX)
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 if(APPLE)
     enable_language(OBJC)
@@ -75,13 +74,6 @@ if(WIN32 AND NOT CMAKE_PREFIX_PATH)
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/DetectQtInstallation.cmake")
 endif ()
 
-if (WIN32)
-    set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/qtstatic")
-    set(Qt6_DIR "CMAKE_CURRENT_SOURCE_DIR}/qtstatic/lib/cmake/Qt6")
-    set(Qt6Widgets_DIR "CMAKE_CURRENT_SOURCE_DIR}/qtstatic/lib/cmake/Qt6Widgets")
-    set(Qt6Network_DIR "CMAKE_CURRENT_SOURCE_DIR}/qtstatic/lib/cmake/Qt6Network")
-endif()
-
 find_package(toml11 4.2.0 CONFIG)
 find_package(pugixml 1.14 CONFIG)
 find_package(fmt 10.2.0 CONFIG)
@@ -97,7 +89,7 @@ endif()
 
 add_subdirectory(externals)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Network Qml WebChannel WebEngineCore WebEngineWidgets)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -187,7 +179,7 @@ if (WIN32)
 endif()
 
 target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network)
+target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network Qt6::Qml Qt6::WebChannel Qt6::WebEngineCore Qt6::WebEngineWidgets)
 target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 pugixml::pugixml SDL3::SDL3 Vulkan::Headers qmicroz volk_headers nlohmann_json::nlohmann_json)
 
 if (APPLE)

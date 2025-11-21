@@ -54,14 +54,27 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Setup Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: 6.10.1
+        host: windows
+        target: desktop
+        arch: win64_msvc2022_64
+        archives: qtbase qttools qtdeclarative
+        modules: qtmultimedia qtimageformats qtpositioning qtwebchannel qtwebengine
+
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DFORCE_UAC=ON -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qtstatic -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DFORCE_UAC=ON -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: Deploy and Package
       run: |
         mkdir upload
+        mkdir upload/qtplugins
         move build/BB_Launcher.exe upload
+        cp dist/qt.conf upload/qt.conf
+        windeployqt --plugindir upload/qtplugins --no-compiler-runtime --no-system-d3d-compiler --no-system-dxc-compiler --dir upload upload/BB_Launcher.exe
         Compress-Archive -Path upload/* -DestinationPath BB_Launcher-win64-qt-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}.zip
     - name: Upload Windows Qt artifact
       uses: actions/upload-artifact@v4
@@ -77,14 +90,27 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Setup Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: 6.10.1
+        host: windows
+        target: desktop
+        arch: win64_msvc2022_64
+        archives: qtbase qttools qtdeclarative
+        modules: qtmultimedia qtimageformats qtpositioning qtwebchannel qtwebengine
+
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DFORCE_UAC=OFF -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qtstatic -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DFORCE_UAC=OFF -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: Deploy and Package
       run: |
         mkdir upload
+        mkdir upload/qtplugins
         move build/BB_Launcher.exe upload
+        cp dist/qt.conf upload/qt.conf
+        windeployqt --plugindir upload/qtplugins --no-compiler-runtime --no-system-d3d-compiler --no-system-dxc-compiler --dir upload upload/BB_Launcher.exe
         Compress-Archive -Path upload/* -DestinationPath BB_Launcher-win64-qt-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}.zip
     - name: Upload Windows Qt artifact
       uses: actions/upload-artifact@v4
@@ -108,12 +134,12 @@ jobs:
     - name: Setup Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: 6.10.0
+        version: 6.10.1
         host: mac
         target: desktop
         arch: clang_64
-        archives: qtbase qttools
-        modules: qtmultimedia qtimageformats
+        archives: qtbase qttools qtdeclarative
+        modules: qtmultimedia qtimageformats qtpositioning qtwebchannel qtwebengine
 
     - name: Configure CMake
       run: cmake --fresh -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_OSX_ARCHITECTURES=x86_64
@@ -151,9 +177,9 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: 6.10.0
+        version: 6.10.1
         arch: linux_gcc_64
-        modules: "qtmultimedia qtimageformats"
+        modules: "qtmultimedia qtimageformats qtserialport qtpositioning qtwebchannel qtwebengine"
         tools: 'tools_generic tools_opensslv3_src'
         setup-python: false
         cache: true

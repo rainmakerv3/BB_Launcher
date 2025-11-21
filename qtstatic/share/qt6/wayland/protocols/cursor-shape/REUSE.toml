@@ -1,8 +1,0 @@
-version = 1
-
-[[annotations]]
-path = "cursor-shape-v1.xml"
-precedence = "closest"
-SPDX-FileCopyrightText = ["Copyright 2018 The Chromium Authors",
-                          "Copyright 2023 Simon Ser"]
-SPDX-License-Identifier = "MIT"

@@ -49,6 +49,13 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QPushButton" name="ModDownloaderButton">
+         <property name="text">
+          <string>Mod Downloader</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>

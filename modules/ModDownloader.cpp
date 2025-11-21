@@ -10,6 +10,8 @@
 #include <QNetworkRequest>
 #include <QProcess>
 #include <QProgressBar>
+#include <QWebEngineProfile>
+#include <QWebEngineView>
 #include <nlohmann/json.hpp>
 #include <qmicroz.h>
 
@@ -66,10 +68,11 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
 
     if (apiKey.isEmpty()) {
         ui->validApiLabel->setStyleSheet("color: red;");
-        ui->validApiLabel->setText("No Valid Nexus ModsAPI Key Set");
+        ui->validApiLabel->setText("No Premium Nexus ModsAPI Key Set");
     } else {
-        if (ValidateApi())
+        if (ValidateApi()) {
             LoadModInfo(109);
+        }
     }
 
     sevenzipPath = Config::SevenZipPath;
@@ -105,10 +108,6 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         if (ui->apiLineEdit->text().isEmpty())
             return;
 
-        apiKey = ui->apiLineEdit->text();
-        Config::ApiKey = apiKey.toStdString();
-        Config::SaveLauncherSettings();
-
         if (ValidateApi())
             LoadModInfo(modIDmap[ui->modComboBox->currentIndex()]);
     });
@@ -143,7 +142,9 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
             return;
         }
 
-        DownloadFile(fileIdList[fileIndex], modIDmap[modIndex], modFilename);
+        isApiKeyPremium
+            ? DownloadFilePremium(fileIdList[fileIndex], modIDmap[modIndex], modFilename)
+            : DownloadFileRegular(fileIdList[fileIndex], modIDmap[modIndex], modFilename);
     });
 
     connect(ui->fileListWidget, &QListWidget::itemClicked, this, [this]() {
@@ -158,7 +159,7 @@ bool ModDownloader::ValidateApi() {
     QNetworkRequest request(url);
     request.setRawHeader("Accept", "application/json");
     request.setRawHeader("Content-Type", "application/json");
-    request.setRawHeader("apikey", apiKey.toUtf8());
+    request.setRawHeader("apikey", ui->apiLineEdit->text().toUtf8());
 
     QNetworkReply* reply = manager->get(request);
     bool valid = false;
@@ -177,24 +178,24 @@ bool ModDownloader::ValidateApi() {
                 if (item.key() == "is_premium") {
                     bool isPremium = jsonDoc["is_premium"].get<bool>();
                     if (!isPremium) {
-                        QMessageBox::information(this, "Premium key required",
-                                                 "Due to nexus Mods Api guidelines, a premium Api "
-                                                 "key is required for donwloading");
-                        ui->validApiLabel->setStyleSheet("color: red;");
-                        ui->validApiLabel->setText("No Valid Nexus ModsAPI Key Set");
+                        ui->validApiLabel->setStyleSheet("color: green;");
+                        ui->validApiLabel->setText("Valid Non-Premium API Key Set");
                     } else {
                         ui->validApiLabel->setStyleSheet("color: green;");
                         ui->validApiLabel->setText("Valid premium Api key set");
-                        valid = true;
+                        isApiKeyPremium = true;
                     }
                     break;
                 }
             }
+
+            valid = true;
+            apiKey = ui->apiLineEdit->text();
+            Config::ApiKey = apiKey.toStdString();
+            Config::SaveLauncherSettings();
         } else {
             ui->validApiLabel->setStyleSheet("color: red;");
             ui->validApiLabel->setText("No Valid Nexus ModsAPI Key Set");
-            QMessageBox::warning(this, tr("Error"),
-                                 QString(tr("Network error:") + "\n" + reply->errorString()));
         }
 
         reply->deleteLater();
@@ -360,7 +361,7 @@ void ModDownloader::GetModFiles(int modId) {
     });
 }
 
-void ModDownloader::DownloadFile(int fileId, int ModId, QString modFilename) {
+void ModDownloader::DownloadFilePremium(int fileId, int ModId, QString modFilename) {
     QString url = "https://api.nexusmods.com/v1/games/bloodborne/mods/" + QString::number(ModId) +
                   "/files/" + QString::number(fileId) + "/download_link.json";
     QNetworkRequest request(url);
@@ -383,7 +384,7 @@ void ModDownloader::DownloadFile(int fileId, int ModId, QString modFilename) {
                 if (element.contains("URI")) {
                     QString downloadUrl =
                         QString::fromStdString(element.at("URI").get<std::string>());
-                    StartDownload(downloadUrl, modFilename);
+                    StartDownload(downloadUrl, modFilename, true);
                     break;
                 }
             }
@@ -396,7 +397,7 @@ void ModDownloader::DownloadFile(int fileId, int ModId, QString modFilename) {
     });
 }
 
-void ModDownloader::StartDownload(QString url, QString modFilename) {
+void ModDownloader::StartDownload(QString url, QString modFilename, bool isPremium) {
     QNetworkRequest downloadRequest(url);
     downloadRequest.setRawHeader("apikey", apiKey.toUtf8());
     QNetworkAccessManager* downloadManager = new QNetworkAccessManager(this);
@@ -447,17 +448,17 @@ void ModDownloader::StartDownload(QString url, QString modFilename) {
             Common::PathToQString(newZipPath,
                                   Common::GetBBLFilesPath() / "Temp" / "downloaded_mod.tmp");
 
-            bool is7z = false;
+            bool isZip = false;
             QString filenameFromUrl = downloadReply->request().url().fileName();
             if (filenameFromUrl.right(3) == "zip") {
                 newZipPath = newZipPath.replace("tmp", "zip");
+                isZip = true;
             } else if (filenameFromUrl.right(2) == "7z") {
                 newZipPath = newZipPath.replace("tmp", "7z");
-                is7z = true;
             }
 
             QFile::rename(zipPath, newZipPath);
-            if (is7z) {
+            if (!isZip) {
                 extract7z(newZipPath, tempPath);
             } else {
                 QMicroz::extract(newZipPath, tempPath);
@@ -503,6 +504,124 @@ void ModDownloader::StartDownload(QString url, QString modFilename) {
             QFile::remove(zipPath);
         }
     });
+}
+
+void ModDownloader::DownloadFileRegular(int fileId, int ModId, QString modFilename) {
+    QDialog* webDialog = new QDialog();
+    webDialog->setWindowTitle("Download Selected Mod");
+    QMessageBox::information(this, "Instructions",
+                             "Log-in by clicking the upper right log-in button, then click slow "
+                             "download once you are back to the download page");
+
+    QWebEngineView* webView = new QWebEngineView(webDialog);
+    QString fileUrl = "https://www.nexusmods.com/bloodborne/mods/" + QString::number(ModId) +
+                      "?tab=files&file_id=" + QString::number(fileId);
+    webView->setUrl(QUrl(fileUrl));
+
+    QObject::connect(
+        QWebEngineProfile::defaultProfile(), &QWebEngineProfile::downloadRequested, this,
+        [this, webDialog, modFilename](QWebEngineDownloadRequest* download) {
+            if (download->state() == QWebEngineDownloadRequest::DownloadRequested) {
+                QMessageBox::information(this, "download started", "download started");
+
+                QString zipPath;
+                Common::PathToQString(zipPath, Common::GetBBLFilesPath() / "Temp");
+                QString savePath = zipPath + "/" + download->suggestedFileName();
+
+                QString tempPath;
+                Common::PathToQString(tempPath, Common::GetBBLFilesPath() / "Temp" / "Download");
+                std::filesystem::create_directories(Common::GetBBLFilesPath() / "Temp" /
+                                                    "Download");
+
+                download->setDownloadDirectory(QFileInfo(savePath).absolutePath());
+                download->setDownloadFileName(QFileInfo(savePath).fileName());
+                download->accept();
+
+                QDialog* progressDialog = new QDialog(this);
+                progressDialog->setWindowTitle(
+                    tr("Downloading %1 , please wait...").arg(modFilename));
+                progressDialog->setFixedSize(400, 80);
+                progressDialog->setWindowFlags(progressDialog->windowFlags() &
+                                               ~Qt::WindowCloseButtonHint);
+                QVBoxLayout* layout = new QVBoxLayout(progressDialog);
+                QProgressBar* progressBar = new QProgressBar(progressDialog);
+                progressBar->setRange(0, 100);
+                layout->addWidget(progressBar);
+                progressDialog->setLayout(layout);
+                progressDialog->show();
+
+                connect(download, &QWebEngineDownloadRequest::receivedBytesChanged, this, [=]() {
+                    qint64 received = download->receivedBytes();
+                    qint64 total = download->totalBytes();
+                    if (total > 0)
+                        progressBar->setValue(static_cast<int>((received * 100) / total));
+                    progressDialog->raise();
+                });
+
+                connect(download, &QWebEngineDownloadRequest::stateChanged, this,
+                        [=, this](QWebEngineDownloadRequest::DownloadState state) {
+                            if (state == QWebEngineDownloadRequest::DownloadCompleted) {
+
+                                if (QFileInfo(savePath).fileName().right(3) == "zip") {
+                                    QMicroz::extract(savePath, tempPath);
+                                } else {
+                                    extract7z(savePath, tempPath);
+                                }
+
+                                std::string folderName = modFilename.toStdString();
+                                std::filesystem::path folderPath = "";
+                                const std::vector<std::string> BBFolders = {
+                                    "dvdroot_ps4", "action", "chr",   "event",    "facegen",
+                                    "map",         "menu",   "movie", "msg",      "mtd",
+                                    "obj",         "other",  "param", "paramdef", "parts",
+                                    "remo",        "script", "sfx",   "shader",   "sound"};
+
+                                for (const auto& entry :
+                                     std::filesystem::recursive_directory_iterator(
+                                         Common::PathFromQString(tempPath))) {
+                                    if (entry.is_directory()) {
+                                        folderName = entry.path().filename().string();
+                                        folderPath = entry.path().parent_path();
+                                        if (std::find(BBFolders.begin(), BBFolders.end(),
+                                                      folderName) != BBFolders.end()) {
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                std::filesystem::path newPath =
+                                    Common::ModPath / modFilename.toStdString();
+                                std::filesystem::rename(folderPath, newPath);
+                                QMessageBox::information(this, tr("Confirm Download"),
+                                                         tr("%1 has been downloaded. You can "
+                                                            "activate it using the mod manager")
+                                                             .arg(modFilename.toStdString()));
+
+                                progressDialog->close();
+                                progressDialog->deleteLater();
+                                webDialog->close();
+                                QDir(tempPath).removeRecursively();
+                                QFile::remove(savePath);
+
+                            } else if (state == QWebEngineDownloadRequest::DownloadCancelled ||
+                                       state == QWebEngineDownloadRequest::DownloadInterrupted) {
+                                QMessageBox::information(this, "Download Error",
+                                                         "Download cancelled or interrupted");
+                                progressDialog->close();
+                                progressDialog->deleteLater();
+                                QDir(tempPath).removeRecursively();
+                                QFile::remove(savePath);
+                            }
+                        });
+            }
+        });
+
+    QVBoxLayout* layout = new QVBoxLayout(webDialog);
+    layout->addWidget(webView);
+    webDialog->setLayout(layout);
+
+    webDialog->resize(1280, 720);
+    webDialog->exec();
 }
 
 QString ModDownloader::BbcodeToHtml(QString BbcodeString) {

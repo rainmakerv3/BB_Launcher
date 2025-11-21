@@ -12,6 +12,7 @@
 
 #include "bblauncher.h"
 #include "modules/Common.h"
+#include "modules/ModDownloader.h"
 #include "modules/ModManager.h"
 #include "modules/SaveManager.h"
 #include "modules/TrophyManager.h"
@@ -143,6 +144,12 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         cheatsPatches->show();
         connect(this, &QWidget::destroyed, cheatsPatches,
                 [cheatsPatches]() { cheatsPatches->deleteLater(); });
+    });
+
+    connect(ui->ModDownloaderButton, &QPushButton::pressed, this, [this]() {
+        ModDownloader* Downloader = new ModDownloader(this);
+        Downloader->exec();
+        UpdateModList();
     });
 
     connect(ui->ModManagerButton, &QPushButton::pressed, this, [this]() {

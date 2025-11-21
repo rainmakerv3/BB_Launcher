@@ -1,2 +1,0 @@
-load(emcc_ver)
-load(default_pre)
