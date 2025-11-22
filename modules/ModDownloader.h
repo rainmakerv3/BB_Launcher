@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <QDialog>
 #include <QNetworkAccessManager>
+#include <QtWebSockets/QWebSocket>
 
 namespace Ui {
 class ModDownloader;

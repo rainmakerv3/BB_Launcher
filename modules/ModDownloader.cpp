@@ -1,15 +1,21 @@
 // SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <QDesktopServices>
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMessageBox>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QProcess>
 #include <QProgressBar>
+#include <QTimer>
+#include <QUuid>
+#include <QtWebSockets/QWebSocket>
 #include <nlohmann/json.hpp>
 #include <qmicroz.h>
 
@@ -93,6 +99,45 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         ui->zipLabel->setText("Valid 7zip binary detected. 7z mod files can be downloaded");
         ui->zipLabel->setStyleSheet("color: green;");
     }
+
+    connect(ui->testButton, &QPushButton::pressed, this, [this]() {
+        QUuid uuid = QUuid::createUuid();
+        QString uuidString = uuid.toString(QUuid::WithoutBraces);
+        QJsonValue jsonValueUuid(uuidString);
+        QWebSocket* m_webSocket = new QWebSocket();
+
+        connect(m_webSocket, &QWebSocket::textMessageReceived, m_webSocket,
+                [this, m_webSocket](QString message) {
+                    QMessageBox::information(this, "test", message);
+                    m_webSocket->close();
+                });
+
+        connect(m_webSocket, &QWebSocket::connected, this,
+                [this, jsonValueUuid, m_webSocket, uuidString]() {
+                    QJsonObject jsonObject;
+                    jsonObject["id"] = jsonValueUuid;
+                    jsonObject["appid"] = "Vortex";
+                    jsonObject["protocol"] = 2;
+                    // jsonObject["token"] = NULL;
+
+                    QJsonDocument jsonDoc(jsonObject);
+                    QByteArray jsonByteArray = jsonDoc.toJson();
+                    m_webSocket->sendTextMessage(QString::fromUtf8(jsonByteArray));
+
+                    QTimer* m_pingTimer = new QTimer(this);
+                    m_pingTimer->setInterval(30000); // 30 seconds
+                    connect(m_pingTimer, &QTimer::timeout, m_webSocket,
+                            [this, m_webSocket]() { m_webSocket->ping(); });
+                    m_pingTimer->start();
+
+                    QString link =
+                        "https://www.nexusmods.com/sso?application=vortex&id=" + uuidString;
+                    QDesktopServices::openUrl(QUrl(link));
+                });
+
+        QUrl socketUrl = QUrl("wss://sso.nexusmods.com");
+        m_webSocket->open(QNetworkRequest(socketUrl));
+    });
 
     connect(ui->zipButton, &QPushButton::pressed, this, &ModDownloader::SetSevenzipPath);
 
