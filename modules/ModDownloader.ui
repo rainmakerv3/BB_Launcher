@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1120</width>
-    <height>697</height>
+    <height>692</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -261,7 +261,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <x>10</x>
      <y>540</y>
      <width>831</width>
-     <height>141</height>
+     <height>111</height>
     </rect>
    </property>
    <property name="title">
@@ -282,43 +282,14 @@ li.checked::marker { content: &quot;\2612&quot;; }
        </font>
       </property>
       <property name="text">
-       <string>Validating Api Key...</string>
+       <string>No Valid Api Key Set</string>
       </property>
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
-      <item>
-       <widget class="QLineEdit" name="apiLineEdit"/>
-      </item>
-      <item>
-       <widget class="QPushButton" name="setApiButton">
-        <property name="text">
-         <string>Set API Key</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <widget class="QLabel" name="label_10">
-      <property name="font">
-       <font>
-        <bold>true</bold>
-       </font>
-      </property>
+     <widget class="QPushButton" name="testButton">
       <property name="text">
-       <string>Note: to get your API Key, go to the link to the right and check the bottom of the page to get your personal API key</string>
-      </property>
-      <property name="wordWrap">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="linkLabel">
-      <property name="text">
-       <string>API Key Link</string>
+       <string>Get Nexus Api Key from Nexus Mods Website (Requires Login)</string>
       </property>
      </widget>
     </item>
@@ -388,19 +359,6 @@ li.checked::marker { content: &quot;\2612&quot;; }
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QPushButton" name="testButton">
-   <property name="geometry">
-    <rect>
-     <x>820</x>
-     <y>530</y>
-     <width>80</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>PushButton</string>
-   </property>
   </widget>
  </widget>
  <resources/>

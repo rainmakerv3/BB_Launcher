@@ -18,6 +18,7 @@ public:
     ~ModDownloader();
 
 private:
+    void GetApiKey();
     bool ValidateApi();
     void LoadModInfo(int modId);
     void GetModFiles(int modId);

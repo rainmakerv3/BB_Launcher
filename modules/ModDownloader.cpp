@@ -37,9 +37,6 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     ui->linkLabel->setOpenExternalLinks(true);
     ui->modDesc->setOpenLinks(false);
 
-    apiKey = QString::fromStdString(Config::ApiKey);
-    ui->apiLineEdit->setText(apiKey);
-
     modIDmap = {{0, 109},   // Vertex Explosion Mod
                 {1, 70},    // 60 fps Cutscene Fix
                 {2, 41},    // Sfx Fix Mods
@@ -70,12 +67,14 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     ui->modComboBox->addItem("Bloodborne Enhanced");
     ui->modComboBox->addItem("4K Upscaled UI");
 
+    GetApiKey();
     if (apiKey.isEmpty()) {
         ui->validApiLabel->setStyleSheet("color: red;");
         ui->validApiLabel->setText("No Valid Nexus ModsAPI Key Set");
     } else {
-        if (ValidateApi())
+        if (ValidateApi()) {
             LoadModInfo(109);
+        }
     }
 
     sevenzipPath = Config::SevenZipPath;
@@ -100,62 +99,13 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         ui->zipLabel->setStyleSheet("color: green;");
     }
 
-    connect(ui->testButton, &QPushButton::pressed, this, [this]() {
-        QUuid uuid = QUuid::createUuid();
-        QString uuidString = uuid.toString(QUuid::WithoutBraces);
-        QJsonValue jsonValueUuid(uuidString);
-        QWebSocket* m_webSocket = new QWebSocket();
-
-        connect(m_webSocket, &QWebSocket::textMessageReceived, m_webSocket,
-                [this, m_webSocket](QString message) {
-                    QMessageBox::information(this, "test", message);
-                    m_webSocket->close();
-                });
-
-        connect(m_webSocket, &QWebSocket::connected, this,
-                [this, jsonValueUuid, m_webSocket, uuidString]() {
-                    QJsonObject jsonObject;
-                    jsonObject["id"] = jsonValueUuid;
-                    jsonObject["appid"] = "Vortex";
-                    jsonObject["protocol"] = 2;
-                    // jsonObject["token"] = NULL;
-
-                    QJsonDocument jsonDoc(jsonObject);
-                    QByteArray jsonByteArray = jsonDoc.toJson();
-                    m_webSocket->sendTextMessage(QString::fromUtf8(jsonByteArray));
-
-                    QTimer* m_pingTimer = new QTimer(this);
-                    m_pingTimer->setInterval(30000); // 30 seconds
-                    connect(m_pingTimer, &QTimer::timeout, m_webSocket,
-                            [this, m_webSocket]() { m_webSocket->ping(); });
-                    m_pingTimer->start();
-
-                    QString link =
-                        "https://www.nexusmods.com/sso?application=vortex&id=" + uuidString;
-                    QDesktopServices::openUrl(QUrl(link));
-                });
-
-        QUrl socketUrl = QUrl("wss://sso.nexusmods.com");
-        m_webSocket->open(QNetworkRequest(socketUrl));
-    });
+    connect(ui->testButton, &QPushButton::pressed, this, &ModDownloader::GetApiKey);
 
     connect(ui->zipButton, &QPushButton::pressed, this, &ModDownloader::SetSevenzipPath);
 
     connect(ui->modComboBox, &QComboBox::currentIndexChanged, this, [this]() {
         int index = ui->modComboBox->currentIndex();
         LoadModInfo(modIDmap[index]);
-    });
-
-    connect(ui->setApiButton, &QPushButton::pressed, this, [this]() {
-        if (ui->apiLineEdit->text().isEmpty())
-            return;
-
-        apiKey = ui->apiLineEdit->text();
-        Config::ApiKey = apiKey.toStdString();
-        Config::SaveLauncherSettings();
-
-        if (ValidateApi())
-            LoadModInfo(modIDmap[ui->modComboBox->currentIndex()]);
     });
 
     connect(ui->downloadButton, &QPushButton::pressed, this, [this]() {
@@ -198,6 +148,60 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     });
 }
 
+void ModDownloader::GetApiKey() {
+    QUuid uuid = QUuid::createUuid();
+    QString uuidString = uuid.toString(QUuid::WithoutBraces);
+    QJsonValue jsonValueUuid(uuidString);
+    QWebSocket* m_webSocket = new QWebSocket();
+
+    connect(m_webSocket, &QWebSocket::textMessageReceived, m_webSocket,
+            [this, m_webSocket](QString message) {
+                QByteArray jsonData = message.toUtf8();
+                QJsonDocument doc = QJsonDocument::fromJson(jsonData);
+
+                if (!doc.isNull()) {
+                    QJsonObject obj = doc.object();
+                    if (obj.contains("data") && obj["data"].isObject()) {
+                        QJsonObject userObject = obj["data"].toObject();
+                        if (userObject.contains("api_key")) {
+                            apiKey = userObject["api_key"].toString();
+                            ValidateApi();
+                            LoadModInfo(109);
+                            this->raise();
+                        }
+                    }
+                } else {
+                    qDebug() << "Failed to parse JSON message";
+                }
+            });
+
+    connect(m_webSocket, &QWebSocket::connected, this,
+            [this, jsonValueUuid, m_webSocket, uuidString]() {
+                QJsonObject jsonObject;
+                jsonObject["id"] = jsonValueUuid;
+                jsonObject["appid"] = "Vortex";
+                jsonObject["protocol"] = 2;
+                // jsonObject["token"] = NULL;
+
+                QJsonDocument jsonDoc(jsonObject);
+                QByteArray jsonByteArray = jsonDoc.toJson();
+                m_webSocket->sendTextMessage(QString::fromUtf8(jsonByteArray));
+
+                QTimer* m_pingTimer = new QTimer(this);
+                m_pingTimer->setInterval(30000); // 30 seconds
+                connect(m_pingTimer, &QTimer::timeout, m_webSocket,
+                        [this, m_webSocket]() { m_webSocket->ping(); });
+                m_pingTimer->start();
+
+                QString link =
+                    "https://www.nexusmods.com/sso?id=" + uuidString + "&application=vortex";
+                QDesktopServices::openUrl(QUrl(link));
+            });
+
+    QUrl socketUrl = QUrl("wss://sso.nexusmods.com");
+    m_webSocket->open(QNetworkRequest(socketUrl));
+}
+
 bool ModDownloader::ValidateApi() {
     QString url = "https://api.nexusmods.com/v1/users/validate.json";
     QNetworkRequest request(url);
@@ -222,19 +226,16 @@ bool ModDownloader::ValidateApi() {
                 if (item.key() == "is_premium") {
                     bool isPremium = jsonDoc["is_premium"].get<bool>();
                     if (!isPremium) {
-                        QMessageBox::information(this, "Premium key required",
-                                                 "Due to nexus Mods Api guidelines, a premium Api "
-                                                 "key is required for donwloading");
-                        ui->validApiLabel->setStyleSheet("color: red;");
-                        ui->validApiLabel->setText("No Valid Nexus ModsAPI Key Set");
+                        ui->validApiLabel->setStyleSheet("color: green;");
+                        ui->validApiLabel->setText("Valid Non-premium Nexus ModsAPI Key Set");
                     } else {
                         ui->validApiLabel->setStyleSheet("color: green;");
                         ui->validApiLabel->setText("Valid premium Api key set");
-                        valid = true;
                     }
                     break;
                 }
             }
+            valid = true;
         } else {
             ui->validApiLabel->setStyleSheet("color: red;");
             ui->validApiLabel->setText("No Valid Nexus ModsAPI Key Set");
@@ -248,7 +249,6 @@ bool ModDownloader::ValidateApi() {
     QEventLoop loop;
     connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();
-
     return valid;
 }
 
