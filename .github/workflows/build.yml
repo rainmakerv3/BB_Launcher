@@ -79,7 +79,7 @@ jobs:
     - name: Upload Windows Qt artifact
       uses: actions/upload-artifact@v4
       with:
-        name: BB_Launcher-win64-qt-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}
+        name: BB_Launcher_with_Downloader-Windows-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}
         path: upload/
 
   build-windows-noUAC:
@@ -115,7 +115,7 @@ jobs:
     - name: Upload Windows Qt artifact
       uses: actions/upload-artifact@v4
       with:
-        name: BB_Launcher-win64-qt-noUAC-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}
+        name: BB_Launcher_with_Downloader-Windows-noUAC-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}
         path: upload/
 
   build-macos:
@@ -155,7 +155,7 @@ jobs:
         tar cf BB_Launcher-macos-qt.tar.gz -C upload .
     - uses: actions/upload-artifact@v4
       with:
-        name: BB_Launcher-macos-qt-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}
+        name: BB_Launcher_with_Downloader-Mac-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}
         path: BB_Launcher-macos-qt.tar.gz
 
 
@@ -214,11 +214,11 @@ jobs:
         tar cf BB_Launcher-qt.tar.gz -C ${{github.workspace}}/build BB_Launcher
     - uses: actions/upload-artifact@v4
       with:
-        name: BB_Launcher-linux-qt-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}
+        name: BB_Launcher_with_Downloader-Linux-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}
         path: BB_Launcher-qt.AppImage
 
   pre-release:
-    if: github.ref == 'refs/heads/master' && github.repository == 'rainmakerv3/BB_Launcher' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/modDownloader' && github.repository == 'rainmakerv3/BB_Launcher' && github.event_name == 'push'
     needs: [get-info, build-windows, build-windows-noUAC, build-linux, build-macos]
     runs-on: ubuntu-24.04
     steps:
@@ -257,7 +257,7 @@ jobs:
         tag: "Pre-release-BBLauncher-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}"
         draft: false
         prerelease: true
-        body: "- Mac builds now out of BETA since there have been no reported issues\n- Prerelease builds are meant for testing, releases are better for general use\n- Full Changelog: https://github.com/rainmakerv3/BB_Launcher/commits/master/"
+        body: "Downloader Version\n\n- Mac builds now out of BETA since there have been no reported issues\n- Prerelease builds are meant for testing, releases are better for general use\n- Full Changelog: https://github.com/rainmakerv3/BB_Launcher/commits/modDownloader/"
         artifacts: ./artifacts/*.zip
 
     - name: Publish to Release Repository
