@@ -32,115 +32,6 @@ CheckUpdate::CheckUpdate(const bool showMessage, QWidget* parent)
     CheckForUpdates(showMessage);
 }
 
-CheckUpdate::~CheckUpdate() {}
-
-void CheckUpdate::CheckForUpdates(const bool showMessage) {
-    QString CurrentBranch = Build::Branch;
-    QUrl url = QUrl("https://api.github.com/repos/rainmakerv3/BB_Launcher/releases");
-
-    QNetworkRequest request(url);
-    QNetworkReply* reply = networkManager->get(request);
-
-    connect(reply, &QNetworkReply::finished, this, [this, reply, showMessage, CurrentBranch]() {
-        if (reply->error() != QNetworkReply::NoError) {
-            QMessageBox::warning(this, tr("Error"),
-                                 QString(tr("Network error:") + "\n" + reply->errorString()));
-            reply->deleteLater();
-            return;
-        }
-
-        QByteArray response = reply->readAll();
-        QJsonDocument jsonDoc(QJsonDocument::fromJson(response));
-
-        if (jsonDoc.isNull()) {
-            QMessageBox::warning(this, tr("Error"), tr("Failed to parse update information."));
-            reply->deleteLater();
-            return;
-        }
-
-        QString downloadUrl;
-        QString latestVersion;
-        QString latestRev;
-        QString latestDate;
-        QString platformString;
-
-#ifdef Q_OS_WIN
-        platformString = "win64";
-#elif defined(Q_OS_LINUX)
-        platformString = "linux";
-#elif defined(Q_OS_MAC)
-        platformString = "macos";
-#endif
-
-        QJsonObject jsonObj;
-        jsonObj = jsonDoc.object();
-
-        QJsonArray jsonArray = jsonDoc.array();
-        for (const QJsonValue& value : jsonArray) {
-            jsonObj = value.toObject();
-            if (jsonObj.contains("name") && !jsonObj["name"].toString().contains("Pre-release")) {
-                break;
-            }
-        }
-
-        if (!jsonObj.isEmpty()) {
-            latestVersion = jsonObj["tag_name"].toString();
-        } else {
-            QMessageBox::warning(this, tr("Error"), tr("No releases found."));
-            reply->deleteLater();
-            return;
-        }
-
-        latestRev = latestVersion;
-        latestDate = jsonObj["published_at"].toString();
-
-        QJsonArray assets = jsonObj["assets"].toArray();
-        bool found = false;
-
-        for (const QJsonValue& assetValue : assets) {
-            QJsonObject assetObj = assetValue.toObject();
-            if (CurrentBranch == "noUAC") {
-                if (assetObj["name"].toString().contains("noUAC")) {
-                    downloadUrl = assetObj["browser_download_url"].toString();
-                    found = true;
-                    break;
-                }
-            } else {
-                if (assetObj["name"].toString().contains(platformString)) {
-                    downloadUrl = assetObj["browser_download_url"].toString();
-                    found = true;
-                    break;
-                }
-            }
-        }
-
-        if (!found) {
-            QMessageBox::warning(this, tr("Error"),
-                                 tr("No download URL found for the specified asset."));
-            reply->deleteLater();
-            return;
-        }
-
-        QString currentRev = QString::fromStdString(Common::VERSION);
-        QString currentDate = Build::Date;
-
-        QDateTime dateTime = QDateTime::fromString(latestDate, Qt::ISODate);
-        latestDate = dateTime.isValid() ? dateTime.toString("yyyy-MM-dd HH:mm:ss") : "Unknown date";
-
-        if (latestRev == currentRev) {
-            if (showMessage) {
-                QMessageBox::information(this, tr("Auto Updater"),
-                                         tr("Your version is already up to date!"));
-            }
-            close();
-            return;
-        } else {
-            setupUI(downloadUrl, latestDate, latestRev, currentDate, currentRev);
-        }
-        reply->deleteLater();
-    });
-}
-
 void CheckUpdate::setupUI(const QString& downloadUrl, const QString& latestDate,
                           const QString& latestRev, const QString& currentDate,
                           const QString& currentRev) {
@@ -221,6 +112,114 @@ void CheckUpdate::setupUI(const QString& downloadUrl, const QString& latestDate,
 
     connect(noButton, &QPushButton::clicked, this, [this]() { close(); });
     setLayout(layout);
+}
+
+void CheckUpdate::CheckForUpdates(const bool showMessage) {
+    QString CurrentBranch = Build::Branch;
+    QUrl url = QUrl("https://api.github.com/repos/rainmakerv3/BB_Launcher/releases");
+
+    QNetworkRequest request(url);
+    QNetworkReply* reply = networkManager->get(request);
+
+    connect(reply, &QNetworkReply::finished, this, [this, reply, showMessage, CurrentBranch]() {
+        if (reply->error() != QNetworkReply::NoError) {
+            QMessageBox::warning(this, tr("Error"),
+                                 QString(tr("Network error:") + "\n" + reply->errorString()));
+            reply->deleteLater();
+            return;
+        }
+
+        QByteArray response = reply->readAll();
+        QJsonDocument jsonDoc(QJsonDocument::fromJson(response));
+
+        if (jsonDoc.isNull()) {
+            QMessageBox::warning(this, tr("Error"), tr("Failed to parse update information."));
+            reply->deleteLater();
+            return;
+        }
+
+        QString downloadUrl;
+        QString latestVersion;
+        QString latestRev;
+        QString latestDate;
+        QString platformString;
+
+#ifdef Q_OS_WIN
+        platformString = "win64";
+#elif defined(Q_OS_LINUX)
+        platformString = "linux";
+#elif defined(Q_OS_MAC)
+        platformString = "macos";
+#endif
+
+        QJsonObject jsonObj;
+        jsonObj = jsonDoc.object();
+
+        QJsonArray jsonArray = jsonDoc.array();
+        for (const QJsonValue& value : jsonArray) {
+            jsonObj = value.toObject();
+            if (jsonObj.contains("name") && !jsonObj["name"].toString().contains("Pre-release") &&
+                !jsonObj["name"].toString().contains("Downloader")) {
+                break;
+            }
+        }
+
+        if (!jsonObj.isEmpty()) {
+            latestVersion = jsonObj["tag_name"].toString();
+        } else {
+            QMessageBox::warning(this, tr("Error"), tr("No releases found."));
+            reply->deleteLater();
+            return;
+        }
+
+        latestRev = latestVersion;
+        latestDate = jsonObj["published_at"].toString();
+
+        QJsonArray assets = jsonObj["assets"].toArray();
+        bool found = false;
+
+        for (const QJsonValue& assetValue : assets) {
+            QJsonObject assetObj = assetValue.toObject();
+            if (CurrentBranch == "noUAC") {
+                if (assetObj["name"].toString().contains("noUAC")) {
+                    downloadUrl = assetObj["browser_download_url"].toString();
+                    found = true;
+                    break;
+                }
+            } else {
+                if (assetObj["name"].toString().contains(platformString)) {
+                    downloadUrl = assetObj["browser_download_url"].toString();
+                    found = true;
+                    break;
+                }
+            }
+        }
+
+        if (!found) {
+            QMessageBox::warning(this, tr("Error"),
+                                 tr("No download URL found for the specified asset."));
+            reply->deleteLater();
+            return;
+        }
+
+        QString currentRev = QString::fromStdString(Common::VERSION);
+        QString currentDate = Build::Date;
+
+        QDateTime dateTime = QDateTime::fromString(latestDate, Qt::ISODate);
+        latestDate = dateTime.isValid() ? dateTime.toString("yyyy-MM-dd HH:mm:ss") : "Unknown date";
+
+        if (latestRev == currentRev) {
+            if (showMessage) {
+                QMessageBox::information(this, tr("Auto Updater"),
+                                         tr("Your version is already up to date!"));
+            }
+            close();
+            return;
+        } else {
+            setupUI(downloadUrl, latestDate, latestRev, currentDate, currentRev);
+        }
+        reply->deleteLater();
+    });
 }
 
 void CheckUpdate::requestChangelog(const QString& currentRev, const QString& latestRev,
@@ -522,3 +521,5 @@ void CheckUpdate::Install() {
             QString(tr("Failed to create the update script file") + ":\n" + scriptFileName));
     }
 }
+
+CheckUpdate::~CheckUpdate() {}
