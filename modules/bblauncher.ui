@@ -36,16 +36,16 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
-        <widget class="QPushButton" name="LauncherSettingsButton">
+        <widget class="QPushButton" name="ModManagerButton">
          <property name="text">
-          <string>BB Launcher Settings</string>
+          <string>Mod Manager</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="ModManagerButton">
+        <widget class="QPushButton" name="downloaderButton">
          <property name="text">
-          <string>Mod Manager</string>
+          <string>Mod Downloader</string>
          </property>
         </widget>
        </item>
@@ -53,6 +53,13 @@
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_9">
+       <item>
+        <widget class="QPushButton" name="LauncherSettingsButton">
+         <property name="text">
+          <string>BB Launcher Settings</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QPushButton" name="shadSettingsButton">
          <property name="text">

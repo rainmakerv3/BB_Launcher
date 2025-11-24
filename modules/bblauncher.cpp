@@ -12,6 +12,7 @@
 
 #include "bblauncher.h"
 #include "modules/Common.h"
+#include "modules/ModDownloader.h"
 #include "modules/ModManager.h"
 #include "modules/SaveManager.h"
 #include "modules/TrophyManager.h"
@@ -99,6 +100,11 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     connect(ui->RestartButton, &QPushButton::clicked, this, &BBLauncher::RestartEmulator);
     connect(ui->FullscreenButton, &QPushButton::clicked, this,
             [this]() { m_ipc_client->toggleFullscreen(); });
+
+    connect(ui->downloaderButton, &QPushButton::pressed, this, [this]() {
+        ModDownloader* Downloader = new ModDownloader(this);
+        Downloader->exec();
+    });
 
     connect(ui->TrophyButton, &QPushButton::pressed, this, [this]() {
         QString trophyPath, gameTrpPath;

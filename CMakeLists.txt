@@ -122,6 +122,8 @@ set(PROJECT_SOURCES
     modules/ModManager.ui
     modules/QAnsiTextEdit.cpp
     modules/QAnsiTextEdit.h
+    modules/QmlObject.cpp
+    modules/QmlObject.h
     modules/RunGuard.cpp
     modules/RunGuard.h
     modules/SaveManager.h
@@ -178,8 +180,6 @@ set(PROJECT_SOURCES
     dist/BBIcon.icns
     ${CMAKE_CURRENT_BINARY_DIR}/settings/updater/BuildInfo.cpp
     ${RESOURCE_FILES}
-    ${WEBVIEW2_LIBRARY}
-    ${WEBVIEW2_INCLUDE_DIR}
 )
 
 qt_add_executable(BB_Launcher
@@ -188,9 +188,13 @@ qt_add_executable(BB_Launcher
 
 if (WIN32)
     target_sources(BB_Launcher PRIVATE dist/bblauncher.rc)
+    target_include_directories(BB_Launcher PRIVATE
+        qtstatic/include/QtWebView/6.10.0/QtWebView/private
+    )
 endif()
 
 target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
 target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network Qt6::Quick Qt6::QuickWidgets Qt6::WebView Qt6::WebSockets)
 target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 pugixml::pugixml SDL3::SDL3 Vulkan::Headers qmicroz volk_headers nlohmann_json::nlohmann_json)
 

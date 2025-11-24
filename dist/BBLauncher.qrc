@@ -17,6 +17,6 @@
         <file>play_icon.png</file>
         <file>stop_icon.png</file>
         <file>fullscreen_icon.png</file>
-        <file>webauthDialog.qml</file>
+        <file>web.qml</file>
     </qresource>
 </RCC>

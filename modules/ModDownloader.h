@@ -22,9 +22,9 @@ private:
     void LoadModInfo(int modId);
     void GetModFiles(int modId);
     void GetModImage(QUrl url);
-    void DownloadFile(int fileId, int ModId, QString modFilename);
+    void DownloadFilePremium(int fileId, int ModId, QString modFilename);
     void DownloadFileRegular(int fileId, int ModId, QString modFilename);
-    void StartDownload(QString url, QString modFilename);
+    void StartDownload(QString url, QString modFilename, bool isPremium);
     void SetSevenzipPath();
     QString BbcodeToHtml(QString BbcodeString);
     void extract7z(QString inpath, QString outpath);
@@ -32,6 +32,7 @@ private:
     Ui::ModDownloader* ui;
     QNetworkAccessManager* manager;
     QString apiKey;
+    bool isApiKeyPremium = false;
     std::filesystem::path sevenzipPath{};
 
     QStringList fileList;

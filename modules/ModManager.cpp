@@ -38,14 +38,6 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
             "QListWidget::item:selected { background-color: #AAB7DF; }");
     }
 
-    ui->RecModsLabel->setText("<a "
-                              "href=\"https://docs.google.com/document/d/"
-                              "1H5d-RrOE6q3lKTupkZxZRFKP2Q7zoWMTCL0hsPmYuAo\">Click here for a "
-                              "list of cool mods to try out!</a>");
-    ui->RecModsLabel->setTextFormat(Qt::RichText);
-    ui->RecModsLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
-    ui->RecModsLabel->setOpenExternalLinks(true);
-
     ui->ModHelpLabel->setText("<a "
                               "href=\"https://docs.google.com/document/d/"
                               "19ofjr6k4qqm9l9MJFrbDHEoNVyGXlK_8o95rI3xEh2k\">Click here for help "
@@ -55,12 +47,6 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
     ui->ModHelpLabel->setOpenExternalLinks(true);
 
     RefreshLists();
-
-    connect(ui->pushButton, &QPushButton::pressed, this, [this]() {
-        ModDownloader* Downloader = new ModDownloader(this);
-        Downloader->exec();
-        RefreshLists();
-    });
 
     connect(ui->ActivateButton, &QPushButton::pressed, this, &ModManager::ActivateButton_isPressed);
     connect(ui->DeactivateButton, &QPushButton::pressed, this,
