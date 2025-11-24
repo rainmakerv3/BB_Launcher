@@ -1,0 +1,1991 @@
+[
+    {
+        "classes": [
+            {
+                "className": "QGeoSatelliteInfo",
+                "enums": [
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 36,
+                        "name": "Attribute",
+                        "values": [
+                            "Elevation",
+                            "Azimuth"
+                        ]
+                    },
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 42,
+                        "name": "SatelliteSystem",
+                        "values": [
+                            "Undefined",
+                            "GPS",
+                            "GLONASS",
+                            "GALILEO",
+                            "BEIDOU",
+                            "QZSS",
+                            "Multiple",
+                            "CustomType"
+                        ]
+                    }
+                ],
+                "gadget": true,
+                "lineNumber": 28,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "attribute",
+                                "type": "Attribute"
+                            }
+                        ],
+                        "index": 0,
+                        "isConst": true,
+                        "lineNumber": 84,
+                        "name": "attribute",
+                        "returnType": "qreal"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "attribute",
+                                "type": "Attribute"
+                            }
+                        ],
+                        "index": 1,
+                        "isConst": true,
+                        "lineNumber": 87,
+                        "name": "hasAttribute",
+                        "returnType": "bool"
+                    }
+                ],
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": true,
+                        "index": 0,
+                        "lineNumber": 31,
+                        "name": "satelliteSystem",
+                        "read": "satelliteSystem",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "SatelliteSystem",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": true,
+                        "index": 1,
+                        "lineNumber": 32,
+                        "name": "satelliteIdentifier",
+                        "read": "satelliteIdentifier",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": true,
+                        "index": 2,
+                        "lineNumber": 33,
+                        "name": "signalStrength",
+                        "read": "signalStrength",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "qreal",
+                        "user": false
+                    }
+                ],
+                "qualifiedClassName": "QGeoSatelliteInfo"
+            }
+        ],
+        "inputFile": "qgeosatelliteinfo.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QGeoAreaMonitorSource",
+                "enums": [
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 22,
+                        "name": "Error",
+                        "values": [
+                            "AccessError",
+                            "InsufficientPositionInfo",
+                            "UnknownSourceError",
+                            "NoError"
+                        ]
+                    }
+                ],
+                "lineNumber": 17,
+                "object": true,
+                "qualifiedClassName": "QGeoAreaMonitorSource",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "monitor",
+                                "type": "QGeoAreaMonitorInfo"
+                            },
+                            {
+                                "name": "update",
+                                "type": "QGeoPositionInfo"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 62,
+                        "name": "areaEntered",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "monitor",
+                                "type": "QGeoAreaMonitorInfo"
+                            },
+                            {
+                                "name": "update",
+                                "type": "QGeoPositionInfo"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 63,
+                        "name": "areaExited",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "monitor",
+                                "type": "QGeoAreaMonitorInfo"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 64,
+                        "name": "monitorExpired",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "error",
+                                "type": "QGeoAreaMonitorSource::Error"
+                            }
+                        ],
+                        "index": 3,
+                        "lineNumber": 65,
+                        "name": "errorOccurred",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qgeoareamonitorsource.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QGeoCircle",
+                "gadget": true,
+                "lineNumber": 14,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "degreesLatitude",
+                                "type": "double"
+                            },
+                            {
+                                "name": "degreesLongitude",
+                                "type": "double"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 36,
+                        "name": "translate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "degreesLatitude",
+                                "type": "double"
+                            },
+                            {
+                                "name": "degreesLongitude",
+                                "type": "double"
+                            }
+                        ],
+                        "index": 1,
+                        "isConst": true,
+                        "lineNumber": 37,
+                        "name": "translated",
+                        "returnType": "QGeoCircle"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "coordinate",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 38,
+                        "name": "extendCircle",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "isConst": true,
+                        "lineNumber": 40,
+                        "name": "toString",
+                        "returnType": "QString"
+                    }
+                ],
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 17,
+                        "name": "center",
+                        "read": "center",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QGeoCoordinate",
+                        "user": false,
+                        "write": "setCenter"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 18,
+                        "name": "radius",
+                        "read": "radius",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "qreal",
+                        "user": false,
+                        "write": "setRadius"
+                    }
+                ],
+                "qualifiedClassName": "QGeoCircle",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QGeoShape"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qgeocircle.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QGeoCoordinate",
+                "enums": [
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 39,
+                        "name": "CoordinateFormat",
+                        "values": [
+                            "Degrees",
+                            "DegreesWithHemisphere",
+                            "DegreesMinutes",
+                            "DegreesMinutesWithHemisphere",
+                            "DegreesMinutesSeconds",
+                            "DegreesMinutesSecondsWithHemisphere"
+                        ]
+                    }
+                ],
+                "gadget": true,
+                "lineNumber": 21,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "other",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 0,
+                        "isConst": true,
+                        "lineNumber": 81,
+                        "name": "distanceTo",
+                        "returnType": "qreal"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "other",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 1,
+                        "isConst": true,
+                        "lineNumber": 82,
+                        "name": "azimuthTo",
+                        "returnType": "qreal"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "distance",
+                                "type": "qreal"
+                            },
+                            {
+                                "name": "azimuth",
+                                "type": "qreal"
+                            },
+                            {
+                                "name": "distanceUp",
+                                "type": "qreal"
+                            }
+                        ],
+                        "index": 2,
+                        "isConst": true,
+                        "lineNumber": 84,
+                        "name": "atDistanceAndAzimuth",
+                        "returnType": "QGeoCoordinate"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "distance",
+                                "type": "qreal"
+                            },
+                            {
+                                "name": "azimuth",
+                                "type": "qreal"
+                            }
+                        ],
+                        "index": 3,
+                        "isCloned": true,
+                        "isConst": true,
+                        "lineNumber": 84,
+                        "name": "atDistanceAndAzimuth",
+                        "returnType": "QGeoCoordinate"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "format",
+                                "type": "CoordinateFormat"
+                            }
+                        ],
+                        "index": 4,
+                        "isConst": true,
+                        "lineNumber": 86,
+                        "name": "toString",
+                        "returnType": "QString"
+                    },
+                    {
+                        "access": "public",
+                        "index": 5,
+                        "isCloned": true,
+                        "isConst": true,
+                        "lineNumber": 86,
+                        "name": "toString",
+                        "returnType": "QString"
+                    }
+                ],
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 26,
+                        "name": "latitude",
+                        "read": "latitude",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false,
+                        "write": "setLatitude"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 27,
+                        "name": "longitude",
+                        "read": "longitude",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false,
+                        "write": "setLongitude"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 28,
+                        "name": "altitude",
+                        "read": "altitude",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false,
+                        "write": "setAltitude"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 29,
+                        "name": "isValid",
+                        "read": "isValid",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false
+                    }
+                ],
+                "qualifiedClassName": "QGeoCoordinate"
+            }
+        ],
+        "inputFile": "qgeocoordinate.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QGeoCoordinateObject",
+                "lineNumber": 26,
+                "object": true,
+                "properties": [
+                    {
+                        "bindable": "bindableCoordinate",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 29,
+                        "name": "coordinate",
+                        "notify": "coordinateChanged",
+                        "read": "coordinate",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QGeoCoordinate",
+                        "user": false,
+                        "write": "setCoordinate"
+                    }
+                ],
+                "qualifiedClassName": "QGeoCoordinateObject",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 51,
+                        "name": "coordinateChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qgeocoordinateobject_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QGeoPath",
+                "gadget": true,
+                "lineNumber": 15,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "degreesLatitude",
+                                "type": "double"
+                            },
+                            {
+                                "name": "degreesLongitude",
+                                "type": "double"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 40,
+                        "name": "translate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "degreesLatitude",
+                                "type": "double"
+                            },
+                            {
+                                "name": "degreesLongitude",
+                                "type": "double"
+                            }
+                        ],
+                        "index": 1,
+                        "isConst": true,
+                        "lineNumber": 41,
+                        "name": "translated",
+                        "returnType": "QGeoPath"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "indexFrom",
+                                "type": "qsizetype"
+                            },
+                            {
+                                "name": "indexTo",
+                                "type": "qsizetype"
+                            }
+                        ],
+                        "index": 2,
+                        "isConst": true,
+                        "lineNumber": 42,
+                        "name": "length",
+                        "returnType": "double"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "indexFrom",
+                                "type": "qsizetype"
+                            }
+                        ],
+                        "index": 3,
+                        "isCloned": true,
+                        "isConst": true,
+                        "lineNumber": 42,
+                        "name": "length",
+                        "returnType": "double"
+                    },
+                    {
+                        "access": "public",
+                        "index": 4,
+                        "isCloned": true,
+                        "isConst": true,
+                        "lineNumber": 42,
+                        "name": "length",
+                        "returnType": "double"
+                    },
+                    {
+                        "access": "public",
+                        "index": 5,
+                        "isConst": true,
+                        "lineNumber": 43,
+                        "name": "size",
+                        "returnType": "qsizetype"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "coordinate",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 6,
+                        "lineNumber": 44,
+                        "name": "addCoordinate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "qsizetype"
+                            },
+                            {
+                                "name": "coordinate",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 7,
+                        "lineNumber": 45,
+                        "name": "insertCoordinate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "qsizetype"
+                            },
+                            {
+                                "name": "coordinate",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 8,
+                        "lineNumber": 46,
+                        "name": "replaceCoordinate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "qsizetype"
+                            }
+                        ],
+                        "index": 9,
+                        "isConst": true,
+                        "lineNumber": 47,
+                        "name": "coordinateAt",
+                        "returnType": "QGeoCoordinate"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "coordinate",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 10,
+                        "isConst": true,
+                        "lineNumber": 48,
+                        "name": "containsCoordinate",
+                        "returnType": "bool"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "coordinate",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 11,
+                        "lineNumber": 49,
+                        "name": "removeCoordinate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "qsizetype"
+                            }
+                        ],
+                        "index": 12,
+                        "lineNumber": 50,
+                        "name": "removeCoordinate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 13,
+                        "isConst": true,
+                        "lineNumber": 52,
+                        "name": "toString",
+                        "returnType": "QString"
+                    }
+                ],
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 18,
+                        "name": "path",
+                        "read": "variantPath",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QVariantList",
+                        "user": false,
+                        "write": "setVariantPath"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 19,
+                        "name": "width",
+                        "read": "width",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "qreal",
+                        "user": false,
+                        "write": "setWidth"
+                    }
+                ],
+                "qualifiedClassName": "QGeoPath",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QGeoShape"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qgeopath.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QGeoPathEager",
+                "gadget": true,
+                "lineNumber": 210,
+                "qualifiedClassName": "QGeoPathEager",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QGeoPath"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qgeopath_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QGeoPolygon",
+                "gadget": true,
+                "lineNumber": 15,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "holePath",
+                                "type": "QVariant"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 33,
+                        "name": "addHole",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "qsizetype"
+                            }
+                        ],
+                        "index": 1,
+                        "isConst": true,
+                        "lineNumber": 35,
+                        "name": "hole",
+                        "returnType": "QVariantList"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "qsizetype"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 37,
+                        "name": "removeHole",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "isConst": true,
+                        "lineNumber": 38,
+                        "name": "holesCount",
+                        "returnType": "qsizetype"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "degreesLatitude",
+                                "type": "double"
+                            },
+                            {
+                                "name": "degreesLongitude",
+                                "type": "double"
+                            }
+                        ],
+                        "index": 4,
+                        "lineNumber": 39,
+                        "name": "translate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "degreesLatitude",
+                                "type": "double"
+                            },
+                            {
+                                "name": "degreesLongitude",
+                                "type": "double"
+                            }
+                        ],
+                        "index": 5,
+                        "isConst": true,
+                        "lineNumber": 40,
+                        "name": "translated",
+                        "returnType": "QGeoPolygon"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "indexFrom",
+                                "type": "qsizetype"
+                            },
+                            {
+                                "name": "indexTo",
+                                "type": "qsizetype"
+                            }
+                        ],
+                        "index": 6,
+                        "isConst": true,
+                        "lineNumber": 41,
+                        "name": "length",
+                        "returnType": "double"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "indexFrom",
+                                "type": "qsizetype"
+                            }
+                        ],
+                        "index": 7,
+                        "isCloned": true,
+                        "isConst": true,
+                        "lineNumber": 41,
+                        "name": "length",
+                        "returnType": "double"
+                    },
+                    {
+                        "access": "public",
+                        "index": 8,
+                        "isCloned": true,
+                        "isConst": true,
+                        "lineNumber": 41,
+                        "name": "length",
+                        "returnType": "double"
+                    },
+                    {
+                        "access": "public",
+                        "index": 9,
+                        "isConst": true,
+                        "lineNumber": 42,
+                        "name": "size",
+                        "returnType": "qsizetype"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "coordinate",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 10,
+                        "lineNumber": 43,
+                        "name": "addCoordinate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "qsizetype"
+                            },
+                            {
+                                "name": "coordinate",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 11,
+                        "lineNumber": 44,
+                        "name": "insertCoordinate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "qsizetype"
+                            },
+                            {
+                                "name": "coordinate",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 12,
+                        "lineNumber": 45,
+                        "name": "replaceCoordinate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "qsizetype"
+                            }
+                        ],
+                        "index": 13,
+                        "isConst": true,
+                        "lineNumber": 46,
+                        "name": "coordinateAt",
+                        "returnType": "QGeoCoordinate"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "coordinate",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 14,
+                        "isConst": true,
+                        "lineNumber": 47,
+                        "name": "containsCoordinate",
+                        "returnType": "bool"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "coordinate",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 15,
+                        "lineNumber": 48,
+                        "name": "removeCoordinate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "index",
+                                "type": "qsizetype"
+                            }
+                        ],
+                        "index": 16,
+                        "lineNumber": 49,
+                        "name": "removeCoordinate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 17,
+                        "isConst": true,
+                        "lineNumber": 51,
+                        "name": "toString",
+                        "returnType": "QString"
+                    }
+                ],
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 18,
+                        "name": "perimeter",
+                        "read": "perimeter",
+                        "required": false,
+                        "revision": 1292,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QList<QGeoCoordinate>",
+                        "user": false,
+                        "write": "setPerimeter"
+                    }
+                ],
+                "qualifiedClassName": "QGeoPolygon",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QGeoShape"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qgeopolygon.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QGeoPolygonEager",
+                "gadget": true,
+                "lineNumber": 87,
+                "qualifiedClassName": "QGeoPolygonEager",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QGeoPolygon"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qgeopolygon_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QGeoPositionInfoSource",
+                "enums": [
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 25,
+                        "name": "Error",
+                        "values": [
+                            "AccessError",
+                            "ClosedError",
+                            "UnknownSourceError",
+                            "NoError",
+                            "UpdateTimeoutError"
+                        ]
+                    }
+                ],
+                "lineNumber": 14,
+                "object": true,
+                "properties": [
+                    {
+                        "bindable": "bindableUpdateInterval",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 17,
+                        "name": "updateInterval",
+                        "read": "updateInterval",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "write": "setUpdateInterval"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 19,
+                        "name": "minimumUpdateInterval",
+                        "read": "minimumUpdateInterval",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 20,
+                        "name": "sourceName",
+                        "read": "sourceName",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindablePreferredPositioningMethods",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 21,
+                        "name": "preferredPositioningMethods",
+                        "read": "preferredPositioningMethods",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "PositioningMethods",
+                        "user": false,
+                        "write": "setPreferredPositioningMethods"
+                    }
+                ],
+                "qualifiedClassName": "QGeoPositionInfoSource",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "update",
+                                "type": "QGeoPositionInfo"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 77,
+                        "name": "positionUpdated",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QGeoPositionInfoSource::Error"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 78,
+                        "name": "errorOccurred",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "lineNumber": 79,
+                        "name": "supportedPositioningMethodsChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "lineNumber": 71,
+                        "name": "startUpdates",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 4,
+                        "lineNumber": 72,
+                        "name": "stopUpdates",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "timeout",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 5,
+                        "lineNumber": 74,
+                        "name": "requestUpdate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 6,
+                        "isCloned": true,
+                        "lineNumber": 74,
+                        "name": "requestUpdate",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qgeopositioninfosource.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QGeoRectangle",
+                "gadget": true,
+                "lineNumber": 13,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "rectangle",
+                                "type": "QGeoRectangle"
+                            }
+                        ],
+                        "index": 0,
+                        "isConst": true,
+                        "lineNumber": 59,
+                        "name": "intersects",
+                        "returnType": "bool"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "degreesLatitude",
+                                "type": "double"
+                            },
+                            {
+                                "name": "degreesLongitude",
+                                "type": "double"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 61,
+                        "name": "translate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "degreesLatitude",
+                                "type": "double"
+                            },
+                            {
+                                "name": "degreesLongitude",
+                                "type": "double"
+                            }
+                        ],
+                        "index": 2,
+                        "isConst": true,
+                        "lineNumber": 62,
+                        "name": "translated",
+                        "returnType": "QGeoRectangle"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "coordinate",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 3,
+                        "lineNumber": 63,
+                        "name": "extendRectangle",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "rectangle",
+                                "type": "QGeoRectangle"
+                            }
+                        ],
+                        "index": 4,
+                        "isConst": true,
+                        "lineNumber": 65,
+                        "name": "united",
+                        "returnType": "QGeoRectangle"
+                    },
+                    {
+                        "access": "public",
+                        "index": 5,
+                        "isConst": true,
+                        "lineNumber": 69,
+                        "name": "toString",
+                        "returnType": "QString"
+                    }
+                ],
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 16,
+                        "name": "bottomLeft",
+                        "read": "bottomLeft",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QGeoCoordinate",
+                        "user": false,
+                        "write": "setBottomLeft"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 17,
+                        "name": "bottomRight",
+                        "read": "bottomRight",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QGeoCoordinate",
+                        "user": false,
+                        "write": "setBottomRight"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 18,
+                        "name": "topLeft",
+                        "read": "topLeft",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QGeoCoordinate",
+                        "user": false,
+                        "write": "setTopLeft"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 19,
+                        "name": "topRight",
+                        "read": "topRight",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QGeoCoordinate",
+                        "user": false,
+                        "write": "setTopRight"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "lineNumber": 20,
+                        "name": "center",
+                        "read": "center",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QGeoCoordinate",
+                        "user": false,
+                        "write": "setCenter"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 5,
+                        "lineNumber": 21,
+                        "name": "height",
+                        "read": "height",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false,
+                        "write": "setHeight"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 6,
+                        "lineNumber": 22,
+                        "name": "width",
+                        "read": "width",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false,
+                        "write": "setWidth"
+                    }
+                ],
+                "qualifiedClassName": "QGeoRectangle",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QGeoShape"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qgeorectangle.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QGeoSatelliteInfoSource",
+                "enums": [
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 22,
+                        "name": "Error",
+                        "values": [
+                            "AccessError",
+                            "ClosedError",
+                            "NoError",
+                            "UnknownSourceError",
+                            "UpdateTimeoutError"
+                        ]
+                    }
+                ],
+                "lineNumber": 14,
+                "object": true,
+                "properties": [
+                    {
+                        "bindable": "bindableUpdateInterval",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 17,
+                        "name": "updateInterval",
+                        "read": "updateInterval",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "write": "setUpdateInterval"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 19,
+                        "name": "minimumUpdateInterval",
+                        "read": "minimumUpdateInterval",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false
+                    }
+                ],
+                "qualifiedClassName": "QGeoSatelliteInfoSource",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "satellites",
+                                "type": "QList<QGeoSatelliteInfo>"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 59,
+                        "name": "satellitesInViewUpdated",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "satellites",
+                                "type": "QList<QGeoSatelliteInfo>"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 60,
+                        "name": "satellitesInUseUpdated",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QGeoSatelliteInfoSource::Error"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 61,
+                        "name": "errorOccurred",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "lineNumber": 53,
+                        "name": "startUpdates",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 4,
+                        "lineNumber": 54,
+                        "name": "stopUpdates",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "timeout",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 5,
+                        "lineNumber": 56,
+                        "name": "requestUpdate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 6,
+                        "isCloned": true,
+                        "lineNumber": 56,
+                        "name": "requestUpdate",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qgeosatelliteinfosource.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QGeoShape",
+                "constructors": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "other",
+                                "type": "QGeoShape"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 27,
+                        "name": "QGeoShape",
+                        "returnType": ""
+                    }
+                ],
+                "enums": [
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 30,
+                        "name": "ShapeType",
+                        "values": [
+                            "UnknownType",
+                            "RectangleType",
+                            "CircleType",
+                            "PathType",
+                            "PolygonType"
+                        ]
+                    }
+                ],
+                "gadget": true,
+                "lineNumber": 16,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "coordinate",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 0,
+                        "isConst": true,
+                        "lineNumber": 42,
+                        "name": "contains",
+                        "returnType": "bool"
+                    },
+                    {
+                        "access": "public",
+                        "index": 1,
+                        "isConst": true,
+                        "lineNumber": 43,
+                        "name": "boundingGeoRectangle",
+                        "returnType": "QGeoRectangle"
+                    },
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "isConst": true,
+                        "lineNumber": 57,
+                        "name": "toString",
+                        "returnType": "QString"
+                    }
+                ],
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 19,
+                        "name": "type",
+                        "read": "type",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "ShapeType",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 20,
+                        "name": "isValid",
+                        "read": "isValid",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 21,
+                        "name": "isEmpty",
+                        "read": "isEmpty",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 22,
+                        "name": "center",
+                        "read": "center",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QGeoCoordinate",
+                        "user": false
+                    }
+                ],
+                "qualifiedClassName": "QGeoShape"
+            }
+        ],
+        "inputFile": "qgeoshape.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QNmeaPositionInfoSource",
+                "lineNumber": 13,
+                "object": true,
+                "qualifiedClassName": "QNmeaPositionInfoSource",
+                "slots": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 42,
+                        "name": "startUpdates",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 1,
+                        "lineNumber": 43,
+                        "name": "stopUpdates",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "timeout",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 44,
+                        "name": "requestUpdate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "isCloned": true,
+                        "lineNumber": 44,
+                        "name": "requestUpdate",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QGeoPositionInfoSource"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qnmeapositioninfosource.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QNmeaPositionInfoSourcePrivate",
+                "lineNumber": 40,
+                "object": true,
+                "qualifiedClassName": "QNmeaPositionInfoSourcePrivate",
+                "slots": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 65,
+                        "name": "readyRead",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "index": 1,
+                        "lineNumber": 71,
+                        "name": "emitPendingUpdate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "index": 2,
+                        "lineNumber": 72,
+                        "name": "sourceDataClosed",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "index": 3,
+                        "lineNumber": 73,
+                        "name": "updateRequestTimeout",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            },
+            {
+                "className": "QNmeaSimulatedReader",
+                "lineNumber": 128,
+                "object": true,
+                "qualifiedClassName": "QNmeaSimulatedReader",
+                "slots": [
+                    {
+                        "access": "private",
+                        "index": 0,
+                        "lineNumber": 140,
+                        "name": "simulatePendingUpdate",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    },
+                    {
+                        "access": "public",
+                        "name": "QNmeaReader"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qnmeapositioninfosource_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QNmeaSatelliteInfoSource",
+                "lineNumber": 13,
+                "object": true,
+                "qualifiedClassName": "QNmeaSatelliteInfoSource",
+                "slots": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 40,
+                        "name": "startUpdates",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 1,
+                        "lineNumber": 41,
+                        "name": "stopUpdates",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "timeout",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 42,
+                        "name": "requestUpdate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "isCloned": true,
+                        "lineNumber": 42,
+                        "name": "requestUpdate",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QGeoSatelliteInfoSource"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qnmeasatelliteinfosource.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QNmeaSatelliteInfoSourcePrivate",
+                "lineNumber": 69,
+                "object": true,
+                "qualifiedClassName": "QNmeaSatelliteInfoSourcePrivate",
+                "slots": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 83,
+                        "name": "readyRead",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 1,
+                        "lineNumber": 84,
+                        "name": "emitPendingUpdate",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "lineNumber": 85,
+                        "name": "sourceDataClosed",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "lineNumber": 86,
+                        "name": "updateRequestTimeout",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qnmeasatelliteinfosource_p.h",
+        "outputRevision": 69
+    }
+]

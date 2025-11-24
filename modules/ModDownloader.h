@@ -17,11 +17,13 @@ public:
     ~ModDownloader();
 
 private:
+    void GetApiKey();
     bool ValidateApi();
     void LoadModInfo(int modId);
     void GetModFiles(int modId);
     void GetModImage(QUrl url);
     void DownloadFile(int fileId, int ModId, QString modFilename);
+    void DownloadFileRegular(int fileId, int ModId, QString modFilename);
     void StartDownload(QString url, QString modFilename);
     void SetSevenzipPath();
     QString BbcodeToHtml(QString BbcodeString);
@@ -37,4 +39,7 @@ private:
     QStringList fileDescList;
     QStringList fileTypeList;
     QMap<int, int> modIDmap;
+
+    QDialog* authorizationDialog;
+    QDialog* downloadDialog;
 };

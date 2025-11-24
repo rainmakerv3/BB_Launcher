@@ -80,6 +80,8 @@ if (WIN32)
     set(Qt6_DIR "CMAKE_CURRENT_SOURCE_DIR}/qtstatic/lib/cmake/Qt6")
     set(Qt6Widgets_DIR "CMAKE_CURRENT_SOURCE_DIR}/qtstatic/lib/cmake/Qt6Widgets")
     set(Qt6Network_DIR "CMAKE_CURRENT_SOURCE_DIR}/qtstatic/lib/cmake/Qt6Network")
+    set(WEBVIEW2_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/WebView2SDK/build/native/x64/WebView2LoaderStatic.lib")
+    set(WEBVIEW2_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/WebView2SDK/build/native/include")
 endif()
 
 find_package(toml11 4.2.0 CONFIG)
@@ -97,7 +99,7 @@ endif()
 
 add_subdirectory(externals)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Network Quick QuickWidgets WebView WebSockets)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -176,6 +178,8 @@ set(PROJECT_SOURCES
     dist/BBIcon.icns
     ${CMAKE_CURRENT_BINARY_DIR}/settings/updater/BuildInfo.cpp
     ${RESOURCE_FILES}
+    ${WEBVIEW2_LIBRARY}
+    ${WEBVIEW2_INCLUDE_DIR}
 )
 
 qt_add_executable(BB_Launcher
@@ -187,7 +191,7 @@ if (WIN32)
 endif()
 
 target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network)
+target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network Qt6::Quick Qt6::QuickWidgets Qt6::WebView Qt6::WebSockets)
 target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 pugixml::pugixml SDL3::SDL3 Vulkan::Headers qmicroz volk_headers nlohmann_json::nlohmann_json)
 
 if (APPLE)

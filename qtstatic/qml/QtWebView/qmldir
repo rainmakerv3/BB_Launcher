@@ -1,0 +1,9 @@
+module QtWebView
+linktarget Qt6::qtwebviewquickplugin
+optional plugin qtwebviewquickplugin
+classname QWebViewQuickPlugin
+typeinfo plugins.qmltypes
+depends QtQuick auto
+prefer :/qt-project.org/imports/QtWebView/
+depends QtQuick
+

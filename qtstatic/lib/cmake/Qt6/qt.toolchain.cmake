@@ -26,8 +26,8 @@ if(NOT QT_QMAKE_TARGET_MKSPEC)
     set(QT_QMAKE_TARGET_MKSPEC win32-msvc CACHE STRING "")
 endif()
 
-set(__qt_initial_c_compiler "D:/Visual Studio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe")
-set(__qt_initial_cxx_compiler "D:/Visual Studio/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe")
+set(__qt_initial_c_compiler "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe")
+set(__qt_initial_cxx_compiler "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe")
 if(QT_USE_ORIGINAL_COMPILER AND NOT DEFINED CMAKE_C_COMPILER
         AND EXISTS "${__qt_initial_c_compiler}")
     set(CMAKE_C_COMPILER "${__qt_initial_c_compiler}" CACHE STRING "")

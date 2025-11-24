@@ -77,7 +77,7 @@ endif()
 set(QT_WILL_INSTALL ON CACHE BOOL
     "Boolean indicating if doing a Qt prefix build (vs non-prefix build)." FORCE)
 
-set(QT_SOURCE_TREE "D:/Github/qt-everywhere-src-6.10.0/qtbase" CACHE PATH
+set(QT_SOURCE_TREE "D:/Github/qt-6.10.0/qt-everywhere-src-6.10.0/qtbase" CACHE PATH
 "A path to the source tree of the previously configured QtBase project." FORCE)
 
 # Propagate decision of building tests and examples to other repositories.

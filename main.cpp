@@ -5,6 +5,7 @@
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QMessageBox>
+#include <QtWebView>
 #include "modules/RunGuard.h"
 #include "modules/bblauncher.h"
 
@@ -13,6 +14,8 @@ void customMessageHandler(QtMsgType, const QMessageLogContext&, const QString&) 
 int main(int argc, char* argv[]) {
     qInstallMessageHandler(customMessageHandler);
     std::cout << "SHADPS4 LOG WINDOW\n\n";
+
+    QtWebView::initialize();
     QApplication a(argc, argv);
 
     QCommandLineParser parser;

@@ -1,0 +1,11 @@
+QT.labssynchronizer_private.VERSION = 6.10.0
+QT.labssynchronizer_private.name = QtLabsSynchronizer
+QT.labssynchronizer_private.module =
+QT.labssynchronizer_private.libs = $$QT_MODULE_LIB_BASE
+QT.labssynchronizer_private.includes = $$QT_MODULE_INCLUDE_BASE/QtLabsSynchronizer/6.10.0 $$QT_MODULE_INCLUDE_BASE/QtLabsSynchronizer/6.10.0/QtLabsSynchronizer
+QT.labssynchronizer_private.frameworks = 
+QT.labssynchronizer_private.depends = qml_private labssynchronizer
+QT.labssynchronizer_private.uses = 
+QT.labssynchronizer_private.module_config = v2 staticlib internal_module
+QT.labssynchronizer_private.enabled_features = 
+QT.labssynchronizer_private.disabled_features = 

@@ -1,0 +1,11 @@
+QT.quickcontrols2fluentwinui3styleimpl_private.VERSION = 6.10.0
+QT.quickcontrols2fluentwinui3styleimpl_private.name = QtQuickControls2FluentWinUI3StyleImpl
+QT.quickcontrols2fluentwinui3styleimpl_private.module =
+QT.quickcontrols2fluentwinui3styleimpl_private.libs = $$QT_MODULE_LIB_BASE
+QT.quickcontrols2fluentwinui3styleimpl_private.includes = $$QT_MODULE_INCLUDE_BASE/QtQuickControls2FluentWinUI3StyleImpl/6.10.0 $$QT_MODULE_INCLUDE_BASE/QtQuickControls2FluentWinUI3StyleImpl/6.10.0/QtQuickControls2FluentWinUI3StyleImpl
+QT.quickcontrols2fluentwinui3styleimpl_private.frameworks = 
+QT.quickcontrols2fluentwinui3styleimpl_private.depends = quickcontrols2fluentwinui3styleimpl
+QT.quickcontrols2fluentwinui3styleimpl_private.uses = 
+QT.quickcontrols2fluentwinui3styleimpl_private.module_config = v2 staticlib internal_module
+QT.quickcontrols2fluentwinui3styleimpl_private.enabled_features = 
+QT.quickcontrols2fluentwinui3styleimpl_private.disabled_features = 

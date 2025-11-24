@@ -1,0 +1,19 @@
+QT.quick.VERSION = 6.10.0
+QT.quick.name = QtQuick
+QT.quick.module = Qt6Quick
+QT.quick.libs = $$QT_MODULE_LIB_BASE
+QT.quick.ldflags = 
+QT.quick.includes = $$QT_MODULE_INCLUDE_BASE $$QT_MODULE_INCLUDE_BASE/QtQuick
+QT.quick.frameworks = 
+QT.quick.bins = $$QT_MODULE_BIN_BASE
+QT.quick.plugin_types = scenegraph
+QT.quick.depends =  core gui qml qmlmeta qmlmodels opengl core gui qml
+QT.quick.run_depends = network
+QT.quick.uses = 
+QT.quick.module_config = v2 staticlib
+QT.quick.DEFINES = QT_QUICK_LIB
+QT.quick.enabled_features = quick-shadereffect quick-draganddrop quick-pixmap-cache-threaded-download
+QT.quick.disabled_features = 
+QT_CONFIG += quick-shadereffect quick-draganddrop quick-pixmap-cache-threaded-download
+QT_MODULES += quick
+

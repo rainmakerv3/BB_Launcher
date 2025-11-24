@@ -1,0 +1,267 @@
+SPDXVersion: SPDX-2.3
+DataLicense: CC0-1.0
+SPDXID: SPDXRef-DOCUMENT
+DocumentName: qtwebview-6.10.0
+DocumentNamespace: https://qt.io/spdxdocs/qtwebview-6.10.0
+Creator: Organization: TheQtCompany
+Creator: Tool: Qt Build System
+CreatorComment: <text>This SPDX document was created from CMake 4.1.2, using the qt
+build system from https://code.qt.io/cgit/qt/qtbase.git/tree/cmake/QtPublicSbomHelpers.cmake</text>
+Created: 2025-11-24T00:53:54Z
+ExternalDocumentRef: DocumentRef-qtbase https://qt.io/spdxdocs/qtbase-6.10.0 SHA1: cce17b50b228887686beca621985071bef948dd3
+ExternalDocumentRef: DocumentRef-qtdeclarative https://qt.io/spdxdocs/qtdeclarative-6.10.0 SHA1: 69d5461b5f1477abeaca8926a8be1076a5c3b82d
+
+PackageName: MSVC
+SPDXID: SPDXRef-compiler
+PackageVersion: 19.44.35219.0
+PackageDownloadLocation: NOASSERTION
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+PackageSupplier: Organization: Anonymous
+FilesAnalyzed: false
+PackageSummary: <text>The compiler as identified by CMake, running on Windows (AMD64)</text>
+PrimaryPackagePurpose: APPLICATION
+Relationship: SPDXRef-compiler BUILD_DEPENDENCY_OF SPDXRef-Package-qtwebview
+RelationshipComment: <text>SPDXRef-Package-qtwebview is built by compiler MSVC version 19.44.35219.0</text>
+
+PackageName: qtwebview
+SPDXID: SPDXRef-Package-qtwebview
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtwebview:6.10.0:*:*:*:*:*:*:*
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtwebview@6.10.0
+PackageVersion: 6.10.0
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtwebview@6.10.0
+PackageSupplier: Organization: TheQtCompany
+PackageDownloadLocation: git://code.qt.io/qt/qtwebview.git
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: Copyright (C) The Qt Company Ltd. and other contributors.
+PackageHomePage: https://qt.io
+PackageComment: <text>Built by CMake 4.1.2 with Release configuration for Windows (AMD64)
+qtwebview was configured with:
+    qt6/configure -static -static-runtime -prefix D:\Github\BB_Launcher\qtstatic -skip qt3d -skip qt5compat -skip qtactiveqt -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtopcua -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwebchannel -skip qtwebengine -skip tests -release -webview2-sdk D:\Github\BB_Launcher\WebView2SDK
+</text>
+FilesAnalyzed: false
+BuiltDate: 2025-11-24T00:53:54Z
+Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-qtwebview
+
+PackageName: WebView
+SPDXID: SPDXRef-Package-qtwebview-qt-module-WebView
+PackageDownloadLocation: git://code.qt.io/qt/qtwebview.git
+PackageVersion: 6.10.0
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+PackageLicenseDeclared: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtwebview?library_name=WebView#src/webview
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtwebview-WebView?vcs_url=https://code.qt.io/qt/qtwebview.git&library_name=WebView#src/webview
+PackageCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: WebView
+CMake exported target name: Qt6::WebView
+Contained in CMake package: Qt6WebView
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtwebview:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: 265b146efe566d7f9f04d40504769d4bddd3d36c
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtwebview-qt-module-WebView DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
+Relationship: SPDXRef-Package-qtwebview-qt-module-WebView DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
+Relationship: SPDXRef-Package-qtwebview-qt-module-WebView DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
+Relationship: SPDXRef-Package-qtwebview CONTAINS SPDXRef-Package-qtwebview-qt-module-WebView
+
+FileName: ./lib/Qt6WebView.lib
+SPDXID: SPDXRef-PackagedFile-qt-module-WebView
+FileType: BINARY
+FileChecksum: SHA1: 8bbda6a7ab1bde9c7843bad25f29d4b517eeeb7b
+LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtwebview-qt-module-WebView CONTAINS SPDXRef-PackagedFile-qt-module-WebView
+Relationship: SPDXRef-PackagedFile-qt-module-WebView GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/webview/qabstractwebview_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebView GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/webview/qtwebviewfunctions.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebView GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/webview/qtwebviewfunctions.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebView GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/webview/qwebview.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebView GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/webview/qwebview_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebView GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/webview/qwebview_global.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebView GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/webview/qwebviewfactory.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebView GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/webview/qwebviewfactory_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebView GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/webview/qwebviewinterface_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebView GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/webview/qwebviewloadrequest.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebView GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/webview/qwebviewloadrequest_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebView GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/webview/qwebviewplugin.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebView GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/webview/qwebviewplugin_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebView GENERATED_FROM NOASSERTION
+RelationshipComment: /build_dir/qtwebview/src/webview/qtwebview-config.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebView GENERATED_FROM NOASSERTION
+RelationshipComment: /build_dir/qtwebview/src/webview/qtwebview-config_p.h
+
+PackageName: WebViewQuick
+SPDXID: SPDXRef-Package-qtwebview-qt-module-WebViewQuick
+PackageDownloadLocation: git://code.qt.io/qt/qtwebview.git
+PackageVersion: 6.10.0
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+PackageLicenseDeclared: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtwebview?library_name=WebViewQuick#src/quick
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtwebview-WebViewQuick?vcs_url=https://code.qt.io/qt/qtwebview.git&library_name=WebViewQuick#src/quick
+PackageCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: WebViewQuick
+CMake exported target name: Qt6::WebViewQuick
+Contained in CMake package: Qt6WebViewQuick
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtwebview:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: 27a076402d35870b3c4a47c73ea0aae2d3f38288
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtwebview-qt-module-WebViewQuick DEPENDS_ON DocumentRef-qtdeclarative:SPDXRef-Package-qtdeclarative-qt-module-Quick
+Relationship: SPDXRef-Package-qtwebview-qt-module-WebViewQuick DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
+Relationship: SPDXRef-Package-qtwebview-qt-module-WebViewQuick DEPENDS_ON DocumentRef-qtdeclarative:SPDXRef-Package-qtdeclarative-qt-module-QmlModels
+Relationship: SPDXRef-Package-qtwebview-qt-module-WebViewQuick DEPENDS_ON DocumentRef-qtdeclarative:SPDXRef-Package-qtdeclarative-qt-module-Qml
+Relationship: SPDXRef-Package-qtwebview-qt-module-WebViewQuick DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-OpenGL
+Relationship: SPDXRef-Package-qtwebview-qt-module-WebViewQuick DEPENDS_ON SPDXRef-Package-qtwebview-qt-module-WebView
+Relationship: SPDXRef-Package-qtwebview CONTAINS SPDXRef-Package-qtwebview-qt-module-WebViewQuick
+
+FileName: ./lib/Qt6WebViewQuick.lib
+SPDXID: SPDXRef-PackagedFile-qt-module-WebViewQuick
+FileType: BINARY
+FileChecksum: SHA1: e0c81da7ba7e8c7996dd946113b862f2343620ef
+LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtwebview-qt-module-WebViewQuick CONTAINS SPDXRef-PackagedFile-qt-module-WebViewQuick
+Relationship: SPDXRef-PackagedFile-qt-module-WebViewQuick GENERATED_FROM NOASSERTION
+RelationshipComment: D:/Github/qt-6.10.0/static/qtbase/include/QtWebViewQuick/qtwebviewquickexports.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebViewQuick GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/quick/qquickwebview.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebViewQuick GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/quick/qquickwebview_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebViewQuick GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/quick/qquickwebviewloadrequest.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebViewQuick GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/quick/qquickwebviewloadrequest_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebViewQuick GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/quick/qtwebviewquickglobal_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebViewQuick GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/quick/qquickwebviewsettings.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebViewQuick GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/quick/qquickwebviewsettings_p.h
+Relationship: SPDXRef-PackagedFile-qt-module-WebViewQuick GENERATED_FROM NOASSERTION
+RelationshipComment: /build_dir/qtwebview/src/quick/webviewquick_qmltyperegistrations.cpp
+Relationship: SPDXRef-PackagedFile-qt-module-WebViewQuick GENERATED_FROM NOASSERTION
+RelationshipComment: /build_dir/qtwebview/src/quick/.qt/rcc/qrc_qmake_QtWebView.cpp
+
+PackageName: qtwebviewquickplugin
+SPDXID: SPDXRef-Package-qtwebview-qt-plugin-qtwebviewquickplugin
+PackageDownloadLocation: git://code.qt.io/qt/qtwebview.git
+PackageVersion: 6.10.0
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+PackageLicenseDeclared: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtwebview?library_name=qtwebviewquickplugin#src/quick
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtwebview-qtwebviewquickplugin?vcs_url=https://code.qt.io/qt/qtwebview.git&library_name=qtwebviewquickplugin#src/quick
+PackageCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: qtwebviewquickplugin
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtwebview:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: d11682186e4b44b73b444ce34f436b53754654d5
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtwebview-qt-plugin-qtwebviewquickplugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformPluginInternal
+Relationship: SPDXRef-Package-qtwebview-qt-plugin-qtwebviewquickplugin DEPENDS_ON DocumentRef-qtdeclarative:SPDXRef-Package-qtdeclarative-qt-module-Qml
+Relationship: SPDXRef-Package-qtwebview-qt-plugin-qtwebviewquickplugin DEPENDS_ON SPDXRef-Package-qtwebview-qt-module-WebViewQuick
+Relationship: SPDXRef-Package-qtwebview CONTAINS SPDXRef-Package-qtwebview-qt-plugin-qtwebviewquickplugin
+
+FileName: ./qml/QtWebView/qtwebviewquickplugin.lib
+SPDXID: SPDXRef-PackagedFile-qt-plugin-qtwebviewquickplugin
+FileType: BINARY
+FileChecksum: SHA1: 1ec7cd21375c441b0b231eef165a240ad3896b16
+LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtwebview-qt-plugin-qtwebviewquickplugin CONTAINS SPDXRef-PackagedFile-qt-plugin-qtwebviewquickplugin
+Relationship: SPDXRef-PackagedFile-qt-plugin-qtwebviewquickplugin GENERATED_FROM NOASSERTION
+RelationshipComment: /build_dir/qtwebview/src/quick/qtwebviewquickplugin_QWebViewQuickPlugin.cpp
+
+PackageName: QWebView2WebViewPlugin
+SPDXID: SPDXRef-Package-qtwebview-qt-plugin-QWebView2WebViewPlugin
+PackageDownloadLocation: git://code.qt.io/qt/qtwebview.git
+PackageVersion: 6.10.0
+PackageSupplier: Organization: TheQtCompany
+PackageLicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+PackageLicenseDeclared: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+ExternalRef: PACKAGE-MANAGER purl pkg:github/qt/qtwebview?library_name=QWebView2WebViewPlugin#src/plugins/windows
+ExternalRef: PACKAGE-MANAGER purl pkg:generic/TheQtCompany/qtwebview-QWebView2WebViewPlugin?vcs_url=https://code.qt.io/qt/qtwebview.git&library_name=QWebView2WebViewPlugin#src/plugins/windows
+PackageCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: QWebView2WebViewPlugin
+</text>
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
+ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtwebview:6.10.0:*:*:*:*:*:*:*
+PackageVerificationCode: 9926c46ab513fd784bdcb0114dbabc5cbc8edead
+FilesAnalyzed: true
+Relationship: SPDXRef-Package-qtwebview-qt-plugin-QWebView2WebViewPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
+Relationship: SPDXRef-Package-qtwebview-qt-plugin-QWebView2WebViewPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
+Relationship: SPDXRef-Package-qtwebview-qt-plugin-QWebView2WebViewPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformPluginInternal
+Relationship: SPDXRef-Package-qtwebview-qt-plugin-QWebView2WebViewPlugin DEPENDS_ON SPDXRef-Package-qtwebview-qt-module-WebView
+Relationship: SPDXRef-Package-qtwebview-qt-plugin-QWebView2WebViewPlugin DEPENDS_ON SPDXRef-Package-qtwebview-system-3rdparty-WebView2
+Relationship: SPDXRef-Package-qtwebview CONTAINS SPDXRef-Package-qtwebview-qt-plugin-QWebView2WebViewPlugin
+
+FileName: ./plugins/webview/qtwebview_webview2.lib
+SPDXID: SPDXRef-PackagedFile-qt-plugin-QWebView2WebViewPlugin
+FileType: BINARY
+FileChecksum: SHA1: ac7b76a7686099a0afec6a56057725cc06202a84
+LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
+LicenseInfoInFile: NOASSERTION
+Relationship: SPDXRef-Package-qtwebview-qt-plugin-QWebView2WebViewPlugin CONTAINS SPDXRef-PackagedFile-qt-plugin-QWebView2WebViewPlugin
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWebView2WebViewPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/plugins/windows/qwebview2webview.cpp
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWebView2WebViewPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/plugins/windows/qwebview2webview_p.h
+Relationship: SPDXRef-PackagedFile-qt-plugin-QWebView2WebViewPlugin GENERATED_FROM NOASSERTION
+RelationshipComment: /src_dir/qtwebview/src/plugins/windows/qwebview2webviewplugin.cpp
+
+PackageName: WebView2
+SPDXID: SPDXRef-Package-qtwebview-system-3rdparty-WebView2
+PackageDownloadLocation: NOASSERTION
+PackageVersion: unknown
+PackageSupplier: Person: Anonymous
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+PrimaryPackagePurpose: LIBRARY
+PackageComment: <text>
+CMake target name: WebView2::WebView2
+</text>
+FilesAnalyzed: false
+Relationship: SPDXRef-Package-qtwebview CONTAINS SPDXRef-Package-qtwebview-system-3rdparty-WebView2
+
+LicenseID: LicenseRef-Qt-Commercial
+ExtractedText: <text>Licensees holding valid commercial Qt licenses may use this software in
+accordance with the the terms contained in a written agreement between
+you and The Qt Company. Alternatively, the terms and conditions that were
+accepted by the licensee when buying and/or downloading the
+software do apply.
+
+For the latest licensing terms and conditions, see https://www.qt.io/terms-conditions.
+For further information use the contact form at https://www.qt.io/contact-us.
+</text>

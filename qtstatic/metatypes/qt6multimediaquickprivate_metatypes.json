@@ -1,0 +1,1079 @@
+[
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "ImageCapture"
+                    }
+                ],
+                "className": "QQuickImageCapture",
+                "lineNumber": 29,
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 32,
+                        "name": "preview",
+                        "notify": "previewChanged",
+                        "read": "preview",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false
+                    }
+                ],
+                "qualifiedClassName": "QQuickImageCapture",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 45,
+                        "name": "previewChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "location",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 1,
+                        "isConst": true,
+                        "lineNumber": 42,
+                        "name": "saveToFile",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "type": "int"
+                            },
+                            {
+                                "type": "QImage"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 48,
+                        "name": "_q_imageCaptured",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QImageCapture"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qquickimagecapture_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "MediaPlayer"
+                    }
+                ],
+                "className": "QQuickMediaPlayer",
+                "lineNumber": 26,
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": true,
+                        "index": 0,
+                        "lineNumber": 29,
+                        "name": "source",
+                        "notify": "qmlSourceChanged",
+                        "read": "qmlSource",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QUrl",
+                        "user": false,
+                        "write": "qmlSetSource"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": true,
+                        "index": 1,
+                        "lineNumber": 33,
+                        "name": "duration",
+                        "notify": "qmlDurationChanged",
+                        "read": "qmlDuration",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": true,
+                        "index": 2,
+                        "lineNumber": 34,
+                        "name": "position",
+                        "notify": "qmlPositionChanged",
+                        "read": "qmlPosition",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "write": "setQmlPosition"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": true,
+                        "index": 3,
+                        "lineNumber": 35,
+                        "name": "autoPlay",
+                        "notify": "autoPlayChanged",
+                        "read": "autoPlay",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "setAutoPlay"
+                    }
+                ],
+                "qualifiedClassName": "QQuickMediaPlayer",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "source",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 62,
+                        "name": "qmlSourceChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "position",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 63,
+                        "name": "qmlPositionChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "duration",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 64,
+                        "name": "qmlDurationChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "autoPlay",
+                                "type": "bool"
+                            }
+                        ],
+                        "index": 3,
+                        "lineNumber": 65,
+                        "name": "autoPlayChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QMediaPlayer"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qquickmediaplayer_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "ScreenCapture"
+                    }
+                ],
+                "className": "QQuickScreenCatpure",
+                "lineNumber": 25,
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 28,
+                        "name": "screen",
+                        "notify": "screenChanged",
+                        "read": "qmlScreen",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QQuickScreenInfo*",
+                        "user": false,
+                        "write": "qmlSetScreen"
+                    }
+                ],
+                "qualifiedClassName": "QQuickScreenCatpure",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QQuickScreenInfo*"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 39,
+                        "name": "screenChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QScreenCapture"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qquickscreencapture_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "SoundEffect"
+                    }
+                ],
+                "className": "QQuickSoundEffect",
+                "lineNumber": 25,
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 28,
+                        "name": "source",
+                        "notify": "sourceChanged",
+                        "read": "qmlSource",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QUrl",
+                        "user": false,
+                        "write": "qmlSetSource"
+                    }
+                ],
+                "qualifiedClassName": "QQuickSoundEffect",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "source",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 39,
+                        "name": "sourceChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QSoundEffect"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qquicksoundeffect_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "VideoSink"
+                    }
+                ],
+                "className": "QQuickVideoSink",
+                "lineNumber": 40,
+                "object": true,
+                "qualifiedClassName": "QQuickVideoSink",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 52,
+                        "name": "videoFrameChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QVideoSink"
+                    }
+                ]
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "VideoOutput"
+                    }
+                ],
+                "className": "QQuickVideoOutput",
+                "enums": [
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 73,
+                        "name": "FillMode",
+                        "values": [
+                            "Stretch",
+                            "PreserveAspectFit",
+                            "PreserveAspectCrop"
+                        ]
+                    },
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 81,
+                        "name": "EndOfStreamPolicy",
+                        "values": [
+                            "ClearOutput",
+                            "KeepLastFrame"
+                        ]
+                    }
+                ],
+                "lineNumber": 55,
+                "methods": [
+                    {
+                        "access": "public",
+                        "index": 9,
+                        "isConst": true,
+                        "lineNumber": 91,
+                        "name": "videoSink",
+                        "returnType": "QVideoSink*"
+                    },
+                    {
+                        "access": "public",
+                        "index": 10,
+                        "lineNumber": 108,
+                        "name": "clearOutput",
+                        "returnType": "void",
+                        "revision": 1545
+                    }
+                ],
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 59,
+                        "name": "fillMode",
+                        "notify": "fillModeChanged",
+                        "read": "fillMode",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "FillMode",
+                        "user": false,
+                        "write": "setFillMode"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 60,
+                        "name": "endOfStreamPolicy",
+                        "notify": "endOfStreamPolicyChanged",
+                        "read": "endOfStreamPolicy",
+                        "required": false,
+                        "revision": 1545,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "EndOfStreamPolicy",
+                        "user": false,
+                        "write": "setEndOfStreamPolicy"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 62,
+                        "name": "orientation",
+                        "notify": "orientationChanged",
+                        "read": "orientation",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "write": "setOrientation"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 63,
+                        "name": "mirrored",
+                        "notify": "mirroredChanged",
+                        "read": "mirrored",
+                        "required": false,
+                        "revision": 1545,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "setMirrored"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "lineNumber": 64,
+                        "name": "sourceRect",
+                        "notify": "sourceRectChanged",
+                        "read": "sourceRect",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QRectF",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 5,
+                        "lineNumber": 65,
+                        "name": "contentRect",
+                        "notify": "contentRectChanged",
+                        "read": "contentRect",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QRectF",
+                        "user": false
+                    },
+                    {
+                        "constant": true,
+                        "designable": true,
+                        "final": false,
+                        "index": 6,
+                        "lineNumber": 66,
+                        "name": "videoSink",
+                        "read": "videoSink",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QVideoSink*",
+                        "user": false
+                    }
+                ],
+                "qualifiedClassName": "QQuickVideoOutput",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 111,
+                        "name": "sourceChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QQuickVideoOutput::FillMode"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 112,
+                        "name": "fillModeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "lineNumber": 113,
+                        "name": "orientationChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "lineNumber": 114,
+                        "name": "mirroredChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 4,
+                        "lineNumber": 115,
+                        "name": "sourceRectChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 5,
+                        "lineNumber": 116,
+                        "name": "contentRectChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "type": "QQuickVideoOutput::EndOfStreamPolicy"
+                            }
+                        ],
+                        "index": 6,
+                        "lineNumber": 117,
+                        "name": "endOfStreamPolicyChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "type": "QSize"
+                            }
+                        ],
+                        "index": 7,
+                        "lineNumber": 137,
+                        "name": "_q_newFrame",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "index": 8,
+                        "lineNumber": 138,
+                        "name": "_q_updateGeometry",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QQuickItem"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qquickvideooutput_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QMediaCaptureSession"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "CaptureSession"
+                    }
+                ],
+                "className": "QMediaCaptureSessionForeign",
+                "gadget": true,
+                "lineNumber": 42,
+                "qualifiedClassName": "QtMultimediaPrivate::QMediaCaptureSessionForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QCamera"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "Camera"
+                    }
+                ],
+                "className": "QCameraForeign",
+                "gadget": true,
+                "lineNumber": 49,
+                "qualifiedClassName": "QtMultimediaPrivate::QCameraForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "anonymous"
+                    },
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QImageCapture"
+                    }
+                ],
+                "className": "QImageCaptureForeign",
+                "gadget": true,
+                "lineNumber": 56,
+                "qualifiedClassName": "QtMultimediaPrivate::QImageCaptureForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "anonymous"
+                    },
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QScreenCapture"
+                    }
+                ],
+                "className": "QScreenCaptureForeign",
+                "gadget": true,
+                "lineNumber": 63,
+                "qualifiedClassName": "QtMultimediaPrivate::QScreenCaptureForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QMediaRecorder"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "MediaRecorder"
+                    }
+                ],
+                "className": "QMediaRecorderForeign",
+                "gadget": true,
+                "lineNumber": 70,
+                "qualifiedClassName": "QtMultimediaPrivate::QMediaRecorderForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QMediaMetaData"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "mediaMetaData"
+                    }
+                ],
+                "className": "QMediaMetaDataForeign",
+                "gadget": true,
+                "lineNumber": 77,
+                "qualifiedClassName": "QtMultimediaPrivate::QMediaMetaDataForeign"
+            },
+            {
+                "className": "QMediaMetaDataDerived",
+                "gadget": true,
+                "lineNumber": 86,
+                "qualifiedClassName": "QtMultimediaPrivate::QMediaMetaDataDerived",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QMediaMetaData"
+                    }
+                ]
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QMediaDevices"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "MediaDevices"
+                    }
+                ],
+                "className": "QMediaDevicesForeign",
+                "gadget": true,
+                "lineNumber": 98,
+                "qualifiedClassName": "QtMultimediaPrivate::QMediaDevicesForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QAudioInput"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "AudioInput"
+                    }
+                ],
+                "className": "QAudioInputForeign",
+                "gadget": true,
+                "lineNumber": 105,
+                "qualifiedClassName": "QtMultimediaPrivate::QAudioInputForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QAudioOutput"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "AudioOutput"
+                    }
+                ],
+                "className": "QAudioOutputForeign",
+                "gadget": true,
+                "lineNumber": 112,
+                "qualifiedClassName": "QtMultimediaPrivate::QAudioOutputForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QAudioDevice"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "audioDevice"
+                    }
+                ],
+                "className": "QAudioDeviceForeign",
+                "gadget": true,
+                "lineNumber": 119,
+                "qualifiedClassName": "QtMultimediaPrivate::QAudioDeviceForeign"
+            },
+            {
+                "className": "QAudioDeviceDerived",
+                "gadget": true,
+                "lineNumber": 128,
+                "qualifiedClassName": "QtMultimediaPrivate::QAudioDeviceDerived",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QAudioDevice"
+                    }
+                ]
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QCameraDevice"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "cameraDevice"
+                    }
+                ],
+                "className": "QCameraDeviceForeign",
+                "gadget": true,
+                "lineNumber": 140,
+                "qualifiedClassName": "QtMultimediaPrivate::QCameraDeviceForeign"
+            },
+            {
+                "className": "QCameraDeviceDerived",
+                "gadget": true,
+                "lineNumber": 149,
+                "qualifiedClassName": "QtMultimediaPrivate::QCameraDeviceDerived",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QCameraDevice"
+                    }
+                ]
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QMediaFormat"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "mediaFormat"
+                    }
+                ],
+                "className": "QMediaFormatForeign",
+                "gadget": true,
+                "lineNumber": 161,
+                "qualifiedClassName": "QtMultimediaPrivate::QMediaFormatForeign"
+            },
+            {
+                "className": "QMediaFormatDerived",
+                "gadget": true,
+                "lineNumber": 170,
+                "qualifiedClassName": "QtMultimediaPrivate::QMediaFormatDerived",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QMediaFormat"
+                    }
+                ]
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QCameraFormat"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "cameraFormat"
+                    }
+                ],
+                "className": "QCameraFormatForeign",
+                "gadget": true,
+                "lineNumber": 182,
+                "qualifiedClassName": "QtMultimediaPrivate::QCameraFormatForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QCapturableWindow"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "capturableWindow"
+                    },
+                    {
+                        "name": "QML.Creatable",
+                        "value": "true"
+                    },
+                    {
+                        "name": "QML.CreationMethod",
+                        "value": "construct"
+                    }
+                ],
+                "className": "QCapturableWindowForeign",
+                "gadget": true,
+                "lineNumber": 189,
+                "qualifiedClassName": "QtMultimediaPrivate::QCapturableWindowForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QWindowCapture"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "WindowCapture"
+                    }
+                ],
+                "className": "QWindowCaptureForeign",
+                "gadget": true,
+                "lineNumber": 197,
+                "qualifiedClassName": "QtMultimediaPrivate::QWindowCaptureForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QPlaybackOptions"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "playbackOptions"
+                    },
+                    {
+                        "name": "QML.Extended",
+                        "value": "QPlaybackOptionsDerived"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1546"
+                    }
+                ],
+                "className": "QPlaybackOptionsDerived",
+                "gadget": true,
+                "lineNumber": 204,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": true,
+                        "index": 0,
+                        "lineNumber": 206,
+                        "name": "networkTimeoutMs",
+                        "read": "networkTimeoutMs",
+                        "required": false,
+                        "reset": "resetNetworkTimeoutMs",
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "qint64",
+                        "user": false,
+                        "write": "setNetworkTimeoutMs"
+                    }
+                ],
+                "qualifiedClassName": "QtMultimediaPrivate::QPlaybackOptionsDerived",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QPlaybackOptions"
+                    }
+                ]
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QMediaMetaDataDerived"
+                    },
+                    {
+                        "name": "QML.ForeignIsNamespace",
+                        "value": "true"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "MediaMetaData"
+                    }
+                ],
+                "className": "QMediaMetaDataNamespaceForeign",
+                "lineNumber": 91,
+                "namespace": true,
+                "qualifiedClassName": "QtMultimediaPrivate::QMediaMetaDataNamespaceForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QAudioDeviceDerived"
+                    },
+                    {
+                        "name": "QML.ForeignIsNamespace",
+                        "value": "true"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "AudioDevice"
+                    }
+                ],
+                "className": "QAudioDeviceNamespaceForeign",
+                "lineNumber": 133,
+                "namespace": true,
+                "qualifiedClassName": "QtMultimediaPrivate::QAudioDeviceNamespaceForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QCameraDeviceDerived"
+                    },
+                    {
+                        "name": "QML.ForeignIsNamespace",
+                        "value": "true"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "CameraDevice"
+                    }
+                ],
+                "className": "QCameraDeviceNamespaceForeign",
+                "lineNumber": 154,
+                "namespace": true,
+                "qualifiedClassName": "QtMultimediaPrivate::QCameraDeviceNamespaceForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QMediaFormatDerived"
+                    },
+                    {
+                        "name": "QML.ForeignIsNamespace",
+                        "value": "true"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "MediaFormat"
+                    }
+                ],
+                "className": "QMediaFormatNamespaceForeign",
+                "lineNumber": 175,
+                "namespace": true,
+                "qualifiedClassName": "QtMultimediaPrivate::QMediaFormatNamespaceForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "PlaybackOptions"
+                    },
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QPlaybackOptions"
+                    },
+                    {
+                        "name": "QML.ForeignIsNamespace",
+                        "value": "true"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1546"
+                    }
+                ],
+                "className": "QPlaybackOptionsNamespaceForeign",
+                "lineNumber": 222,
+                "namespace": true,
+                "qualifiedClassName": "QtMultimediaPrivate::QPlaybackOptionsNamespaceForeign"
+            }
+        ],
+        "inputFile": "qtmultimediaquicktypes_p.h",
+        "outputRevision": 69
+    }
+]

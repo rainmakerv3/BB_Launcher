@@ -1,0 +1,5 @@
+#ifndef QT_QTWEBVIEWQUICK_MODULE_H
+#define QT_QTWEBVIEWQUICK_MODULE_H
+#include <QtWebViewQuick/QtWebViewQuickDepends>
+#include "qtwebviewquickversion.h"
+#endif

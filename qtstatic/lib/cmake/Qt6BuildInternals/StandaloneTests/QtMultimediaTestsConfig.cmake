@@ -5,4 +5,4 @@
 # bypassing the Qt6 Config file, aka find_package(Qt6SpecificFoo) repated x times. But it's not
 # critical.
 find_package(Qt6 6.10.0
-             COMPONENTS Multimedia SpatialAudio MultimediaWidgets MultimediaTestLibPrivate)
+             COMPONENTS Multimedia SpatialAudio MultimediaQuickPrivate MultimediaWidgets MultimediaTestLibPrivate)

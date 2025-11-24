@@ -10,6 +10,12 @@
 #include <QNetworkRequest>
 #include <QProcess>
 #include <QProgressBar>
+#include <QTimer>
+#include <QUuid>
+#include <QWebSocket>
+#include <QtQuickWidgets>
+#include <QtWebView>
+
 #include <nlohmann/json.hpp>
 #include <qmicroz.h>
 
@@ -32,7 +38,34 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     ui->modDesc->setOpenLinks(false);
 
     apiKey = QString::fromStdString(Config::ApiKey);
-    ui->apiLineEdit->setText(apiKey);
+    ui->apiLineEdit->setText(apiKey);    QString storagePath;
+    Common::PathToQString(storagePath, Common::GetBBLFilesPath() / "WebCache" / "Data");
+    QString cachePath = QFileInfo(storagePath).absolutePath();
+    if (!QDir(storagePath).exists()) {
+        QDir().mkdir(storagePath);
+    }
+
+    /*
+    profile = new QWebEngineProfile(QStringLiteral("MyPersistentProfile"), this);
+    profile->setPersistentStoragePath(storagePath);
+    profile->setCachePath(cachePath);
+    profile->setPersistentCookiesPolicy(QWebEngineProfile::ForcePersistentCookies);
+    */
+
+    QQuickWidget* webWidget = new QQuickWidget();
+    if (webWidget->status() != QQuickWidget::Ready) {
+        for (const QQmlError& error : webWidget->errors()) {
+            QMessageBox::information(this, "test", error.toString());
+        }
+    }
+
+    QHBoxLayout* layout = new QHBoxLayout();
+    layout->addWidget(webWidget);
+
+    QDialog* authdialog = new QDialog();
+    authdialog->setLayout(layout);
+    webWidget->setSource(QUrl("qrc:/webauthDialog.qml"));
+    authdialog->exec();
 
     modIDmap = {{0, 109},   // Vertex Explosion Mod
                 {1, 70},    // 60 fps Cutscene Fix
@@ -68,8 +101,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         ui->validApiLabel->setStyleSheet("color: red;");
         ui->validApiLabel->setText("No Valid Nexus ModsAPI Key Set");
     } else {
-        if (ValidateApi())
-            LoadModInfo(109);
+        // GetApiKey();
     }
 
     sevenzipPath = Config::SevenZipPath;
@@ -151,6 +183,76 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         fileDescList[fileIndex].isEmpty() ? ui->fileDesc->setText("No description")
                                           : ui->fileDesc->setHtml(fileDescList[fileIndex]);
     });
+}
+
+void ModDownloader::GetApiKey() {
+    QUuid uuid = QUuid::createUuid();
+    QString uuidString = uuid.toString(QUuid::WithoutBraces);
+    QJsonValue jsonValueUuid(uuidString);
+
+    QWebSocket* m_webSocket = new QWebSocket();
+    QUrl socketUrl = QUrl("wss://sso.nexusmods.com");
+    m_webSocket->open(QNetworkRequest(socketUrl));
+
+    authorizationDialog = new QDialog();
+    authorizationDialog->setModal(true);
+    authorizationDialog->setWindowTitle("Get Authorization");
+
+    connect(m_webSocket, &QWebSocket::textMessageReceived, m_webSocket,
+            [this, m_webSocket](QString message) {
+                QByteArray jsonData = message.toUtf8();
+                QJsonDocument doc = QJsonDocument::fromJson(jsonData);
+
+                if (!doc.isNull()) {
+                    QJsonObject obj = doc.object();
+                    if (obj.contains("data") && obj["data"].isObject()) {
+                        QJsonObject userObject = obj["data"].toObject();
+                        if (userObject.contains("api_key")) {
+                            apiKey = userObject["api_key"].toString();
+                            authorizationDialog->close();
+                            this->raise();
+                        }
+                    }
+                } else {
+                    qDebug() << "Failed to parse JSON message";
+                }
+            });
+
+    connect(m_webSocket, &QWebSocket::connected, this,
+            [this, jsonValueUuid, m_webSocket, uuidString]() {
+                QJsonObject jsonObject;
+                jsonObject["id"] = jsonValueUuid;
+                jsonObject["appid"] = "Vortex";
+                jsonObject["protocol"] = 2;
+                // jsonObject["token"] = NULL;
+
+                QJsonDocument jsonDoc(jsonObject);
+                QByteArray jsonByteArray = jsonDoc.toJson();
+                m_webSocket->sendTextMessage(QString::fromUtf8(jsonByteArray));
+
+                QTimer* m_pingTimer = new QTimer(this);
+                m_pingTimer->setInterval(30000); // 30 seconds
+                connect(m_pingTimer, &QTimer::timeout, m_webSocket,
+                        [this, m_webSocket]() { m_webSocket->ping(); });
+                m_pingTimer->start();
+
+                QString link =
+                    "https://www.nexusmods.com/sso?id=" + uuidString + "&application=vortex";
+
+                QVBoxLayout* layout = new QVBoxLayout(authorizationDialog);
+                // layout->addWidget(webView);
+                authorizationDialog->setLayout(layout);
+
+                authorizationDialog->resize(1280, 720);
+                authorizationDialog->show();
+                authorizationDialog->raise();
+            });
+
+    QEventLoop authloop;
+    connect(authorizationDialog, &QDialog::finished, &authloop, &QEventLoop::quit);
+    authloop.exec();
+
+    authorizationDialog->deleteLater();
 }
 
 bool ModDownloader::ValidateApi() {
@@ -503,6 +605,174 @@ void ModDownloader::StartDownload(QString url, QString modFilename) {
             QFile::remove(zipPath);
         }
     });
+}
+
+void ModDownloader::DownloadFileRegular(int fileId, int ModId, QString modFilename) {
+    downloadDialog = new QDialog();
+    downloadDialog->setModal(true);
+    downloadDialog->setWindowTitle("Download Selected Mod");
+    QMessageBox::information(this, "Instructions",
+                             "Click the Slow Download button to proceed with the download.");
+
+    /* QWebEngineView* webView = new QWebEngineView(profile, downloadDialog);
+    QString fileUrl = "https://www.nexusmods.com/bloodborne/mods/" + QString::number(ModId) +
+                      "?tab=files&file_id=" + QString::number(fileId);
+    webView->setUrl(QUrl(fileUrl));
+
+    connect(webView->page(), &QWebEnginePage::loadFinished, [this, webView]() {
+        if (webView->url().toString().contains("users.nexusmods.com")) {
+            QString defocus = "document.getElementById('user_login').blur();";
+            webView->page()->runJavaScript(defocus);
+
+            QString removeOnFocusUsername = QStringLiteral(R"SCRIPT(
+                document.getElementById("user_login").addEventListener("focus", function() {
+                    var label = document.querySelector('label[for="user_login"]');
+                    if (label) {
+                        label.style.display = 'none';
+                    }
+                });
+            )SCRIPT");
+            webView->page()->runJavaScript(removeOnFocusUsername);
+
+            QString restoreOnBlurUsername = QStringLiteral(R"SCRIPT(
+                document.getElementById("user_login").addEventListener("blur", function() {
+                    var input = document.getElementById("user_login");
+                    var label = document.querySelector('label[for="user_login"]');
+                    if (label && input.value.trim() === '') {
+                        label.style.display = 'inline';
+                    }
+                });
+            )SCRIPT");
+            webView->page()->runJavaScript(restoreOnBlurUsername);
+
+            QString removeOnFocusPassword = QStringLiteral(R"SCRIPT(
+                document.getElementById("password").addEventListener("focus", function() {
+                    var label = document.querySelector('label[for="user_password"]');
+                    if (label) {
+                        label.style.display = 'none';
+                    }
+                });
+            )SCRIPT");
+            webView->page()->runJavaScript(removeOnFocusPassword);
+
+            QString restoreOnBlurPassword = QStringLiteral(R"SCRIPT(
+                document.getElementById("password").addEventListener("blur", function() {
+                    var input = document.getElementById("password");
+                    var label = document.querySelector('label[for="user_password"]');
+                    if (label && input.value.trim() === '') {
+                        label.style.display = 'inline';
+                    }
+                });
+            )SCRIPT");
+            webView->page()->runJavaScript(restoreOnBlurPassword);
+        }
+    });
+
+    QObject::connect(
+        profile, &QWebEngineProfile::downloadRequested, this,
+        [this, modFilename](QWebEngineDownloadRequest* download) {
+            if (download->state() == QWebEngineDownloadRequest::DownloadRequested) {
+                QString zipPath;
+                Common::PathToQString(zipPath, Common::GetBBLFilesPath() / "Temp");
+                QString savePath = zipPath + "/" + download->suggestedFileName();
+
+                QString tempPath;
+                Common::PathToQString(tempPath, Common::GetBBLFilesPath() / "Temp" / "Download");
+                std::filesystem::create_directories(Common::GetBBLFilesPath() / "Temp" /
+                                                    "Download");
+
+                download->setDownloadDirectory(QFileInfo(savePath).absolutePath());
+                download->setDownloadFileName(QFileInfo(savePath).fileName());
+                download->accept();
+
+                QDialog* progressDialog = new QDialog(this);
+                progressDialog->setWindowTitle(
+                    tr("Downloading %1 , please wait...").arg(modFilename));
+                progressDialog->setFixedSize(400, 80);
+                progressDialog->setWindowFlags(progressDialog->windowFlags() &
+                                               ~Qt::WindowCloseButtonHint);
+                QVBoxLayout* layout = new QVBoxLayout(progressDialog);
+                QProgressBar* progressBar = new QProgressBar(progressDialog);
+                progressBar->setRange(0, 100);
+                layout->addWidget(progressBar);
+                progressDialog->setLayout(layout);
+                progressDialog->show();
+
+                connect(download, &QWebEngineDownloadRequest::receivedBytesChanged, this, [=]() {
+                    qint64 received = download->receivedBytes();
+                    qint64 total = download->totalBytes();
+                    if (total > 0)
+                        progressBar->setValue(static_cast<int>((received * 100) / total));
+                    progressDialog->raise();
+                });
+
+                connect(download, &QWebEngineDownloadRequest::stateChanged, this,
+                        [=, this](QWebEngineDownloadRequest::DownloadState state) {
+                            if (state == QWebEngineDownloadRequest::DownloadCompleted) {
+                                downloadDialog->close();
+                                if (QFileInfo(savePath).fileName().right(3) == "zip") {
+                                    QMicroz::extract(savePath, tempPath);
+                                } else {
+                                    extract7z(savePath, tempPath);
+                                }
+
+                                std::string folderName = modFilename.toStdString();
+                                std::filesystem::path folderPath = "";
+                                const std::vector<std::string> BBFolders = {
+                                    "dvdroot_ps4", "action", "chr",   "event",    "facegen",
+                                    "map",         "menu",   "movie", "msg",      "mtd",
+                                    "obj",         "other",  "param", "paramdef", "parts",
+                                    "remo",        "script", "sfx",   "shader",   "sound"};
+
+                                for (const auto& entry :
+                                     std::filesystem::recursive_directory_iterator(
+                                         Common::PathFromQString(tempPath))) {
+                                    if (entry.is_directory()) {
+                                        folderName = entry.path().filename().string();
+                                        folderPath = entry.path().parent_path();
+                                        if (std::find(BBFolders.begin(), BBFolders.end(),
+                                                      folderName) != BBFolders.end()) {
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                std::filesystem::path newPath =
+                                    Common::ModPath / modFilename.toStdString();
+                                std::filesystem::rename(folderPath, newPath);
+                                QMessageBox::information(this, tr("Confirm Download"),
+                                                         tr("%1 has been downloaded. You can "
+                                                            "activate it using the mod manager")
+                                                             .arg(modFilename.toStdString()));
+
+                                progressDialog->close();
+                                progressDialog->deleteLater();
+                                QDir(tempPath).removeRecursively();
+                                QFile::remove(savePath);
+
+                            } else if (state == QWebEngineDownloadRequest::DownloadCancelled ||
+                                       state == QWebEngineDownloadRequest::DownloadInterrupted) {
+                                QMessageBox::information(this, "Download Error",
+                                                         "Download cancelled or interrupted");
+                            }
+                        });
+            }
+        });
+
+*/
+
+    QVBoxLayout* layout = new QVBoxLayout(downloadDialog);
+    // layout->addWidget(webView);
+    downloadDialog->setLayout(layout);
+
+    downloadDialog->resize(1280, 720);
+    downloadDialog->show();
+
+    QEventLoop downloadloop;
+    connect(downloadDialog, &QDialog::finished, &downloadloop, &QEventLoop::quit);
+    downloadloop.exec();
+
+    downloadDialog->deleteLater();
 }
 
 QString ModDownloader::BbcodeToHtml(QString BbcodeString) {

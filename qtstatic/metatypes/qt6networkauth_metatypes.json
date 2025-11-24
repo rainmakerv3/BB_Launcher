@@ -1,0 +1,1889 @@
+[
+    {
+        "classes": [
+            {
+                "className": "QAbstractOAuth",
+                "enums": [
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 53,
+                        "name": "Status",
+                        "values": [
+                            "NotAuthenticated",
+                            "TemporaryCredentialsReceived",
+                            "Granted",
+                            "RefreshingToken"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 60,
+                        "name": "Stage",
+                        "values": [
+                            "RequestingTemporaryCredentials",
+                            "RequestingAuthorization",
+                            "RequestingAccessToken",
+                            "RefreshingAccessToken"
+                        ]
+                    },
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 67,
+                        "name": "Error",
+                        "values": [
+                            "NoError",
+                            "NetworkError",
+                            "ServerError",
+                            "OAuthTokenNotFoundError",
+                            "OAuthTokenSecretNotFoundError",
+                            "OAuthCallbackNotVerified",
+                            "ClientError",
+                            "ExpiredError"
+                        ]
+                    }
+                ],
+                "lineNumber": 29,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "parameters",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 12,
+                        "lineNumber": 108,
+                        "name": "head",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 13,
+                        "isCloned": true,
+                        "lineNumber": 108,
+                        "name": "head",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "parameters",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 14,
+                        "lineNumber": 110,
+                        "name": "get",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 15,
+                        "isCloned": true,
+                        "lineNumber": 110,
+                        "name": "get",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "parameters",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 16,
+                        "lineNumber": 112,
+                        "name": "post",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 17,
+                        "isCloned": true,
+                        "lineNumber": 112,
+                        "name": "post",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "parameters",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 18,
+                        "lineNumber": 114,
+                        "name": "put",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 19,
+                        "isCloned": true,
+                        "lineNumber": 114,
+                        "name": "put",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "parameters",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 20,
+                        "lineNumber": 116,
+                        "name": "deleteResource",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 21,
+                        "isCloned": true,
+                        "lineNumber": 116,
+                        "name": "deleteResource",
+                        "returnType": "QNetworkReply*"
+                    }
+                ],
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 36,
+                        "name": "clientIdentifier",
+                        "notify": "clientIdentifierChanged",
+                        "read": "clientIdentifier",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setClientIdentifier"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 40,
+                        "name": "token",
+                        "notify": "tokenChanged",
+                        "read": "token",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setToken"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 41,
+                        "name": "status",
+                        "notify": "statusChanged",
+                        "read": "status",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "Status",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 42,
+                        "name": "extraTokens",
+                        "notify": "extraTokensChanged",
+                        "read": "extraTokens",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QVariantMap",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "lineNumber": 43,
+                        "name": "authorizationUrl",
+                        "notify": "authorizationUrlChanged",
+                        "read": "authorizationUrl",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QUrl",
+                        "user": false,
+                        "write": "setAuthorizationUrl"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 5,
+                        "lineNumber": 47,
+                        "name": "contentType",
+                        "notify": "contentTypeChanged",
+                        "read": "contentType",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QAbstractOAuth::ContentType",
+                        "user": false,
+                        "write": "setContentType"
+                    }
+                ],
+                "qualifiedClassName": "QAbstractOAuth",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "clientIdentifier",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 132,
+                        "name": "clientIdentifierChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "token",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 133,
+                        "name": "tokenChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "status",
+                                "type": "Status"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 134,
+                        "name": "statusChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 3,
+                        "lineNumber": 135,
+                        "name": "authorizationUrlChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "tokens",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 4,
+                        "lineNumber": 136,
+                        "name": "extraTokensChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "contentType",
+                                "type": "ContentType"
+                            }
+                        ],
+                        "index": 5,
+                        "lineNumber": 137,
+                        "name": "contentTypeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "error",
+                                "type": "Error"
+                            }
+                        ],
+                        "index": 6,
+                        "lineNumber": 139,
+                        "name": "requestFailed",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 7,
+                        "lineNumber": 140,
+                        "name": "authorizeWithBrowser",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 8,
+                        "lineNumber": 141,
+                        "name": "granted",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "reply",
+                                "type": "QNetworkReply*"
+                            }
+                        ],
+                        "index": 9,
+                        "lineNumber": 142,
+                        "name": "finished",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "data",
+                                "type": "QByteArray"
+                            }
+                        ],
+                        "index": 10,
+                        "lineNumber": 143,
+                        "name": "replyDataReceived",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "public",
+                        "index": 11,
+                        "lineNumber": 129,
+                        "name": "grant",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qabstractoauth.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QAbstractOAuthReplyHandler",
+                "lineNumber": 17,
+                "object": true,
+                "qualifiedClassName": "QAbstractOAuthReplyHandler",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "values",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 31,
+                        "name": "callbackReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "tokens",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 32,
+                        "name": "tokensReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "error",
+                                "type": "QAbstractOAuth::Error"
+                            },
+                            {
+                                "name": "errorString",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 33,
+                        "name": "tokenRequestErrorOccurred",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "data",
+                                "type": "QByteArray"
+                            }
+                        ],
+                        "index": 3,
+                        "lineNumber": 35,
+                        "name": "replyDataReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "data",
+                                "type": "QByteArray"
+                            }
+                        ],
+                        "index": 4,
+                        "lineNumber": 36,
+                        "name": "callbackDataReceived",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "reply",
+                                "type": "QNetworkReply*"
+                            }
+                        ],
+                        "index": 5,
+                        "lineNumber": 28,
+                        "name": "networkReplyFinished",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qabstractoauthreplyhandler.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QOAuth1",
+                "enums": [
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 24,
+                        "name": "SignatureMethod",
+                        "values": [
+                            "Hmac_Sha1",
+                            "Rsa_Sha1",
+                            "PlainText"
+                        ]
+                    }
+                ],
+                "lineNumber": 19,
+                "object": true,
+                "qualifiedClassName": "QOAuth1",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "method",
+                                "type": "QOAuth1::SignatureMethod"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 82,
+                        "name": "signatureMethodChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "credential",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 83,
+                        "name": "clientSharedSecretChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "token",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 84,
+                        "name": "tokenSecretChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 3,
+                        "lineNumber": 85,
+                        "name": "temporaryCredentialsUrlChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 4,
+                        "lineNumber": 86,
+                        "name": "tokenCredentialsUrlChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "public",
+                        "index": 5,
+                        "lineNumber": 78,
+                        "name": "grant",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "verifier",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 6,
+                        "lineNumber": 79,
+                        "name": "continueGrantWithVerifier",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QAbstractOAuth"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qoauth1.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QAbstractOAuth2",
+                "enums": [
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 69,
+                        "name": "NonceMode",
+                        "type": "quint8",
+                        "values": [
+                            "Automatic",
+                            "Enabled",
+                            "Disabled"
+                        ]
+                    }
+                ],
+                "lineNumber": 25,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "parameters",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 22,
+                        "lineNumber": 80,
+                        "name": "createAuthenticatedUrl",
+                        "returnType": "QUrl"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 23,
+                        "isCloned": true,
+                        "lineNumber": 80,
+                        "name": "createAuthenticatedUrl",
+                        "returnType": "QUrl"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "parameters",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 24,
+                        "lineNumber": 85,
+                        "name": "head",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 25,
+                        "isCloned": true,
+                        "lineNumber": 85,
+                        "name": "head",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "parameters",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 26,
+                        "lineNumber": 90,
+                        "name": "get",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 27,
+                        "isCloned": true,
+                        "lineNumber": 90,
+                        "name": "get",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "parameters",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 28,
+                        "lineNumber": 95,
+                        "name": "post",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 29,
+                        "isCloned": true,
+                        "lineNumber": 95,
+                        "name": "post",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "data",
+                                "type": "QByteArray"
+                            }
+                        ],
+                        "index": 30,
+                        "lineNumber": 100,
+                        "name": "post",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "multiPart",
+                                "type": "QHttpMultiPart*"
+                            }
+                        ],
+                        "index": 31,
+                        "lineNumber": 104,
+                        "name": "post",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "parameters",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 32,
+                        "lineNumber": 108,
+                        "name": "put",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 33,
+                        "isCloned": true,
+                        "lineNumber": 108,
+                        "name": "put",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "data",
+                                "type": "QByteArray"
+                            }
+                        ],
+                        "index": 34,
+                        "lineNumber": 113,
+                        "name": "put",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "multiPart",
+                                "type": "QHttpMultiPart*"
+                            }
+                        ],
+                        "index": 35,
+                        "lineNumber": 117,
+                        "name": "put",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "parameters",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 36,
+                        "lineNumber": 121,
+                        "name": "deleteResource",
+                        "returnType": "QNetworkReply*"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 37,
+                        "isCloned": true,
+                        "lineNumber": 121,
+                        "name": "deleteResource",
+                        "returnType": "QNetworkReply*"
+                    }
+                ],
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 29,
+                        "name": "scope",
+                        "notify": "scopeChanged",
+                        "read": "scope",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setScope"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 31,
+                        "name": "grantedScopeTokens",
+                        "notify": "grantedScopeTokensChanged",
+                        "read": "grantedScopeTokens",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QSet<QByteArray>",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 33,
+                        "name": "requestedScopeTokens",
+                        "notify": "requestedScopeTokensChanged",
+                        "read": "requestedScopeTokens",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QSet<QByteArray>",
+                        "user": false,
+                        "write": "setRequestedScopeTokens"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 37,
+                        "name": "userAgent",
+                        "notify": "userAgentChanged",
+                        "read": "userAgent",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setUserAgent"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "lineNumber": 38,
+                        "name": "clientIdentifierSharedKey",
+                        "notify": "clientIdentifierSharedKeyChanged",
+                        "read": "clientIdentifierSharedKey",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setClientIdentifierSharedKey"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 5,
+                        "lineNumber": 42,
+                        "name": "state",
+                        "notify": "stateChanged",
+                        "read": "state",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setState"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 6,
+                        "lineNumber": 43,
+                        "name": "expiration",
+                        "notify": "expirationAtChanged",
+                        "read": "expirationAt",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QDateTime",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 7,
+                        "lineNumber": 44,
+                        "name": "refreshToken",
+                        "notify": "refreshTokenChanged",
+                        "read": "refreshToken",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setRefreshToken"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 8,
+                        "lineNumber": 48,
+                        "name": "refreshLeadTime",
+                        "notify": "refreshLeadTimeChanged",
+                        "read": "refreshLeadTime",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "std::chrono::seconds",
+                        "user": false,
+                        "write": "setRefreshLeadTime"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 9,
+                        "lineNumber": 52,
+                        "name": "autoRefresh",
+                        "notify": "autoRefreshChanged",
+                        "read": "autoRefresh",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "setAutoRefresh"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 10,
+                        "lineNumber": 56,
+                        "name": "nonceMode",
+                        "notify": "nonceModeChanged",
+                        "read": "nonceMode",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "NonceMode",
+                        "user": false,
+                        "write": "setNonceMode"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 11,
+                        "lineNumber": 57,
+                        "name": "nonce",
+                        "notify": "nonceChanged",
+                        "read": "nonce",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setNonce"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 12,
+                        "lineNumber": 58,
+                        "name": "idToken",
+                        "notify": "idTokenChanged",
+                        "read": "idToken",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 13,
+                        "lineNumber": 59,
+                        "name": "tokenUrl",
+                        "notify": "tokenUrlChanged",
+                        "read": "tokenUrl",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QUrl",
+                        "user": false,
+                        "write": "setTokenUrl"
+                    }
+                ],
+                "qualifiedClassName": "QAbstractOAuth2",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "scope",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 196,
+                        "name": "scopeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "tokens",
+                                "type": "QSet<QByteArray>"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 198,
+                        "name": "grantedScopeTokensChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "tokens",
+                                "type": "QSet<QByteArray>"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 199,
+                        "name": "requestedScopeTokensChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "userAgent",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 3,
+                        "lineNumber": 200,
+                        "name": "userAgentChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "responseType",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 4,
+                        "lineNumber": 201,
+                        "name": "responseTypeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "clientIdentifierSharedKey",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 5,
+                        "lineNumber": 202,
+                        "name": "clientIdentifierSharedKeyChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "state",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 6,
+                        "lineNumber": 203,
+                        "name": "stateChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "expiration",
+                                "type": "QDateTime"
+                            }
+                        ],
+                        "index": 7,
+                        "lineNumber": 204,
+                        "name": "expirationAtChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "refreshToken",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 8,
+                        "lineNumber": 205,
+                        "name": "refreshTokenChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 9,
+                        "lineNumber": 206,
+                        "name": "accessTokenAboutToExpire",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "leadTime",
+                                "type": "std::chrono::seconds"
+                            }
+                        ],
+                        "index": 10,
+                        "lineNumber": 207,
+                        "name": "refreshLeadTimeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "enable",
+                                "type": "bool"
+                            }
+                        ],
+                        "index": 11,
+                        "lineNumber": 208,
+                        "name": "autoRefreshChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "mode",
+                                "type": "NonceMode"
+                            }
+                        ],
+                        "index": 12,
+                        "lineNumber": 209,
+                        "name": "nonceModeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "nonce",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 13,
+                        "lineNumber": 210,
+                        "name": "nonceChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "idToken",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 14,
+                        "lineNumber": 211,
+                        "name": "idTokenChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "tokenUrl",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 15,
+                        "lineNumber": 212,
+                        "name": "tokenUrlChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "configuration",
+                                "type": "QSslConfiguration"
+                            }
+                        ],
+                        "index": 16,
+                        "lineNumber": 214,
+                        "name": "sslConfigurationChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "error",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "errorDescription",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "uri",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 17,
+                        "lineNumber": 220,
+                        "name": "error",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "error",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "errorDescription",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "uri",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 18,
+                        "lineNumber": 222,
+                        "name": "serverReportedErrorOccurred",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "data",
+                                "type": "QVariantMap"
+                            }
+                        ],
+                        "index": 19,
+                        "lineNumber": 224,
+                        "name": "authorizationCallbackReceived",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "protected",
+                        "index": 20,
+                        "lineNumber": 187,
+                        "name": "refreshTokensImplementation",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 21,
+                        "lineNumber": 190,
+                        "name": "refreshTokens",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QAbstractOAuth"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qabstractoauth2.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "RegisterEnumClassesUnscoped",
+                        "value": "false"
+                    }
+                ],
+                "className": "QOAuth2AuthorizationCodeFlow",
+                "enums": [
+                    {
+                        "isClass": true,
+                        "isFlag": false,
+                        "lineNumber": 60,
+                        "name": "PkceMethod",
+                        "type": "quint8",
+                        "values": [
+                            "S256",
+                            "Plain",
+                            "None"
+                        ]
+                    }
+                ],
+                "lineNumber": 20,
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 24,
+                        "name": "accessTokenUrl",
+                        "notify": "accessTokenUrlChanged",
+                        "read": "accessTokenUrl",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QUrl",
+                        "user": false,
+                        "write": "setAccessTokenUrl"
+                    }
+                ],
+                "qualifiedClassName": "QOAuth2AuthorizationCodeFlow",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "accessTokenUrl",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 90,
+                        "name": "accessTokenUrlChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "public",
+                        "index": 1,
+                        "lineNumber": 71,
+                        "name": "grant",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "lineNumber": 74,
+                        "name": "refreshAccessToken",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "protected",
+                        "index": 3,
+                        "lineNumber": 78,
+                        "name": "refreshTokensImplementation",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QAbstractOAuth2"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qoauth2authorizationcodeflow.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QOAuth2DeviceAuthorizationFlow",
+                "lineNumber": 21,
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": true,
+                        "index": 0,
+                        "lineNumber": 24,
+                        "name": "userCode",
+                        "notify": "userCodeChanged",
+                        "read": "userCode",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": true,
+                        "index": 1,
+                        "lineNumber": 25,
+                        "name": "verificationUrl",
+                        "notify": "verificationUrlChanged",
+                        "read": "verificationUrl",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QUrl",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": true,
+                        "index": 2,
+                        "lineNumber": 26,
+                        "name": "completeVerificationUrl",
+                        "notify": "completeVerificationUrlChanged",
+                        "read": "completeVerificationUrl",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QUrl",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": true,
+                        "index": 3,
+                        "lineNumber": 28,
+                        "name": "polling",
+                        "notify": "pollingChanged",
+                        "read": "isPolling",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": true,
+                        "index": 4,
+                        "lineNumber": 29,
+                        "name": "userCodeExpirationAt",
+                        "notify": "userCodeExpirationAtChanged",
+                        "read": "userCodeExpirationAt",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QDateTime",
+                        "user": false
+                    }
+                ],
+                "qualifiedClassName": "QOAuth2DeviceAuthorizationFlow",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "verificationUrl",
+                                "type": "QUrl"
+                            },
+                            {
+                                "name": "userCode",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "completeVerificationUrl",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 51,
+                        "name": "authorizeWithUserCode",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "userCode",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 53,
+                        "name": "userCodeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "verificationUrl",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 2,
+                        "lineNumber": 54,
+                        "name": "verificationUrlChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "completeVerificationUrl",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 3,
+                        "lineNumber": 55,
+                        "name": "completeVerificationUrlChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "polling",
+                                "type": "bool"
+                            }
+                        ],
+                        "index": 4,
+                        "lineNumber": 56,
+                        "name": "pollingChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "expiration",
+                                "type": "QDateTime"
+                            }
+                        ],
+                        "index": 5,
+                        "lineNumber": 57,
+                        "name": "userCodeExpirationAtChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "public",
+                        "index": 6,
+                        "lineNumber": 46,
+                        "name": "grant",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 7,
+                        "lineNumber": 47,
+                        "name": "startTokenPolling",
+                        "returnType": "bool"
+                    },
+                    {
+                        "access": "public",
+                        "index": 8,
+                        "lineNumber": 48,
+                        "name": "stopTokenPolling",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "protected",
+                        "index": 9,
+                        "lineNumber": 63,
+                        "name": "refreshTokensImplementation",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QAbstractOAuth2"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qoauth2deviceauthorizationflow.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QOAuthHttpServerReplyHandler",
+                "lineNumber": 23,
+                "object": true,
+                "qualifiedClassName": "QOAuthHttpServerReplyHandler",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QOAuthOobReplyHandler"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qoauthhttpserverreplyhandler.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QOAuthOobReplyHandler",
+                "lineNumber": 17,
+                "object": true,
+                "qualifiedClassName": "QOAuthOobReplyHandler",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QAbstractOAuthReplyHandler"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qoauthoobreplyhandler.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "className": "QOAuthUriSchemeReplyHandler",
+                "lineNumber": 15,
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": true,
+                        "index": 0,
+                        "lineNumber": 18,
+                        "name": "redirectUrl",
+                        "notify": "redirectUrlChanged",
+                        "read": "redirectUrl",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QUrl",
+                        "user": false,
+                        "write": "setRedirectUrl"
+                    }
+                ],
+                "qualifiedClassName": "QOAuthUriSchemeReplyHandler",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 37,
+                        "name": "redirectUrlChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "url",
+                                "type": "QUrl"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 43,
+                        "name": "_q_handleRedirectUrl",
+                        "returnType": "bool"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QOAuthOobReplyHandler"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qoauthurischemereplyhandler.h",
+        "outputRevision": 69
+    }
+]

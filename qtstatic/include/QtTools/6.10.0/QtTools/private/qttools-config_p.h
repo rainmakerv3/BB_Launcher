@@ -8,7 +8,7 @@
 
 #define QT_FEATURE_designer 1
 
-#define QT_FEATURE_distancefieldgenerator -1
+#define QT_FEATURE_distancefieldgenerator 1
 
 #define QT_FEATURE_kmap2qmap 1
 

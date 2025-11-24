@@ -1,0 +1,11 @@
+QT.webviewquick_private.VERSION = 6.10.0
+QT.webviewquick_private.name = QtWebViewQuick
+QT.webviewquick_private.module =
+QT.webviewquick_private.libs = $$QT_MODULE_LIB_BASE
+QT.webviewquick_private.includes = $$QT_MODULE_INCLUDE_BASE/QtWebViewQuick/6.10.0 $$QT_MODULE_INCLUDE_BASE/QtWebViewQuick/6.10.0/QtWebViewQuick
+QT.webviewquick_private.frameworks = 
+QT.webviewquick_private.depends = quick_private webviewquick
+QT.webviewquick_private.uses = 
+QT.webviewquick_private.module_config = v2 staticlib internal_module
+QT.webviewquick_private.enabled_features = 
+QT.webviewquick_private.disabled_features = 

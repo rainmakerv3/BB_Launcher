@@ -5,14 +5,14 @@ DocumentName: qtlanguageserver-6.10.0
 DocumentNamespace: https://qt.io/spdxdocs/qtlanguageserver-6.10.0
 Creator: Organization: TheQtCompany
 Creator: Tool: Qt Build System
-CreatorComment: <text>This SPDX document was created from CMake 3.31.9, using the qt
+CreatorComment: <text>This SPDX document was created from CMake 4.1.2, using the qt
 build system from https://code.qt.io/cgit/qt/qtbase.git/tree/cmake/QtPublicSbomHelpers.cmake</text>
-Created: 2025-11-19T03:49:00Z
-ExternalDocumentRef: DocumentRef-qtbase https://qt.io/spdxdocs/qtbase-6.10.0 SHA1: 77d26cc8d0a6466a911df7f9a32c4b9d1165b62c
+Created: 2025-11-24T00:53:13Z
+ExternalDocumentRef: DocumentRef-qtbase https://qt.io/spdxdocs/qtbase-6.10.0 SHA1: cce17b50b228887686beca621985071bef948dd3
 
 PackageName: MSVC
 SPDXID: SPDXRef-compiler
-PackageVersion: 19.44.35211.0
+PackageVersion: 19.44.35219.0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
 PackageLicenseDeclared: NOASSERTION
@@ -22,7 +22,7 @@ FilesAnalyzed: false
 PackageSummary: <text>The compiler as identified by CMake, running on Windows (AMD64)</text>
 PrimaryPackagePurpose: APPLICATION
 Relationship: SPDXRef-compiler BUILD_DEPENDENCY_OF SPDXRef-Package-qtlanguageserver
-RelationshipComment: <text>SPDXRef-Package-qtlanguageserver is built by compiler MSVC version 19.44.35211.0</text>
+RelationshipComment: <text>SPDXRef-Package-qtlanguageserver is built by compiler MSVC version 19.44.35219.0</text>
 
 PackageName: qtlanguageserver
 SPDXID: SPDXRef-Package-qtlanguageserver
@@ -36,12 +36,12 @@ PackageLicenseConcluded: NOASSERTION
 PackageLicenseDeclared: NOASSERTION
 PackageCopyrightText: Copyright (C) The Qt Company Ltd. and other contributors.
 PackageHomePage: https://qt.io
-PackageComment: <text>Built by CMake 3.31.9 with Release configuration for Windows (AMD64)
+PackageComment: <text>Built by CMake 4.1.2 with Release configuration for Windows (AMD64)
 qtlanguageserver was configured with:
-    qt6/configure -static -static-runtime -prefix D:\Github\BB_Launcher\qtstatic -skip qt3d -skip qt5compat -skip qtactiveqt -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdeclarative -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qhttpserver -skip qlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtnetworkauth -skip qtopcua -skip qtpositioning -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwebchannel -skip qtwebview -skip tests -skip qtwebengine -release
+    qt6/configure -static -static-runtime -prefix D:\Github\BB_Launcher\qtstatic -skip qt3d -skip qt5compat -skip qtactiveqt -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtopcua -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwebchannel -skip qtwebengine -skip tests -release -webview2-sdk D:\Github\BB_Launcher\WebView2SDK
 </text>
 FilesAnalyzed: false
-BuiltDate: 2025-11-19T03:49:00Z
+BuiltDate: 2025-11-24T00:53:13Z
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-qtlanguageserver
 
 PackageName: JsonRpcPrivate
@@ -62,7 +62,7 @@ Contained in CMake package: Qt6JsonRpcPrivate
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtlanguageserver:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 4d1da12016a8e3aeae708345b0c25a0e778e562d
+PackageVerificationCode: 5d35b1b06bc6c3ec82be85ab88c6f730727061ec
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtlanguageserver-qt-module-JsonRpcPrivate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
 Relationship: SPDXRef-Package-qtlanguageserver-qt-module-JsonRpcPrivate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
@@ -71,7 +71,7 @@ Relationship: SPDXRef-Package-qtlanguageserver CONTAINS SPDXRef-Package-qtlangua
 FileName: ./lib/Qt6JsonRpc.lib
 SPDXID: SPDXRef-PackagedFile-qt-module-JsonRpcPrivate
 FileType: BINARY
-FileChecksum: SHA1: ce608043f00993dcd20547ca67757a604c017e08
+FileChecksum: SHA1: d63b02c1752048007eb0cd4600efa2ec1d522ad8
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -117,7 +117,7 @@ Contained in CMake package: Qt6LanguageServerPrivate
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtlanguageserver:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 7c49c7ee97c797dd0bdce981af74d8f6293ccc6c
+PackageVerificationCode: 3b87e405a7da08b717d0e7fbff65874a533791ae
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtlanguageserver-qt-module-LanguageServerPrivate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-PlatformModuleInternal
 Relationship: SPDXRef-Package-qtlanguageserver-qt-module-LanguageServerPrivate DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
@@ -127,7 +127,7 @@ Relationship: SPDXRef-Package-qtlanguageserver CONTAINS SPDXRef-Package-qtlangua
 FileName: ./lib/Qt6LanguageServer.lib
 SPDXID: SPDXRef-PackagedFile-qt-module-LanguageServerPrivate
 FileType: BINARY
-FileChecksum: SHA1: 6023910ddc38c3678617ad3367c4b63b3125a13e
+FileChecksum: SHA1: 8e5d778a031a7825730707c7227fdd70afc0eead
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION

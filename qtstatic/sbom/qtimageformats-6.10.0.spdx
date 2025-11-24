@@ -5,14 +5,14 @@ DocumentName: qtimageformats-6.10.0
 DocumentNamespace: https://qt.io/spdxdocs/qtimageformats-6.10.0
 Creator: Organization: TheQtCompany
 Creator: Tool: Qt Build System
-CreatorComment: <text>This SPDX document was created from CMake 3.31.9, using the qt
+CreatorComment: <text>This SPDX document was created from CMake 4.1.2, using the qt
 build system from https://code.qt.io/cgit/qt/qtbase.git/tree/cmake/QtPublicSbomHelpers.cmake</text>
-Created: 2025-11-19T03:48:58Z
-ExternalDocumentRef: DocumentRef-qtbase https://qt.io/spdxdocs/qtbase-6.10.0 SHA1: 77d26cc8d0a6466a911df7f9a32c4b9d1165b62c
+Created: 2025-11-24T00:53:11Z
+ExternalDocumentRef: DocumentRef-qtbase https://qt.io/spdxdocs/qtbase-6.10.0 SHA1: cce17b50b228887686beca621985071bef948dd3
 
 PackageName: MSVC
 SPDXID: SPDXRef-compiler
-PackageVersion: 19.44.35211.0
+PackageVersion: 19.44.35219.0
 PackageDownloadLocation: NOASSERTION
 PackageLicenseConcluded: NOASSERTION
 PackageLicenseDeclared: NOASSERTION
@@ -22,7 +22,7 @@ FilesAnalyzed: false
 PackageSummary: <text>The compiler as identified by CMake, running on Windows (AMD64)</text>
 PrimaryPackagePurpose: APPLICATION
 Relationship: SPDXRef-compiler BUILD_DEPENDENCY_OF SPDXRef-Package-qtimageformats
-RelationshipComment: <text>SPDXRef-Package-qtimageformats is built by compiler MSVC version 19.44.35211.0</text>
+RelationshipComment: <text>SPDXRef-Package-qtimageformats is built by compiler MSVC version 19.44.35219.0</text>
 
 PackageName: qtimageformats
 SPDXID: SPDXRef-Package-qtimageformats
@@ -36,12 +36,12 @@ PackageLicenseConcluded: NOASSERTION
 PackageLicenseDeclared: NOASSERTION
 PackageCopyrightText: Copyright (C) The Qt Company Ltd. and other contributors.
 PackageHomePage: https://qt.io
-PackageComment: <text>Built by CMake 3.31.9 with Release configuration for Windows (AMD64)
+PackageComment: <text>Built by CMake 4.1.2 with Release configuration for Windows (AMD64)
 qtimageformats was configured with:
-    qt6/configure -static -static-runtime -prefix D:\Github\BB_Launcher\qtstatic -skip qt3d -skip qt5compat -skip qtactiveqt -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdeclarative -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qhttpserver -skip qlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtnetworkauth -skip qtopcua -skip qtpositioning -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwebchannel -skip qtwebview -skip tests -skip qtwebengine -release
+    qt6/configure -static -static-runtime -prefix D:\Github\BB_Launcher\qtstatic -skip qt3d -skip qt5compat -skip qtactiveqt -skip qtcharts -skip qtcoap -skip qtconnectivity -skip qtdatavis3d -skip qtdoc -skip qtgraphs -skip qtgrpc -skip qlanguageserver -skip qtlocation -skip qtlottie -skip qtmqtt -skip qtopcua -skip qtquick3d -skip qtquick3dphysics -skip qtquickeffectmaker -skip qtquicktimeline -skip qtremoteobjects -skip qtscxml -skip qtsensors -skip qtserialbus -skip qtserialport -skip qtspeech -skip qtsvg -skip qtvirtualkeyboard -skip qtwebchannel -skip qtwebengine -skip tests -release -webview2-sdk D:\Github\BB_Launcher\WebView2SDK
 </text>
 FilesAnalyzed: false
-BuiltDate: 2025-11-19T03:48:58Z
+BuiltDate: 2025-11-24T00:53:11Z
 Relationship: SPDXRef-DOCUMENT DESCRIBES SPDXRef-Package-qtimageformats
 
 PackageName: QTgaPlugin
@@ -60,7 +60,7 @@ CMake target name: QTgaPlugin
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtimageformats:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 1f081e175eadc1c06decdc181bd632bc4593a983
+PackageVerificationCode: 985732e1c58a744e037ce0adf5aca5fdc5acc8e0
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtimageformats-qt-plugin-QTgaPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qtimageformats-qt-plugin-QTgaPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
@@ -70,7 +70,7 @@ Relationship: SPDXRef-Package-qtimageformats CONTAINS SPDXRef-Package-qtimagefor
 FileName: ./plugins/imageformats/qtga.lib
 SPDXID: SPDXRef-PackagedFile-qt-plugin-QTgaPlugin
 FileType: BINARY
-FileChecksum: SHA1: 8e44f2cf049286778960ec4ee25d4290e5ccb23b
+FileChecksum: SHA1: f13815f63a0b06fddb22bcb37112c5f753340deb
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -102,7 +102,7 @@ CMake target name: QWbmpPlugin
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtimageformats:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: e3c91859df30eb5977409bcb10556169d3b76e4e
+PackageVerificationCode: 8e8878892a853f6e108a191de8b9631a4c0a73ae
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtimageformats-qt-plugin-QWbmpPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qtimageformats-qt-plugin-QWbmpPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
@@ -112,7 +112,7 @@ Relationship: SPDXRef-Package-qtimageformats CONTAINS SPDXRef-Package-qtimagefor
 FileName: ./plugins/imageformats/qwbmp.lib
 SPDXID: SPDXRef-PackagedFile-qt-plugin-QWbmpPlugin
 FileType: BINARY
-FileChecksum: SHA1: c68b8ab1c0055cb0c42f4040d027f5f65e1444cd
+FileChecksum: SHA1: 3f6671578a691c38dbd3f225b8d7ed328a5bceb8
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -168,7 +168,7 @@ CMake target name: QTiffPlugin
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtimageformats:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: a2f86109d56f9c74dd223012eb7772e6757d5a9f
+PackageVerificationCode: be93bc8898e3ba24b885986594362d372d594d62
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtimageformats-qt-plugin-QTiffPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qtimageformats-qt-plugin-QTiffPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
@@ -180,7 +180,7 @@ Relationship: SPDXRef-Package-qtimageformats CONTAINS SPDXRef-Package-qtimagefor
 FileName: ./plugins/imageformats/qtiff.lib
 SPDXID: SPDXRef-PackagedFile-qt-plugin-QTiffPlugin
 FileType: BINARY
-FileChecksum: SHA1: b9f8574affd1fbb4edcfde774539187087a5a1ac
+FileChecksum: SHA1: 842ab2135a60676f7ccc984c21c95d3c4b42554d
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -330,7 +330,7 @@ CMake target name: QWebpPlugin
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtimageformats:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: 350604e1e5dfca47443a65ca9e31a6539bc63419
+PackageVerificationCode: 42633c7bc4963e74e15d19da2f659401db006585
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtimageformats-qt-plugin-QWebpPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qtimageformats-qt-plugin-QWebpPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
@@ -341,7 +341,7 @@ Relationship: SPDXRef-Package-qtimageformats CONTAINS SPDXRef-Package-qtimagefor
 FileName: ./plugins/imageformats/qwebp.lib
 SPDXID: SPDXRef-PackagedFile-qt-plugin-QWebpPlugin
 FileType: BINARY
-FileChecksum: SHA1: 35c210367f601b2c7c8ed091e052a0352daa7e8f
+FileChecksum: SHA1: 8adb17670fb248b41ab0ff817581caffac82c4c3
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION
@@ -597,7 +597,7 @@ CMake target name: QICNSPlugin
 </text>
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qt:6.10.0:*:*:*:*:*:*:*
 ExternalRef: SECURITY cpe23Type cpe:2.3:a:qt:qtimageformats:6.10.0:*:*:*:*:*:*:*
-PackageVerificationCode: cb74662e28b2506aa70f459fb793f36761222c90
+PackageVerificationCode: c7841137641815f8dfc71dcd9017a761c95d7388
 FilesAnalyzed: true
 Relationship: SPDXRef-Package-qtimageformats-qt-plugin-QICNSPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Core
 Relationship: SPDXRef-Package-qtimageformats-qt-plugin-QICNSPlugin DEPENDS_ON DocumentRef-qtbase:SPDXRef-Package-qtbase-qt-module-Gui
@@ -607,7 +607,7 @@ Relationship: SPDXRef-Package-qtimageformats CONTAINS SPDXRef-Package-qtimagefor
 FileName: ./plugins/imageformats/qicns.lib
 SPDXID: SPDXRef-PackagedFile-qt-plugin-QICNSPlugin
 FileType: BINARY
-FileChecksum: SHA1: cc2c7d3ac99686b8ec0cb30309a4165063490e52
+FileChecksum: SHA1: da67c4441d3b541c74d6e48b027f230ec172b8ce
 LicenseConcluded: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 FileCopyrightText: <text>Copyright (C) The Qt Company Ltd. and other contributors.</text>
 LicenseInfoInFile: NOASSERTION

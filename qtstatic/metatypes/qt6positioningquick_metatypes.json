@@ -1,0 +1,2378 @@
+[
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "SatelliteSource"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1541"
+                    },
+                    {
+                        "name": "DefaultProperty",
+                        "value": "parameters"
+                    }
+                ],
+                "className": "QDeclarativeSatelliteSource",
+                "enums": [
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 52,
+                        "name": "SourceError",
+                        "values": [
+                            "AccessError",
+                            "ClosedError",
+                            "NoError",
+                            "UnknownSourceError",
+                            "UpdateTimeoutError"
+                        ]
+                    }
+                ],
+                "interfaces": [
+                    [
+                        {
+                            "className": "QQmlParserStatus",
+                            "id": "\"org.qt-project.Qt.QQmlParserStatus\""
+                        }
+                    ]
+                ],
+                "lineNumber": 30,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "name",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "value",
+                                "type": "QVariant"
+                            }
+                        ],
+                        "index": 15,
+                        "lineNumber": 81,
+                        "name": "setBackendProperty",
+                        "returnType": "bool"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "name",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 16,
+                        "isConst": true,
+                        "lineNumber": 82,
+                        "name": "backendProperty",
+                        "returnType": "QVariant"
+                    }
+                ],
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 36,
+                        "name": "active",
+                        "notify": "activeChanged",
+                        "read": "isActive",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "setActive"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 37,
+                        "name": "valid",
+                        "notify": "validityChanged",
+                        "read": "isValid",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 38,
+                        "name": "updateInterval",
+                        "notify": "updateIntervalChanged",
+                        "read": "updateInterval",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "write": "setUpdateInterval"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 40,
+                        "name": "sourceError",
+                        "notify": "sourceErrorChanged",
+                        "read": "sourceError",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "SourceError",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "lineNumber": 41,
+                        "name": "name",
+                        "notify": "nameChanged",
+                        "read": "name",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setName"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 5,
+                        "lineNumber": 42,
+                        "name": "parameters",
+                        "read": "parameters",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QQmlListProperty<QDeclarativePluginParameter>",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 6,
+                        "lineNumber": 43,
+                        "name": "satellitesInUse",
+                        "notify": "satellitesInUseChanged",
+                        "read": "satellitesInUse",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QList<QGeoSatelliteInfo>",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 7,
+                        "lineNumber": 45,
+                        "name": "satellitesInView",
+                        "notify": "satellitesInViewChanged",
+                        "read": "satellitesInView",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QList<QGeoSatelliteInfo>",
+                        "user": false
+                    }
+                ],
+                "qualifiedClassName": "QDeclarativeSatelliteSource",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 90,
+                        "name": "activeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 1,
+                        "lineNumber": 91,
+                        "name": "validityChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "lineNumber": 92,
+                        "name": "updateIntervalChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "lineNumber": 93,
+                        "name": "sourceErrorChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 4,
+                        "lineNumber": 94,
+                        "name": "nameChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 5,
+                        "lineNumber": 95,
+                        "name": "satellitesInUseChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 6,
+                        "lineNumber": 96,
+                        "name": "satellitesInViewChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "timeout",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 7,
+                        "lineNumber": 85,
+                        "name": "update",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 8,
+                        "isCloned": true,
+                        "lineNumber": 85,
+                        "name": "update",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 9,
+                        "lineNumber": 86,
+                        "name": "start",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 10,
+                        "lineNumber": 87,
+                        "name": "stop",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "error",
+                                "type": "QGeoSatelliteInfoSource::Error"
+                            }
+                        ],
+                        "index": 11,
+                        "lineNumber": 99,
+                        "name": "sourceErrorReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "index": 12,
+                        "lineNumber": 100,
+                        "name": "onParameterInitialized",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "satellites",
+                                "type": "QList<QGeoSatelliteInfo>"
+                            }
+                        ],
+                        "index": 13,
+                        "lineNumber": 101,
+                        "name": "satellitesInViewUpdateReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "satellites",
+                                "type": "QList<QGeoSatelliteInfo>"
+                            }
+                        ],
+                        "index": 14,
+                        "lineNumber": 102,
+                        "name": "satellitesInUseUpdateReceived",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    },
+                    {
+                        "access": "public",
+                        "name": "QQmlParserStatus"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qdeclarativesatellitesource_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "QtPositioning"
+                    },
+                    {
+                        "name": "QML.Singleton",
+                        "value": "true"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1280"
+                    }
+                ],
+                "className": "LocationSingleton",
+                "lineNumber": 34,
+                "methods": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "isConst": true,
+                        "lineNumber": 44,
+                        "name": "coordinate",
+                        "returnType": "QGeoCoordinate"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "latitude",
+                                "type": "double"
+                            },
+                            {
+                                "name": "longitude",
+                                "type": "double"
+                            },
+                            {
+                                "name": "altitude",
+                                "type": "double"
+                            }
+                        ],
+                        "index": 1,
+                        "isConst": true,
+                        "lineNumber": 45,
+                        "name": "coordinate",
+                        "returnType": "QGeoCoordinate"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "latitude",
+                                "type": "double"
+                            },
+                            {
+                                "name": "longitude",
+                                "type": "double"
+                            }
+                        ],
+                        "index": 2,
+                        "isCloned": true,
+                        "isConst": true,
+                        "lineNumber": 45,
+                        "name": "coordinate",
+                        "returnType": "QGeoCoordinate"
+                    },
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "isConst": true,
+                        "lineNumber": 48,
+                        "name": "shape",
+                        "returnType": "QGeoShape"
+                    },
+                    {
+                        "access": "public",
+                        "index": 4,
+                        "isConst": true,
+                        "lineNumber": 50,
+                        "name": "rectangle",
+                        "returnType": "QGeoRectangle"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "center",
+                                "type": "QGeoCoordinate"
+                            },
+                            {
+                                "name": "width",
+                                "type": "double"
+                            },
+                            {
+                                "name": "height",
+                                "type": "double"
+                            }
+                        ],
+                        "index": 5,
+                        "isConst": true,
+                        "lineNumber": 51,
+                        "name": "rectangle",
+                        "returnType": "QGeoRectangle"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "topLeft",
+                                "type": "QGeoCoordinate"
+                            },
+                            {
+                                "name": "bottomRight",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 6,
+                        "isConst": true,
+                        "lineNumber": 53,
+                        "name": "rectangle",
+                        "returnType": "QGeoRectangle"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "coordinates",
+                                "type": "QVariantList"
+                            }
+                        ],
+                        "index": 7,
+                        "isConst": true,
+                        "lineNumber": 55,
+                        "name": "rectangle",
+                        "returnType": "QGeoRectangle"
+                    },
+                    {
+                        "access": "public",
+                        "index": 8,
+                        "isConst": true,
+                        "lineNumber": 57,
+                        "name": "circle",
+                        "returnType": "QGeoCircle"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "center",
+                                "type": "QGeoCoordinate"
+                            },
+                            {
+                                "name": "radius",
+                                "type": "qreal"
+                            }
+                        ],
+                        "index": 9,
+                        "isConst": true,
+                        "lineNumber": 58,
+                        "name": "circle",
+                        "returnType": "QGeoCircle"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "center",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 10,
+                        "isCloned": true,
+                        "isConst": true,
+                        "lineNumber": 58,
+                        "name": "circle",
+                        "returnType": "QGeoCircle"
+                    },
+                    {
+                        "access": "public",
+                        "index": 11,
+                        "isConst": true,
+                        "lineNumber": 60,
+                        "name": "path",
+                        "returnType": "QGeoPath"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "value",
+                                "type": "QJSValue"
+                            },
+                            {
+                                "name": "width",
+                                "type": "qreal"
+                            }
+                        ],
+                        "index": 12,
+                        "isConst": true,
+                        "lineNumber": 61,
+                        "name": "path",
+                        "returnType": "QGeoPath"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "value",
+                                "type": "QJSValue"
+                            }
+                        ],
+                        "index": 13,
+                        "isCloned": true,
+                        "isConst": true,
+                        "lineNumber": 61,
+                        "name": "path",
+                        "returnType": "QGeoPath"
+                    },
+                    {
+                        "access": "public",
+                        "index": 14,
+                        "isConst": true,
+                        "lineNumber": 63,
+                        "name": "polygon",
+                        "returnType": "QGeoPolygon"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "value",
+                                "type": "QVariantList"
+                            }
+                        ],
+                        "index": 15,
+                        "isConst": true,
+                        "lineNumber": 64,
+                        "name": "polygon",
+                        "returnType": "QGeoPolygon"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "perimeter",
+                                "type": "QVariantList"
+                            },
+                            {
+                                "name": "holes",
+                                "type": "QVariantList"
+                            }
+                        ],
+                        "index": 16,
+                        "isConst": true,
+                        "lineNumber": 65,
+                        "name": "polygon",
+                        "returnType": "QGeoPolygon"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "shape",
+                                "type": "QGeoShape"
+                            }
+                        ],
+                        "index": 17,
+                        "isConst": true,
+                        "lineNumber": 67,
+                        "name": "shapeToCircle",
+                        "returnType": "QGeoCircle"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "shape",
+                                "type": "QGeoShape"
+                            }
+                        ],
+                        "index": 18,
+                        "isConst": true,
+                        "lineNumber": 68,
+                        "name": "shapeToRectangle",
+                        "returnType": "QGeoRectangle"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "shape",
+                                "type": "QGeoShape"
+                            }
+                        ],
+                        "index": 19,
+                        "isConst": true,
+                        "lineNumber": 69,
+                        "name": "shapeToPath",
+                        "returnType": "QGeoPath"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "shape",
+                                "type": "QGeoShape"
+                            }
+                        ],
+                        "index": 20,
+                        "isConst": true,
+                        "lineNumber": 70,
+                        "name": "shapeToPolygon",
+                        "returnType": "QGeoPolygon"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "mercator",
+                                "type": "QPointF"
+                            }
+                        ],
+                        "index": 21,
+                        "isConst": true,
+                        "lineNumber": 72,
+                        "name": "mercatorToCoord",
+                        "returnType": "QGeoCoordinate",
+                        "revision": 1292
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "coord",
+                                "type": "QGeoCoordinate"
+                            }
+                        ],
+                        "index": 22,
+                        "isConst": true,
+                        "lineNumber": 73,
+                        "name": "coordToMercator",
+                        "returnType": "QPointF",
+                        "revision": 1292
+                    }
+                ],
+                "object": true,
+                "qualifiedClassName": "LocationSingleton",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "locationsingleton_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "Address"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1280"
+                    }
+                ],
+                "className": "QDeclarativeGeoAddress",
+                "lineNumber": 25,
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 31,
+                        "name": "address",
+                        "read": "address",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QGeoAddress",
+                        "user": false,
+                        "write": "setAddress"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 32,
+                        "name": "text",
+                        "notify": "textChanged",
+                        "read": "text",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setText"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 33,
+                        "name": "country",
+                        "notify": "countryChanged",
+                        "read": "country",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setCountry"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 34,
+                        "name": "countryCode",
+                        "notify": "countryCodeChanged",
+                        "read": "countryCode",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setCountryCode"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "lineNumber": 35,
+                        "name": "state",
+                        "notify": "stateChanged",
+                        "read": "state",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setState"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 5,
+                        "lineNumber": 36,
+                        "name": "county",
+                        "notify": "countyChanged",
+                        "read": "county",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setCounty"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 6,
+                        "lineNumber": 37,
+                        "name": "city",
+                        "notify": "cityChanged",
+                        "read": "city",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setCity"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 7,
+                        "lineNumber": 38,
+                        "name": "district",
+                        "notify": "districtChanged",
+                        "read": "district",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setDistrict"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 8,
+                        "lineNumber": 39,
+                        "name": "street",
+                        "notify": "streetChanged",
+                        "read": "street",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setStreet"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 9,
+                        "lineNumber": 40,
+                        "name": "streetNumber",
+                        "notify": "streetNumberChanged",
+                        "read": "streetNumber",
+                        "required": false,
+                        "revision": 1538,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setStreetNumber"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 10,
+                        "lineNumber": 42,
+                        "name": "postalCode",
+                        "notify": "postalCodeChanged",
+                        "read": "postalCode",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setPostalCode"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 11,
+                        "lineNumber": 43,
+                        "name": "isTextGenerated",
+                        "notify": "isTextGeneratedChanged",
+                        "read": "isTextGenerated",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false
+                    }
+                ],
+                "qualifiedClassName": "QDeclarativeGeoAddress",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 75,
+                        "name": "textChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 1,
+                        "lineNumber": 76,
+                        "name": "countryChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "lineNumber": 77,
+                        "name": "countryCodeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "lineNumber": 78,
+                        "name": "stateChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 4,
+                        "lineNumber": 79,
+                        "name": "countyChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 5,
+                        "lineNumber": 80,
+                        "name": "cityChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 6,
+                        "lineNumber": 81,
+                        "name": "districtChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 7,
+                        "lineNumber": 82,
+                        "name": "streetChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 8,
+                        "lineNumber": 83,
+                        "name": "streetNumberChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 9,
+                        "lineNumber": 84,
+                        "name": "postalCodeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 10,
+                        "lineNumber": 85,
+                        "name": "isTextGeneratedChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qdeclarativegeoaddress_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "Location"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1280"
+                    }
+                ],
+                "className": "QDeclarativeGeoLocation",
+                "lineNumber": 28,
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 34,
+                        "name": "location",
+                        "read": "location",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QGeoLocation",
+                        "user": false,
+                        "write": "setLocation"
+                    },
+                    {
+                        "bindable": "bindableAddress",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 35,
+                        "name": "address",
+                        "read": "address",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QDeclarativeGeoAddress*",
+                        "user": false,
+                        "write": "setAddress"
+                    },
+                    {
+                        "bindable": "bindableCoordinate",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 37,
+                        "name": "coordinate",
+                        "read": "coordinate",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QGeoCoordinate",
+                        "user": false,
+                        "write": "setCoordinate"
+                    },
+                    {
+                        "bindable": "bindableBoundingShape",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 39,
+                        "name": "boundingShape",
+                        "read": "boundingShape",
+                        "required": false,
+                        "revision": 1538,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QGeoShape",
+                        "user": false,
+                        "write": "setBoundingShape"
+                    },
+                    {
+                        "bindable": "bindableExtendedAttributes",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "lineNumber": 41,
+                        "name": "extendedAttributes",
+                        "read": "extendedAttributes",
+                        "required": false,
+                        "revision": 1293,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QVariantMap",
+                        "user": false,
+                        "write": "setExtendedAttributes"
+                    }
+                ],
+                "qualifiedClassName": "QDeclarativeGeoLocation",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qdeclarativegeolocation_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "PluginParameter"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1294"
+                    }
+                ],
+                "className": "QDeclarativePluginParameter",
+                "lineNumber": 27,
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 33,
+                        "name": "name",
+                        "notify": "nameChanged",
+                        "read": "name",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setName"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 34,
+                        "name": "value",
+                        "notify": "valueChanged",
+                        "read": "value",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QVariant",
+                        "user": false,
+                        "write": "setValue"
+                    }
+                ],
+                "qualifiedClassName": "QDeclarativePluginParameter",
+                "signals": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "name",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 0,
+                        "lineNumber": 49,
+                        "name": "nameChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "value",
+                                "type": "QVariant"
+                            }
+                        ],
+                        "index": 1,
+                        "lineNumber": 50,
+                        "name": "valueChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "lineNumber": 51,
+                        "name": "initialized",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qdeclarativepluginparameter_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "Position"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1280"
+                    }
+                ],
+                "className": "QDeclarativePosition",
+                "lineNumber": 28,
+                "object": true,
+                "properties": [
+                    {
+                        "bindable": "bindableLatitudeValid",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 34,
+                        "name": "latitudeValid",
+                        "read": "isLatitudeValid",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableLongitudeValid",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 35,
+                        "name": "longitudeValid",
+                        "read": "isLongitudeValid",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableAltitudeValid",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 36,
+                        "name": "altitudeValid",
+                        "read": "isAltitudeValid",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableCoordinate",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 37,
+                        "name": "coordinate",
+                        "read": "coordinate",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QGeoCoordinate",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableTimestamp",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "lineNumber": 38,
+                        "name": "timestamp",
+                        "read": "timestamp",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QDateTime",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableSpeed",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 5,
+                        "lineNumber": 39,
+                        "name": "speed",
+                        "read": "speed",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableSpeedValid",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 6,
+                        "lineNumber": 40,
+                        "name": "speedValid",
+                        "read": "isSpeedValid",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableHorizontalAccuracy",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 7,
+                        "lineNumber": 41,
+                        "name": "horizontalAccuracy",
+                        "read": "horizontalAccuracy",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "qreal",
+                        "user": false
+                    },
+                    {
+                        "bindable": "binableVerticalAccuracy",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 8,
+                        "lineNumber": 42,
+                        "name": "verticalAccuracy",
+                        "read": "verticalAccuracy",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "qreal",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableHorizontalAccuracyValid",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 9,
+                        "lineNumber": 43,
+                        "name": "horizontalAccuracyValid",
+                        "read": "isHorizontalAccuracyValid",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableVerticalAccuracyValid",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 10,
+                        "lineNumber": 45,
+                        "name": "verticalAccuracyValid",
+                        "read": "isVerticalAccuracyValid",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableDirectionValid",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 11,
+                        "lineNumber": 48,
+                        "name": "directionValid",
+                        "read": "isDirectionValid",
+                        "required": false,
+                        "revision": 1281,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableDirection",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 12,
+                        "lineNumber": 50,
+                        "name": "direction",
+                        "read": "direction",
+                        "required": false,
+                        "revision": 1281,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableVerticalSpeedValid",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 13,
+                        "lineNumber": 51,
+                        "name": "verticalSpeedValid",
+                        "read": "isVerticalSpeedValid",
+                        "required": false,
+                        "revision": 1281,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableVerticalSpeed",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 14,
+                        "lineNumber": 53,
+                        "name": "verticalSpeed",
+                        "read": "verticalSpeed",
+                        "required": false,
+                        "revision": 1281,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableMagneticVariation",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 15,
+                        "lineNumber": 56,
+                        "name": "magneticVariation",
+                        "read": "magneticVariation",
+                        "required": false,
+                        "revision": 1282,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableMagneticVariationValid",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 16,
+                        "lineNumber": 58,
+                        "name": "magneticVariationValid",
+                        "read": "isMagneticVariationValid",
+                        "required": false,
+                        "revision": 1282,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableDirectionAccuracy",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 17,
+                        "lineNumber": 61,
+                        "name": "directionAccuracy",
+                        "read": "directionAccuracy",
+                        "required": false,
+                        "revision": 1539,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "double",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableDirectionAccuracyValid",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 18,
+                        "lineNumber": 63,
+                        "name": "directionAccuracyValid",
+                        "read": "isDirectionAccuracyValid",
+                        "required": false,
+                        "revision": 1539,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false
+                    }
+                ],
+                "qualifiedClassName": "QDeclarativePosition",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qdeclarativeposition_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "PositionSource"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1280"
+                    },
+                    {
+                        "name": "DefaultProperty",
+                        "value": "parameters"
+                    }
+                ],
+                "className": "QDeclarativePositionSource",
+                "enums": [
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 59,
+                        "name": "PositioningMethod",
+                        "values": [
+                            "NoPositioningMethods",
+                            "SatellitePositioningMethods",
+                            "NonSatellitePositioningMethods",
+                            "AllPositioningMethods"
+                        ]
+                    },
+                    {
+                        "alias": "PositioningMethod",
+                        "isClass": false,
+                        "isFlag": true,
+                        "lineNumber": 59,
+                        "name": "PositioningMethods",
+                        "values": [
+                            "NoPositioningMethods",
+                            "SatellitePositioningMethods",
+                            "NonSatellitePositioningMethods",
+                            "AllPositioningMethods"
+                        ]
+                    },
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 70,
+                        "name": "SourceError",
+                        "values": [
+                            "AccessError",
+                            "ClosedError",
+                            "UnknownSourceError",
+                            "NoError",
+                            "UpdateTimeoutError"
+                        ]
+                    }
+                ],
+                "interfaces": [
+                    [
+                        {
+                            "className": "QQmlParserStatus",
+                            "id": "\"org.qt-project.Qt.QQmlParserStatus\""
+                        }
+                    ]
+                ],
+                "lineNumber": 32,
+                "methods": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "name",
+                                "type": "QString"
+                            },
+                            {
+                                "name": "value",
+                                "type": "QVariant"
+                            }
+                        ],
+                        "index": 16,
+                        "lineNumber": 103,
+                        "name": "setBackendProperty",
+                        "returnType": "bool",
+                        "revision": 1294
+                    },
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "name",
+                                "type": "QString"
+                            }
+                        ],
+                        "index": 17,
+                        "isConst": true,
+                        "lineNumber": 104,
+                        "name": "backendProperty",
+                        "returnType": "QVariant",
+                        "revision": 1294
+                    }
+                ],
+                "object": true,
+                "properties": [
+                    {
+                        "bindable": "bindablePosition",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 38,
+                        "name": "position",
+                        "notify": "positionChanged",
+                        "read": "position",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QDeclarativePosition*",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableActive",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 40,
+                        "name": "active",
+                        "notify": "activeChanged",
+                        "read": "isActive",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false,
+                        "write": "setActive"
+                    },
+                    {
+                        "bindable": "bindableIsValid",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 42,
+                        "name": "valid",
+                        "notify": "validityChanged",
+                        "read": "isValid",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "bool",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 3,
+                        "lineNumber": 43,
+                        "name": "updateInterval",
+                        "notify": "updateIntervalChanged",
+                        "read": "updateInterval",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "int",
+                        "user": false,
+                        "write": "setUpdateInterval"
+                    },
+                    {
+                        "bindable": "bindableSupportedPositioningMethods",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 4,
+                        "lineNumber": 45,
+                        "name": "supportedPositioningMethods",
+                        "notify": "supportedPositioningMethodsChanged",
+                        "read": "supportedPositioningMethods",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "PositioningMethods",
+                        "user": false
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 5,
+                        "lineNumber": 48,
+                        "name": "preferredPositioningMethods",
+                        "notify": "preferredPositioningMethodsChanged",
+                        "read": "preferredPositioningMethods",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "PositioningMethods",
+                        "user": false,
+                        "write": "setPreferredPositioningMethods"
+                    },
+                    {
+                        "bindable": "bindableSourceError",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 6,
+                        "lineNumber": 50,
+                        "name": "sourceError",
+                        "notify": "sourceErrorChanged",
+                        "read": "sourceError",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "SourceError",
+                        "user": false
+                    },
+                    {
+                        "bindable": "bindableName",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 7,
+                        "lineNumber": 52,
+                        "name": "name",
+                        "notify": "nameChanged",
+                        "read": "name",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QString",
+                        "user": false,
+                        "write": "setName"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 8,
+                        "lineNumber": 53,
+                        "name": "parameters",
+                        "read": "parameters",
+                        "required": false,
+                        "revision": 1294,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QQmlListProperty<QDeclarativePluginParameter>",
+                        "user": false
+                    }
+                ],
+                "qualifiedClassName": "QDeclarativePositionSource",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 119,
+                        "name": "positionChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 1,
+                        "lineNumber": 120,
+                        "name": "activeChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 2,
+                        "lineNumber": 121,
+                        "name": "updateIntervalChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 3,
+                        "lineNumber": 122,
+                        "name": "supportedPositioningMethodsChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 4,
+                        "lineNumber": 123,
+                        "name": "preferredPositioningMethodsChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 5,
+                        "lineNumber": 124,
+                        "name": "sourceErrorChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 6,
+                        "lineNumber": 125,
+                        "name": "nameChanged",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 7,
+                        "lineNumber": 126,
+                        "name": "validityChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "slots": [
+                    {
+                        "access": "public",
+                        "arguments": [
+                            {
+                                "name": "timeout",
+                                "type": "int"
+                            }
+                        ],
+                        "index": 8,
+                        "lineNumber": 114,
+                        "name": "update",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 9,
+                        "isCloned": true,
+                        "lineNumber": 114,
+                        "name": "update",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 10,
+                        "lineNumber": 115,
+                        "name": "start",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "public",
+                        "index": 11,
+                        "lineNumber": 116,
+                        "name": "stop",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "update",
+                                "type": "QGeoPositionInfo"
+                            }
+                        ],
+                        "index": 12,
+                        "lineNumber": 129,
+                        "name": "positionUpdateReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "arguments": [
+                            {
+                                "name": "error",
+                                "type": "QGeoPositionInfoSource::Error"
+                            }
+                        ],
+                        "index": 13,
+                        "lineNumber": 130,
+                        "name": "sourceErrorReceived",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "index": 14,
+                        "lineNumber": 131,
+                        "name": "onParameterInitialized",
+                        "returnType": "void"
+                    },
+                    {
+                        "access": "private",
+                        "index": 15,
+                        "lineNumber": 132,
+                        "name": "notifySupportedPositioningMethodsChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QObject"
+                    },
+                    {
+                        "access": "public",
+                        "name": "QQmlParserStatus"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qdeclarativepositionsource_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QGeoCoordinate"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "geoCoordinate"
+                    },
+                    {
+                        "name": "QML.Creatable",
+                        "value": "true"
+                    },
+                    {
+                        "name": "QML.CreationMethod",
+                        "value": "structured"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1280"
+                    }
+                ],
+                "className": "QGeoCoordinateForeign",
+                "gadget": true,
+                "lineNumber": 34,
+                "qualifiedClassName": "QGeoCoordinateForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QGeoAddress"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "geoAddress"
+                    },
+                    {
+                        "name": "QML.Creatable",
+                        "value": "true"
+                    },
+                    {
+                        "name": "QML.CreationMethod",
+                        "value": "structured"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1280"
+                    }
+                ],
+                "className": "QGeoAddressForeign",
+                "gadget": true,
+                "lineNumber": 43,
+                "qualifiedClassName": "QGeoAddressForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QGeoRectangle"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "geoRectangle"
+                    },
+                    {
+                        "name": "QML.Creatable",
+                        "value": "true"
+                    },
+                    {
+                        "name": "QML.CreationMethod",
+                        "value": "structured"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1280"
+                    }
+                ],
+                "className": "QGeoRectangleForeign",
+                "gadget": true,
+                "lineNumber": 52,
+                "qualifiedClassName": "QGeoRectangleForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QGeoCircle"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "geoCircle"
+                    },
+                    {
+                        "name": "QML.Creatable",
+                        "value": "true"
+                    },
+                    {
+                        "name": "QML.CreationMethod",
+                        "value": "structured"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1280"
+                    }
+                ],
+                "className": "QGeoCircleForeign",
+                "gadget": true,
+                "lineNumber": 61,
+                "qualifiedClassName": "QGeoCircleForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QGeoPath"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "geoPath"
+                    },
+                    {
+                        "name": "QML.Creatable",
+                        "value": "true"
+                    },
+                    {
+                        "name": "QML.CreationMethod",
+                        "value": "structured"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1280"
+                    }
+                ],
+                "className": "QGeoPathForeign",
+                "gadget": true,
+                "lineNumber": 70,
+                "qualifiedClassName": "QGeoPathForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QGeoPolygon"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "geoPolygon"
+                    },
+                    {
+                        "name": "QML.Creatable",
+                        "value": "true"
+                    },
+                    {
+                        "name": "QML.CreationMethod",
+                        "value": "structured"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1280"
+                    }
+                ],
+                "className": "QGeoPolygonForeign",
+                "gadget": true,
+                "lineNumber": 79,
+                "qualifiedClassName": "QGeoPolygonForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QGeoLocation"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "geoLocation"
+                    },
+                    {
+                        "name": "QML.Creatable",
+                        "value": "true"
+                    },
+                    {
+                        "name": "QML.CreationMethod",
+                        "value": "structured"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1280"
+                    }
+                ],
+                "className": "QGeoLocationForeign",
+                "gadget": true,
+                "lineNumber": 88,
+                "qualifiedClassName": "QGeoLocationForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QGeoShape"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "geoShape"
+                    },
+                    {
+                        "name": "QML.Creatable",
+                        "value": "true"
+                    },
+                    {
+                        "name": "QML.CreationMethod",
+                        "value": "construct"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1280"
+                    }
+                ],
+                "className": "QGeoShapeForeign",
+                "gadget": true,
+                "lineNumber": 97,
+                "qualifiedClassName": "QGeoShapeForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QGeoCoordinateObject"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "anonymous"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1280"
+                    }
+                ],
+                "className": "QGeoCoordinateObjectForeign",
+                "gadget": true,
+                "lineNumber": 106,
+                "qualifiedClassName": "QGeoCoordinateObjectForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QGeoPositionInfo"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "geoPositionInfo"
+                    },
+                    {
+                        "name": "QML.Creatable",
+                        "value": "true"
+                    },
+                    {
+                        "name": "QML.CreationMethod",
+                        "value": "structured"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1280"
+                    }
+                ],
+                "className": "QGeoPositionInfoForeign",
+                "gadget": true,
+                "lineNumber": 114,
+                "qualifiedClassName": "QGeoPositionInfoForeign"
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QGeoSatelliteInfo"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "geoSatelliteInfo"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1541"
+                    }
+                ],
+                "className": "QGeoSatelliteInfoForeign",
+                "gadget": true,
+                "lineNumber": 123,
+                "qualifiedClassName": "QGeoSatelliteInfoForeign"
+            },
+            {
+                "className": "QGeoSatelliteInfoDerived",
+                "gadget": true,
+                "lineNumber": 133,
+                "qualifiedClassName": "QGeoSatelliteInfoDerived",
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QGeoSatelliteInfo"
+                    }
+                ]
+            },
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Foreign",
+                        "value": "QGeoSatelliteInfoDerived"
+                    },
+                    {
+                        "name": "QML.ForeignIsNamespace",
+                        "value": "true"
+                    },
+                    {
+                        "name": "QML.Element",
+                        "value": "GeoSatelliteInfo"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1541"
+                    }
+                ],
+                "className": "QGeoSatelliteInfoForeignNamespace",
+                "lineNumber": 138,
+                "namespace": true,
+                "qualifiedClassName": "QGeoSatelliteInfoForeignNamespace"
+            }
+        ],
+        "inputFile": "qpositioningquickmodule_p.h",
+        "outputRevision": 69
+    },
+    {
+        "classes": [
+            {
+                "classInfos": [
+                    {
+                        "name": "QML.Element",
+                        "value": "CoordinateAnimation"
+                    },
+                    {
+                        "name": "QML.AddedInVersion",
+                        "value": "1283"
+                    }
+                ],
+                "className": "QQuickGeoCoordinateAnimation",
+                "enums": [
+                    {
+                        "isClass": false,
+                        "isFlag": false,
+                        "lineNumber": 38,
+                        "name": "Direction",
+                        "values": [
+                            "Shortest",
+                            "West",
+                            "East"
+                        ]
+                    }
+                ],
+                "lineNumber": 26,
+                "object": true,
+                "properties": [
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 0,
+                        "lineNumber": 32,
+                        "name": "from",
+                        "read": "from",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QGeoCoordinate",
+                        "user": false,
+                        "write": "setFrom"
+                    },
+                    {
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 1,
+                        "lineNumber": 33,
+                        "name": "to",
+                        "read": "to",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "QGeoCoordinate",
+                        "user": false,
+                        "write": "setTo"
+                    },
+                    {
+                        "bindable": "bindableDirection",
+                        "constant": false,
+                        "designable": true,
+                        "final": false,
+                        "index": 2,
+                        "lineNumber": 34,
+                        "name": "direction",
+                        "notify": "directionChanged",
+                        "read": "direction",
+                        "required": false,
+                        "scriptable": true,
+                        "stored": true,
+                        "type": "Direction",
+                        "user": false,
+                        "write": "setDirection"
+                    }
+                ],
+                "qualifiedClassName": "QQuickGeoCoordinateAnimation",
+                "signals": [
+                    {
+                        "access": "public",
+                        "index": 0,
+                        "lineNumber": 59,
+                        "name": "directionChanged",
+                        "returnType": "void"
+                    }
+                ],
+                "superClasses": [
+                    {
+                        "access": "public",
+                        "name": "QQuickPropertyAnimation"
+                    }
+                ]
+            }
+        ],
+        "inputFile": "qquickgeocoordinateanimation_p.h",
+        "outputRevision": 69
+    }
+]
