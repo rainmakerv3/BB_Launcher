@@ -6,7 +6,6 @@
 #include <QMessageBox>
 #include <QtWebView>
 
-#include "modules/QmlObject.h"
 #include "modules/RunGuard.h"
 #include "modules/bblauncher.h"
 

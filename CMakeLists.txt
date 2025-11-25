@@ -122,8 +122,6 @@ set(PROJECT_SOURCES
     modules/ModManager.ui
     modules/QAnsiTextEdit.cpp
     modules/QAnsiTextEdit.h
-    modules/QmlObject.cpp
-    modules/QmlObject.h
     modules/RunGuard.cpp
     modules/RunGuard.h
     modules/SaveManager.h

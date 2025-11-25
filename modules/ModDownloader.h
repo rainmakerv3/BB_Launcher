@@ -28,6 +28,7 @@ private:
     void SetSevenzipPath();
     QString BbcodeToHtml(QString BbcodeString);
     void extract7z(QString inpath, QString outpath);
+    void extractZip(QString inpath, QString outpath);
 
     Ui::ModDownloader* ui;
     QNetworkAccessManager* manager;

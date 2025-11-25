@@ -15,13 +15,13 @@
 #include <QTimer>
 #include <QUuid>
 #include <QWebSocket>
+#include <QtConcurrent/QtConcurrentRun>
 #include <QtWebView>
 #include <nlohmann/json.hpp>
 #include <qmicroz.h>
 
 #include "Common.h"
 #include "ModDownloader.h"
-#include "QmlObject.h"
 #include "settings/config.h"
 #include "ui_ModDownloader.h"
 
@@ -516,7 +516,6 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
     QDialog* progressDialog = new QDialog(this);
     progressDialog->setWindowTitle(tr("Downloading %1 , please wait...").arg(modName));
     progressDialog->setFixedSize(400, 80);
-    progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowCloseButtonHint);
     QVBoxLayout* layout = new QVBoxLayout(progressDialog);
     QProgressBar* progressBar = new QProgressBar(progressDialog);
     progressBar->setRange(0, 100);
@@ -558,21 +557,13 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
             Common::PathToQString(newZipPath,
                                   Common::GetBBLFilesPath() / "Temp" / "downloaded_mod.tmp");
 
-            bool isZip = false;
             QString filenameFromUrl = downloadReply->request().url().fileName();
-            if (filenameFromUrl.right(3) == "zip") {
-                newZipPath = newZipPath.replace("tmp", "zip");
-                isZip = true;
-            } else if (filenameFromUrl.right(2) == "7z") {
-                newZipPath = newZipPath.replace("tmp", "7z");
-            }
+            bool isZip = filenameFromUrl.right(3) == "zip";
+            isZip ? newZipPath = newZipPath.replace("tmp", "zip")
+                  : newZipPath = newZipPath.replace("tmp", "7z");
 
             QFile::rename(zipPath, newZipPath);
-            if (!isZip) {
-                extract7z(newZipPath, tempPath);
-            } else {
-                QMicroz::extract(newZipPath, tempPath);
-            }
+            isZip ? extractZip(newZipPath, tempPath) : extract7z(newZipPath, tempPath);
 
             std::string folderName = modName.toStdString();
             std::filesystem::path folderPath = "";
@@ -726,9 +717,72 @@ void ModDownloader::extract7z(QString inpath, QString outpath) {
     arguments << "x";
     arguments << QDir::toNativeSeparators(inpath);
     arguments << "-o" + QDir::toNativeSeparators(outpath);
+    arguments << "-bso0";
+    arguments << "-bsp1";
+
+    QDialog* progressDialog = new QDialog(this);
+    progressDialog->setWindowTitle(tr("Extracting compressed archive"));
+    progressDialog->setFixedSize(400, 80);
+    QVBoxLayout* layout = new QVBoxLayout(progressDialog);
+    QProgressBar* progressBar = new QProgressBar(progressDialog);
+    progressBar->setRange(0, 100);
+    layout->addWidget(progressBar);
+    progressDialog->setLayout(layout);
+    progressDialog->show();
+
+    connect(sevenZipProcess, &QProcess::readyRead, this, [this, sevenZipProcess, progressBar]() {
+        QString output = sevenZipProcess->readAllStandardOutput();
+        QRegularExpression percentageMessage("^(\\s*)(\\d+)(%.*)$");
+        QRegularExpressionMatch match = percentageMessage.match(output);
+        if (match.hasMatch()) {
+            const int percentageExported = match.captured(2).toInt();
+            progressBar->setValue(percentageExported);
+        }
+    });
 
     sevenZipProcess->start(processPath, arguments);
-    sevenZipProcess->waitForFinished();
+
+    QEventLoop extractloop;
+    connect(sevenZipProcess, &QProcess::finished, &extractloop, &QEventLoop::quit);
+    extractloop.exec();
+
+    progressDialog->close();
+    progressDialog->deleteLater();
+}
+
+void ModDownloader::extractZip(QString inpath, QString outpath) {
+    QMicroz qmz(inpath);
+    qmz.setOutputFolder(outpath);
+    if (!qmz)
+        return;
+
+    QDialog* progressDialog = new QDialog(this);
+    progressDialog->setWindowTitle(tr("Extracting zip archive"));
+    progressDialog->setFixedSize(400, 80);
+    QVBoxLayout* layout = new QVBoxLayout(progressDialog);
+    QProgressBar* progressBar = new QProgressBar(progressDialog);
+    progressBar->setRange(0, 100);
+    layout->addWidget(progressBar);
+    progressDialog->setLayout(layout);
+    progressDialog->show();
+
+    QFuture<void> future = QtConcurrent::run([this, &qmz, progressBar]() {
+        for (int i = 0; i < qmz.count(); ++i) {
+            qmz.extractIndex(i);
+            progressBar->setValue(static_cast<int>((i * 100) / qmz.count()));
+            QApplication::processEvents();
+        }
+    });
+
+    QFutureWatcher<void> watcher;
+    watcher.setFuture(future);
+
+    QEventLoop extractloop;
+    connect(&watcher, &QFutureWatcher<void>::finished, &extractloop, &QEventLoop::quit);
+    extractloop.exec();
+
+    progressDialog->close();
+    progressDialog->deleteLater();
 }
 
 void ModDownloader::SetSevenzipPath() {
