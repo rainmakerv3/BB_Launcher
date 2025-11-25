@@ -22,9 +22,9 @@ private:
     void LoadModInfo(int modId);
     void GetModFiles(int modId);
     void GetModImage(QUrl url);
-    void DownloadFilePremium(int fileId, int ModId, QString modFilename);
-    void DownloadFileRegular(int fileId, int ModId, QString modFilename);
-    void StartDownload(QString url, QString modFilename, bool isPremium);
+    void DownloadFilePremium(int fileId, int ModId, QString modName);
+    void DownloadFileRegular(int fileId, int ModId, QString modName, QString modFileName);
+    void StartDownload(QString url, QString modNamee, bool isPremium);
     void SetSevenzipPath();
     QString BbcodeToHtml(QString BbcodeString);
     void extract7z(QString inpath, QString outpath);
@@ -38,7 +38,7 @@ private:
     QStringList fileList;
     std::vector<int> fileIdList;
     QStringList fileDescList;
-    QStringList fileTypeList;
+    QStringList fileNameList;
     QMap<int, int> modIDmap;
 
     QDialog* authorizationDialog;
