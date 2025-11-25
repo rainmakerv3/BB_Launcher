@@ -516,9 +516,12 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
     QDialog* progressDialog = new QDialog(this);
     progressDialog->setWindowTitle(tr("Downloading %1 , please wait...").arg(modName));
     progressDialog->setFixedSize(400, 80);
+    progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowCloseButtonHint);
+
     QVBoxLayout* layout = new QVBoxLayout(progressDialog);
     QProgressBar* progressBar = new QProgressBar(progressDialog);
     progressBar->setRange(0, 100);
+
     layout->addWidget(progressBar);
     progressDialog->setLayout(layout);
     progressDialog->show();
@@ -723,9 +726,12 @@ void ModDownloader::extract7z(QString inpath, QString outpath) {
     QDialog* progressDialog = new QDialog(this);
     progressDialog->setWindowTitle(tr("Extracting compressed archive"));
     progressDialog->setFixedSize(400, 80);
+    progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowCloseButtonHint);
+
     QVBoxLayout* layout = new QVBoxLayout(progressDialog);
     QProgressBar* progressBar = new QProgressBar(progressDialog);
     progressBar->setRange(0, 100);
+
     layout->addWidget(progressBar);
     progressDialog->setLayout(layout);
     progressDialog->show();
@@ -759,9 +765,12 @@ void ModDownloader::extractZip(QString inpath, QString outpath) {
     QDialog* progressDialog = new QDialog(this);
     progressDialog->setWindowTitle(tr("Extracting zip archive"));
     progressDialog->setFixedSize(400, 80);
+    progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowCloseButtonHint);
+
     QVBoxLayout* layout = new QVBoxLayout(progressDialog);
     QProgressBar* progressBar = new QProgressBar(progressDialog);
     progressBar->setRange(0, 100);
+
     layout->addWidget(progressBar);
     progressDialog->setLayout(layout);
     progressDialog->show();
