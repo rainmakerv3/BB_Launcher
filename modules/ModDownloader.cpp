@@ -188,6 +188,7 @@ void ModDownloader::GetApiKey() {
     authorizationDialog->setWindowTitle("Get Authorization");
 
     QQuickView* webView = new QQuickView();
+    QVBoxLayout* layout = new QVBoxLayout(authorizationDialog);
 
     connect(m_webSocket, &QWebSocket::textMessageReceived, m_webSocket,
             [this, m_webSocket](QString message) {
@@ -212,7 +213,7 @@ void ModDownloader::GetApiKey() {
             });
 
     connect(m_webSocket, &QWebSocket::connected, this,
-            [this, jsonValueUuid, m_webSocket, uuidString, webView]() {
+            [this, jsonValueUuid, m_webSocket, uuidString, webView, layout]() {
                 QJsonObject jsonObject;
                 jsonObject["id"] = jsonValueUuid;
                 jsonObject["appid"] = "Vortex";
@@ -239,29 +240,29 @@ void ModDownloader::GetApiKey() {
 
 #ifdef Q_OS_LINUX
                 QDesktopServices::openUrl(link);
+                QLabel* label =
+                    new QLabel("Waiting for authorization (link opened in external browser)",
+                               authorizationDialog);
+                layout->addWidget(label);
+
 #else
                 webView->setSource(QUrl("qrc:/web.qml"));
-                webView->setResizeMode(QQuickView::SizeRootObjectToView);
-
                 QObject* rootObject = webView->rootObject();
                 QObject* webViewObject = rootObject->findChild<QObject*>("currentWebView");
+                
+                webView->setResizeMode(QQuickView::SizeRootObjectToView);
                 webViewObject->setProperty("url", link);
-
-                QVBoxLayout* layout = new QVBoxLayout(authorizationDialog);
                 layout->addWidget(QWidget::createWindowContainer(webView));
-                authorizationDialog->setLayout(layout);
-
                 authorizationDialog->resize(1280, 720);
+#endif
+                authorizationDialog->setLayout(layout);
                 authorizationDialog->show();
                 authorizationDialog->raise();
-#endif
             });
 
-#ifndef Q_OS_LINUX
     QEventLoop authloop;
     connect(authorizationDialog, &QDialog::finished, &authloop, &QEventLoop::quit);
     authloop.exec();
-#endif
 
     webView->close();
     webView->deleteLater();
