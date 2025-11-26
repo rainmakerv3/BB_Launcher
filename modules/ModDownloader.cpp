@@ -191,7 +191,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         } else {
 #if defined Q_OS_LINUX and !defined USE_WEBENGINE
             QMessageBox::information(this, tr("Not Supported"),
-                                     "Non-premium downloads not supported on Linux");
+                                     "Non-premium downloads not supported on this build");
             return;
 #endif
             DownloadFileRegular(fileIdList[fileIndex], modIDmap[modIndex], modName,

@@ -199,19 +199,10 @@ void ModManager::ActivateButton_isPressed() {
                                                         relative_path.parent_path());
                 }
 
-                if (std::filesystem::exists(ModInstallPath / "dvdroot_ps4" / relative_path)) {
-                    if (std::filesystem::is_symlink(ModInstallPath / "dvdroot_ps4" /
-                                                    relative_path)) {
-                        std::filesystem::copy_file(
-                            std::filesystem::read_symlink(ModInstallPath / "dvdroot_ps4" /
-                                                          relative_path),
-                            ModBackupFolderPath / relative_path,
-                            std::filesystem::copy_options::overwrite_existing);
-                        std::filesystem::remove(ModInstallPath / "dvdroot_ps4" / relative_path);
-                    } else {
-                        std::filesystem::rename(ModInstallPath / "dvdroot_ps4" / relative_path,
-                                                ModBackupFolderPath / relative_path);
-                    }
+                if (std::filesystem::exists(ModInstallPath / "dvdroot_ps4" / relative_path) ||
+                    std::filesystem::is_symlink(ModInstallPath / "dvdroot_ps4" / relative_path)) {
+                    std::filesystem::rename(ModInstallPath / "dvdroot_ps4" / relative_path,
+                                            ModBackupFolderPath / relative_path);
                 } else {
                     UniqueList.push_back(Common::PathToU8(relative_path) + ", " + ModName);
                 }
@@ -483,18 +474,21 @@ void ModManager::DeactivateButton_isPressed() {
             for (std::string fileline : UniqueList) {
 
                 std::size_t comma_pos = fileline.find(',');
-                std::filesystem::path path;
                 if (comma_pos != std::string::npos) {
-                    std::string modline = fileline.substr(0, comma_pos);
-                    path = ModInstallPath / "dvdroot_ps4" / modline;
-                } else {
-                    path = ModInstallPath / "dvdroot_ps4" / fileline;
+                    fileline = fileline.substr(0, comma_pos);
                 }
 
+#ifdef _WIN32
+                auto basePath = ModInstallPath / "dvdroot_ps4";
+                std::string npath = Common::PathToU8(basePath) + "/" + fileline;
+                std::filesystem::path path = Common::Utf8ToUtf16(npath);
+#else
+                std::filesystem::path path = ModInstallPath / "dvdroot_ps4" / fileline;
+#endif
+
                 try {
-                    if (std::filesystem::exists(path)) {
+                    if (std::filesystem::exists(path))
                         std::filesystem::remove(path);
-                    }
                 } catch (std::exception& ex) {
                     QMessageBox::warning(this, "Filesystem error deleting mod files", ex.what());
                     haserror = true;
@@ -533,7 +527,24 @@ void ModManager::DeactivateButton_isPressed() {
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModBackupFolderPath)) {
         auto relative_path = std::filesystem::relative(entry, ModBackupFolderPath);
 
-        if (!entry.is_directory()) {
+        // Relative path seemingly not working on symlinks
+        if (std::filesystem::is_symlink(entry.symlink_status())) {
+#ifdef _WIN32
+            std::wstring pathString = entry.path().wstring();
+            std::wstring baseString = ModBackupFolderPath.wstring();
+#else
+            std::string pathString = entry.path().string();
+            std::string baseString = ModBackupFolderPath.string();
+#endif
+            size_t pos = std::string::npos;
+            while ((pos = pathString.find(baseString)) != std::string::npos) {
+                pathString.erase(pos, baseString.length());
+            }
+            pathString.erase(0, 1);
+            relative_path = pathString;
+        }
+
+        if (!std::filesystem::is_directory(ModBackupFolderPath / relative_path)) {
             try {
                 if (std::filesystem::exists(ModInstallPath / "dvdroot_ps4" / relative_path))
                     std::filesystem::remove(ModInstallPath / "dvdroot_ps4" / relative_path);

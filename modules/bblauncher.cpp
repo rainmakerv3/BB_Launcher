@@ -433,9 +433,9 @@ void BBLauncher::UpdateModList() {
         for_each(ActiveModList.begin(), ActiveModList.end(),
                  [&](std::string s) { ActiveModStringList.append(QString::fromStdString(s)); });
     } else {
-        const QString NoModMsg =
-            "No mods active.\n\nPlace mods in the Mods Folder (click Mods Button) and "
-            "activate them using the Mod Manager";
+        const QString NoModMsg = "No mods active.\n\nDownload mods using the Mod Downloader or "
+                                 "manually place mods in the Mods Folder (click Mods Button) to "
+                                 "make them available in the Mod Manager";
         ActiveModStringList.append(NoModMsg);
     }
 
