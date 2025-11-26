@@ -5,6 +5,10 @@
 #include <QDialog>
 #include <QNetworkAccessManager>
 
+#ifdef USE_WEBENGINE
+#include <QWebEngineProfile>
+#endif
+
 namespace Ui {
 class ModDownloader;
 }
@@ -44,4 +48,8 @@ private:
 
     QDialog* authorizationDialog;
     QDialog* downloadDialog;
+
+#ifdef USE_WEBENGINE
+    QWebEngineProfile* profile;
+#endif
 };

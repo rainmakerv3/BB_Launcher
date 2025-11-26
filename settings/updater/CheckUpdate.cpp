@@ -186,6 +186,12 @@ void CheckUpdate::CheckForUpdates(const bool showMessage) {
                     found = true;
                     break;
                 }
+            } else if (CurrentBranch == "downloader") {
+                if (assetObj["name"].toString().contains("downloader")) {
+                    downloadUrl = assetObj["browser_download_url"].toString();
+                    found = true;
+                    break;
+                }
             } else {
                 if (assetObj["name"].toString().contains(platformString)) {
                     downloadUrl = assetObj["browser_download_url"].toString();

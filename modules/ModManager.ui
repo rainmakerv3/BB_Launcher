@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>682</height>
+    <height>637</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -171,7 +171,7 @@
    <property name="geometry">
     <rect>
      <x>40</x>
-     <y>540</y>
+     <y>510</y>
      <width>491</width>
      <height>81</height>
     </rect>
@@ -200,7 +200,7 @@
    <property name="geometry">
     <rect>
      <x>580</x>
-     <y>560</y>
+     <y>530</y>
      <width>81</width>
      <height>61</height>
     </rect>
@@ -255,7 +255,7 @@
    <property name="geometry">
     <rect>
      <x>39</x>
-     <y>630</y>
+     <y>590</y>
      <width>641</width>
      <height>41</height>
     </rect>
@@ -278,19 +278,6 @@
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QPushButton" name="pushButton">
-   <property name="geometry">
-    <rect>
-     <x>68</x>
-     <y>500</y>
-     <width>561</width>
-     <height>26</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Download Recommended Mods from Nexus Mods (Nexus Premium members only)</string>
-   </property>
   </widget>
  </widget>
  <resources/>

@@ -14,6 +14,8 @@ namespace Build {
 const char Branch[] = GIT_BRANCH;
 #elif _WIN32
 const char Branch[] = "noUAC";
+#elif USE_WEBENGINE
+const char Branch[] = "downloader";
 #else
 const char Branch[] = GIT_BRANCH;
 #endif

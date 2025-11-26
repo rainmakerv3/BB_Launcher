@@ -10,13 +10,10 @@
 #include <QNetworkRequest>
 #include <QProcess>
 #include <QProgressBar>
-#include <QQuickItem>
-#include <QQuickView>
 #include <QTimer>
 #include <QUuid>
 #include <QWebSocket>
 #include <QtConcurrent/QtConcurrentRun>
-#include <QtWebView>
 #include <nlohmann/json.hpp>
 #include <qmicroz.h>
 
@@ -24,6 +21,18 @@
 #include "ModDownloader.h"
 #include "settings/config.h"
 #include "ui_ModDownloader.h"
+
+#ifndef USE_WEBENGINE
+#include <QQuickItem>
+#include <QQuickView>
+#include <QtWebView>
+#else
+#include <QFutureWatcher>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QWebEngineProfile>
+#include <QWebEngineView>
+#endif
 
 using json = nlohmann::json;
 
@@ -45,6 +54,20 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     ui->RecModsLabel->setTextFormat(Qt::RichText);
     ui->RecModsLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
     ui->RecModsLabel->setOpenExternalLinks(true);
+
+#ifdef USE_WEBENGINE
+    QString storagePath;
+    Common::PathToQString(storagePath, Common::GetBBLFilesPath() / "WebCache" / "Data");
+    QString cachePath = QFileInfo(storagePath).absolutePath();
+    if (!QDir(storagePath).exists()) {
+        QDir().mkdir(storagePath);
+    }
+
+    profile = new QWebEngineProfile(QStringLiteral("MyPersistentProfile"), this);
+    profile->setPersistentStoragePath(storagePath);
+    profile->setCachePath(cachePath);
+    profile->setPersistentCookiesPolicy(QWebEngineProfile::ForcePersistentCookies);
+#endif
 
     apiKey = QString::fromStdString(Config::ApiKey);
     if (apiKey.isEmpty())
@@ -166,7 +189,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         if (isApiKeyPremium) {
             DownloadFilePremium(fileIdList[fileIndex], modIDmap[modIndex], modName);
         } else {
-#ifdef Q_OS_LINUX
+#if defined Q_OS_LINUX and !defined USE_WEBENGINE
             QMessageBox::information(this, tr("Not Supported"),
                                      "Non-premium downloads not supported on Linux");
             return;
@@ -183,6 +206,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     });
 }
 
+#ifndef USE_WEBENGINE
 void ModDownloader::GetApiKey() {
     QUuid uuid = QUuid::createUuid();
     QString uuidString = uuid.toString(QUuid::WithoutBraces);
@@ -277,6 +301,82 @@ void ModDownloader::GetApiKey() {
     webView->deleteLater();
     authorizationDialog->deleteLater();
 }
+#endif
+
+#ifdef USE_WEBENGINE
+void ModDownloader::GetApiKey() {
+    QUuid uuid = QUuid::createUuid();
+    QString uuidString = uuid.toString(QUuid::WithoutBraces);
+    QJsonValue jsonValueUuid(uuidString);
+
+    QWebSocket* m_webSocket = new QWebSocket();
+    QUrl socketUrl = QUrl("wss://sso.nexusmods.com");
+    m_webSocket->open(QNetworkRequest(socketUrl));
+
+    authorizationDialog = new QDialog();
+    authorizationDialog->setModal(true);
+    authorizationDialog->setWindowTitle("Get Authorization");
+
+    connect(m_webSocket, &QWebSocket::textMessageReceived, m_webSocket,
+            [this, m_webSocket](QString message) {
+                QByteArray jsonData = message.toUtf8();
+                QJsonDocument doc = QJsonDocument::fromJson(jsonData);
+
+                if (!doc.isNull()) {
+                    QJsonObject obj = doc.object();
+                    if (obj.contains("data") && obj["data"].isObject()) {
+                        QJsonObject userObject = obj["data"].toObject();
+                        if (userObject.contains("api_key")) {
+                            apiKey = userObject["api_key"].toString();
+                            authorizationDialog->close();
+                            this->raise();
+                        }
+                    }
+                } else {
+                    qDebug() << "Failed to parse JSON message";
+                }
+            });
+
+    connect(m_webSocket, &QWebSocket::connected, this,
+            [this, jsonValueUuid, m_webSocket, uuidString]() {
+                QJsonObject jsonObject;
+                jsonObject["id"] = jsonValueUuid;
+                jsonObject["appid"] = "Vortex";
+                jsonObject["protocol"] = 2;
+                // jsonObject["token"] = NULL;
+
+                QJsonDocument jsonDoc(jsonObject);
+                QByteArray jsonByteArray = jsonDoc.toJson();
+                m_webSocket->sendTextMessage(QString::fromUtf8(jsonByteArray));
+
+                QTimer* m_pingTimer = new QTimer(this);
+                m_pingTimer->setInterval(30000); // 30 seconds
+                connect(m_pingTimer, &QTimer::timeout, m_webSocket,
+                        [this, m_webSocket]() { m_webSocket->ping(); });
+                m_pingTimer->start();
+
+                QString link =
+                    "https://www.nexusmods.com/sso?id=" + uuidString + "&application=vortex";
+
+                QWebEngineView* webView = new QWebEngineView(profile, authorizationDialog);
+                webView->setUrl(QUrl(link));
+
+                QVBoxLayout* layout = new QVBoxLayout(authorizationDialog);
+                layout->addWidget(webView);
+                authorizationDialog->setLayout(layout);
+
+                authorizationDialog->resize(1280, 720);
+                authorizationDialog->show();
+                authorizationDialog->raise();
+            });
+
+    QEventLoop authloop;
+    connect(authorizationDialog, &QDialog::finished, &authloop, &QEventLoop::quit);
+    authloop.exec();
+
+    authorizationDialog->deleteLater();
+}
+#endif
 
 bool ModDownloader::ValidateApi() {
     QString url = "https://api.nexusmods.com/v1/users/validate.json";
@@ -611,6 +711,7 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
     });
 }
 
+#ifndef USE_WEBENGINE
 void ModDownloader::DownloadFileRegular(int fileId, int ModId, QString modName,
                                         QString modFilename) {
     downloadDialog = new QDialog();
@@ -665,6 +766,51 @@ void ModDownloader::DownloadFileRegular(int fileId, int ModId, QString modName,
     if (!redirectUrl.isEmpty())
         StartDownload(redirectUrl, modName, false);
 }
+#endif
+
+#ifdef USE_WEBENGINE
+void ModDownloader::DownloadFileRegular(int fileId, int ModId, QString modName,
+                                        QString modFilename) {
+    downloadDialog = new QDialog();
+    downloadDialog->setModal(true);
+    downloadDialog->setWindowTitle("Download Selected Mod");
+    QMessageBox::information(this, "Instructions",
+                             "Click the Slow Download button to proceed with the download.");
+
+    QWebEngineView* webView = new QWebEngineView(profile, downloadDialog);
+    QString fileUrl = "https://www.nexusmods.com/bloodborne/mods/" + QString::number(ModId) +
+                      "?tab=files&file_id=" + QString::number(fileId);
+    webView->setUrl(QUrl(fileUrl));
+
+    QString downloadUrl = "";
+    QObject::connect(profile, &QWebEngineProfile::downloadRequested, this,
+                     [this, modFilename, &downloadUrl](QWebEngineDownloadRequest* download) {
+                         QString url = download->url().toString();
+                         QByteArray utf8ByteArray = url.toUtf8();
+                         QString urlUtf8 = QString::fromUtf8(utf8ByteArray);
+
+                         if (urlUtf8.contains(modFilename)) {
+                             downloadDialog->close();
+                             downloadUrl = url;
+                         }
+                     });
+
+    QVBoxLayout* layout = new QVBoxLayout(downloadDialog);
+    layout->addWidget(webView);
+    downloadDialog->setLayout(layout);
+
+    downloadDialog->resize(1280, 720);
+    downloadDialog->show();
+
+    QEventLoop downloadloop;
+    connect(downloadDialog, &QDialog::finished, &downloadloop, &QEventLoop::quit);
+    downloadloop.exec();
+    downloadDialog->deleteLater();
+
+    if (!downloadUrl.isEmpty())
+        StartDownload(downloadUrl, modName, false);
+}
+#endif
 
 QString ModDownloader::BbcodeToHtml(QString BbcodeString) {
     BbcodeString.replace("[b]", "<b>");

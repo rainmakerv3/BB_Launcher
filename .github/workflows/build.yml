@@ -55,7 +55,7 @@ jobs:
         submodules: recursive
 
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DFORCE_UAC=ON -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qtstatic -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DFORCE_UAC=ON -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qtstatic -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja -DUSE_WEBENGINE=OFF
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: Deploy and Package
@@ -78,7 +78,7 @@ jobs:
         submodules: recursive
 
     - name: Configure CMake
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DFORCE_UAC=OFF -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qtstatic -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DFORCE_UAC=OFF -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qtstatic -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja -DUSE_WEBENGINE=OFF
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
     - name: Deploy and Package
@@ -116,7 +116,7 @@ jobs:
         modules: qtmultimedia qtimageformats qtwebview qtwebsockets
 
     - name: Configure CMake
-      run: cmake --fresh -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_OSX_ARCHITECTURES=x86_64
+      run: cmake --fresh -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_OSX_ARCHITECTURES=x86_64 -DUSE_WEBENGINE=OFF
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
@@ -159,7 +159,7 @@ jobs:
         cache: true
 
     - name: Configure CMake
-      run: cmake --fresh -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=clang-19 -DCMAKE_CXX_COMPILER=clang++-19 -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=mold"
+      run: cmake --fresh -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=clang-19 -DCMAKE_CXX_COMPILER=clang++-19 -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=mold" -DUSE_WEBENGINE=OFF
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
@@ -189,6 +189,64 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: BB_Launcher-linux-qt-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}
+        path: BB_Launcher-qt.AppImage
+
+  build-linux-downloader:
+    runs-on: ubuntu-24.04
+    needs: get-info
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: recursive
+    - name: Add LLVM repository
+      run: |
+        wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+        sudo add-apt-repository 'deb http://apt.llvm.org/noble/ llvm-toolchain-noble-19 main'
+
+    - name: Install dependencies
+      run: sudo apt-get update && sudo apt install -y libx11-dev libxext-dev libwayland-dev libdecor-0-dev libxkbcommon-dev libglfw3-dev libgles2-mesa-dev libfuse2 clang-19 mold build-essential libasound2-dev libpulse-dev libopenal-dev libudev-dev
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: 6.10.0
+        arch: linux_gcc_64
+        modules: "qtmultimedia qtimageformats qtserialport qtpositioning qtwebchannel qtwebengine qtwebview qtwebsockets"
+        tools: 'tools_generic tools_opensslv3_src'
+        setup-python: false
+        cache: true
+
+    - name: Configure CMake
+      run: cmake --fresh -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=clang-19 -DCMAKE_CXX_COMPILER=clang++-19 -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=mold" -DUSE_WEBENGINE=ON
+
+    - name: Build
+      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+    - name: Build AppImage
+      run: |
+        export Qt6_DIR="/usr/lib/qt6"
+        export PATH="$Qt6_DIR/bin:$PATH"
+        export LINUXDEPLOY_EXCLUDED_LIBRARIES="libqtiff.so;libnss3.so;libnssutil3.so"
+        export EXTRA_QT_PLUGINS="waylandcompositor"
+        export EXTRA_PLATFORM_PLUGINS="libqwayland.so"
+        wget -q "https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/linuxdeploy-x86_64.AppImage"
+        wget -q "https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/linuxdeploy-plugin-qt-x86_64.AppImage"
+        wget -q "https://github.com/linuxdeploy/linuxdeploy-plugin-checkrt/releases/download/continuous/linuxdeploy-plugin-checkrt-x86_64.sh"
+        chmod a+x linuxdeploy-x86_64.AppImage
+        chmod a+x linuxdeploy-plugin-qt-x86_64.AppImage
+        chmod a+x linuxdeploy-plugin-checkrt-x86_64.sh
+        ./linuxdeploy-x86_64.AppImage --appdir AppDir
+        bash ./linuxdeploy-plugin-checkrt-x86_64.sh --appdir AppDir
+        ./linuxdeploy-x86_64.AppImage --appdir AppDir -d "$GITHUB_WORKSPACE"/dist/BBLauncher.desktop  -e "$GITHUB_WORKSPACE"/build/BB_Launcher -i "$GITHUB_WORKSPACE"/dist/BBIcon.png --plugin qt
+        ./linuxdeploy-x86_64.AppImage --appdir AppDir --output appimage
+        mv BB_Launcher-x86_64.AppImage BB_Launcher-qt.AppImage
+
+    - name: Package and Upload Linux Qt artifact
+      run: |
+        tar cf BB_Launcher-qt.tar.gz -C ${{github.workspace}}/build BB_Launcher
+    - uses: actions/upload-artifact@v4
+      with:
+        name: BB_Launcher-linux-downloader-qt-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}
         path: BB_Launcher-qt.AppImage
 
   pre-release:

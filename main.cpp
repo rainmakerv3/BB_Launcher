@@ -4,7 +4,10 @@
 #include <QApplication>
 #include <QCommandLineParser>
 #include <QMessageBox>
+
+#ifndef USE_WEBENGINE
 #include <QtWebView>
+#endif
 
 #include "modules/RunGuard.h"
 #include "modules/bblauncher.h"
@@ -12,7 +15,9 @@
 void customMessageHandler(QtMsgType, const QMessageLogContext&, const QString&) {}
 
 int main(int argc, char* argv[]) {
+#ifndef USE_WEBENGINE
     QtWebView::initialize();
+#endif
     QApplication a(argc, argv);
 
     QCommandLineParser parser;
