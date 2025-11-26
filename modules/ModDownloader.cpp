@@ -50,35 +50,43 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     if (apiKey.isEmpty())
         GetApiKey();
 
-    modIDmap = {{0, 109},   // Vertex Explosion Mod
-                {1, 70},    // 60 fps Cutscene Fix
-                {2, 41},    // Sfx Fix Mods
-                {3, 114},   // Cloth physics mods
-                {4, 30},    // Xbox Controller Icons
-                {5, 162},   // Disable FXAA
-                {6, 102},   // Performance Drawparams
-                {7, 223},   // Stake of Marika
-                {8, 107},   // More Options at Lamps
-                {9, 6},     // Great One Beast Restored
-                {10, 206},  // Estus Vial and Bullet
-                {11, 156},  // Jump on L3
-                {12, 19},   // Bloodborne Enhanced
-                {13, 182}}; // 4k Upscaled UI
+    modIDmap = {
+        {0, 109},  // Vertex Explosion Mod
+        {1, 70},   // 60 fps Cutscene Fix
+        {2, 41},   // Sfx Fix Mods
+        {3, 30},   // Xbox Controller Icons
+        {4, 182},  // 4k Upscaled UI
+        {5, 160},  // Bloodborne Visual Upgrade Mod
+        {6, 430},  // SFX Texture Overhaul
+        {7, 162},  // Disable FXAA
+        {8, 114},  // Cloth physics mods
+        {9, 102},  // Performance Drawparams
+        {10, 206}, // Estus Vial and Bullet
+        {11, 223}, // Stake of Marika
+        {12, 257}, // Estus of Marika
+        {13, 19},  // Bloodborne Enhanced
+        {14, 107}, // More Options at Lamps
+        {15, 6},   // Great One Beast Restored
+        {16, 156}, // Jump on L3
+    };
 
     ui->modComboBox->addItem("Vertex Explosion Mod");
     ui->modComboBox->addItem("60 fps Cutscene Fix");
     ui->modComboBox->addItem("Sfx Fix Mods");
-    ui->modComboBox->addItem("Cloth physics mods");
     ui->modComboBox->addItem("Xbox Controller Icons");
+    ui->modComboBox->addItem("4K Upscaled UI");
+    ui->modComboBox->addItem("Bloodborne Visual Upgrade Mod");
+    ui->modComboBox->addItem("SFX Texture Overhaul");
     ui->modComboBox->addItem("Disable FXAA");
+    ui->modComboBox->addItem("Cloth physics mods");
     ui->modComboBox->addItem("Performance Drawparams");
+    ui->modComboBox->addItem("Estus Vial and Bullet");
     ui->modComboBox->addItem("Stake of Marika");
+    ui->modComboBox->addItem("Estus of Marika");
+    ui->modComboBox->addItem("Bloodborne Enhanced");
     ui->modComboBox->addItem("More Options at Lamps");
     ui->modComboBox->addItem("Great One Beast Restored");
-    ui->modComboBox->addItem("Estus Vial and Bullet");
     ui->modComboBox->addItem("Jump on L3");
-    ui->modComboBox->addItem("Bloodborne Enhanced");
-    ui->modComboBox->addItem("4K Upscaled UI");
 
     if (apiKey.isEmpty()) {
         ui->validApiLabel->setStyleSheet("color: red;");
