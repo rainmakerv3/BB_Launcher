@@ -123,6 +123,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     connect(ui->modComboBox, &QComboBox::currentIndexChanged, this, [this]() {
         int index = ui->modComboBox->currentIndex();
         LoadModInfo(modIDmap[index]);
+        ui->fileDesc->setText("Selected File Description");
     });
 
     connect(ui->setApiButton, &QPushButton::pressed, this, [this]() {
@@ -541,7 +542,8 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
             });
 
     QString zipPath;
-    Common::PathToQString(zipPath, Common::GetBBLFilesPath() / "Temp" / "downloaded_mod.tmp");
+    Common::PathToQString(zipPath, Common::GetBBLFilesPath() / "Temp");
+    zipPath = zipPath + "/" + downloadReply->request().url().fileName();
 
     QString tempPath;
     Common::PathToQString(tempPath, Common::GetBBLFilesPath() / "Temp" / "Download");
@@ -564,17 +566,8 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
             file->close();
             downloadReply->deleteLater();
 
-            QString newZipPath;
-            Common::PathToQString(newZipPath,
-                                  Common::GetBBLFilesPath() / "Temp" / "downloaded_mod.tmp");
-
-            QString filenameFromUrl = downloadReply->request().url().fileName();
-            bool isZip = filenameFromUrl.right(3) == "zip";
-            isZip ? newZipPath = newZipPath.replace("tmp", "zip")
-                  : newZipPath = newZipPath.replace("tmp", "7z");
-
-            QFile::rename(zipPath, newZipPath);
-            isZip ? extractZip(newZipPath, tempPath) : extract7z(newZipPath, tempPath);
+            bool isZip = zipPath.right(3) == "zip";
+            isZip ? extractZip(zipPath, tempPath) : extract7z(zipPath, tempPath);
 
             std::string folderName = modName.toStdString();
             std::filesystem::path folderPath = "";
@@ -605,7 +598,7 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
             progressDialog->close();
             progressDialog->deleteLater();
             QDir(tempPath).removeRecursively();
-            QFile::remove(newZipPath);
+            QFile::remove(zipPath);
         } else {
             QMessageBox::warning(
                 this, tr("Error"),
@@ -787,7 +780,6 @@ void ModDownloader::extractZip(QString inpath, QString outpath) {
         for (int i = 0; i < qmz.count(); ++i) {
             qmz.extractIndex(i);
             progressBar->setValue(static_cast<int>((i * 100) / qmz.count()));
-            QApplication::processEvents();
         }
     });
 
