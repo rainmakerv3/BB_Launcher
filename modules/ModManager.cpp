@@ -181,7 +181,7 @@ void ModManager::ActivateButton_isPressed() {
         ModInfoFileSave << i << "\n";
     ModInfoFileSave.close();
 
-#ifdef FORCE_UAC
+#if defined FORCE_UAC or !defined _WIN32
     ui->FileTransferLabel->setText("Backing up original files, symlinking to BB folder");
 #else
     ui->FileTransferLabel->setText("Backing up original files, copying to BB folder");
@@ -212,7 +212,7 @@ void ModManager::ActivateButton_isPressed() {
                     std::filesystem::create_directories(ModInstallPath / "dvdroot_ps4" /
                                                         relative_path.parent_path());
                 }
-#ifdef FORCE_UAC
+#if defined FORCE_UAC or !defined _WIN32
                 std::filesystem::create_symlink(ModActiveFolderPath / relative_path,
                                                 ModInstallPath / "dvdroot_ps4" / relative_path);
 #else
