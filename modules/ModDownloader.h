@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <QDialog>
 #include <QNetworkAccessManager>
+#include "Common.h"
 
 #ifdef USE_WEBENGINE
 #include <QWebEngineProfile>
@@ -48,6 +49,9 @@ private:
 
     QDialog* authorizationDialog;
     QDialog* downloadDialog;
+
+    const std::filesystem::path ModActivePath =
+        Common::GetBBLFilesPath() / "Mods-Active (DO NOT DELETE)";
 
 #ifdef USE_WEBENGINE
     QWebEngineProfile* profile;

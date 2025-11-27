@@ -17,7 +17,6 @@
 #include <nlohmann/json.hpp>
 #include <qmicroz.h>
 
-#include "Common.h"
 #include "ModDownloader.h"
 #include "settings/config.h"
 #include "ui_ModDownloader.h"
@@ -179,10 +178,12 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
             return;
         }
 
-        if (std::filesystem::exists(Common::ModPath / modName.toStdString())) {
-            QMessageBox::information(this, tr("Mod already exists"),
-                                     tr("%1 is already in your mod folder. Aborting...")
-                                         .arg(QString::fromStdString(modName.toStdString())));
+        if (std::filesystem::exists(Common::ModPath / modName.toStdString()) ||
+            std::filesystem::exists(ModActivePath / modName.toStdString())) {
+            QMessageBox::information(
+                this, tr("Mod already exists"),
+                tr("%1 is already in your mod folder or active mod folder. Aborting...")
+                    .arg(QString::fromStdString(modName.toStdString())));
             return;
         }
 
@@ -681,6 +682,12 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
                     folderPath = entry.path().parent_path();
                     if (std::find(BBFolders.begin(), BBFolders.end(), folderName) !=
                         BBFolders.end()) {
+
+                        if (modName.contains("Jump on L3")) {
+                            if (folderPath.string().contains("Backup") ||
+                                folderPath.parent_path().string().contains("Backup"))
+                                continue;
+                        }
                         break;
                     }
                 }
@@ -926,6 +933,8 @@ void ModDownloader::extractZip(QString inpath, QString outpath) {
             progressBar->setValue(static_cast<int>((i * 100) / qmz.count()));
         }
     });
+
+    QThread::msleep(100); // prevents a race condition I think
 
     QFutureWatcher<void> watcher;
     watcher.setFuture(future);
