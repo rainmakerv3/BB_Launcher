@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1120</width>
+    <width>1146</width>
     <height>705</height>
    </rect>
   </property>
@@ -213,8 +213,8 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <rect>
      <x>789</x>
      <y>10</y>
-     <width>311</width>
-     <height>641</height>
+     <width>341</width>
+     <height>651</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -289,7 +289,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
      <x>10</x>
      <y>550</y>
      <width>761</width>
-     <height>101</height>
+     <height>111</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout_5">
@@ -370,7 +370,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>660</y>
+     <y>670</y>
      <width>941</width>
      <height>22</height>
     </rect>

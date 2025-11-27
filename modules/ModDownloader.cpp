@@ -457,8 +457,7 @@ void ModDownloader::LoadModInfo(int modId) {
             for (auto& item : jsonDoc.items()) {
                 if (item.key() == "name") {
                     ui->modNameLabel->setText(
-                        "Name: " +
-                        QString::fromStdString(item.value().get<std::string>()).left(45));
+                        "Name: " + QString::fromStdString(item.value().get<std::string>()));
                 }
 
                 if (item.key() == "updated_timestamp") {
@@ -469,8 +468,7 @@ void ModDownloader::LoadModInfo(int modId) {
 
                 if (item.key() == "author") {
                     ui->modAuthorLabel->setText(
-                        "Author: " +
-                        QString::fromStdString(item.value().get<std::string>()).left(45));
+                        "Author: " + QString::fromStdString(item.value().get<std::string>()));
                 }
 
                 if (item.key() == "version") {
