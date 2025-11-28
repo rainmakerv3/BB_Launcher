@@ -626,18 +626,23 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
     progressDialog->setFixedSize(400, 80);
     progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowCloseButtonHint);
 
+    QLabel* label = new QLabel("Initializing", progressDialog);
     QVBoxLayout* layout = new QVBoxLayout(progressDialog);
     QProgressBar* progressBar = new QProgressBar(progressDialog);
     progressBar->setRange(0, 100);
 
     layout->addWidget(progressBar);
+    layout->addWidget(label);
     progressDialog->setLayout(layout);
     progressDialog->show();
 
     connect(downloadReply, &QNetworkReply::downloadProgress, this,
-            [progressBar](qint64 bytesReceived, qint64 bytesTotal) {
+            [progressBar, label](qint64 bytesReceived, qint64 bytesTotal) {
                 if (bytesTotal > 0)
                     progressBar->setValue(static_cast<int>((bytesReceived * 100) / bytesTotal));
+                label->setText(QString("%1 / %2 bytes downloaded")
+                                   .arg(QString::number(bytesReceived))
+                                   .arg(bytesTotal));
             });
 
     QString zipPath;
@@ -664,6 +669,8 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
             file->flush();
             file->close();
             downloadReply->deleteLater();
+            progressDialog->close();
+            progressDialog->deleteLater();
 
             bool isZip = zipPath.right(3) == "zip";
             isZip ? extractZip(zipPath, tempPath) : extract7z(zipPath, tempPath);
@@ -700,8 +707,6 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
                 tr("%1 has been downloaded. You can activate it using the mod manager")
                     .arg(modName.toStdString()));
 
-            progressDialog->close();
-            progressDialog->deleteLater();
             QDir(tempPath).removeRecursively();
             QFile::remove(zipPath);
         } else {
