@@ -112,7 +112,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
 
     if (apiKey.isEmpty()) {
         ui->validApiLabel->setStyleSheet("color: red;");
-        ui->validApiLabel->setText("No Valid Nexus ModsAPI Key Set");
+        ui->validApiLabel->setText("No Valid Nexus Mods API Key Set");
     } else {
         if (ValidateApi())
             LoadModInfo(109);
@@ -404,7 +404,7 @@ bool ModDownloader::ValidateApi() {
                     bool isPremium = jsonDoc["is_premium"].get<bool>();
                     if (!isPremium) {
                         ui->validApiLabel->setStyleSheet("color: green;");
-                        ui->validApiLabel->setText("Valid Non-Premium Nexus ModsAPI Key Set");
+                        ui->validApiLabel->setText("Valid Non-Premium Nexus Mods API Key Set");
                     } else {
                         ui->validApiLabel->setStyleSheet("color: green;");
                         ui->validApiLabel->setText("Valid premium Api key set");
@@ -416,7 +416,7 @@ bool ModDownloader::ValidateApi() {
             valid = true;
         } else {
             ui->validApiLabel->setStyleSheet("color: red;");
-            ui->validApiLabel->setText("No Valid Nexus ModsAPI Key Set");
+            ui->validApiLabel->setText("No Valid Nexus Mods API Key Set");
             QMessageBox::warning(this, tr("Error"),
                                  QString(tr("Network error:") + "\n" + reply->errorString()));
         }
@@ -490,7 +490,7 @@ void ModDownloader::LoadModInfo(int modId) {
             }
         } else {
             ui->validApiLabel->setStyleSheet("color: red;");
-            ui->validApiLabel->setText("No Valid Nexus ModsAPI Key Set");
+            ui->validApiLabel->setText("No Valid Nexus Mods API Key Set");
             QMessageBox::warning(this, tr("Error"),
                                  QString(tr("Network error:") + "\n" + reply->errorString()));
         }
@@ -690,15 +690,24 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
                     if (std::find(BBFolders.begin(), BBFolders.end(), folderName) !=
                         BBFolders.end()) {
 
-                        if (modName.contains("Jump on L3")) {
-                            if (folderPath.string().contains("Backup") ||
-                                folderPath.parent_path().string().contains("Backup"))
+                        // Fixes for non-standard Mod folder structure
+                        if (modName.contains("Performance Drawparams")) {
+                            if (!folderPath.string().contains("No AA, SSAO, Color Grading, DOF"))
                                 continue;
                         }
+
+                        if (modName.contains("Jump on L3")) {
+                            if (!folderPath.string().contains("Jump only"))
+                                continue;
+                        }
+
                         break;
                     }
                 }
             }
+
+            QMessageBox::information(this, tr("Folder check"),
+                                     QString::fromStdString(folderPath.string()));
 
             std::filesystem::path newPath = Common::ModPath / modName.toStdString();
             std::filesystem::rename(folderPath, newPath);
@@ -868,45 +877,77 @@ QString ModDownloader::BbcodeToHtml(QString BbcodeString) {
 }
 
 void ModDownloader::extract7z(QString inpath, QString outpath) {
-    QProcess* sevenZipProcess = new QProcess(this);
-
     QString processPath;
     Common::PathToQString(processPath, sevenzipPath);
+    int fileCount = 0;
+    QProcess* infoProcess = new QProcess(this);
+    connect(infoProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
+            [infoProcess, &fileCount](int exitCode, QProcess::ExitStatus exitStatus) {
+                if (exitStatus == QProcess::NormalExit && exitCode == 0) {
+                    QByteArray output = infoProcess->readAllStandardOutput();
+                    QString outputStr(output);
 
-    QStringList arguments;
-    arguments << "x";
-    arguments << QDir::toNativeSeparators(inpath);
-    arguments << "-o" + QDir::toNativeSeparators(outpath);
-    arguments << "-bso0";
-    arguments << "-bsp1";
+                    QRegularExpression regex("(\\d+)\\s+(?:files)\\b");
+                    QRegularExpressionMatch match = regex.match(outputStr);
+
+                    if (match.hasMatch()) {
+                        QString numberString = match.captured(1);
+                        fileCount = numberString.toInt();
+                    }
+                }
+                infoProcess->deleteLater();
+            });
+
+    QStringList infoArgs;
+    infoArgs << "l" << inpath;
+
+    infoProcess->start(processPath, infoArgs);
+    infoProcess->waitForFinished();
+
+    QProcess* extractProcess = new QProcess(this);
+    QStringList extractArgs;
+    extractArgs << "x";
+    extractArgs << QDir::toNativeSeparators(inpath);
+    extractArgs << "-o" + QDir::toNativeSeparators(outpath);
+    extractArgs << "-bso0";
+    extractArgs << "-bsp1";
 
     QDialog* progressDialog = new QDialog(this);
     progressDialog->setWindowTitle(tr("Extracting compressed archive"));
     progressDialog->setFixedSize(400, 80);
     progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowCloseButtonHint);
 
+    QLabel* label = new QLabel("Initializing", progressDialog);
     QVBoxLayout* layout = new QVBoxLayout(progressDialog);
     QProgressBar* progressBar = new QProgressBar(progressDialog);
     progressBar->setRange(0, 100);
 
+    if (fileCount != 0)
+        layout->addWidget(label);
     layout->addWidget(progressBar);
     progressDialog->setLayout(layout);
     progressDialog->show();
 
-    connect(sevenZipProcess, &QProcess::readyRead, this, [this, sevenZipProcess, progressBar]() {
-        QString output = sevenZipProcess->readAllStandardOutput();
-        QRegularExpression percentageMessage("^(\\s*)(\\d+)(%.*)$");
-        QRegularExpressionMatch match = percentageMessage.match(output);
-        if (match.hasMatch()) {
-            const int percentageExported = match.captured(2).toInt();
-            progressBar->setValue(percentageExported);
-        }
-    });
+    connect(extractProcess, &QProcess::readyRead, this,
+            [this, extractProcess, progressBar, label, fileCount]() {
+                QString output = extractProcess->readAllStandardOutput();
+                QRegularExpression percentageMessage("^(\\s*)(\\d+)(%.*)$");
+                QRegularExpressionMatch match = percentageMessage.match(output);
+                if (match.hasMatch()) {
+                    const int percentageExported = match.captured(2).toInt();
+                    progressBar->setValue(percentageExported);
+                    if (fileCount != 0)
+                        label->setText(QString("%1 / %2 files extracted")
+                                           .arg(QString::number(static_cast<int>(
+                                               fileCount * percentageExported / 100.f)))
+                                           .arg(fileCount));
+                }
+            });
 
-    sevenZipProcess->start(processPath, arguments);
+    extractProcess->start(processPath, extractArgs);
 
     QEventLoop extractloop;
-    connect(sevenZipProcess, &QProcess::finished, &extractloop, &QEventLoop::quit);
+    connect(extractProcess, &QProcess::finished, &extractloop, &QEventLoop::quit);
     extractloop.exec();
 
     progressDialog->close();
@@ -924,22 +965,28 @@ void ModDownloader::extractZip(QString inpath, QString outpath) {
     progressDialog->setFixedSize(400, 80);
     progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowCloseButtonHint);
 
+    QLabel* label = new QLabel("Initializing", progressDialog);
     QVBoxLayout* layout = new QVBoxLayout(progressDialog);
     QProgressBar* progressBar = new QProgressBar(progressDialog);
     progressBar->setRange(0, 100);
 
     layout->addWidget(progressBar);
+    layout->addWidget(label);
     progressDialog->setLayout(layout);
     progressDialog->show();
 
-    QFuture<void> future = QtConcurrent::run([this, &qmz, progressBar]() {
+    connect(this, &ModDownloader::FileExtracted, progressBar,
+            [this, &qmz, progressBar, label](int extracted) {
+                progressBar->setValue(static_cast<int>((extracted * 100.f) / qmz.count()));
+                label->setText(QString("%1 / %2 files extracted").arg(extracted).arg(qmz.count()));
+            });
+
+    QFuture<void> future = QtConcurrent::run([this, &qmz, progressBar, label]() {
         for (int i = 0; i < qmz.count(); ++i) {
             qmz.extractIndex(i);
-            progressBar->setValue(static_cast<int>((i * 100) / qmz.count()));
+            emit FileExtracted(i);
         }
     });
-
-    QThread::msleep(100); // prevents a race condition I think
 
     QFutureWatcher<void> watcher;
     watcher.setFuture(future);

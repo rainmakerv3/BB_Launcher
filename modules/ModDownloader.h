@@ -21,6 +21,9 @@ public:
     explicit ModDownloader(QWidget* parent = nullptr);
     ~ModDownloader();
 
+signals:
+    void FileExtracted(int extracted);
+
 private:
     void GetApiKey();
     bool ValidateApi();
