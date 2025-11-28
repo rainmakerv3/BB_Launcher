@@ -42,5 +42,5 @@ private:
     const std::vector<std::string> BBFolders = {
         "dvdroot_ps4", "action", "chr",    "event", "facegen", "map",   "menu",
         "movie",       "msg",    "mtd",    "obj",   "other",   "param", "paramdef",
-        "parts",       "remo",   "script", "sfx",   "shader",  "sound"};
+        "parts",       "remo",   "script", "sfx",   "shader",  "sound", "font"};
 };

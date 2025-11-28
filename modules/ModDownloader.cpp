@@ -90,6 +90,10 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         {14, 107}, // More Options at Lamps
         {15, 6},   // Great One Beast Restored
         {16, 156}, // Jump on L3
+        {17, 28},  // Boczekek's FPS boost
+        {18, 168}, // 2B mod
+        {19, 93},  // Debug Menu Restoration (needs debug menu patch enabled)
+        {20, 224}, // Start with any Weapon
     };
 
     ui->modComboBox->addItem("Vertex Explosion Mod");
@@ -109,6 +113,10 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     ui->modComboBox->addItem("More Options at Lamps");
     ui->modComboBox->addItem("Great One Beast Restored");
     ui->modComboBox->addItem("Jump on L3");
+    ui->modComboBox->addItem("Boczekek's FPS boost");
+    ui->modComboBox->addItem("2B mod");
+    ui->modComboBox->addItem("Debug Menu Restoration (needs debug menu patch enabled)");
+    ui->modComboBox->addItem("Start with any Weapon");
 
     if (apiKey.isEmpty()) {
         ui->validApiLabel->setStyleSheet("color: red;");
@@ -651,6 +659,7 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
 
     QString tempPath;
     Common::PathToQString(tempPath, Common::GetBBLFilesPath() / "Temp" / "Download");
+    std::filesystem::remove_all(Common::GetBBLFilesPath() / "Temp");
     std::filesystem::create_directories(Common::GetBBLFilesPath() / "Temp" / "Download");
 
     QFile* file = new QFile(zipPath);
@@ -675,7 +684,7 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
             bool isZip = zipPath.right(3) == "zip";
             isZip ? extractZip(zipPath, tempPath) : extract7z(zipPath, tempPath);
 
-            std::string folderName = modName.toStdString();
+            std::string folderName;
             std::filesystem::path folderPath = "";
             const std::vector<std::string> BBFolders = {
                 "dvdroot_ps4", "action", "chr",    "event", "facegen", "map",   "menu",
@@ -690,12 +699,13 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
                     if (std::find(BBFolders.begin(), BBFolders.end(), folderName) !=
                         BBFolders.end()) {
 
-                        // Fixes for non-standard Mod folder structure
+                        // Performance Drawparams: mod has subfolders as options, most perf impact
                         if (modName.contains("Performance Drawparams")) {
                             if (!folderPath.string().contains("No AA, SSAO, Color Grading, DOF"))
                                 continue;
                         }
 
+                        // Jump on L3: mod has subfolders as options, choose jump only
                         if (modName.contains("Jump on L3")) {
                             if (!folderPath.string().contains("Jump only"))
                                 continue;
@@ -706,8 +716,20 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
                 }
             }
 
-            QMessageBox::information(this, tr("Folder check"),
-                                     QString::fromStdString(folderPath.string()));
+            // Boczekek: rename mapstudio (maybe case sensitive on non-Windows), insert map folder
+            if (modName == "Boczekek's FPS boost") {
+                std::filesystem::path dlPath = Common::GetBBLFilesPath() / "Temp" / "Download";
+                std::filesystem::rename(dlPath / "MapStudio", dlPath / "mapstudio");
+                    std::filesystem::path tempPath =
+                        Common::GetBBLFilesPath() / "Temp" / modName.toStdString();
+                    std::filesystem::create_directory(tempPath);
+                    std::filesystem::rename(dlPath, tempPath / "map");
+                    std::filesystem::rename(tempPath, dlPath);
+                    folderPath = dlPath;
+            } else if (modName == "Boczekek's FPS boost Lite") {
+                std::filesystem::path dlPath = Common::GetBBLFilesPath() / "Temp" / "Download";
+                std::filesystem::rename(dlPath / "map" / "MapStudio", dlPath / "map" / "mapstudio");
+            }
 
             std::filesystem::path newPath = Common::ModPath / modName.toStdString();
             std::filesystem::rename(folderPath, newPath);
@@ -922,9 +944,9 @@ void ModDownloader::extract7z(QString inpath, QString outpath) {
     QProgressBar* progressBar = new QProgressBar(progressDialog);
     progressBar->setRange(0, 100);
 
+    layout->addWidget(progressBar);
     if (fileCount != 0)
         layout->addWidget(label);
-    layout->addWidget(progressBar);
     progressDialog->setLayout(layout);
     progressDialog->show();
 
