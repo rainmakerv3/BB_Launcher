@@ -256,6 +256,8 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->volumeSlider->setValue(toml::find_or<int>(data, "General", "volumeSlider", 100));
     ui->volumeValue->setText(QString::number(ui->volumeSlider->value()) + "%");
     ui->graphicsAdapterBox->setCurrentIndex(toml::find_or<int>(data, "Vulkan", "gpuId", -1) + 1);
+    ui->pipelineCacheCheckBox->setChecked(
+        toml::find_or<bool>(data, "Vulkan", "pipelineCacheEnable", false));
 
     QString translatedText_PresentMode = presentModeMap.key(
         QString::fromStdString(toml::find_or<std::string>(data, "GPU", "presentMode", "Mailbox")));
@@ -427,6 +429,7 @@ void ShadSettings::SaveSettings() {
     data["GPU"]["Fullscreen"] = isFullscreen;
 
     data["Vulkan"]["gpuId"] = ui->graphicsAdapterBox->currentIndex() - 1;
+    data["Vulkan"]["pipelineCacheEnable"] = ui->pipelineCacheCheckBox->isChecked();
 
     data["Settings"]["consoleLanguage"] =
         languageIndexes[ui->consoleLanguageComboBox->currentIndex()];
@@ -442,13 +445,10 @@ void ShadSettings::SetDefaults() {
     ui->idleTimeoutSpinBox->setValue(5);
     ui->widthSpinBox->setValue(1280);
     ui->heightSpinBox->setValue(720);
-    ui->vblankSpinBox->setValue(60);
     ui->disableTrophycheckBox->setChecked(false);
     ui->popUpPosComboBox->setCurrentText("right");
     ui->popUpDurationSpinBox->setValue(6.0);
     ui->discordRPCCheckbox->setChecked(false);
-    ui->ReadbacksCheckBox->setChecked(false);
-    ui->DevkitCheckBox->setChecked(false);
     ui->GPUBufferCheckBox->setChecked(false);
     ui->logTypeComboBox->setCurrentText("sync");
     ui->logFilterLineEdit->setText("");
@@ -462,6 +462,17 @@ void ShadSettings::SetDefaults() {
     ui->volumeSlider->setValue(100);
     ui->presentModeComboBox->setCurrentText("Mailbox");
     ui->dmemSpinBox->setValue(0);
+    ui->showSplashCheckBox->setChecked(false);
+    ui->pipelineCacheCheckBox->setChecked(false);
+
+    if (is_game_specific) {
+        ui->vblankSpinBox->setValue(60);
+        ui->ReadbacksCheckBox->setChecked(false);
+        ui->DevkitCheckBox->setChecked(false);
+        ui->dmemSpinBox->setValue(0);
+    } else {
+        ui->discordRPCCheckbox->setChecked(true);
+    }
 }
 
 void ShadSettings::getPhysicalDevices() {

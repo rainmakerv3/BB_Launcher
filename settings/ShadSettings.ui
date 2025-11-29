@@ -65,8 +65,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>981</width>
-         <height>633</height>
+         <width>967</width>
+         <height>640</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="generalTabVLayout" stretch="0,0">
@@ -75,79 +75,37 @@
           <property name="bottomMargin">
            <number>0</number>
           </property>
-          <item row="0" column="0">
-           <layout class="QVBoxLayout" name="emulatorTabLayoutMiddle">
+          <item row="0" column="1">
+           <layout class="QVBoxLayout" name="GUITabLayoutMiddle" stretch="0">
             <item>
-             <widget class="QGroupBox" name="trophySettingsGroupBox">
+             <widget class="QGroupBox" name="SystemSettings">
               <property name="title">
-               <string>Trophies</string>
+               <string notr="true">System</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_11">
+              <layout class="QVBoxLayout" name="verticalLayout_9">
                <item>
-                <widget class="QCheckBox" name="disableTrophycheckBox">
-                 <property name="text">
-                  <string notr="true">Disable Trophy Pop-ups</string>
+                <widget class="QGroupBox" name="consoleLanguageGroupBox">
+                 <property name="title">
+                  <string notr="true">Console Language</string>
                  </property>
+                 <layout class="QVBoxLayout" name="settingsLayout">
+                  <item>
+                   <widget class="QComboBox" name="consoleLanguageComboBox"/>
+                  </item>
+                 </layout>
                 </widget>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout">
-                 <item>
-                  <widget class="QLabel" name="label">
-                   <property name="text">
-                    <string>Pop-up Position</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QComboBox" name="popUpPosComboBox">
-                   <item>
-                    <property name="text">
-                     <string>right</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>left</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>top</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>bottom</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_5">
-                 <item>
-                  <widget class="QLabel" name="label_3">
-                   <property name="text">
-                    <string>Pop-up Duration</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QDoubleSpinBox" name="popUpDurationSpinBox">
-                   <property name="maximum">
-                    <double>10.000000000000000</double>
-                   </property>
-                   <property name="singleStep">
-                    <double>0.100000000000000</double>
-                   </property>
-                   <property name="value">
-                    <double>6.000000000000000</double>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+                <widget class="QGroupBox" name="userName">
+                 <property name="title">
+                  <string notr="true">Username</string>
+                 </property>
+                 <layout class="QVBoxLayout" name="userNameLayout1">
+                  <item>
+                   <widget class="QLineEdit" name="userNameLineEdit"/>
+                  </item>
+                 </layout>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -304,44 +262,6 @@
             </item>
            </layout>
           </item>
-          <item row="3" column="0">
-           <widget class="QGroupBox" name="ControllerGroupBox">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="title">
-             <string>Controller</string>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>11</number>
-             </property>
-             <property name="bottomMargin">
-              <number>11</number>
-             </property>
-             <item>
-              <widget class="QCheckBox" name="motionControlsCheckBox">
-               <property name="text">
-                <string>Enable Motion Controls</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QCheckBox" name="backgroundControllerCheckBox">
-               <property name="text">
-                <string>Enable Background Controller Input</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
           <item row="2" column="1">
            <layout class="QVBoxLayout" name="ControllerLayoutRight" stretch="0">
             <item>
@@ -398,31 +318,57 @@
           <item row="2" column="2">
            <layout class="QVBoxLayout" name="verticalLayout_5">
             <item>
-             <widget class="QGroupBox" name="FSRGroupBox">
+             <widget class="QGroupBox" name="emulatorSettingsGroupBox">
               <property name="title">
-               <string>FSR Settings</string>
+               <string notr="true">Emulator</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_17">
+              <layout class="QVBoxLayout" name="verticalLayout_4">
                <item>
-                <widget class="QCheckBox" name="FSRCheckBox">
+                <widget class="QCheckBox" name="pipelineCacheCheckBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>11</pointsize>
+                   <bold>true</bold>
+                  </font>
+                 </property>
                  <property name="text">
-                  <string>Enable FSR</string>
+                  <string>Enable Shader Cache</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="RCASCheckBox">
+                <widget class="QLabel" name="label_5">
+                 <property name="font">
+                  <font>
+                   <pointsize>8</pointsize>
+                   <bold>false</bold>
+                  </font>
+                 </property>
                  <property name="text">
-                  <string>Enable FSR RCAS Sharpening</string>
+                  <string>*requires latest shadps4 pre-release/nightly</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <layout class="QVBoxLayout" name="verticalLayout_16">
+                <widget class="QCheckBox" name="showSplashCheckBox">
+                 <property name="text">
+                  <string>Show Splash Screen</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="GPUBufferCheckBox">
+                 <property name="text">
+                  <string>Copy GPU Buffers (may fix PM4 crashes)</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_20">
                  <item>
-                  <layout class="QHBoxLayout" name="horizontalLayout_3">
+                  <layout class="QHBoxLayout" name="horizontalLayout_4">
                    <item>
-                    <widget class="QLabel" name="RCASLabel">
+                    <widget class="QLabel" name="volumeLabel">
                      <property name="sizePolicy">
                       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                        <horstretch>0</horstretch>
@@ -430,14 +376,14 @@
                       </sizepolicy>
                      </property>
                      <property name="text">
-                      <string>RCAS Value</string>
+                      <string>Volume</string>
                      </property>
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLabel" name="RCASValue">
+                    <widget class="QLabel" name="volumeValue">
                      <property name="text">
-                      <string>0.250</string>
+                      <string>100</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
@@ -447,12 +393,12 @@
                   </layout>
                  </item>
                  <item>
-                  <widget class="QSlider" name="RCASSlider">
+                  <widget class="QSlider" name="volumeSlider">
                    <property name="maximum">
-                    <number>1000</number>
+                    <number>500</number>
                    </property>
                    <property name="value">
-                    <number>250</number>
+                    <number>100</number>
                    </property>
                    <property name="orientation">
                     <enum>Qt::Orientation::Horizontal</enum>
@@ -460,19 +406,6 @@
                   </widget>
                  </item>
                 </layout>
-               </item>
-               <item>
-                <spacer name="verticalSpacer_3">
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>40</height>
-                  </size>
-                 </property>
-                </spacer>
                </item>
               </layout>
              </widget>
@@ -573,43 +506,6 @@
             </item>
            </layout>
           </item>
-          <item row="0" column="1">
-           <layout class="QVBoxLayout" name="GUITabLayoutMiddle" stretch="0">
-            <item>
-             <widget class="QGroupBox" name="SystemSettings">
-              <property name="title">
-               <string notr="true">System</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_9">
-               <item>
-                <widget class="QGroupBox" name="consoleLanguageGroupBox">
-                 <property name="title">
-                  <string notr="true">Console Language</string>
-                 </property>
-                 <layout class="QVBoxLayout" name="settingsLayout">
-                  <item>
-                   <widget class="QComboBox" name="consoleLanguageComboBox"/>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item>
-                <widget class="QGroupBox" name="userName">
-                 <property name="title">
-                  <string notr="true">Username</string>
-                 </property>
-                 <layout class="QVBoxLayout" name="userNameLayout1">
-                  <item>
-                   <widget class="QLineEdit" name="userNameLineEdit"/>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-           </layout>
-          </item>
           <item row="3" column="1">
            <layout class="QVBoxLayout" name="verticalLayout_8">
             <item>
@@ -649,32 +545,152 @@
             </item>
            </layout>
           </item>
-          <item row="3" column="2">
-           <widget class="QGroupBox" name="emulatorSettingsGroupBox">
-            <property name="title">
-             <string notr="true">Emulator</string>
+          <item row="3" column="0">
+           <widget class="QGroupBox" name="ControllerGroupBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_4">
+            <property name="title">
+             <string>Controller</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>11</number>
+             </property>
+             <property name="bottomMargin">
+              <number>11</number>
+             </property>
              <item>
-              <widget class="QCheckBox" name="showSplashCheckBox">
+              <widget class="QCheckBox" name="motionControlsCheckBox">
                <property name="text">
-                <string>Show Splash Screen</string>
+                <string>Enable Motion Controls</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QCheckBox" name="GPUBufferCheckBox">
+              <widget class="QCheckBox" name="backgroundControllerCheckBox">
                <property name="text">
-                <string>Copy GPU Buffers (may fix PM4 crashes)</string>
+                <string>Enable Background Controller Input</string>
                </property>
               </widget>
              </item>
-             <item>
-              <layout class="QVBoxLayout" name="verticalLayout_20">
+            </layout>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <layout class="QVBoxLayout" name="emulatorTabLayoutMiddle">
+            <item>
+             <widget class="QGroupBox" name="trophySettingsGroupBox">
+              <property name="title">
+               <string>Trophies</string>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_11">
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <widget class="QCheckBox" name="disableTrophycheckBox">
+                 <property name="text">
+                  <string notr="true">Disable Trophy Pop-ups</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout">
                  <item>
-                  <widget class="QLabel" name="volumeLabel">
+                  <widget class="QLabel" name="label">
+                   <property name="text">
+                    <string>Pop-up Position</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QComboBox" name="popUpPosComboBox">
+                   <item>
+                    <property name="text">
+                     <string>right</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>left</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>top</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>bottom</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_5">
+                 <item>
+                  <widget class="QLabel" name="label_3">
+                   <property name="text">
+                    <string>Pop-up Duration</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QDoubleSpinBox" name="popUpDurationSpinBox">
+                   <property name="maximum">
+                    <double>10.000000000000000</double>
+                   </property>
+                   <property name="singleStep">
+                    <double>0.100000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>6.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="2">
+           <layout class="QVBoxLayout" name="verticalLayout_13"/>
+          </item>
+          <item row="3" column="2">
+           <widget class="QGroupBox" name="FSRGroupBox">
+            <property name="title">
+             <string>FSR Settings</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_17">
+             <item>
+              <widget class="QCheckBox" name="FSRCheckBox">
+               <property name="text">
+                <string>Enable FSR</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="RCASCheckBox">
+               <property name="text">
+                <string>Enable FSR RCAS Sharpening</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <layout class="QVBoxLayout" name="verticalLayout_16">
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_3">
+                 <item>
+                  <widget class="QLabel" name="RCASLabel">
                    <property name="sizePolicy">
                     <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                      <horstretch>0</horstretch>
@@ -682,14 +698,14 @@
                     </sizepolicy>
                    </property>
                    <property name="text">
-                    <string>Volume</string>
+                    <string>RCAS Value</string>
                    </property>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QLabel" name="volumeValue">
+                  <widget class="QLabel" name="RCASValue">
                    <property name="text">
-                    <string>100</string>
+                    <string>0.250</string>
                    </property>
                    <property name="alignment">
                     <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
@@ -699,12 +715,12 @@
                 </layout>
                </item>
                <item>
-                <widget class="QSlider" name="volumeSlider">
+                <widget class="QSlider" name="RCASSlider">
                  <property name="maximum">
-                  <number>500</number>
+                  <number>1000</number>
                  </property>
                  <property name="value">
-                  <number>100</number>
+                  <number>250</number>
                  </property>
                  <property name="orientation">
                   <enum>Qt::Orientation::Horizontal</enum>
@@ -712,6 +728,19 @@
                 </widget>
                </item>
               </layout>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
              </item>
             </layout>
            </widget>
