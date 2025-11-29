@@ -622,7 +622,7 @@ void ModDownloader::DownloadFilePremium(int fileId, int ModId, QString modName) 
     });
 }
 
-void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) {
+void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium) {
     QNetworkRequest downloadRequest(url);
     if (isPremium)
         downloadRequest.setRawHeader("apikey", apiKey.toUtf8());
@@ -631,7 +631,7 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
     QNetworkReply* downloadReply = downloadManager->get(downloadRequest);
 
     QDialog* progressDialog = new QDialog(this);
-    progressDialog->setWindowTitle(tr("Downloading %1 , please wait...").arg(modName));
+    progressDialog->setWindowTitle(tr("Downloading %1 , please wait...").arg(m_modName));
     progressDialog->setFixedSize(400, 80);
     progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowCloseButtonHint);
 
@@ -675,6 +675,7 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
             [file, downloadReply]() { file->write(downloadReply->readAll()); });
 
     connect(downloadReply, &QNetworkReply::finished, [=, this]() {
+        QString modName = m_modName;
         if (downloadReply->error() == QNetworkReply::NoError) {
             file->flush();
             file->close();
@@ -745,6 +746,7 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
                     QString item = GetOption(options);
                     std::string option = item.toStdString();
                     folderPath = optionsSourcePath / option;
+                    modName = modName + QString(" (%1)").arg(item);
                 }
             }
 
