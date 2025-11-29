@@ -4,6 +4,7 @@
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QMessageBox>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -657,8 +658,8 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
     Common::PathToQString(zipPath, Common::GetBBLFilesPath() / "Temp");
     zipPath = zipPath + "/" + downloadReply->request().url().fileName();
 
-    QString tempPath;
-    Common::PathToQString(tempPath, Common::GetBBLFilesPath() / "Temp" / "Download");
+    QString extractPath;
+    Common::PathToQString(extractPath, Common::GetBBLFilesPath() / "Temp" / "Download");
     std::filesystem::remove_all(Common::GetBBLFilesPath() / "Temp");
     std::filesystem::create_directories(Common::GetBBLFilesPath() / "Temp" / "Download");
 
@@ -682,53 +683,98 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
             progressDialog->deleteLater();
 
             bool isZip = zipPath.right(3) == "zip";
-            isZip ? extractZip(zipPath, tempPath) : extract7z(zipPath, tempPath);
+            isZip ? ExtractZip(zipPath, extractPath) : Extract7z(zipPath, extractPath);
 
-            std::string folderName;
-            std::filesystem::path folderPath = "";
+            std::filesystem::path sourcePath = Common::PathFromQString(extractPath);
+            std::filesystem::path optionsSourcePath;
+            const QStringList modsWithOptions = {
+                "Jump on L3",
+                "Performance Drawparams",
+            };
+
             const std::vector<std::string> BBFolders = {
                 "dvdroot_ps4", "action", "chr",    "event", "facegen", "map",   "menu",
                 "movie",       "msg",    "mtd",    "obj",   "other",   "param", "paramdef",
-                "parts",       "remo",   "script", "sfx",   "shader",  "sound"};
+                "parts",       "remo",   "script", "sfx",   "shader",  "sound", "font"};
 
-            for (const auto& entry :
-                 std::filesystem::recursive_directory_iterator(Common::PathFromQString(tempPath))) {
+            //  source folder for mods with options
+            for (const auto& entry : std::filesystem::recursive_directory_iterator(sourcePath)) {
                 if (entry.is_directory()) {
-                    folderName = entry.path().filename().string();
-                    folderPath = entry.path().parent_path();
+                    std::string folderName = entry.path().filename().string();
                     if (std::find(BBFolders.begin(), BBFolders.end(), folderName) !=
                         BBFolders.end()) {
 
-                        // Performance Drawparams: mod has subfolders as options, most perf impact
-                        if (modName.contains("Performance Drawparams")) {
-                            if (!folderPath.string().contains("No AA, SSAO, Color Grading, DOF"))
-                                continue;
+                        if (entry.path().parent_path().filename().string() == "dvdroot_ps4") {
+                            optionsSourcePath =
+                                entry.path().parent_path().parent_path().parent_path();
+                        } else {
+                            optionsSourcePath = entry.path().parent_path().parent_path();
                         }
-
-                        // Jump on L3: mod has subfolders as options, choose jump only
-                        if (modName.contains("Jump on L3")) {
-                            if (!folderPath.string().contains("Jump only"))
-                                continue;
-                        }
-
                         break;
+                    }
+                }
+            }
+
+            // get options and show dialog for user to select, then set folder path
+            std::filesystem::path folderPath = "";
+            for (const QString& name : modsWithOptions) {
+                if (modName.contains(name)) {
+                    QStringList options;
+                    for (const auto& entry :
+                         std::filesystem::directory_iterator(optionsSourcePath)) {
+                        if (entry.is_directory() && entry.path() != optionsSourcePath &&
+                            entry.path().filename().string() != "Backup" &&
+                            // LOD Maps and model versions are empty for some reason
+                            !entry.path().filename().string().contains("LOD Maps and Models")) {
+
+                            for (const auto& subEntry :
+                                 std::filesystem::recursive_directory_iterator(entry.path())) {
+
+                                std::string folderName = subEntry.path().filename().string();
+                                if (std::find(BBFolders.begin(), BBFolders.end(), folderName) !=
+                                    BBFolders.end()) {
+
+                                    options.append(
+                                        QString::fromStdString(entry.path().filename().string()));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+
+                    QString item = GetOption(options);
+                    std::string option = item.toStdString();
+                    folderPath = optionsSourcePath / option;
+                }
+            }
+
+            if (folderPath.empty()) {
+                for (const auto& entry :
+                     std::filesystem::recursive_directory_iterator(sourcePath)) {
+                    if (entry.is_directory()) {
+                        std::string folderName = entry.path().filename().string();
+                        if (std::find(BBFolders.begin(), BBFolders.end(), folderName) !=
+                            BBFolders.end()) {
+
+                            folderPath = entry.path().parent_path();
+                            break;
+                        }
                     }
                 }
             }
 
             // Boczekek: rename mapstudio (maybe case sensitive on non-Windows), insert map folder
             if (modName == "Boczekek's FPS boost") {
-                std::filesystem::path dlPath = Common::GetBBLFilesPath() / "Temp" / "Download";
-                std::filesystem::rename(dlPath / "MapStudio", dlPath / "mapstudio");
-                    std::filesystem::path tempPath =
-                        Common::GetBBLFilesPath() / "Temp" / modName.toStdString();
-                    std::filesystem::create_directory(tempPath);
-                    std::filesystem::rename(dlPath, tempPath / "map");
-                    std::filesystem::rename(tempPath, dlPath);
-                    folderPath = dlPath;
+                std::filesystem::rename(sourcePath / "MapStudio", sourcePath / "mapstudio");
+                std::filesystem::path tempPath =
+                    Common::GetBBLFilesPath() / "Temp" / modName.toStdString();
+                std::filesystem::create_directory(tempPath);
+                std::filesystem::rename(sourcePath, tempPath / "map");
+                std::filesystem::rename(tempPath, sourcePath);
+                folderPath = sourcePath;
             } else if (modName == "Boczekek's FPS boost Lite") {
-                std::filesystem::path dlPath = Common::GetBBLFilesPath() / "Temp" / "Download";
-                std::filesystem::rename(dlPath / "map" / "MapStudio", dlPath / "map" / "mapstudio");
+                std::filesystem::rename(sourcePath / "map" / "MapStudio",
+                                        sourcePath / "map" / "mapstudio");
             }
 
             std::filesystem::path newPath = Common::ModPath / modName.toStdString();
@@ -738,7 +784,7 @@ void ModDownloader::StartDownload(QString url, QString modName, bool isPremium) 
                 tr("%1 has been downloaded. You can activate it using the mod manager")
                     .arg(modName.toStdString()));
 
-            QDir(tempPath).removeRecursively();
+            QDir(extractPath).removeRecursively();
             QFile::remove(zipPath);
         } else {
             QMessageBox::warning(
@@ -898,7 +944,7 @@ QString ModDownloader::BbcodeToHtml(QString BbcodeString) {
     return BbcodeString;
 }
 
-void ModDownloader::extract7z(QString inpath, QString outpath) {
+void ModDownloader::Extract7z(QString inpath, QString outpath) {
     QString processPath;
     Common::PathToQString(processPath, sevenzipPath);
     int fileCount = 0;
@@ -976,7 +1022,7 @@ void ModDownloader::extract7z(QString inpath, QString outpath) {
     progressDialog->deleteLater();
 }
 
-void ModDownloader::extractZip(QString inpath, QString outpath) {
+void ModDownloader::ExtractZip(QString inpath, QString outpath) {
     QMicroz qmz(inpath);
     qmz.setOutputFolder(outpath);
     if (!qmz)
@@ -1040,6 +1086,18 @@ void ModDownloader::SetSevenzipPath() {
         Config::SevenZipPath = sevenzipPath;
         Config::SaveLauncherSettings();
     }
+}
+
+QString ModDownloader::GetOption(QStringList options) {
+    bool selected;
+    QString item = QInputDialog::getItem(this, "Select mod Option",
+                                         "Please choose a version of the downloaded mod:", options,
+                                         0, false, &selected);
+
+    if (!selected)
+        item = GetOption(options);
+
+    return item;
 }
 
 ModDownloader::~ModDownloader() {}

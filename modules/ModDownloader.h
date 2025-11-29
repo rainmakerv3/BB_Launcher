@@ -35,8 +35,9 @@ private:
     void StartDownload(QString url, QString modNamee, bool isPremium);
     void SetSevenzipPath();
     QString BbcodeToHtml(QString BbcodeString);
-    void extract7z(QString inpath, QString outpath);
-    void extractZip(QString inpath, QString outpath);
+    void Extract7z(QString inpath, QString outpath);
+    void ExtractZip(QString inpath, QString outpath);
+    QString GetOption(QStringList options);
 
     Ui::ModDownloader* ui;
     QNetworkAccessManager* manager;
