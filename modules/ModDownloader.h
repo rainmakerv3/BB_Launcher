@@ -23,6 +23,7 @@ public:
 
 signals:
     void FileExtracted(int extracted);
+    void ExtractionDone();
 
 private:
     void GetApiKey();
@@ -33,7 +34,6 @@ private:
     void DownloadFilePremium(int fileId, int ModId, QString modName);
     void DownloadFileRegular(int fileId, int ModId, QString modName, QString modFileName);
     void StartDownload(QString url, QString modNamee, bool isPremium);
-    void SetSevenzipPath();
     QString BbcodeToHtml(QString BbcodeString);
     void Extract7z(QString inpath, QString outpath);
     void ExtractZip(QString inpath, QString outpath);
@@ -43,7 +43,6 @@ private:
     QNetworkAccessManager* manager;
     QString apiKey;
     bool isApiKeyPremium = false;
-    std::filesystem::path sevenzipPath{};
 
     QStringList fileList;
     std::vector<int> fileIdList;
