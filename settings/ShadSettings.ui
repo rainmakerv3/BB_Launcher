@@ -51,7 +51,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QScrollArea" name="generalTab">
       <property name="widgetResizable">
@@ -886,7 +886,7 @@
            <string>MB</string>
           </property>
           <property name="maximum">
-           <number>100000</number>
+           <number>16000</number>
           </property>
          </widget>
         </item>

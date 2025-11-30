@@ -37,7 +37,7 @@ private:
     QString BbcodeToHtml(QString BbcodeString);
     void Extract7z(QString inpath, QString outpath);
     void ExtractZip(QString inpath, QString outpath);
-    QString GetOption(QStringList options);
+    bool GetOption(QStringList options, QString& modName, std::string& option);
 
     Ui::ModDownloader* ui;
     QNetworkAccessManager* manager;

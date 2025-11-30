@@ -743,10 +743,14 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
                         }
                     }
 
-                    QString item = GetOption(options);
-                    std::string option = item.toStdString();
-                    folderPath = optionsSourcePath / option;
-                    modName = modName + QString(" (%1)").arg(item);
+                    std::string option;
+                    if (GetOption(options, modName, option)) {
+                        folderPath = optionsSourcePath / option;
+                    } else {
+                        QDir(extractPath).removeRecursively();
+                        QFile::remove(zipPath);
+                        return;
+                    }
                 }
             }
 
@@ -1090,16 +1094,37 @@ void ModDownloader::SetSevenzipPath() {
     }
 }
 
-QString ModDownloader::GetOption(QStringList options) {
-    bool selected;
+bool ModDownloader::GetOption(QStringList options, QString& modName, std::string& option) {
+    bool selected = true;
+    QString oldModName = modName;
     QString item = QInputDialog::getItem(this, "Select mod Option",
                                          "Please choose a version of the downloaded mod:", options,
                                          0, false, &selected);
 
-    if (!selected)
-        item = GetOption(options);
+    if (!selected) {
+        QMessageBox::StandardButton reply = QMessageBox::question(
+            this, "Confirm Cancel", "Are you sure you want to cancel download of this mod?",
+            QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
 
-    return item;
+        reply == QMessageBox::Yes ? selected = false
+                                  : selected = GetOption(options, modName, option);
+    } else {
+        modName = modName + QString(" (%1)").arg(item);
+        option = item.toStdString();
+    }
+
+    if (selected && std::filesystem::exists(Common::ModPath / modName.toStdString()) ||
+        std::filesystem::exists(ModActivePath / modName.toStdString())) {
+        QMessageBox::information(this, tr("Mod already exists"),
+                                 tr("%1 is already in your mod folder or active mod folder. Select "
+                                    "another option or cancel")
+                                     .arg(QString::fromStdString(modName.toStdString())));
+
+        modName = oldModName;
+        selected = GetOption(options, modName, option);
+    }
+
+    return selected;
 }
 
 ModDownloader::~ModDownloader() {}
