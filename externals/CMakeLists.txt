@@ -48,6 +48,10 @@ add_subdirectory(json)
 #volk
 add_subdirectory(volk)
 
+#bit7z
+set(BIT7Z_AUTO_FORMAT ON)
+add_subdirectory(bit7z)
+
 # vulkan-headers
 if (NOT TARGET Vulkan::Headers)
     set(VULKAN_HEADERS_ENABLE_MODULE OFF)
