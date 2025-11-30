@@ -23,6 +23,7 @@ public:
 
 signals:
     void FileExtracted(int extracted);
+    void ExtractionDone();
 
 private:
     void GetApiKey();

@@ -35,3 +35,7 @@
 	url = https://github.com/nlohmann/json
 	branch = develop
 	shallow = true
+[submodule "externals/bit7z"]
+	path = externals/bit7z
+	url = https://github.com/rainmakerv3/bit7z
+	shallow = true

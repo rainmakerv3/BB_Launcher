@@ -15,6 +15,7 @@
 #include <QUuid>
 #include <QWebSocket>
 #include <QtConcurrent/QtConcurrentRun>
+#include <bit7z/bitarchivereader.hpp>
 #include <nlohmann/json.hpp>
 #include <qmicroz.h>
 
@@ -951,40 +952,7 @@ QString ModDownloader::BbcodeToHtml(QString BbcodeString) {
 }
 
 void ModDownloader::Extract7z(QString inpath, QString outpath) {
-    QString processPath;
-    Common::PathToQString(processPath, sevenzipPath);
-    int fileCount = 0;
-    QProcess* infoProcess = new QProcess(this);
-    connect(infoProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
-            [infoProcess, &fileCount](int exitCode, QProcess::ExitStatus exitStatus) {
-                if (exitStatus == QProcess::NormalExit && exitCode == 0) {
-                    QByteArray output = infoProcess->readAllStandardOutput();
-                    QString outputStr(output);
-
-                    QRegularExpression regex("(\\d+)\\s+(?:files)\\b");
-                    QRegularExpressionMatch match = regex.match(outputStr);
-
-                    if (match.hasMatch()) {
-                        QString numberString = match.captured(1);
-                        fileCount = numberString.toInt();
-                    }
-                }
-                infoProcess->deleteLater();
-            });
-
-    QStringList infoArgs;
-    infoArgs << "l" << inpath;
-
-    infoProcess->start(processPath, infoArgs);
-    infoProcess->waitForFinished();
-
-    QProcess* extractProcess = new QProcess(this);
-    QStringList extractArgs;
-    extractArgs << "x";
-    extractArgs << QDir::toNativeSeparators(inpath);
-    extractArgs << "-o" + QDir::toNativeSeparators(outpath);
-    extractArgs << "-bso0";
-    extractArgs << "-bsp1";
+    using namespace bit7z;
 
     QDialog* progressDialog = new QDialog(this);
     progressDialog->setWindowTitle(tr("Extracting compressed archive"));
@@ -997,31 +965,46 @@ void ModDownloader::Extract7z(QString inpath, QString outpath) {
     progressBar->setRange(0, 100);
 
     layout->addWidget(progressBar);
-    if (fileCount != 0)
-        layout->addWidget(label);
+    layout->addWidget(label);
     progressDialog->setLayout(layout);
     progressDialog->show();
 
-    connect(extractProcess, &QProcess::readyRead, this,
-            [this, extractProcess, progressBar, label, fileCount]() {
-                QString output = extractProcess->readAllStandardOutput();
-                QRegularExpression percentageMessage("^(\\s*)(\\d+)(%.*)$");
-                QRegularExpressionMatch match = percentageMessage.match(output);
-                if (match.hasMatch()) {
-                    const int percentageExported = match.captured(2).toInt();
-                    progressBar->setValue(percentageExported);
-                    if (fileCount != 0)
-                        label->setText(QString("%1 / %2 files extracted")
-                                           .arg(QString::number(static_cast<int>(
-                                               fileCount * percentageExported / 100.f)))
-                                           .arg(fileCount));
-                }
+#if defined _WIN32
+    Bit7zLibrary lib{"7z.dll"};
+#elif defined __APPLE__
+    std::filesystem::path libPath =
+        std::filesystem::current_path().parent_path() / "Resources" / "7z.so";
+    Bit7zLibrary lib{libPath};
+#else
+    const char* appDir = std::getenv("APPDIR");
+    std::filesystem::path libPath =
+        appDir != nullptr ? std::filesystem::path(appDir) / "usr" / "bin" / "7z.so" : "./7z.so";
+    Bit7zLibrary lib{libPath};
+#endif
+
+    BitArchiveReader archive(lib, inpath.toStdString(), BitFormat::Auto);
+    int fileCount = archive.filesCount();
+
+    connect(this, &ModDownloader::FileExtracted, progressBar,
+            [this, fileCount, progressBar, label](int extracted) {
+                progressBar->setValue(static_cast<int>((extracted * 100.f) / fileCount));
+                label->setText(QString("%1 / %2 files extracted").arg(extracted).arg(fileCount));
             });
 
-    extractProcess->start(processPath, extractArgs);
+    QFuture<void> future = QtConcurrent::run([this, inpath, outpath, &lib, &archive]() {
+        int extractedCount = 0;
+        for (const auto& item : archive) {
+            std::vector<uint32_t> items = {item.index()};
+            archive.extractTo(outpath.toStdString(), items);
+            emit FileExtracted(extractedCount);
+            extractedCount += 1;
+        }
+
+        emit ExtractionDone();
+    });
 
     QEventLoop extractloop;
-    connect(extractProcess, &QProcess::finished, &extractloop, &QEventLoop::quit);
+    connect(this, &ModDownloader::ExtractionDone, &extractloop, &QEventLoop::quit);
     extractloop.exec();
 
     progressDialog->close();
@@ -1055,7 +1038,7 @@ void ModDownloader::ExtractZip(QString inpath, QString outpath) {
                 label->setText(QString("%1 / %2 files extracted").arg(extracted).arg(qmz.count()));
             });
 
-    QFuture<void> future = QtConcurrent::run([this, &qmz, progressBar, label]() {
+    QFuture<void> future = QtConcurrent::run([this, &qmz]() {
         for (int i = 0; i < qmz.count(); ++i) {
             qmz.extractIndex(i);
             emit FileExtracted(i);
