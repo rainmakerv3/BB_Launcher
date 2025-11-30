@@ -169,6 +169,10 @@ void VersionDialog::onItemChanged(QTreeWidgetItem* item, int column) {
 }
 
 void VersionDialog::loadJson() {
+    QMessageBox::information(this, "Temporarily disabled",
+                             "Disabled because of incoming changes to how the json works which "
+                             "will probably break this.");
+    return;
     QString jsonPath =
         QFileDialog::getOpenFileName(this, "Select ShadPS4 versions.json file", QDir::homePath(),
                                      "shadPS4 versions json file (versions.json)");

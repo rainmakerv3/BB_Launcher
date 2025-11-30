@@ -26,6 +26,8 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
     ui->tabWidgetSettings->setUsesScrollButtons(false);
     initialHeight = this->height();
 
+    ui->tabWidgetSettings->setCurrentIndex(0);
+
     if (game_specific) {
         ui->tabWidgetSettings->setTabVisible(2, false);
     } else {
