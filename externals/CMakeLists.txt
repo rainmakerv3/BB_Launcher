@@ -38,9 +38,6 @@ if (NOT TARGET SDL3::SDL3)
     add_subdirectory(sdl3)
 endif()
 
-# microz
-add_subdirectory(microz)
-
 #nlohmann json 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(json)
