@@ -33,7 +33,7 @@ std::filesystem::path installPath;
 std::filesystem::path installUpdatePath;
 std::filesystem::path shadPs4Executable;
 
-const char VERSION[] = "Release12.08";
+const char VERSION[] = "Release12.09";
 
 std::filesystem::path GetCurrentPath(bool getLinuxFileName) {
     std::filesystem::path currentPath;
