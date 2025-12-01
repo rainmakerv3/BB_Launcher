@@ -130,7 +130,6 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     connect(ui->modComboBox, &QComboBox::currentIndexChanged, this, [this]() {
         int index = ui->modComboBox->currentIndex();
         LoadModInfo(modIDmap[index]);
-        ui->fileDesc->setText("Selected File Description");
     });
 
     connect(ui->setApiButton, &QPushButton::pressed, this, [this]() {
@@ -434,6 +433,16 @@ void ModDownloader::LoadModInfo(int modId) {
             }
 
             for (auto& item : jsonDoc.items()) {
+                if (item.key() == "status") {
+                    std::string status = item.value().get<std::string>();
+                    if (status != "published") {
+                        QMessageBox::information(this, "Mod unavailable",
+                                                 "This mod is currently not published. It may have "
+                                                 "been removed or hidden by the mod owner.");
+                        return;
+                    }
+                }
+
                 if (item.key() == "name") {
                     ui->modNameLabel->setText(
                         "Name: " + QString::fromStdString(item.value().get<std::string>()));
@@ -466,6 +475,8 @@ void ModDownloader::LoadModInfo(int modId) {
                     ui->modDesc->setHtml(BbcodeToHtml(desc));
                 }
             }
+
+            GetModFiles(modId);
         } else {
             ui->validApiLabel->setStyleSheet("color: red;");
             ui->validApiLabel->setText("No Valid Nexus Mods API Key Set");
@@ -475,8 +486,6 @@ void ModDownloader::LoadModInfo(int modId) {
 
         reply->deleteLater();
     });
-
-    GetModFiles(modId);
 }
 
 void ModDownloader::GetModImage(QUrl url) {
@@ -546,6 +555,7 @@ void ModDownloader::GetModFiles(int modId) {
 
             ui->fileListWidget->clear();
             ui->fileListWidget->addItems(fileList);
+            ui->fileDesc->setText("Selected File Description");
         } else {
             QMessageBox::warning(this, tr("Error"),
                                  QString(tr("Network error:") + "\n" + reply->errorString()));
@@ -964,8 +974,14 @@ void ModDownloader::ExtractArchive(QString inpath, QString outpath) {
                 label->setText(QString("%1 / %2 bytes extracted").arg(processed).arg(totalSize));
             });
 
-    QFuture<void> future = QtConcurrent::run(
-        [this, inpath, outpath, &lib, &archive]() { archive.extractTo(outpath.toStdString()); });
+    QFuture<void> future = QtConcurrent::run([this, inpath, outpath, &lib, &archive]() {
+        try {
+            archive.extractTo(outpath.toStdString());
+        } catch (const BitException& ex) {
+            QMessageBox::information(this, tr("Extraction failed"),
+                                     tr("File extraction error: ").arg(ex.what()));
+        }
+    });
 
     QFutureWatcher<void> watcher;
     watcher.setFuture(future);
