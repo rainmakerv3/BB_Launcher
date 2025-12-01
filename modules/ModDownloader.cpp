@@ -17,7 +17,6 @@
 #include <QtConcurrent/QtConcurrentRun>
 #include <bit7z/bitarchivereader.hpp>
 #include <nlohmann/json.hpp>
-#include <qmicroz.h>
 
 #include "ModDownloader.h"
 #include "settings/config.h"
@@ -653,9 +652,7 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
             progressDialog->close();
             progressDialog->deleteLater();
 
-            bool isZip = zipPath.right(3) == "zip";
-            isZip ? ExtractZip(zipPath, extractPath) : Extract7z(zipPath, extractPath);
-
+            ExtractArchive(zipPath, extractPath);
             std::filesystem::path sourcePath = Common::PathFromQString(extractPath);
             std::filesystem::path optionsSourcePath;
             const QStringList modsWithOptions = {
@@ -920,7 +917,7 @@ QString ModDownloader::BbcodeToHtml(QString BbcodeString) {
     return BbcodeString;
 }
 
-void ModDownloader::Extract7z(QString inpath, QString outpath) {
+void ModDownloader::ExtractArchive(QString inpath, QString outpath) {
     using namespace bit7z;
 
     QDialog* progressDialog = new QDialog(this);
@@ -951,68 +948,24 @@ void ModDownloader::Extract7z(QString inpath, QString outpath) {
     Bit7zLibrary lib{libPath};
 #endif
 
+    uint64_t totalSize = 0;
     BitArchiveReader archive(lib, inpath.toStdString(), BitFormat::Auto);
-    int fileCount = archive.filesCount();
 
-    connect(this, &ModDownloader::FileExtracted, progressBar,
-            [this, fileCount, progressBar, label](int extracted) {
-                progressBar->setValue(static_cast<int>((extracted * 100.f) / fileCount));
-                label->setText(QString("%1 / %2 files extracted").arg(extracted).arg(fileCount));
-            });
-
-    QFuture<void> future = QtConcurrent::run([this, inpath, outpath, &lib, &archive]() {
-        int extractedCount = 0;
-        for (const auto& item : archive) {
-            std::vector<uint32_t> items = {item.index()};
-            archive.extractTo(outpath.toStdString(), items);
-            emit FileExtracted(extractedCount);
-            extractedCount += 1;
-        }
-
-        emit ExtractionDone();
+    archive.setTotalCallback([this, &totalSize](uint64_t size) { totalSize = size; });
+    archive.setProgressCallback([this](uint64_t processedSize) -> bool {
+        QMetaObject::invokeMethod(this, &ModDownloader::FileExtracted, Qt::QueuedConnection,
+                                  processedSize);
+        return true;
     });
 
-    QEventLoop extractloop;
-    connect(this, &ModDownloader::ExtractionDone, &extractloop, &QEventLoop::quit);
-    extractloop.exec();
-
-    progressDialog->close();
-    progressDialog->deleteLater();
-}
-
-void ModDownloader::ExtractZip(QString inpath, QString outpath) {
-    QMicroz qmz(inpath);
-    qmz.setOutputFolder(outpath);
-    if (!qmz)
-        return;
-
-    QDialog* progressDialog = new QDialog(this);
-    progressDialog->setWindowTitle(tr("Extracting zip archive"));
-    progressDialog->setFixedSize(400, 80);
-    progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowCloseButtonHint);
-
-    QLabel* label = new QLabel("Initializing", progressDialog);
-    QVBoxLayout* layout = new QVBoxLayout(progressDialog);
-    QProgressBar* progressBar = new QProgressBar(progressDialog);
-    progressBar->setRange(0, 100);
-
-    layout->addWidget(progressBar);
-    layout->addWidget(label);
-    progressDialog->setLayout(layout);
-    progressDialog->show();
-
     connect(this, &ModDownloader::FileExtracted, progressBar,
-            [this, &qmz, progressBar, label](int extracted) {
-                progressBar->setValue(static_cast<int>((extracted * 100.f) / qmz.count()));
-                label->setText(QString("%1 / %2 files extracted").arg(extracted).arg(qmz.count()));
+            [this, &totalSize, progressBar, label](int processed) {
+                progressBar->setValue(static_cast<int>((processed * 100.f) / totalSize));
+                label->setText(QString("%1 / %2 bytes extracted").arg(processed).arg(totalSize));
             });
 
-    QFuture<void> future = QtConcurrent::run([this, &qmz]() {
-        for (int i = 0; i < qmz.count(); ++i) {
-            qmz.extractIndex(i);
-            emit FileExtracted(i);
-        }
-    });
+    QFuture<void> future = QtConcurrent::run(
+        [this, inpath, outpath, &lib, &archive]() { archive.extractTo(outpath.toStdString()); });
 
     QFutureWatcher<void> watcher;
     watcher.setFuture(future);

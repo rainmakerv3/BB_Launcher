@@ -35,8 +35,7 @@ private:
     void DownloadFileRegular(int fileId, int ModId, QString modName, QString modFileName);
     void StartDownload(QString url, QString modNamee, bool isPremium);
     QString BbcodeToHtml(QString BbcodeString);
-    void Extract7z(QString inpath, QString outpath);
-    void ExtractZip(QString inpath, QString outpath);
+    void ExtractArchive(QString inpath, QString outpath);
     bool GetOption(QStringList options, QString& modName, std::string& option);
 
     Ui::ModDownloader* ui;
