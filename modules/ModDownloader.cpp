@@ -612,7 +612,6 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
     QDialog* progressDialog = new QDialog(this);
     progressDialog->setWindowTitle(tr("Downloading %1 , please wait...").arg(m_modName));
     progressDialog->setFixedSize(400, 80);
-    progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowCloseButtonHint);
 
     QLabel* label = new QLabel("Initializing", progressDialog);
     QVBoxLayout* layout = new QVBoxLayout(progressDialog);
@@ -649,6 +648,9 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
         downloadReply->deleteLater();
         return;
     }
+
+    connect(progressDialog, &QDialog::rejected, this,
+            [zipPath, file, downloadReply]() { downloadReply->abort(); });
 
     connect(downloadReply, &QNetworkReply::readyRead, this,
             [file, downloadReply]() { file->write(downloadReply->readAll()); });
@@ -771,9 +773,11 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
             QFile::remove(zipPath);
         } else {
             QMessageBox::warning(
-                this, tr("Error"),
-                QString(tr("Network error:") + "\n" + downloadReply->errorString()));
+                this, tr("Download incomplete"),
+                QString(tr("Download incomplete:") + "\n" + downloadReply->errorString()));
 
+            file->flush();
+            file->close();
             progressDialog->close();
             progressDialog->deleteLater();
             QFile::remove(zipPath);
