@@ -6,6 +6,7 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_gamepad.h>
 
+#include "RightClickButton.h"
 #include "modules/ipc/ipc_client.h"
 
 namespace Ui {
@@ -27,9 +28,9 @@ private Q_SLOTS:
     void SetDefault();
     void OnProfileChanged();
     void UpdateLightbarColor();
-    void CheckMapping(QPushButton*& button);
-    void StartTimer(QPushButton*& button, bool isButton);
-    void ConnectAxisInputs(QPushButton*& button);
+    void CheckMapping(QRightClickButton*& button);
+    void StartTimer(QRightClickButton*& button, bool isButton);
+    void ConnectAxisInputs(QRightClickButton*& button);
     void ActiveControllerChanged(int value);
 
 private:
@@ -49,8 +50,8 @@ private:
     void EnableMappingButtons();
     void Cleanup();
 
-    QList<QPushButton*> ButtonsList;
-    QList<QPushButton*> AxisList;
+    QList<QRightClickButton*> ButtonsList;
+    QList<QRightClickButton*> AxisList;
     QMap<int, QString> pressedButtons;
 
     bool L2Pressed = false;
@@ -61,7 +62,7 @@ private:
     QString mapping;
     int MappingTimer;
     QTimer* timer;
-    QPushButton* MappingButton;
+    QRightClickButton* MappingButton;
     SDL_Gamepad* gamepad = nullptr;
     QFuture<void> Polling;
     SDL_JoystickID* gamepads;

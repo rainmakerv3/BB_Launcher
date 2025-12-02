@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>988</width>
-    <height>581</height>
+    <height>635</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
      <x>3</x>
      <y>2</y>
      <width>981</width>
-     <height>571</height>
+     <height>591</height>
     </rect>
    </property>
    <property name="widgetResizable">
@@ -34,7 +34,7 @@
       <x>0</x>
       <y>0</y>
       <width>979</width>
-      <height>569</height>
+      <height>589</height>
      </rect>
     </property>
     <widget class="QWidget" name="verticalLayoutWidget_3">
@@ -43,7 +43,7 @@
        <x>3</x>
        <y>7</y>
        <width>971</width>
-       <height>559</height>
+       <height>581</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="HotkeysLayout">
@@ -84,7 +84,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QPushButton" name="fpsButtonPad">
+            <widget class="QRightClickButton" name="fpsButtonPad">
              <property name="focusPolicy">
               <enum>Qt::FocusPolicy::NoFocus</enum>
              </property>
@@ -109,7 +109,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_5">
            <item>
-            <widget class="QPushButton" name="quitButtonPad">
+            <widget class="QRightClickButton" name="quitButtonPad">
              <property name="focusPolicy">
               <enum>Qt::FocusPolicy::NoFocus</enum>
              </property>
@@ -134,7 +134,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_6">
            <item>
-            <widget class="QPushButton" name="reloadButtonPad">
+            <widget class="QRightClickButton" name="reloadButtonPad">
              <property name="text">
               <string>unmapped</string>
              </property>
@@ -160,7 +160,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_3">
            <item>
-            <widget class="QPushButton" name="fullscreenButtonPad">
+            <widget class="QRightClickButton" name="fullscreenButtonPad">
              <property name="focusPolicy">
               <enum>Qt::FocusPolicy::NoFocus</enum>
              </property>
@@ -185,7 +185,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <item>
-            <widget class="QPushButton" name="pauseButtonPad">
+            <widget class="QRightClickButton" name="pauseButtonPad">
              <property name="focusPolicy">
               <enum>Qt::FocusPolicy::NoFocus</enum>
              </property>
@@ -249,7 +249,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_7">
            <item>
-            <widget class="QPushButton" name="fpsButtonKB">
+            <widget class="QRightClickButton" name="fpsButtonKB">
              <property name="focusPolicy">
               <enum>Qt::FocusPolicy::NoFocus</enum>
              </property>
@@ -274,7 +274,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_9">
            <item>
-            <widget class="QPushButton" name="quitButtonKB">
+            <widget class="QRightClickButton" name="quitButtonKB">
              <property name="focusPolicy">
               <enum>Qt::FocusPolicy::NoFocus</enum>
              </property>
@@ -299,7 +299,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_11">
            <item>
-            <widget class="QPushButton" name="reloadButtonKB">
+            <widget class="QRightClickButton" name="reloadButtonKB">
              <property name="focusPolicy">
               <enum>Qt::FocusPolicy::NoFocus</enum>
              </property>
@@ -328,7 +328,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_8">
            <item>
-            <widget class="QPushButton" name="fullscreenButtonKB">
+            <widget class="QRightClickButton" name="fullscreenButtonKB">
              <property name="focusPolicy">
               <enum>Qt::FocusPolicy::NoFocus</enum>
              </property>
@@ -353,7 +353,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_10">
            <item>
-            <widget class="QPushButton" name="pauseButtonKB">
+            <widget class="QRightClickButton" name="pauseButtonKB">
              <property name="focusPolicy">
               <enum>Qt::FocusPolicy::NoFocus</enum>
              </property>
@@ -378,7 +378,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_12">
            <item>
-            <widget class="QPushButton" name="renderdocButton">
+            <widget class="QRightClickButton" name="renderdocButton">
              <property name="focusPolicy">
               <enum>Qt::FocusPolicy::NoFocus</enum>
              </property>
@@ -407,7 +407,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_13">
            <item>
-            <widget class="QPushButton" name="mouseJoystickButton">
+            <widget class="QRightClickButton" name="mouseJoystickButton">
              <property name="focusPolicy">
               <enum>Qt::FocusPolicy::NoFocus</enum>
              </property>
@@ -432,7 +432,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_14">
            <item>
-            <widget class="QPushButton" name="mouseGyroButton">
+            <widget class="QRightClickButton" name="mouseGyroButton">
              <property name="focusPolicy">
               <enum>Qt::FocusPolicy::NoFocus</enum>
              </property>
@@ -504,25 +504,24 @@
        </widget>
       </item>
       <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
+       <widget class="QLabel" name="tipLabel_3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <bold>true</bold>
+         </font>
         </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="QDialogButtonBox" name="buttonBox">
-        <property name="orientation">
-         <enum>Qt::Orientation::Horizontal</enum>
+        <property name="text">
+         <string>Tip: Unmap with right-click</string>
         </property>
-        <property name="standardButtons">
-         <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::RestoreDefaults|QDialogButtonBox::StandardButton::Save</set>
+        <property name="alignment">
+         <set>Qt::AlignmentFlag::AlignCenter</set>
         </property>
        </widget>
       </item>
@@ -530,7 +529,30 @@
     </widget>
    </widget>
   </widget>
+  <widget class="QDialogButtonBox" name="buttonBox">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>600</y>
+     <width>969</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Orientation::Horizontal</enum>
+   </property>
+   <property name="standardButtons">
+    <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::RestoreDefaults|QDialogButtonBox::StandardButton::Save</set>
+   </property>
+  </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QRightClickButton</class>
+   <extends>QPushButton</extends>
+   <header>settings/RightClickButton.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

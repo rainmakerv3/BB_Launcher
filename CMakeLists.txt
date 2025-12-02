@@ -173,6 +173,8 @@ set(PROJECT_SOURCES
     settings/LauncherSettings.h
     settings/LauncherSettings.cpp
     settings/LauncherSettings.ui
+    settings/RightClickButton.cpp    
+    settings/RightClickButton.h  
     settings/ShadCheatsPatches.cpp    
     settings/ShadCheatsPatches.h    
     settings/ShadSettings.h

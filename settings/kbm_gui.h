@@ -3,6 +3,7 @@
 
 #include <QDialog>
 
+#include "RightClickButton.h"
 #include "modules/ipc/ipc_client.h"
 
 namespace Ui {
@@ -21,8 +22,8 @@ signals:
 private Q_SLOTS:
     void SaveKBMConfig(bool CloseOnSave);
     void SetDefault();
-    void CheckMapping(QPushButton*& button);
-    void StartTimer(QPushButton*& button);
+    void CheckMapping(QRightClickButton*& button);
+    void StartTimer(QRightClickButton*& button);
     void onHelpClicked();
 
 private:
@@ -53,8 +54,8 @@ private:
     QString mapping;
     int MappingTimer;
     QTimer* timer;
-    QPushButton* MappingButton;
-    QList<QPushButton*> ButtonsList;
+    QRightClickButton* MappingButton;
+    QList<QRightClickButton*> ButtonsList;
     QMap<int, QString> pressedKeys;
 
     const std::vector<std::string> ControllerInputs = {

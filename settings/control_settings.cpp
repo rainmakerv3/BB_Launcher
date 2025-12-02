@@ -16,7 +16,6 @@
 ControlSettings::ControlSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
     : QDialog(parent), m_ipc_client(ipc_client), ui(new Ui::ControlSettings) {
     ui->setupUi(this);
-    this->setFixedWidth(this->width());
     ui->PerGameCheckBox->setChecked(!Config::UnifiedInputConfig);
 
     SDL_InitSubSystem(SDL_INIT_GAMEPAD);
@@ -54,11 +53,19 @@ ControlSettings::ControlSettings(std::shared_ptr<IpcClient> ipc_client, QWidget*
     for (auto& button : ButtonsList) {
         connect(button, &QPushButton::clicked, this,
                 [this, &button]() { StartTimer(button, true); });
+
+        connect(button, &QRightClickButton::rightClicked, this,
+                [this, &button]() { button->setText("unmapped"); });
     }
 
     for (auto& button : AxisList) {
         connect(button, &QPushButton::clicked, this,
                 [this, &button]() { StartTimer(button, false); });
+
+        connect(button, &QRightClickButton::rightClicked, this, [this, &button]() {
+            button->setText("unmapped");
+            ConnectAxisInputs(button);
+        });
     }
 
     connect(ui->buttonBox, &QDialogButtonBox::clicked, this, [this](QAbstractButton* button) {
@@ -770,7 +777,7 @@ void ControlSettings::EnableMappingButtons() {
     ui->buttonBox->button(QDialogButtonBox::RestoreDefaults)->setEnabled(true);
 }
 
-void ControlSettings::ConnectAxisInputs(QPushButton*& button) {
+void ControlSettings::ConnectAxisInputs(QRightClickButton*& button) {
     QString input = button->text();
     if (button == ui->LStickUpButton) {
         ui->LStickDownButton->setText(input);
@@ -791,7 +798,7 @@ void ControlSettings::ConnectAxisInputs(QPushButton*& button) {
     }
 }
 
-void ControlSettings::StartTimer(QPushButton*& button, bool isButton) {
+void ControlSettings::StartTimer(QRightClickButton*& button, bool isButton) {
     MappingTimer = 3;
     isButton ? EnableButtonMapping = true : EnableAxisMapping = true;
     MappingCompleted = false;
@@ -808,7 +815,7 @@ void ControlSettings::StartTimer(QPushButton*& button, bool isButton) {
     connect(timer, &QTimer::timeout, this, [this]() { CheckMapping(MappingButton); });
 }
 
-void ControlSettings::CheckMapping(QPushButton*& button) {
+void ControlSettings::CheckMapping(QRightClickButton*& button) {
     MappingTimer -= 1;
     EnableButtonMapping
         ? button->setText(tr("Press a button") + " [" + QString::number(MappingTimer) + "]")

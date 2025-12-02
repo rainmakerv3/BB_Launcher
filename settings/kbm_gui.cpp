@@ -9,6 +9,7 @@
 #include <QTimer>
 #include <QWheelEvent>
 
+#include "RightClickButton.h"
 #include "config.h"
 #include "kbm_config_dialog.h"
 #include "kbm_gui.h"
@@ -22,7 +23,6 @@ KBMSettings::KBMSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
     : QDialog(parent), m_ipc_client(ipc_client), ui(new Ui::KBMSettings) {
 
     ui->setupUi(this);
-    this->setFixedWidth(this->width());
     ui->PerGameCheckBox->setChecked(!Config::UnifiedInputConfig);
     ui->TextEditorButton->setFocus();
     this->setFocusPolicy(Qt::StrongFocus);
@@ -65,7 +65,7 @@ KBMSettings::KBMSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
 
     ButtonConnects();
     SetUIValuestoMappings("default");
-    installEventFilter(this);
+    qApp->installEventFilter(this);
 
     ui->ProfileComboBox->setCurrentText("Common Config");
     ui->TitleLabel->setText("Common Config");
@@ -148,6 +148,9 @@ KBMSettings::KBMSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
 void KBMSettings::ButtonConnects() {
     for (auto& button : ButtonsList) {
         connect(button, &QPushButton::clicked, this, [this, &button]() { StartTimer(button); });
+
+        connect(button, &QRightClickButton::rightClicked, this,
+                [this, &button]() { button->setText("unmapped"); });
     }
 }
 
@@ -543,7 +546,7 @@ void KBMSettings::onHelpClicked() {
     }
 }
 
-void KBMSettings::StartTimer(QPushButton*& button) {
+void KBMSettings::StartTimer(QRightClickButton*& button) {
     MappingTimer = 3;
     EnableMapping = true;
     MappingCompleted = false;
@@ -557,7 +560,7 @@ void KBMSettings::StartTimer(QPushButton*& button) {
     timer->start(1000);
 }
 
-void KBMSettings::CheckMapping(QPushButton*& button) {
+void KBMSettings::CheckMapping(QRightClickButton*& button) {
     MappingTimer -= 1;
     button->setText("Press a key [" + QString::number(MappingTimer) + "]");
 
@@ -953,8 +956,9 @@ bool KBMSettings::eventFilter(QObject* obj, QEvent* event) {
 
                 // cancel mapping
             case Qt::Key_Escape:
-                SetMapping("unmapped");
+                pressedKeys.insert(135, "escape");
                 break;
+
             default:
                 break;
             }
