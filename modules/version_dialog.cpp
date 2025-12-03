@@ -18,8 +18,8 @@
 #include <QTextStream>
 #include <QTimer>
 #include <QVBoxLayout>
-#include <bit7z/bitarchivereader.hpp>
 #include <nlohmann/json.hpp>
+#include <qmicroz.h>
 #include <sys/stat.h>
 
 #include "Common.h"
@@ -382,8 +382,6 @@ void VersionDialog::CheckVersionsList(const bool showMessage) {
 }
 
 void VersionDialog::InstallSelectedVersion() {
-    using namespace bit7z;
-
     if (ui->downloadTreeWidget->selectedItems().empty()) {
         QMessageBox::information(this, "Error", "Select a version first");
         return;
@@ -535,89 +533,68 @@ void VersionDialog::InstallSelectedVersion() {
                 connect(downloadReply, &QNetworkReply::readyRead, this,
                         [file, downloadReply]() { file->write(downloadReply->readAll()); });
 
-                connect(
-                    downloadReply, &QNetworkReply::finished, this,
-                    [this, file, downloadReply, progressDialog, release, zipPath, versionName,
-                     downloadFolder]() {
-                        file->flush();
-                        file->close();
-                        file->deleteLater();
-                        downloadReply->deleteLater();
+                connect(downloadReply, &QNetworkReply::finished, this,
+                        [this, file, downloadReply, progressDialog, release, zipPath, versionName,
+                         downloadFolder]() {
+                            file->flush();
+                            file->close();
+                            file->deleteLater();
+                            downloadReply->deleteLater();
 
-                        QString buildId;
-                        QString folderName;
-                        if (versionName == "Pre-release") {
-                            folderName = "Pre-release";
-                            buildId = release["tag_name"].toString().right(40);
-                        } else {
-                            folderName = release["tag_name"].toString();
-                            buildId = release["tag_name"].toString();
-                        }
-#if defined _WIN32
-                        Bit7zLibrary lib{"7z.dll"};
-#elif defined __APPLE__
-                        std::filesystem::path libPath =
-                            std::filesystem::current_path().parent_path() / "Resources" / "7z.so";
-                        Bit7zLibrary lib{libPath};
-#else
-                        const char* appDir = std::getenv("APPDIR");
-                        std::filesystem::path libPath =
-                            appDir != nullptr
-                                ? std::filesystem::path(appDir) / "usr" / "bin" / "7z.so"
-                                : "./7z.so";
-                        Bit7zLibrary lib{libPath};
-#endif
+                            QString buildId;
+                            QString folderName;
+                            if (versionName == "Pre-release") {
+                                folderName = "Pre-release";
+                                buildId = release["tag_name"].toString().right(40);
+                            } else {
+                                folderName = release["tag_name"].toString();
+                                buildId = release["tag_name"].toString();
+                            }
 
-                        QString destPath = downloadFolder + "/" + folderName;
+                            QString destPath = downloadFolder + "/" + folderName;
+                            QMicroz::extract(zipPath, destPath);
+                            std::filesystem::remove(Common::PathFromQString(zipPath));
 
-                        try {
-                            BitArchiveReader archive(lib, zipPath.toStdString(), BitFormat::Auto);
-                            archive.extractTo(destPath.toStdString());
-                        } catch (const BitException& ex) {
-                            QMessageBox::information(this, tr("Extraction failed"),
-                                                     tr("File extraction error: ").arg(ex.what()));
-                        }
-
-                        QMessageBox::information(
-                            this, tr("Confirm Download"),
-                            tr("Version %1 has been downloaded.").arg(versionName));
-
-                        std::string type = versionName == "Pre-release" ? "Pre-release" : "Release";
-                        QString exeName;
-#ifdef Q_OS_WIN
-                        exeName = "/shadPS4.exe";
-#elif defined(Q_OS_LINUX)
-                        exeName = "/Shadps4-sdl.AppImage";
-#elif defined(Q_OS_MACOS)
-                        exeName = "/shadps4";
-#endif
-
-                        QString fullExePath = destPath + exeName;
-                        QFile(zipPath).remove();
-
-#ifndef Q_OS_WIN
-                        mode_t permissions = S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
-                        if (chmod(fullExePath.toStdString().c_str(), permissions) != 0) {
                             QMessageBox::information(
-                                this, "Error setting permissions",
-                                "Could not set access permissions for " + fullExePath +
-                                    ". Set permissions manually before launching.");
-                        }
+                                this, tr("Confirm Download"),
+                                tr("Version %1 has been downloaded.").arg(versionName));
+
+                            std::string type =
+                                versionName == "Pre-release" ? "Pre-release" : "Release";
+                            QString exeName;
+#ifdef Q_OS_WIN
+                            exeName = "/shadPS4.exe";
+#elif defined(Q_OS_LINUX)
+                            exeName = "/Shadps4-sdl.AppImage";
+#elif defined(Q_OS_MACOS)
+                            exeName = "/shadps4";
 #endif
 
-                        Config::Build build;
-                        build.path = fullExePath.toStdString();
-                        build.type = type;
-                        build.id = buildId.toStdString();
-                        build.modified =
-                            Config::GetLastModifiedString(Common::PathFromQString(fullExePath));
-                        buildInfo.push_back(build);
-                        LoadInstalledList();
-                        SaveBuilds();
+                            QString fullExePath = destPath + exeName;
+                            std::filesystem::remove(Common::PathFromQString(zipPath));
+#ifndef Q_OS_WIN
+                            mode_t permissions = S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
+                            if (chmod(fullExePath.toStdString().c_str(), permissions) != 0) {
+                                QMessageBox::information(this, "Error setting permissions",
+                                                         "Could not set access permissions for " + fullExePath +
+                                                             ". Set permissions manually before launching.");
+                            }
+#endif
 
-                        progressDialog->close();
-                        progressDialog->deleteLater();
-                    });
+
+                            Config::Build build;
+                            build.path = fullExePath.toStdString();
+                            build.type = type;
+                            build.id = buildId.toStdString();
+                            build.modified =
+                                Config::GetLastModifiedString(Common::PathFromQString(fullExePath));
+                            buildInfo.push_back(build);
+                            LoadInstalledList();
+                            SaveBuilds();
+
+                            progressDialog->close();
+                            progressDialog->deleteLater();
+                        });
                 reply->deleteLater();
             });
 }
@@ -1059,8 +1036,6 @@ void VersionDialog::installPreReleaseByTag(const QString& tagName) {
 }
 
 void VersionDialog::showDownloadDialog(const QString& tagName, const QString& downloadUrl) {
-    using namespace bit7z;
-
     QDialog* dlg = new QDialog(this);
     dlg->setWindowTitle(tr("Downloading Pre‑release, please wait..."));
     QVBoxLayout* lay = new QVBoxLayout(dlg);
@@ -1125,29 +1100,8 @@ void VersionDialog::showDownloadDialog(const QString& tagName, const QString& do
 
         QString fullExePath = preReleaseFolder + exeName;
         std::filesystem::remove(Common::PathFromQString(fullExePath));
-
-#if defined _WIN32
-        Bit7zLibrary lib{"7z.dll"};
-#elif defined __APPLE__
-        std::filesystem::path libPath =
-            std::filesystem::current_path().parent_path() / "Resources" / "7z.so";
-        Bit7zLibrary lib{libPath};
-#else
-        const char* appDir = std::getenv("APPDIR");
-        std::filesystem::path libPath =
-            appDir != nullptr ? std::filesystem::path(appDir) / "usr" / "bin" / "7z.so" : "./7z.so";
-        Bit7zLibrary lib{libPath};
-#endif
-
-        try {
-            BitArchiveReader archive(lib, zipPath.toStdString(), BitFormat::Auto);
-            archive.extractTo(preReleaseFolder.toStdString());
-        } catch (const BitException& ex) {
-            QMessageBox::information(this, tr("Extraction failed"),
-                                     tr("File extraction error: ").arg(ex.what()));
-        }
-
-        QFile(zipPath).remove();
+        QMicroz::extract(zipPath, preReleaseFolder);
+        std::filesystem::remove(Common::PathFromQString(zipPath));
 
 #ifndef Q_OS_WIN
         mode_t permissions = S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;

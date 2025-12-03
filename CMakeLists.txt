@@ -184,7 +184,6 @@ set(PROJECT_SOURCES
     settings/updater/CheckUpdate.cpp
     settings/updater/CheckUpdate.h
     dist/BBIcon.icns
-    dist/7z.so
     ${CMAKE_CURRENT_BINARY_DIR}/settings/updater/BuildInfo.cpp
     ${RESOURCE_FILES}
 )
@@ -203,7 +202,7 @@ endif()
 target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network Qt6::Quick Qt6::QuickWidgets Qt6::WebView Qt6::WebSockets)
-target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 pugixml::pugixml SDL3::SDL3 Vulkan::Headers volk_headers nlohmann_json::nlohmann_json bit7z)
+target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 pugixml::pugixml SDL3::SDL3 Vulkan::Headers qmicroz volk_headers nlohmann_json::nlohmann_json)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux" AND USE_WEBENGINE)
     target_link_libraries(BB_Launcher PRIVATE Qt6::WebEngineCore Qt6::WebEngineWidgets Qt6::WebChannel)
@@ -224,8 +223,6 @@ set_target_properties(BB_Launcher PROPERTIES
 set_source_files_properties(dist/BBIcon.icns PROPERTIES
         MACOSX_PACKAGE_LOCATION Resources)
 
-set_source_files_properties(dist/7z.so PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-
 if (WIN32 AND FORCE_UAC) 
     SET_TARGET_PROPERTIES(BB_Launcher PROPERTIES LINK_FLAGS "/MANIFESTUAC:\"level='requireAdministrator' uiAccess='false'\" ")
     add_definitions(-DFORCE_UAC)
@@ -236,10 +233,4 @@ install(TARGETS BB_Launcher BUNDLE DESTINATION .)
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     install(FILES "dist/BBLauncher.desktop" DESTINATION "share/applications")
     install(FILES "dist/BBIcon.png" DESTINATION "share/icons/hicolor/512x512/apps")
-endif()
-
-if (WIN32) 
-    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/dist/7z.dll" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
-else()
-    file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/dist/7z.so" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 endif()

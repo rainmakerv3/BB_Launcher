@@ -61,7 +61,6 @@ jobs:
     - name: Deploy and Package
       run: |
         mkdir upload
-        move dist/7z.dll upload
         move build/BB_Launcher.exe upload
         Compress-Archive -Path upload/* -DestinationPath BB_Launcher-win64-qt-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}.zip
     - name: Upload Windows Qt artifact
@@ -85,7 +84,6 @@ jobs:
     - name: Deploy and Package
       run: |
         mkdir upload
-        move dist/7z.dll upload
         move build/BB_Launcher.exe upload
         Compress-Archive -Path upload/* -DestinationPath BB_Launcher-win64-qt-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}.zip
     - name: Upload Windows Qt artifact
@@ -181,7 +179,6 @@ jobs:
         chmod a+x linuxdeploy-plugin-checkrt-x86_64.sh
         ./linuxdeploy-x86_64.AppImage --appdir AppDir
         bash ./linuxdeploy-plugin-checkrt-x86_64.sh --appdir AppDir
-        cp -a "$GITHUB_WORKSPACE/dist/7z.so" AppDir/usr/bin
         ./linuxdeploy-x86_64.AppImage --appdir AppDir -d "$GITHUB_WORKSPACE"/dist/BBLauncher.desktop  -e "$GITHUB_WORKSPACE"/build/BB_Launcher -i "$GITHUB_WORKSPACE"/dist/BBIcon.png --plugin qt
         ./linuxdeploy-x86_64.AppImage --appdir AppDir --output appimage
         mv BB_Launcher-x86_64.AppImage BB_Launcher-qt.AppImage
@@ -240,7 +237,6 @@ jobs:
         chmod a+x linuxdeploy-plugin-checkrt-x86_64.sh
         ./linuxdeploy-x86_64.AppImage --appdir AppDir
         bash ./linuxdeploy-plugin-checkrt-x86_64.sh --appdir AppDir
-        cp -a "$GITHUB_WORKSPACE/dist/7z.so" AppDir/usr/bin
         ./linuxdeploy-x86_64.AppImage --appdir AppDir -d "$GITHUB_WORKSPACE"/dist/BBLauncher.desktop  -e "$GITHUB_WORKSPACE"/build/BB_Launcher -i "$GITHUB_WORKSPACE"/dist/BBIcon.png --plugin qt
         ./linuxdeploy-x86_64.AppImage --appdir AppDir --output appimage
         mv BB_Launcher-x86_64.AppImage BB_Launcher-qt.AppImage

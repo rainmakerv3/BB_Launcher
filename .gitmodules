@@ -18,6 +18,10 @@
 	path = externals/date
 	url = https://github.com/HowardHinnant/date.git
 	shallow = true
+[submodule "externals/microz"]
+	path = externals/microz
+	url = https://github.com/artemvlas/qmicroz
+	shallow = true
 [submodule "externals/volk"]
 	path = externals/volk
 	url = https://github.com/zeux/volk.git
@@ -30,8 +34,4 @@
 	path = externals/json
 	url = https://github.com/nlohmann/json
 	branch = develop
-	shallow = true
-[submodule "externals/bit7z"]
-	path = externals/bit7z
-	url = https://github.com/rainmakerv3/bit7z
 	shallow = true

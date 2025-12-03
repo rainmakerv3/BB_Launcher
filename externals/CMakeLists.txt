@@ -38,16 +38,15 @@ if (NOT TARGET SDL3::SDL3)
     add_subdirectory(sdl3)
 endif()
 
+# microz
+add_subdirectory(microz)
+
 #nlohmann json 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(json)
 
 #volk
 add_subdirectory(volk)
-
-#bit7z
-set(BIT7Z_AUTO_FORMAT ON)
-add_subdirectory(bit7z)
 
 # vulkan-headers
 if (NOT TARGET Vulkan::Headers)

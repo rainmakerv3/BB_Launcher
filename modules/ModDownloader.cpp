@@ -15,8 +15,8 @@
 #include <QUuid>
 #include <QWebSocket>
 #include <QtConcurrent/QtConcurrentRun>
-#include <bit7z/bitarchivereader.hpp>
 #include <nlohmann/json.hpp>
+#include <qmicroz.h>
 
 #include "ModDownloader.h"
 #include "settings/config.h"
@@ -127,9 +127,34 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
             LoadModInfo(109);
     }
 
+    sevenzipPath = Config::SevenZipPath;
+    if (sevenzipPath.empty()) {
+        if (std::filesystem::exists("C:/Program Files/7-zip/7z.exe")) {
+            sevenzipPath = "C:/Program Files/7-zip/7z.exe";
+        } else if (std::filesystem::exists("/usr/bin/7z")) {
+            sevenzipPath = "/usr/bin/7z";
+        } else if (std::filesystem::exists("/usr/bin/p7zip/7z")) {
+            sevenzipPath = "/usr/bin/p7zip/7z";
+        } else if (std::filesystem::exists("/usr/local/bin/7z")) {
+            sevenzipPath = "/usr/local/bin/7z";
+        } else if (std::filesystem::exists("/usr/local/bin/p7zip/7z")) {
+            sevenzipPath = "/usr/local/bin/p7zip/7z";
+        }
+    }
+
+    if (sevenzipPath.empty()) {
+        ui->zipLabel->setStyleSheet("color: red;");
+    } else {
+        ui->zipLabel->setText("Valid 7zip binary detected. 7z mod files can be downloaded");
+        ui->zipLabel->setStyleSheet("color: green;");
+    }
+
+    connect(ui->zipButton, &QPushButton::pressed, this, &ModDownloader::SetSevenzipPath);
+
     connect(ui->modComboBox, &QComboBox::currentIndexChanged, this, [this]() {
         int index = ui->modComboBox->currentIndex();
         LoadModInfo(modIDmap[index]);
+        ui->fileDesc->setText("Selected File Description");
     });
 
     connect(ui->setApiButton, &QPushButton::pressed, this, [this]() {
@@ -154,6 +179,13 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         int modIndex = ui->modComboBox->currentIndex();
         int fileIndex = ui->fileListWidget->currentRow();
         QString modName = ui->fileListWidget->currentItem()->text();
+
+        if (fileNameList[fileIndex].right(3) != "zip" && sevenzipPath.empty()) {
+            QMessageBox::warning(this, "Error",
+                                 "Selected file is not a zip file. Valid 7zip must be set to "
+                                 "download. Aborting...");
+            return;
+        }
 
         if (std::filesystem::exists(Common::ModPath / modName.toStdString()) ||
             std::filesystem::exists(ModActivePath / modName.toStdString())) {
@@ -433,16 +465,6 @@ void ModDownloader::LoadModInfo(int modId) {
             }
 
             for (auto& item : jsonDoc.items()) {
-                if (item.key() == "status") {
-                    std::string status = item.value().get<std::string>();
-                    if (status != "published") {
-                        QMessageBox::information(this, "Mod unavailable",
-                                                 "This mod is currently not published. It may have "
-                                                 "been removed or hidden by the mod owner.");
-                        return;
-                    }
-                }
-
                 if (item.key() == "name") {
                     ui->modNameLabel->setText(
                         "Name: " + QString::fromStdString(item.value().get<std::string>()));
@@ -475,8 +497,6 @@ void ModDownloader::LoadModInfo(int modId) {
                     ui->modDesc->setHtml(BbcodeToHtml(desc));
                 }
             }
-
-            GetModFiles(modId);
         } else {
             ui->validApiLabel->setStyleSheet("color: red;");
             ui->validApiLabel->setText("No Valid Nexus Mods API Key Set");
@@ -486,6 +506,8 @@ void ModDownloader::LoadModInfo(int modId) {
 
         reply->deleteLater();
     });
+
+    GetModFiles(modId);
 }
 
 void ModDownloader::GetModImage(QUrl url) {
@@ -555,7 +577,6 @@ void ModDownloader::GetModFiles(int modId) {
 
             ui->fileListWidget->clear();
             ui->fileListWidget->addItems(fileList);
-            ui->fileDesc->setText("Selected File Description");
         } else {
             QMessageBox::warning(this, tr("Error"),
                                  QString(tr("Network error:") + "\n" + reply->errorString()));
@@ -664,7 +685,9 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
             progressDialog->close();
             progressDialog->deleteLater();
 
-            ExtractArchive(zipPath, extractPath);
+            bool isZip = zipPath.right(3) == "zip";
+            isZip ? ExtractZip(zipPath, extractPath) : Extract7z(zipPath, extractPath);
+
             std::filesystem::path sourcePath = Common::PathFromQString(extractPath);
             std::filesystem::path optionsSourcePath;
             const QStringList modsWithOptions = {
@@ -931,11 +954,92 @@ QString ModDownloader::BbcodeToHtml(QString BbcodeString) {
     return BbcodeString;
 }
 
-void ModDownloader::ExtractArchive(QString inpath, QString outpath) {
-    using namespace bit7z;
+void ModDownloader::Extract7z(QString inpath, QString outpath) {
+    QString processPath;
+    Common::PathToQString(processPath, sevenzipPath);
+    int fileCount = 0;
+    QProcess* infoProcess = new QProcess(this);
+    connect(infoProcess, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
+            [infoProcess, &fileCount](int exitCode, QProcess::ExitStatus exitStatus) {
+                if (exitStatus == QProcess::NormalExit && exitCode == 0) {
+                    QByteArray output = infoProcess->readAllStandardOutput();
+                    QString outputStr(output);
+
+                    QRegularExpression regex("(\\d+)\\s+(?:files)\\b");
+                    QRegularExpressionMatch match = regex.match(outputStr);
+
+                    if (match.hasMatch()) {
+                        QString numberString = match.captured(1);
+                        fileCount = numberString.toInt();
+                    }
+                }
+                infoProcess->deleteLater();
+            });
+
+    QStringList infoArgs;
+    infoArgs << "l" << inpath;
+
+    infoProcess->start(processPath, infoArgs);
+    infoProcess->waitForFinished();
+
+    QProcess* extractProcess = new QProcess(this);
+    QStringList extractArgs;
+    extractArgs << "x";
+    extractArgs << QDir::toNativeSeparators(inpath);
+    extractArgs << "-o" + QDir::toNativeSeparators(outpath);
+    extractArgs << "-bso0";
+    extractArgs << "-bsp1";
 
     QDialog* progressDialog = new QDialog(this);
     progressDialog->setWindowTitle(tr("Extracting compressed archive"));
+    progressDialog->setFixedSize(400, 80);
+    progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowCloseButtonHint);
+
+    QLabel* label = new QLabel("Initializing", progressDialog);
+    QVBoxLayout* layout = new QVBoxLayout(progressDialog);
+    QProgressBar* progressBar = new QProgressBar(progressDialog);
+    progressBar->setRange(0, 100);
+
+    layout->addWidget(progressBar);
+    if (fileCount != 0)
+        layout->addWidget(label);
+    progressDialog->setLayout(layout);
+    progressDialog->show();
+
+    connect(extractProcess, &QProcess::readyRead, this,
+            [this, extractProcess, progressBar, label, fileCount]() {
+                QString output = extractProcess->readAllStandardOutput();
+                QRegularExpression percentageMessage("^(\\s*)(\\d+)(%.*)$");
+                QRegularExpressionMatch match = percentageMessage.match(output);
+                if (match.hasMatch()) {
+                    const int percentageExported = match.captured(2).toInt();
+                    progressBar->setValue(percentageExported);
+                    if (fileCount != 0)
+                        label->setText(QString("%1 / %2 files extracted")
+                                           .arg(QString::number(static_cast<int>(
+                                               fileCount * percentageExported / 100.f)))
+                                           .arg(fileCount));
+                }
+            });
+
+    extractProcess->start(processPath, extractArgs);
+
+    QEventLoop extractloop;
+    connect(extractProcess, &QProcess::finished, &extractloop, &QEventLoop::quit);
+    extractloop.exec();
+
+    progressDialog->close();
+    progressDialog->deleteLater();
+}
+
+void ModDownloader::ExtractZip(QString inpath, QString outpath) {
+    QMicroz qmz(inpath);
+    qmz.setOutputFolder(outpath);
+    if (!qmz)
+        return;
+
+    QDialog* progressDialog = new QDialog(this);
+    progressDialog->setWindowTitle(tr("Extracting zip archive"));
     progressDialog->setFixedSize(400, 80);
     progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowCloseButtonHint);
 
@@ -949,41 +1053,16 @@ void ModDownloader::ExtractArchive(QString inpath, QString outpath) {
     progressDialog->setLayout(layout);
     progressDialog->show();
 
-#if defined _WIN32
-    Bit7zLibrary lib{"7z.dll"};
-#elif defined __APPLE__
-    std::filesystem::path libPath =
-        std::filesystem::current_path().parent_path() / "Resources" / "7z.so";
-    Bit7zLibrary lib{libPath};
-#else
-    const char* appDir = std::getenv("APPDIR");
-    std::filesystem::path libPath =
-        appDir != nullptr ? std::filesystem::path(appDir) / "usr" / "bin" / "7z.so" : "./7z.so";
-    Bit7zLibrary lib{libPath};
-#endif
-
-    uint64_t totalSize = 0;
-    BitArchiveReader archive(lib, inpath.toStdString(), BitFormat::Auto);
-
-    archive.setTotalCallback([this, &totalSize](uint64_t size) { totalSize = size; });
-    archive.setProgressCallback([this](uint64_t processedSize) -> bool {
-        QMetaObject::invokeMethod(this, &ModDownloader::FileExtracted, Qt::QueuedConnection,
-                                  processedSize);
-        return true;
-    });
-
     connect(this, &ModDownloader::FileExtracted, progressBar,
-            [this, &totalSize, progressBar, label](int processed) {
-                progressBar->setValue(static_cast<int>((processed * 100.f) / totalSize));
-                label->setText(QString("%1 / %2 bytes extracted").arg(processed).arg(totalSize));
+            [this, &qmz, progressBar, label](int extracted) {
+                progressBar->setValue(static_cast<int>((extracted * 100.f) / qmz.count()));
+                label->setText(QString("%1 / %2 files extracted").arg(extracted).arg(qmz.count()));
             });
 
-    QFuture<void> future = QtConcurrent::run([this, inpath, outpath, &lib, &archive]() {
-        try {
-            archive.extractTo(outpath.toStdString());
-        } catch (const BitException& ex) {
-            QMessageBox::information(this, tr("Extraction failed"),
-                                     tr("File extraction error: ").arg(ex.what()));
+    QFuture<void> future = QtConcurrent::run([this, &qmz, progressBar, label]() {
+        for (int i = 0; i < qmz.count(); ++i) {
+            qmz.extractIndex(i);
+            emit FileExtracted(i);
         }
     });
 
@@ -996,6 +1075,27 @@ void ModDownloader::ExtractArchive(QString inpath, QString outpath) {
 
     progressDialog->close();
     progressDialog->deleteLater();
+}
+
+void ModDownloader::SetSevenzipPath() {
+    QString exePath;
+#ifdef _WIN32
+    exePath = QFileDialog::getOpenFileName(this, "Select ShadPS4 executable (ex. shadPS4.exe)",
+                                           QDir::currentPath(), "Executables (7z.exe)");
+#else
+    exePath = QFileDialog::getOpenFileName(this, "Select 7-zip binary", QDir::homePath(),
+                                           "7z Binary (7z*)");
+#endif
+
+    if (exePath.isEmpty()) {
+        return;
+    } else {
+        sevenzipPath = Common::PathFromQString(exePath);
+        ui->zipLabel->setText("Valid 7zip binary detected. 7z mod files can be downloaded");
+        ui->zipLabel->setStyleSheet("color: green;");
+        Config::SevenZipPath = sevenzipPath;
+        Config::SaveLauncherSettings();
+    }
 }
 
 bool ModDownloader::GetOption(QStringList options, QString& modName, std::string& option) {
