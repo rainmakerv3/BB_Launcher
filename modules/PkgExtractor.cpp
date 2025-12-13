@@ -19,19 +19,45 @@
 #include "modules/PkgDeps/loader.h"
 #include "modules/PkgDeps/pkg.h"
 #include "settings/PSF/psf.h"
+#include "settings/formatting.h"
 
 PkgExtractor::PkgExtractor(QWidget* parent) : QDialog(parent) {
     setupUI();
-    resize(600, 50);
-
+    resize(600, 60);
     this->setWindowTitle(tr("PKG Extractor"));
+
+    std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
+    toml::value data;
+
+    try {
+        std::ifstream ifs;
+        ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        ifs.open(shadConfigFile, std::ios_base::binary);
+        data = toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
+    } catch (std::exception& ex) {
+        // handle ?
+        return;
+    }
+
+    std::filesystem::path dlcPath;
+    if (data.contains("GUI")) {
+        const toml::value& GUI = data.at("GUI");
+        dlcPath = toml::find_fs_path_or(GUI, "addonInstallDir", {});
+    }
+
+    if (dlcPath.empty()) {
+        dlcPath = Common::GetShadUserDir() / "addcont";
+    }
+
+    QString qDlcPath;
+    Common::PathToQString(qDlcPath, dlcPath);
+    dlcLineEdit->setText(qDlcPath);
 }
 
 void PkgExtractor::setupUI() {
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
 
     QLabel* selectPkgLabel = new QLabel(tr("<b>%1</b>").arg("Select PKG to extract"));
-
     QHBoxLayout* selectPkgHLayout = new QHBoxLayout(this);
     pkgLineEdit = new QLineEdit();
     pkgLineEdit->setPlaceholderText(tr("Select PKG File"));
@@ -40,15 +66,23 @@ void PkgExtractor::setupUI() {
     selectPkgHLayout->addWidget(pkgLineEdit);
     selectPkgHLayout->addWidget(pkgBrowseButton);
 
-    QLabel* selectOutputLabel = new QLabel(tr("<b>%1</b>").arg("Select output folder"));
-
+    QLabel* selectOutputLabel = new QLabel(tr("<b>%1</b>").arg("Select game output folder"));
     QHBoxLayout* selectOutputHLayout = new QHBoxLayout(this);
     outputLineEdit = new QLineEdit();
-    outputLineEdit->setPlaceholderText(tr("Select Output Folder"));
+    outputLineEdit->setPlaceholderText(tr("Select Game Output Folder"));
     QPushButton* outputBrowseButton = new QPushButton(tr("Browse"));
 
     selectOutputHLayout->addWidget(outputLineEdit);
     selectOutputHLayout->addWidget(outputBrowseButton);
+
+    QLabel* selectDlcLabel = new QLabel(tr("<b>%1</b>").arg("Select Dlc output folder"));
+    QHBoxLayout* selectDlcHLayout = new QHBoxLayout(this);
+    dlcLineEdit = new QLineEdit();
+    dlcLineEdit->setPlaceholderText(tr("Select DLC Output Folder"));
+    QPushButton* dlcBrowseButton = new QPushButton(tr("Browse"));
+
+    selectDlcHLayout->addWidget(dlcLineEdit);
+    selectDlcHLayout->addWidget(dlcBrowseButton);
 
     QDialogButtonBox* buttonBox =
         new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Close);
@@ -61,11 +95,14 @@ void PkgExtractor::setupUI() {
     mainLayout->addLayout(selectPkgHLayout);
     mainLayout->addWidget(selectOutputLabel);
     mainLayout->addLayout(selectOutputHLayout);
+    mainLayout->addWidget(selectDlcLabel);
+    mainLayout->addLayout(selectDlcHLayout);
     mainLayout->addWidget(separateUpdateCheckBox);
     mainLayout->addWidget(buttonBox);
 
     connect(pkgBrowseButton, &QPushButton::clicked, this, &PkgExtractor::browsePkg);
     connect(outputBrowseButton, &QPushButton::clicked, this, &PkgExtractor::browseOutput);
+    connect(dlcBrowseButton, &QPushButton::clicked, this, &PkgExtractor::browseDlc);
 
     connect(buttonBox, &QDialogButtonBox::rejected, this, &QWidget::close);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &PkgExtractor::ExtractPkg);
@@ -75,27 +112,23 @@ void PkgExtractor::ExtractPkg() {
     bool useSeparateUpdate = separateUpdateCheckBox->isChecked();
     QString outputFolder = outputLineEdit->text().replace("\\", "/");
     std::filesystem::path game_install_dir = Common::PathFromQString(outputFolder);
-    std::filesystem::path dlcPath = Common::GetShadUserDir() / "addcont";
 
     QString pkgFile = pkgLineEdit->text().replace("\\", "/");
     std::filesystem::path file = Common::PathFromQString(pkgFile);
 
-    if (!std::filesystem::exists(game_install_dir)) {
-        QMessageBox::information(this, "Error", "Select valid output folder");
-        return;
-    }
+    QString dlcFolder = dlcLineEdit->text().replace("\\", "/");
+    std::filesystem::path dlcPath = Common::PathFromQString(dlcFolder);
 
     if (!std::filesystem::exists(file)) {
         QMessageBox::information(this, "Error", "Select valid pkg file");
         return;
     }
 
-    PKG pkg;
-    PSF psf;
-
     if (Loader::DetectFileType(file) == Loader::FileTypes::Pkg) {
         std::string failreason;
-        pkg = PKG();
+        PKG pkg = PKG();
+        PSF psf;
+
         if (!pkg.Open(file, failreason)) {
             QMessageBox::critical(nullptr, tr("PKG ERROR"), QString::fromStdString(failreason));
             return;
@@ -105,7 +138,13 @@ void PkgExtractor::ExtractPkg() {
                                   "Could not read SFO. Check log for details");
             return;
         }
+
         auto category = psf.GetString("CATEGORY");
+
+        if (!std::filesystem::exists(game_install_dir) && category != "ac") {
+            QMessageBox::information(this, "Error", "Select valid output folder");
+            return;
+        }
 
         QString pkgType = QString::fromStdString(pkg.GetPkgFlags());
         bool use_game_update = pkgType.contains("PATCH") && useSeparateUpdate;
@@ -143,123 +182,133 @@ void PkgExtractor::ExtractPkg() {
                                                : game_folder_path;
         }
 
+        std::string content_id;
+        if (auto value = psf.GetString("CONTENT_ID"); value.has_value()) {
+            content_id = std::string{*value};
+        } else {
+            QMessageBox::critical(this, tr("PKG ERROR"), "PSF file there is no CONTENT_ID");
+            return;
+        }
+
+        QMessageBox msgBox(this);
+        msgBox.setWindowTitle(tr("PKG Installation"));
+
+        QString addonDirPath;
         QString gameDirPath;
         PathToQString(gameDirPath, game_folder_path);
         QDir game_dir(gameDirPath);
-        if (game_dir.exists()) {
-            QMessageBox msgBox;
-            msgBox.setWindowTitle(tr("PKG Installation"));
 
-            std::string content_id;
-            if (auto value = psf.GetString("CONTENT_ID"); value.has_value()) {
-                content_id = std::string{*value};
-            } else {
-                QMessageBox::critical(this, tr("PKG ERROR"), "PSF file there is no CONTENT_ID");
+        std::string entitlement_label = SplitString(content_id, '-')[2];
+        auto addon_extract_path = dlcPath / pkg.GetTitleID() / entitlement_label;
+        Common::PathToQString(addonDirPath, addon_extract_path);
+        QDir addon_dir(addonDirPath);
+
+        if (category == "ac") {
+            if (!std::filesystem::exists(dlcPath)) {
+                QMessageBox::information(this, "Error", "Select valid dlc folder");
                 return;
             }
-            std::string entitlement_label = SplitString(content_id, '-')[2];
 
-            auto addon_extract_path = dlcPath;
-            QString addonDirPath;
-            PathToQString(addonDirPath, addon_extract_path);
-            QDir addon_dir(addonDirPath);
+            if (!addon_dir.exists()) {
+                QMessageBox addonMsgBox(this);
+                addonMsgBox.setWindowTitle(tr("DLC Install"));
+                addonMsgBox.setText(QString(tr("Would you like to install DLC: %1?"))
+                                        .arg(QString::fromStdString(entitlement_label)));
 
-            if (pkgType.contains("PATCH")) {
-                QString pkg_app_version;
-                if (auto app_ver = psf.GetString("APP_VER"); app_ver.has_value()) {
-                    pkg_app_version = QString::fromStdString(std::string{*app_ver});
-                } else {
-                    QMessageBox::critical(this, tr("PKG ERROR"), "PSF file there is no APP_VER");
-                    return;
-                }
-                std::filesystem::path sce_folder_path =
-                    std::filesystem::exists(game_update_path / "sce_sys" / "param.sfo")
-                        ? game_update_path / "sce_sys" / "param.sfo"
-                        : game_folder_path / "sce_sys" / "param.sfo";
-                psf.Open(sce_folder_path);
-                QString game_app_version;
-                if (auto app_ver = psf.GetString("APP_VER"); app_ver.has_value()) {
-                    game_app_version = QString::fromStdString(std::string{*app_ver});
-                } else {
-                    QMessageBox::critical(this, tr("PKG ERROR"), "PSF file there is no APP_VER");
-                    return;
-                }
-                double appD = game_app_version.toDouble();
-                double pkgD = pkg_app_version.toDouble();
-                if (pkgD == appD) {
-                    msgBox.setText(QString(tr("Patch detected!") + "\n" +
-                                           tr("PKG and Game versions match: ") + pkg_app_version +
-                                           "\n" + tr("Would you like to overwrite?")));
-                    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-                    msgBox.setDefaultButton(QMessageBox::No);
-                } else if (pkgD < appD) {
-                    msgBox.setText(QString(
-                        tr("Patch detected!") + "\n" +
-                        tr("PKG Version %1 is older than existing version: ").arg(pkg_app_version) +
-                        game_app_version + "\n" + tr("Would you like to overwrite?")));
-                    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-                    msgBox.setDefaultButton(QMessageBox::No);
-                } else {
-                    msgBox.setText(QString(
-                        tr("Patch detected!") + "\n" + tr("Game exists: ") + game_app_version +
-                        "\n" + tr("Would you like to apply Patch: ") + pkg_app_version + " ?"));
-                    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-                    msgBox.setDefaultButton(QMessageBox::No);
-                }
-                int result = msgBox.exec();
+                addonMsgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+                addonMsgBox.setDefaultButton(QMessageBox::No);
+                int result = addonMsgBox.exec();
                 if (result == QMessageBox::Yes) {
-                    // Do nothing.
+                    game_update_path = addon_extract_path;
                 } else {
                     return;
-                }
-            } else if (category == "ac") {
-                if (!addon_dir.exists()) {
-                    QMessageBox addonMsgBox;
-                    addonMsgBox.setWindowTitle(tr("DLC Install"));
-                    addonMsgBox.setText(QString(tr("Would you like to install DLC: %1?"))
-                                            .arg(QString::fromStdString(entitlement_label)));
-
-                    addonMsgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-                    addonMsgBox.setDefaultButton(QMessageBox::No);
-                    int result = addonMsgBox.exec();
-                    if (result == QMessageBox::Yes) {
-                        game_update_path = addon_extract_path;
-                    } else {
-                        return;
-                    }
-                } else {
-                    msgBox.setText(QString(tr("DLC already installed:") + "\n" + addonDirPath +
-                                           "\n\n" + tr("Would you like to overwrite?")));
-                    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-                    msgBox.setDefaultButton(QMessageBox::No);
-                    int result = msgBox.exec();
-                    if (result == QMessageBox::Yes) {
-                        game_update_path = addon_extract_path;
-                    } else {
-                        return;
-                    }
                 }
             } else {
-                msgBox.setText(QString(tr("Game already installed") + "\n" + gameDirPath + "\n" +
+                msgBox.setText(QString(tr("DLC already installed:") + "\n" + addonDirPath + "\n\n" +
                                        tr("Would you like to overwrite?")));
                 msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
                 msgBox.setDefaultButton(QMessageBox::No);
                 int result = msgBox.exec();
                 if (result == QMessageBox::Yes) {
-                    // Do nothing.
+                    game_update_path = addon_extract_path;
                 } else {
                     return;
                 }
             }
         } else {
-            // Do nothing;
-            if (pkgType.contains("PATCH") || category == "ac") {
-                QMessageBox::information(
-                    this, tr("PKG Installation"),
-                    tr("PKG is a patch or DLC, please install base game first!"));
-                return;
+            if (game_dir.exists()) {
+                if (pkgType.contains("PATCH")) {
+                    QString pkg_app_version;
+                    if (auto app_ver = psf.GetString("APP_VER"); app_ver.has_value()) {
+                        pkg_app_version = QString::fromStdString(std::string{*app_ver});
+                    } else {
+                        QMessageBox::critical(this, tr("PKG ERROR"),
+                                              "PSF file there is no APP_VER");
+                        return;
+                    }
+                    std::filesystem::path sce_folder_path =
+                        std::filesystem::exists(game_update_path / "sce_sys" / "param.sfo")
+                            ? game_update_path / "sce_sys" / "param.sfo"
+                            : game_folder_path / "sce_sys" / "param.sfo";
+                    psf.Open(sce_folder_path);
+                    QString game_app_version;
+                    if (auto app_ver = psf.GetString("APP_VER"); app_ver.has_value()) {
+                        game_app_version = QString::fromStdString(std::string{*app_ver});
+                    } else {
+                        QMessageBox::critical(this, tr("PKG ERROR"),
+                                              "PSF file there is no APP_VER");
+                        return;
+                    }
+                    double appD = game_app_version.toDouble();
+                    double pkgD = pkg_app_version.toDouble();
+                    if (pkgD == appD) {
+                        msgBox.setText(QString(
+                            tr("Patch detected!") + "\n" + tr("PKG and Game versions match: ") +
+                            pkg_app_version + "\n" + tr("Would you like to overwrite?")));
+                        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+                        msgBox.setDefaultButton(QMessageBox::No);
+                    } else if (pkgD < appD) {
+                        msgBox.setText(QString(tr("Patch detected!") + "\n" +
+                                               tr("PKG Version %1 is older than existing version: ")
+                                                   .arg(pkg_app_version) +
+                                               game_app_version + "\n" +
+                                               tr("Would you like to overwrite?")));
+                        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+                        msgBox.setDefaultButton(QMessageBox::No);
+                    } else {
+                        msgBox.setText(QString(
+                            tr("Patch detected!") + "\n" + tr("Game exists: ") + game_app_version +
+                            "\n" + tr("Would you like to apply Patch: ") + pkg_app_version + " ?"));
+                        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+                        msgBox.setDefaultButton(QMessageBox::No);
+                    }
+                    int result = msgBox.exec();
+                    if (result == QMessageBox::Yes) {
+                        // Do nothing.
+                    } else {
+                        return;
+                    }
+                } else {
+                    msgBox.setText(QString(tr("Game already installed") + "\n" + gameDirPath +
+                                           "\n" + tr("Would you like to overwrite?")));
+                    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+                    msgBox.setDefaultButton(QMessageBox::No);
+                    int result = msgBox.exec();
+                    if (result == QMessageBox::Yes) {
+                        // Do nothing.
+                    } else {
+                        return;
+                    }
+                }
+            } else {
+                if (pkgType.contains("PATCH")) {
+                    QMessageBox::information(this, tr("PKG Installation"),
+                                             tr("PKG is a patch, please install base game first. "
+                                                "Make sure you're extracting to the same output "
+                                                "folder where the base game was extracted"));
+                    return;
+                }
             }
-            // what else?
         }
 
         if (!pkg.Extract(file, game_update_path, failreason)) {
@@ -273,9 +322,8 @@ void PkgExtractor::ExtractPkg() {
                     indices.append(i);
                 }
 
-                QProgressDialog dialog;
+                QProgressDialog dialog(this);
                 dialog.setWindowTitle(tr("PKG Installation"));
-                dialog.setWindowModality(Qt::WindowModal);
                 QString extractmsg = QString(tr("Installing PKG"));
                 dialog.setLabelText(extractmsg);
                 dialog.setAutoClose(true);
@@ -324,15 +372,18 @@ void PkgExtractor::ExtractPkg() {
                     if (!windowIcon.isNull()) {
                         extractMsgBox.setWindowIcon(windowIcon);
                     }
-                    extractMsgBox.setText(
-                        QString(tr("Game successfully installed at %1")).arg(path));
+
+                    if (category == "ac") {
+                        path = addonDirPath;
+                    }
+
+                    extractMsgBox.setText(QString(tr("Successfully installed at %1")).arg(path));
                     extractMsgBox.addButton(QMessageBox::Ok);
                     extractMsgBox.setDefaultButton(QMessageBox::Ok);
                     connect(&extractMsgBox, &QMessageBox::buttonClicked, this,
                             [&](QAbstractButton* button) {
                                 if (extractMsgBox.button(QMessageBox::Ok) == button) {
                                     extractMsgBox.close();
-                                    // emit ExtractionFinished();
                                 }
                             });
                     extractMsgBox.exec();
@@ -400,7 +451,8 @@ void PkgExtractor::browsePkg() {
     QString pkgFile = QFileDialog::getOpenFileName(this, tr("Select Pkg to extract"),
                                                    QDir::homePath(), "Pkg files (*.pkg)");
 
-    pkgLineEdit->setText(pkgFile);
+    if (!pkgFile.isEmpty())
+        pkgLineEdit->setText(pkgFile);
 }
 
 void PkgExtractor::browseOutput() {
@@ -408,7 +460,39 @@ void PkgExtractor::browseOutput() {
         QFileDialog::getExistingDirectory(this, tr("Select output folder when extracted"),
                                           QDir::homePath(), QFileDialog::ShowDirsOnly);
 
-    outputLineEdit->setText(outputFolder);
+    if (!outputFolder.isEmpty())
+        outputLineEdit->setText(outputFolder);
+}
+
+void PkgExtractor::browseDlc() {
+    QString dlcFolder =
+        QFileDialog::getExistingDirectory(this, tr("Select output folder when extracted"),
+                                          QDir::homePath(), QFileDialog::ShowDirsOnly);
+
+    if (!dlcFolder.isEmpty()) {
+        dlcLineEdit->setText(dlcFolder);
+
+        std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
+        toml::value data;
+
+        try {
+            std::ifstream ifs;
+            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+            ifs.open(shadConfigFile, std::ios_base::binary);
+            data =
+                toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
+        } catch (std::exception& ex) {
+            // handle ?
+            return;
+        }
+
+        std::filesystem::path dlcPath = Common::PathFromQString(dlcFolder);
+        data["GUI"]["addonInstallDir"] = std::string{fmt::UTF(dlcPath.u8string()).data};
+
+        std::ofstream file(shadConfigFile, std::ios::binary);
+        file << data;
+        file.close();
+    }
 }
 
 PkgExtractor::~PkgExtractor() {}

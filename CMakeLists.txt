@@ -101,7 +101,7 @@ endif()
 
 add_subdirectory(externals)
 
-find_package(Qt6 REQUIRED COMPONENTS Widgets Network Quick QuickWidgets WebView WebSockets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Network Quick QuickWidgets WebView WebSockets Concurrent)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux" AND USE_WEBENGINE)
     add_definitions(-DUSE_WEBENGINE)
@@ -214,7 +214,7 @@ endif()
 
 target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network Qt6::Quick Qt6::QuickWidgets Qt6::WebView Qt6::WebSockets)
+target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network Qt6::Quick Qt6::QuickWidgets Qt6::WebView Qt6::WebSockets Qt6::Concurrent)
 target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 pugixml::pugixml SDL3::SDL3 Vulkan::Headers qmicroz volk_headers nlohmann_json::nlohmann_json cryptopp::cryptopp ZLIB::ZLIB)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux" AND USE_WEBENGINE)

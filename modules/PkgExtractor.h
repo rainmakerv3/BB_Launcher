@@ -19,6 +19,7 @@ private:
     void setupUI();
     void browseOutput();
     void browsePkg();
+    void browseDlc();
     void ExtractPkg();
     std::optional<std::filesystem::path> FindGameByID(const std::filesystem::path& dir,
                                                       const std::string& game_id, int max_depth);
@@ -26,5 +27,6 @@ private:
 
     QLineEdit* pkgLineEdit;
     QLineEdit* outputLineEdit;
+    QLineEdit* dlcLineEdit;
     QCheckBox* separateUpdateCheckBox;
 };

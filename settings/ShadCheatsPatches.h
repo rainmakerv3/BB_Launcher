@@ -63,6 +63,8 @@ private:
 
     void updateNoteTextEdit(const QString& patchName);
     std::string getGameVersion();
+    void DownloadUnofficialPatches(const QDir patchDir, const QString repository,
+                                   const bool showMessageBox);
 
     // Network Manager
     QNetworkAccessManager* manager;

@@ -1,7 +1,6 @@
 ﻿// SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <fstream>
 #include <QComboBox>
 #include <QDir>
 #include <QEvent>
@@ -27,6 +26,7 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 #include <QXmlStreamReader>
+#include <qmicroz.h>
 
 #include "ShadCheatsPatches.h"
 #include "modules/Common.h"
@@ -253,6 +253,7 @@ void CheatsPatches::setupUI() {
     patchesComboBox = new QComboBox();
     patchesComboBox->addItem("shadPS4", "shadPS4");
     patchesComboBox->addItem("GoldHEN", "GoldHEN");
+    // patchesComboBox->addItem("Unofficial Patches", "Unofficial Patches");
     patchesControlLayout->addWidget(patchesComboBox);
 
     QPushButton* patchesButton = new QPushButton(tr("Download Patches"));
@@ -589,6 +590,19 @@ void CheatsPatches::downloadPatches(const QString repository, const bool showMes
     if (repository == "GoldHEN") {
         url = "https://api.github.com/repos/illusion0001/PS4-PS5-Game-Patch/contents/patches/xml";
     }
+
+    QDir dir(Common::GetShadUserDir() / "patches");
+    QString fullPath = dir.filePath(repository);
+    if (!dir.exists(fullPath)) {
+        dir.mkpath(fullPath);
+    }
+    dir.setPath(fullPath);
+
+    if (repository == "Unofficial Patches") {
+        DownloadUnofficialPatches(dir, repository, showMessageBox);
+        return;
+    }
+
     QNetworkAccessManager* manager = new QNetworkAccessManager(this);
     QNetworkRequest request(url);
     request.setRawHeader("Accept", "application/vnd.github.v3+json");
@@ -608,13 +622,6 @@ void CheatsPatches::downloadPatches(const QString repository, const bool showMes
                 }
                 return;
             }
-
-            QDir dir(Common::GetShadUserDir() / "patches");
-            QString fullPath = dir.filePath(repository);
-            if (!dir.exists(fullPath)) {
-                dir.mkpath(fullPath);
-            }
-            dir.setPath(fullPath);
 
             foreach (const QJsonValue& value, itemsArray) {
                 QJsonObject fileObj = value.toObject();
@@ -1353,6 +1360,55 @@ std::string CheatsPatches::getGameVersion() {
         }
     }
     return version;
+}
+
+void CheatsPatches::DownloadUnofficialPatches(const QDir patchDir, const QString repository,
+                                              const bool showMessageBox) {
+    QString url =
+        "https://drive.google.com/uc?export=download&id=1iEr4IujWczfZxlPmJSODRXjBEftWTqz3";
+    QNetworkAccessManager* manager = new QNetworkAccessManager(this);
+    QNetworkRequest request(url);
+    QNetworkReply* reply = manager->get(request);
+
+    QString path = patchDir.path() + "/" + reply->request().url().fileName();
+    QString outputDir = patchDir.path();
+    QDir().mkpath(outputDir);
+
+    QFile* file = new QFile(path);
+    if (!file->open(QIODevice::WriteOnly)) {
+        QMessageBox::warning(this, tr("Error"), tr("Could not save file."));
+        file->deleteLater();
+        reply->deleteLater();
+        return;
+    }
+
+    connect(reply, &QNetworkReply::readyRead, this,
+            [file, reply]() { file->write(reply->readAll()); });
+
+    connect(reply, &QNetworkReply::finished, [=, this]() {
+        if (reply->error() == QNetworkReply::NoError) {
+            file->flush();
+            file->close();
+            reply->deleteLater();
+
+            QMicroz::extract(path, outputDir);
+            QFile::remove(path);
+
+            if (showMessageBox) {
+                QMessageBox::information(this, "Download Complete",
+                                         "Download Succesfully Completed");
+            }
+
+            populateFileListPatches();
+            compatibleVersionNotice(repository);
+        } else {
+            QMessageBox::warning(this, tr("Download incomplete"),
+                                 QString(tr("Download incomplete:") + "\n" + reply->errorString()));
+            file->flush();
+            file->close();
+        }
+        emit downloadFinished();
+    });
 }
 
 CheatsPatches::~CheatsPatches() {}
