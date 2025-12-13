@@ -35,3 +35,12 @@
 	url = https://github.com/nlohmann/json
 	branch = develop
 	shallow = true
+[submodule "externals/cryptopp"]
+	path = externals/cryptopp
+	url = https://github.com/rainmakerv3/ext-cryptopp
+[submodule "externals/cryptopp-cmake"]
+	path = externals/cryptopp-cmake
+	url = https://github.com/rainmakerv3/ext-cryptopp-cmake
+[submodule "externals/zlib-ng"]
+	path = externals/zlib-ng
+	url = https://github.com/shadps4-emu/ext-zlib-ng

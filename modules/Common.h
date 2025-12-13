@@ -250,5 +250,9 @@ using BigEndian =
 
 } // namespace Common
 
+using u16_le = Common::LittleEndian<u16>;
+using u32_le = Common::LittleEndian<u32>;
+
+using u16_be = Common::BigEndian<u16>;
 using u32_be = Common::BigEndian<u32>;
 using u64_be = Common::BigEndian<u64>;

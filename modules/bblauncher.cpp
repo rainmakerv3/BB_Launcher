@@ -14,6 +14,7 @@
 #include "modules/Common.h"
 #include "modules/ModDownloader.h"
 #include "modules/ModManager.h"
+#include "modules/PkgExtractor.h"
 #include "modules/SaveManager.h"
 #include "modules/TrophyManager.h"
 #include "modules/ui_bblauncher.h"
@@ -74,7 +75,6 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     ui->ShadLabel->setText(shadLabelString);
 
     this->setFixedSize(this->width(), this->height());
-    this->statusBar()->setSizeGripEnabled(false);
     QApplication::setStyle("Fusion");
 
     QPalette palette = logDisplay->palette();
@@ -100,6 +100,11 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     connect(ui->RestartButton, &QPushButton::clicked, this, &BBLauncher::RestartEmulator);
     connect(ui->FullscreenButton, &QPushButton::clicked, this,
             [this]() { m_ipc_client->toggleFullscreen(); });
+
+    connect(ui->pkgButton, &QPushButton::pressed, this, [this]() {
+        PkgExtractor* Extractor = new PkgExtractor(this);
+        Extractor->exec();
+    });
 
     connect(ui->downloaderButton, &QPushButton::pressed, this, [this]() {
         ModDownloader* Downloader = new ModDownloader(this);

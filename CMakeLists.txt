@@ -87,6 +87,7 @@ endif()
 
 find_package(toml11 4.2.0 CONFIG)
 find_package(pugixml 1.14 CONFIG)
+find_package(ZLIB 1.3 MODULE)
 find_package(fmt 10.2.0 CONFIG)
 find_package(SDL3 3.1.2 CONFIG)
 find_package(VulkanHeaders 1.4.324 CONFIG)
@@ -126,6 +127,8 @@ set(PROJECT_SOURCES
     modules/ModManager.h
     modules/ModManager.cpp
     modules/ModManager.ui
+    modules/PkgExtractor.h
+    modules/PkgExtractor.cpp
     modules/QAnsiTextEdit.cpp
     modules/QAnsiTextEdit.h
     modules/RunGuard.cpp
@@ -142,6 +145,16 @@ set(PROJECT_SOURCES
     modules/version_dialog.ui
     modules/ipc/ipc_client.cpp
     modules/ipc/ipc_client.h
+    modules/PkgDeps/crypto.cpp
+    modules/PkgDeps/crypto.h
+    modules/PkgDeps/loader.cpp
+    modules/PkgDeps/loader.h
+    modules/PkgDeps/pfs.h
+    modules/PkgDeps/pkg.cpp
+    modules/PkgDeps/pkg.h
+    modules/PkgDeps/pkg_type.cpp
+    modules/PkgDeps/pkg_type.h
+    modules/PkgDeps/types.h
     modules/TrophyDeps/aes.h
     modules/TrophyDeps/concepts.h
     modules/TrophyDeps/enum.h
@@ -202,7 +215,7 @@ endif()
 target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network Qt6::Quick Qt6::QuickWidgets Qt6::WebView Qt6::WebSockets)
-target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 pugixml::pugixml SDL3::SDL3 Vulkan::Headers qmicroz volk_headers nlohmann_json::nlohmann_json)
+target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 pugixml::pugixml SDL3::SDL3 Vulkan::Headers qmicroz volk_headers nlohmann_json::nlohmann_json cryptopp::cryptopp ZLIB::ZLIB)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux" AND USE_WEBENGINE)
     target_link_libraries(BB_Launcher PRIVATE Qt6::WebEngineCore Qt6::WebEngineWidgets Qt6::WebChannel)
