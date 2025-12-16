@@ -48,6 +48,9 @@ void CreateGSFile() {
     std::string filename = Common::game_serial + ".toml";
     std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
 
+    if (!std::filesystem::exists(gsConfig.parent_path()))
+        std::filesystem::create_directories(gsConfig.parent_path());
+
     toml::ordered_value data;
 
     data["General"]["extraDmemInMbytes"] = 0;
