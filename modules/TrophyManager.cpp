@@ -519,6 +519,11 @@ bool TrophyViewer::RefreshValues(QString title) {
         QFileInfoList iconDirList = iconsDir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
 
         for (const QFileInfo& iconInfo : iconDirList) {
+            // Skip files that doesn't start with "trop" or "TROP"
+            QString fileName = iconInfo.fileName();
+            if (!fileName.startsWith("trop", Qt::CaseInsensitive))
+                continue;
+
             QImage icon =
                 QImage(iconInfo.absoluteFilePath())
                     .scaled(QSize(128, 128), Qt::KeepAspectRatio, Qt::SmoothTransformation);
