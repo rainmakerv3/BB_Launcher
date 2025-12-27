@@ -292,6 +292,13 @@
                 </widget>
                </item>
                <item>
+                <widget class="QPushButton" name="deleteCacheButton">
+                 <property name="text">
+                  <string>Delete BB Shader Cache</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QCheckBox" name="showSplashCheckBox">
                  <property name="text">
                   <string>Show Splash Screen</string>
@@ -445,7 +452,13 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="trophySettingsGroupBox">
+             <widget class="QGroupBox" name="ControllerGroupBox">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
@@ -453,74 +466,31 @@
                </font>
               </property>
               <property name="title">
-               <string>Trophies</string>
+               <string>Controller</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_11">
+              <layout class="QVBoxLayout" name="verticalLayout">
+               <property name="spacing">
+                <number>6</number>
+               </property>
+               <property name="topMargin">
+                <number>9</number>
+               </property>
+               <property name="bottomMargin">
+                <number>9</number>
+               </property>
                <item>
-                <widget class="QCheckBox" name="disableTrophycheckBox">
+                <widget class="QCheckBox" name="motionControlsCheckBox">
                  <property name="text">
-                  <string notr="true">Disable Trophy Pop-ups</string>
+                  <string>Enable Motion Controls</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <layout class="QHBoxLayout" name="popupPosLayout">
-                 <item>
-                  <widget class="QLabel" name="popupPosLabel">
-                   <property name="text">
-                    <string>Pop-up Position</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QComboBox" name="popUpPosComboBox">
-                   <item>
-                    <property name="text">
-                     <string>right</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>left</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>top</string>
-                    </property>
-                   </item>
-                   <item>
-                    <property name="text">
-                     <string>bottom</string>
-                    </property>
-                   </item>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="popupDurationLayout">
-                 <item>
-                  <widget class="QLabel" name="popupDurationLabel">
-                   <property name="text">
-                    <string>Pop-up Duration</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QDoubleSpinBox" name="popUpDurationSpinBox">
-                   <property name="maximum">
-                    <double>10.000000000000000</double>
-                   </property>
-                   <property name="singleStep">
-                    <double>0.100000000000000</double>
-                   </property>
-                   <property name="value">
-                    <double>6.000000000000000</double>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+                <widget class="QCheckBox" name="backgroundControllerCheckBox">
+                 <property name="text">
+                  <string>Enable Background Controller Input</string>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -642,13 +612,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="ControllerGroupBox">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
+             <widget class="QGroupBox" name="trophySettingsGroupBox">
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
@@ -656,31 +620,74 @@
                </font>
               </property>
               <property name="title">
-               <string>Controller</string>
+               <string>Trophies</string>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout">
-               <property name="spacing">
-                <number>6</number>
-               </property>
-               <property name="topMargin">
-                <number>9</number>
-               </property>
-               <property name="bottomMargin">
-                <number>9</number>
-               </property>
+              <layout class="QVBoxLayout" name="verticalLayout_11">
                <item>
-                <widget class="QCheckBox" name="motionControlsCheckBox">
+                <widget class="QCheckBox" name="disableTrophycheckBox">
                  <property name="text">
-                  <string>Enable Motion Controls</string>
+                  <string notr="true">Disable Trophy Pop-ups</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="backgroundControllerCheckBox">
-                 <property name="text">
-                  <string>Enable Background Controller Input</string>
-                 </property>
-                </widget>
+                <layout class="QHBoxLayout" name="popupPosLayout">
+                 <item>
+                  <widget class="QLabel" name="popupPosLabel">
+                   <property name="text">
+                    <string>Pop-up Position</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QComboBox" name="popUpPosComboBox">
+                   <item>
+                    <property name="text">
+                     <string>right</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>left</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>top</string>
+                    </property>
+                   </item>
+                   <item>
+                    <property name="text">
+                     <string>bottom</string>
+                    </property>
+                   </item>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="popupDurationLayout">
+                 <item>
+                  <widget class="QLabel" name="popupDurationLabel">
+                   <property name="text">
+                    <string>Pop-up Duration</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QDoubleSpinBox" name="popUpDurationSpinBox">
+                   <property name="maximum">
+                    <double>10.000000000000000</double>
+                   </property>
+                   <property name="singleStep">
+                    <double>0.100000000000000</double>
+                   </property>
+                   <property name="value">
+                    <double>6.000000000000000</double>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
                </item>
               </layout>
              </widget>
@@ -746,19 +753,6 @@
                </item>
               </layout>
              </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer">
-              <property name="orientation">
-               <enum>Qt::Orientation::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </item>
