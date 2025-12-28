@@ -13,19 +13,6 @@
   <property name="windowTitle">
    <string>Save Viewer and Backup Manager</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>630</x>
-     <y>380</y>
-     <width>91</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::StandardButton::Close</set>
-   </property>
-  </widget>
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
@@ -463,7 +450,7 @@
      <x>20</x>
      <y>130</y>
      <width>160</width>
-     <height>111</height>
+     <height>226</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -582,15 +569,38 @@
     <bool>true</bool>
    </property>
   </widget>
-  <zorder>verticalLayoutWidget</zorder>
-  <zorder>horizontalLayoutWidget</zorder>
-  <zorder>horizontalLayoutWidget_2</zorder>
-  <zorder>buttonBox</zorder>
-  <zorder>verticalLayoutWidget_2</zorder>
-  <zorder>LinkLabel</zorder>
-  <zorder>verticalLayoutWidget_3</zorder>
-  <zorder>NoteLabel</zorder>
-  <zorder>NoteLabel_2</zorder>
+  <widget class="QWidget" name="horizontalLayoutWidget_3">
+   <property name="geometry">
+    <rect>
+     <x>542</x>
+     <y>377</y>
+     <width>201</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_13">
+    <item>
+     <widget class="QPushButton" name="saveFolderButton">
+      <property name="text">
+       <string>Open Save Folder</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QDialogButtonBox" name="buttonBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="standardButtons">
+       <set>QDialogButtonBox::StandardButton::Close</set>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
  </widget>
  <resources/>
  <connections>

@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <fstream>
+#include <QDesktopServices>
 #include <QMessageBox>
 
 #include "SaveManager.h"
@@ -56,7 +57,6 @@ SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveMana
     ui->LinkLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
     ui->LinkLabel->setOpenExternalLinks(true);
 
-    // ***TODO NEXT
     connect(ui->ManualBackupButton, &QPushButton::pressed, this, &SaveManager::ManualBackupPressed);
     connect(ui->RestoreButton, &QPushButton::pressed, this, &SaveManager::RestoreBackupPressed);
     connect(ui->DeleteBackupButton, &QPushButton::pressed, this, &SaveManager::DeleteBackupPressed);
@@ -68,6 +68,17 @@ SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveMana
     connect(ui->SelectSaveComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
             [this] { OnSelectSaveChanged(); });
     connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QWidget::close);
+
+    connect(ui->saveFolderButton, &QPushButton::clicked, this, [this]() {
+        if (!std::filesystem::exists(ExactSaveDir)) {
+            QMessageBox::information(this, "Error", "Save folder does not exist");
+            return;
+        }
+
+        QString QSavePath;
+        Common::PathToQString(QSavePath, ExactSaveDir);
+        QDesktopServices::openUrl(QUrl::fromLocalFile(QSavePath));
+    });
 
     saveslot = "userdata0000";
     ui->SaveSlotComboBox->setCurrentText(QString::fromStdString(saveslot));
