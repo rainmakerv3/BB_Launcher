@@ -6,6 +6,7 @@
 #include <thread>
 #include <QDesktopServices>
 #include <QFileDialog>
+#include <QInputDialog>
 #include <QMessageBox>
 #include <QProcess>
 #include <QScrollBar>
@@ -250,6 +251,8 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         QDesktopServices::openUrl(QUrl::fromLocalFile(ModFolder));
     });
 
+    connect(ui->OpenFoldersButton, &QPushButton::pressed, this, &BBLauncher::OpenFolders);
+
     connect(ui->HotkeyButton, &QPushButton::clicked, this, [this]() {
         if (Config::isReleaseOlder(11)) {
             QMessageBox::warning(this, "Old release not supported",
@@ -471,6 +474,8 @@ void BBLauncher::UpdateIcons() {
     ui->KBMButton->setIconSize(QSize(48, 48));
     ui->ModFolderButton->setIcon(QIcon(":mod_folder.png"));
     ui->ModFolderButton->setIconSize(QSize(48, 48));
+    ui->OpenFoldersButton->setIcon(QIcon(":open.png"));
+    ui->OpenFoldersButton->setIconSize(QSize(48, 48));
     ui->HotkeyButton->setIcon(QIcon(":hotkey.png"));
     ui->HotkeyButton->setIconSize(QSize(48, 48));
 
@@ -487,6 +492,7 @@ void BBLauncher::UpdateIcons() {
         ui->ControllerButton->setIcon(RecolorIcon(ui->ControllerButton->icon(), false));
         ui->KBMButton->setIcon(RecolorIcon(ui->KBMButton->icon(), false));
         ui->ModFolderButton->setIcon(RecolorIcon(ui->ModFolderButton->icon(), false));
+        ui->OpenFoldersButton->setIcon(RecolorIcon(ui->OpenFoldersButton->icon(), false));
         ui->HotkeyButton->setIcon(RecolorIcon(ui->HotkeyButton->icon(), false));
 
         ui->LaunchButton->setIcon(RecolorIcon(ui->LaunchButton->icon(), false));
@@ -877,6 +883,41 @@ QString BBLauncher::getPatchFile() {
     }
 
     return patchFile;
+}
+
+void BBLauncher::OpenFolders() {
+    QStringList options = {"Log Folder", "Saves Folder", "Backup Saves Folder",
+                           "ShadPS4 Settings Folder"};
+    bool selected = true;
+    QString item = QInputDialog::getItem(this, "Select Folder", "Please choose a folder to open",
+                                         options, 0, false, &selected);
+
+    if (!selected)
+        return;
+
+    std::filesystem::path path;
+    if (item == "Log Folder") {
+        path = Common::GetShadUserDir() / "log";
+    } else if (item == "Saves Folder") {
+        // Releases older than 0.9.0 will need to use the game serial as save folder
+        std::string savePath = Config::isReleaseOlder(9)
+                                   ? Common::game_serial
+                                   : PSFdata::getSavePath(Common::installPath);
+        path = Common::GetSaveDir() / "1" / savePath / "SPRJ0005";
+    } else if (item == "Backup Saves Folder") {
+        path = Common::GetBBLFilesPath() / "SaveBackups";
+    } else if (item == "ShadPS4 Settings Folder") {
+        path = Common::GetShadUserDir();
+    }
+
+    if (!std::filesystem::exists(path)) {
+        QMessageBox::information(this, "Error", "Selected folder does not exist");
+        return;
+    }
+
+    QString QPath;
+    Common::PathToQString(QPath, path);
+    QDesktopServices::openUrl(QUrl::fromLocalFile(QPath));
 }
 
 BBLauncher::~BBLauncher() {

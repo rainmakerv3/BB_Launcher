@@ -29,6 +29,7 @@ private slots:
     void ShadSelectButton_isPressed();
     void onGameClosed();
     void PrintLog(QString entry);
+    void OpenFolders();
 
 private:
     static void StartBackupSave();

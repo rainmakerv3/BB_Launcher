@@ -18,5 +18,6 @@
         <file>stop_icon.png</file>
         <file>fullscreen_icon.png</file>
         <file>web.qml</file>
+		<file>open.png</file>
     </qresource>
 </RCC>

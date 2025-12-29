@@ -254,9 +254,9 @@
    <widget class="QWidget" name="horizontalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>137</x>
+      <x>57</x>
       <y>270</y>
-      <width>461</width>
+      <width>621</width>
       <height>61</height>
      </rect>
     </property>
@@ -289,6 +289,13 @@
      </item>
      <item>
       <widget class="QPushButton" name="ModFolderButton">
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="OpenFoldersButton">
        <property name="text">
         <string/>
        </property>
