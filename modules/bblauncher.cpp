@@ -158,6 +158,11 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->ModManagerButton, &QPushButton::pressed, this, [this]() {
+        if (Config::GameRunning) {
+            QMessageBox::warning(this, "Error", "Mod Manager cannot be used while game is running");
+            return;
+        }
+
         if (!CheckBBInstall())
             return;
         ModManager* ModWindow = new ModManager(this);
