@@ -123,9 +123,10 @@ void CheckUpdate::CheckForUpdates(const bool showMessage) {
 
     connect(reply, &QNetworkReply::finished, this, [this, reply, showMessage, CurrentBranch]() {
         if (reply->error() != QNetworkReply::NoError) {
-            QMessageBox::warning(this, tr("Error"),
+            QMessageBox::warning(this, tr("BBLauncher Update Error"),
                                  QString(tr("Network error:") + "\n" + reply->errorString()));
             reply->deleteLater();
+            reject();
             return;
         }
 
@@ -133,7 +134,8 @@ void CheckUpdate::CheckForUpdates(const bool showMessage) {
         QJsonDocument jsonDoc(QJsonDocument::fromJson(response));
 
         if (jsonDoc.isNull()) {
-            QMessageBox::warning(this, tr("Error"), tr("Failed to parse update information."));
+            QMessageBox::warning(this, tr("BBLauncher Update Error"),
+                                 tr("Failed to parse update information."));
             reply->deleteLater();
             return;
         }
@@ -167,7 +169,7 @@ void CheckUpdate::CheckForUpdates(const bool showMessage) {
         if (!jsonObj.isEmpty()) {
             latestVersion = jsonObj["tag_name"].toString();
         } else {
-            QMessageBox::warning(this, tr("Error"), tr("No releases found."));
+            QMessageBox::warning(this, tr(" BBLauncher Update Error"), tr("No releases found."));
             reply->deleteLater();
             return;
         }
@@ -202,7 +204,7 @@ void CheckUpdate::CheckForUpdates(const bool showMessage) {
         }
 
         if (!found) {
-            QMessageBox::warning(this, tr("Error"),
+            QMessageBox::warning(this, tr("BBLauncher Update Error"),
                                  tr("No download URL found for the specified asset."));
             reply->deleteLater();
             return;
@@ -216,7 +218,7 @@ void CheckUpdate::CheckForUpdates(const bool showMessage) {
 
         if (latestRev == currentRev) {
             if (showMessage) {
-                QMessageBox::information(this, tr("Auto Updater"),
+                QMessageBox::information(this, tr("BBLauncher Updater"),
                                          tr("Your version is already up to date!"));
             }
             close();

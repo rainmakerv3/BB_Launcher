@@ -373,7 +373,7 @@ void VersionDialog::CheckVersionsList(const bool showMessage) {
                 }
             }
         } else {
-            QMessageBox::warning(this, tr("Error"),
+            QMessageBox::warning(this, tr("ShadPS4 Updater Error"),
                                  tr("Error accessing GitHub API") +
                                      QString(":\n%1").arg(reply->errorString()));
         }
@@ -454,7 +454,7 @@ void VersionDialog::InstallSelectedVersion() {
     connect(reply, &QNetworkReply::finished, this,
             [this, reply, platform, versionName, downloadFolder]() {
                 if (reply->error() != QNetworkReply::NoError) {
-                    QMessageBox::warning(this, tr("Error"), reply->errorString());
+                    QMessageBox::warning(this, tr("ShadPS4 Updater Error"), reply->errorString());
                     reply->deleteLater();
                     return;
                 }
@@ -489,7 +489,7 @@ void VersionDialog::InstallSelectedVersion() {
                     }
                 }
                 if (downloadUrl.isEmpty()) {
-                    QMessageBox::warning(this, tr("Error"),
+                    QMessageBox::warning(this, tr("ShadPS4 Updater Error"),
                                          tr("No files available for this platform."));
                     reply->deleteLater();
                     return;
@@ -524,7 +524,8 @@ void VersionDialog::InstallSelectedVersion() {
 
                 QFile* file = new QFile(zipPath);
                 if (!file->open(QIODevice::WriteOnly)) {
-                    QMessageBox::warning(this, tr("Error"), tr("Could not save file."));
+                    QMessageBox::warning(this, tr("ShadPS4 Updater Error"),
+                                         tr("Could not save file."));
                     file->deleteLater();
                     downloadReply->deleteLater();
                     return;
@@ -763,7 +764,7 @@ void VersionDialog::checkUpdatePre(const bool showMessage) {
     connect(reply, &QNetworkReply::finished, this,
             [this, reply, localHash, localFolderName, showMessage]() {
                 if (reply->error() != QNetworkReply::NoError) {
-                    QMessageBox::warning(this, tr("Error"), reply->errorString());
+                    QMessageBox::warning(this, tr("ShadPS4 Updater Error"), reply->errorString());
                     reply->deleteLater();
                     return;
                 }
@@ -771,7 +772,7 @@ void VersionDialog::checkUpdatePre(const bool showMessage) {
                 QByteArray resp = reply->readAll();
                 QJsonDocument doc = QJsonDocument::fromJson(resp);
                 if (!doc.isArray()) {
-                    QMessageBox::warning(this, tr("Error"),
+                    QMessageBox::warning(this, tr("ShadPS4 Updater Error"),
                                          tr("The GitHub API response is not a valid JSON array."));
                     reply->deleteLater();
                     return;
@@ -812,7 +813,8 @@ void VersionDialog::checkUpdatePre(const bool showMessage) {
                         QString path = QFileDialog::getExistingDirectory(
                             this, "Select Download Folder", defaultPath);
                         if (path == "") {
-                            QMessageBox::warning(this, "Error", "No download folder selected");
+                            QMessageBox::warning(this, "ShadPS4 Updater Error",
+                                                 "No download folder selected");
                             return;
                         }
 
@@ -823,7 +825,7 @@ void VersionDialog::checkUpdatePre(const bool showMessage) {
                 }
 
                 if (latestHash.isEmpty()) {
-                    QMessageBox::warning(this, tr("Error"),
+                    QMessageBox::warning(this, tr("ShadPS4 Updater Error"),
                                          tr("Unable to get hash of latest pre-release"));
                     reply->deleteLater();
                     return;
@@ -938,7 +940,7 @@ void VersionDialog::requestChangelog(const QString& localHash, const QString& la
     connect(
         reply, &QNetworkReply::finished, this, [this, reply, localHash, latestHash, outputView]() {
             if (reply->error() != QNetworkReply::NoError) {
-                QMessageBox::warning(this, tr("Error"),
+                QMessageBox::warning(this, tr("ShadPS4 Updater Error"),
                                      tr("Network error while fetching changelog") + ":\n" +
                                          reply->errorString());
                 reply->deleteLater();
@@ -1024,7 +1026,7 @@ void VersionDialog::installPreReleaseByTag(const QString& tagName) {
             }
         }
         if (downloadUrl.isEmpty()) {
-            QMessageBox::warning(this, tr("Error"),
+            QMessageBox::warning(this, tr("ShadPS4 Updater Error"),
                                  tr("No download URL found for the specified asset."));
             reply->deleteLater();
             return;
@@ -1062,7 +1064,7 @@ void VersionDialog::showDownloadDialog(const QString& tagName, const QString& do
 
     connect(reply, &QNetworkReply::finished, this, [=, this]() {
         if (reply->error() != QNetworkReply::NoError) {
-            QMessageBox::warning(this, tr("Error"),
+            QMessageBox::warning(this, tr("ShadPS4 Updater Error"),
                                  tr("Network error while downloading") + ":\n" +
                                      reply->errorString());
             reply->deleteLater();
@@ -1080,7 +1082,7 @@ void VersionDialog::showDownloadDialog(const QString& tagName, const QString& do
 
         QFile zipFile(zipPath);
         if (!zipFile.open(QIODevice::WriteOnly)) {
-            QMessageBox::warning(this, tr("Error"),
+            QMessageBox::warning(this, tr("ShadPS4 Updater Error"),
                                  tr("Failed to save download file") + ":\n" + zipPath);
             reply->deleteLater();
             return;
