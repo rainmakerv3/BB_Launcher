@@ -123,7 +123,7 @@ void PkgExtractor::ExtractPkg() {
     std::filesystem::path dlcPath = Common::PathFromQString(dlcFolder);
 
     if (!std::filesystem::exists(file)) {
-        QMessageBox::information(this, "Error", "Select valid pkg file");
+        QMessageBox::information(this, "Error", "Selected pkg file does not exist");
         return;
     }
 
@@ -145,7 +145,7 @@ void PkgExtractor::ExtractPkg() {
         auto category = psf.GetString("CATEGORY");
 
         if (!std::filesystem::exists(game_install_dir) && category != "ac") {
-            QMessageBox::information(this, "Error", "Select valid output folder");
+            QMessageBox::information(this, "Error", "Selected game output folder does not exist");
             return;
         }
 
@@ -208,7 +208,7 @@ void PkgExtractor::ExtractPkg() {
 
         if (category == "ac") {
             if (!std::filesystem::exists(dlcPath)) {
-                QMessageBox::information(this, "Error", "Select valid dlc folder");
+                QMessageBox::information(this, "Error", "Selected dlc folder does not exist");
                 return;
             }
 
