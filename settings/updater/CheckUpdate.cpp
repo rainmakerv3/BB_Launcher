@@ -123,8 +123,9 @@ void CheckUpdate::CheckForUpdates(const bool showMessage) {
 
     connect(reply, &QNetworkReply::finished, this, [this, reply, showMessage, CurrentBranch]() {
         if (reply->error() != QNetworkReply::NoError) {
-            QMessageBox::warning(this, tr("BBLauncher Update Error"),
-                                 QString(tr("Network error:") + "\n" + reply->errorString()));
+            QMessageBox::warning(
+                this, tr("BBLauncher Update Error"),
+                QString(tr("Network error:") + QString(":\n%1").arg(reply->errorString())));
             reply->deleteLater();
             reject();
             return;
@@ -307,7 +308,7 @@ void CheckUpdate::DownloadUpdate(const QString& url) {
         if (reply->error() != QNetworkReply::NoError) {
             QMessageBox::warning(this, tr("Error"),
                                  tr("Network error occurred while trying to access the URL") +
-                                     ":\n" + url + "\n" + reply->errorString());
+                                     ":\n" + url + QString(":\n%1").arg(reply->errorString()));
             reply->deleteLater();
             progressBar->deleteLater();
             return;
