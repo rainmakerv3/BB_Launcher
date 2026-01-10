@@ -29,6 +29,9 @@ PkgExtractor::PkgExtractor(QWidget* parent) : QDialog(parent) {
     std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
     toml::value data;
 
+    if (!std::filesystem::exists(Common::GetShadUserDir() / "addcont"))
+        std::filesystem::create_directories(Common::GetShadUserDir() / "addcont");
+
     try {
         std::ifstream ifs;
         ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
