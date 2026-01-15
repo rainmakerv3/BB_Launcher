@@ -412,6 +412,7 @@ bool ModDownloader::ValidateApi() {
                     if (!isPremium) {
                         ui->validApiLabel->setStyleSheet("color: green;");
                         ui->validApiLabel->setText("Valid Non-Premium Nexus Mods API Key Set");
+                        isApiKeyPremium = false;
                     } else {
                         ui->validApiLabel->setStyleSheet("color: green;");
                         ui->validApiLabel->setText("Valid premium Api key set");
