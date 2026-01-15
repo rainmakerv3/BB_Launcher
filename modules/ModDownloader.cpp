@@ -258,7 +258,7 @@ void ModDownloader::GetApiKey() {
             [this, jsonValueUuid, m_webSocket, uuidString, webView, layout]() {
                 QJsonObject jsonObject;
                 jsonObject["id"] = jsonValueUuid;
-                jsonObject["appid"] = "Vortex";
+                jsonObject["appid"] = "rainmakerv2-bblauncher";
                 jsonObject["protocol"] = 2;
                 // jsonObject["token"] = NULL;
 
@@ -272,13 +272,12 @@ void ModDownloader::GetApiKey() {
                         [this, m_webSocket]() { m_webSocket->ping(); });
                 m_pingTimer->start();
 
-                QString link =
-                    "https://www.nexusmods.com/sso?id=" + uuidString + "&application=vortex";
+                QString link = "https://www.nexusmods.com/sso?id=" + uuidString +
+                               "&application=rainmakerv2-bblauncher";
 
                 QMessageBox::information(this, "Authorization required",
                                          "Click authorize to get your Api information with Nexus "
-                                         "mods. While BBLauncher's api ID is being processed, it "
-                                         "will pretend to be vortex in the meantime.");
+                                         "mods.");
 
 #ifdef Q_OS_LINUX
                 QDesktopServices::openUrl(link);
@@ -350,7 +349,7 @@ void ModDownloader::GetApiKey() {
             [this, jsonValueUuid, m_webSocket, uuidString]() {
                 QJsonObject jsonObject;
                 jsonObject["id"] = jsonValueUuid;
-                jsonObject["appid"] = "Vortex";
+                jsonObject["appid"] = "rainmakerv2-bblauncher";
                 jsonObject["protocol"] = 2;
                 // jsonObject["token"] = NULL;
 
@@ -364,8 +363,8 @@ void ModDownloader::GetApiKey() {
                         [this, m_webSocket]() { m_webSocket->ping(); });
                 m_pingTimer->start();
 
-                QString link =
-                    "https://www.nexusmods.com/sso?id=" + uuidString + "&application=vortex";
+                QString link = "https://www.nexusmods.com/sso?id=" + uuidString +
+                               "&application=rainmakerv2-bblauncher";
 
                 QWebEngineView* webView = new QWebEngineView(profile, authorizationDialog);
                 webView->setUrl(QUrl(link));
