@@ -777,35 +777,16 @@ void BBLauncher::StartEmulator(std::filesystem::path path, QStringList args) {
     }
 
     // Releases older than 0.11.0 will active patch file appended
-    bool usePatchFile = false;
-    Config::Build CurrentBuild = Config::GetCurrentBuildInfo();
-    if (CurrentBuild.type == "Release") {
-        static QRegularExpression versionRegex(R"(v\.?(\d+)\.(\d+)\.(\d+))");
-        QRegularExpressionMatch match = versionRegex.match(QString::fromStdString(CurrentBuild.id));
-        if (match.hasMatch()) {
-            int major = match.captured(1).toInt();
-            int minor = match.captured(2).toInt();
-            int patch = match.captured(3).toInt();
-
-            if (major > 0)
-                usePatchFile = true;
-            if (major == 0 && minor < 11)
-                usePatchFile = true;
-        }
-    }
+    bool usePatchFile = Config::isReleaseOlder(11);
 
     QStringList gameArgs{"--game", QString::fromStdWString(path.wstring())};
     QStringList patchArgs{"--patch", getPatchFile()};
     QStringList final_args;
 
-    if (!usePatchFile) {
-        final_args.append(args);
-        final_args.append(gameArgs);
-    } else {
-        final_args.append(args);
-        final_args.append(gameArgs);
+    final_args.append(args);
+    final_args.append(gameArgs);
+    if (usePatchFile)
         final_args.append(patchArgs);
-    }
 
     QString workDir = fileInfo.absolutePath();
     m_ipc_client->startEmulator(fileInfo, final_args, workDir);
