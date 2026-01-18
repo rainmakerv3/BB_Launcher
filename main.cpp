@@ -5,6 +5,10 @@
 #include <QCommandLineParser>
 #include <QMessageBox>
 
+#if defined(_MSC_VER)
+#include <intrin.h>
+#endif
+
 #ifndef USE_WEBENGINE
 #include <QtWebView>
 #endif
@@ -15,10 +19,33 @@
 void customMessageHandler(QtMsgType, const QMessageLogContext&, const QString&) {}
 
 int main(int argc, char* argv[]) {
+
 #ifndef USE_WEBENGINE
     QtWebView::initialize();
 #endif
     QApplication a(argc, argv);
+
+// Check if CPU supports AVX2, show error and quit otherwise
+#if defined(_MSC_VER)
+    std::vector<int> cpuInfo(4);
+    __cpuidex(cpuInfo.data(), 7, 0);
+    const int AVX2_BIT = (1 << 5);
+    bool avx2_available = (cpuInfo[1] & AVX2_BIT) != 0;
+
+    if (!avx2_available) {
+        QMessageBox::information(nullptr, "Unsupported CPU",
+                                 "CPU does not support AVX2 instructions. BBLauncher and ShadPS4 "
+                                 "both require CPU that support AVX2. Quitting application...");
+        return 0;
+    }
+#elif defined(__clang__) || defined(__GNUC__)
+    if (!__builtin_cpu_supports("avx2")) {
+        QMessageBox::information(nullptr, "Unsupported CPU",
+                                 "CPU does not support AVX2 instructions. BBLauncher and ShadPS4 "
+                                 "both require CPU that support AVX2. Quitting application...");
+        return 0;
+    }
+#endif
 
     QCommandLineParser parser;
     QCommandLineOption noGui("n");
