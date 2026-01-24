@@ -190,6 +190,14 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         if (!CheckBBInstall())
             return;
 
+        if (!std::filesystem::exists(Common::GetShadUserDir() / "config.toml")) {
+            QMessageBox::warning(
+                this, "No config files found",
+                QString::fromStdString((Common::GetShadUserDir() / "config.toml").string() +
+                                       " not found. Run shadPS4 once to generate it."));
+            return;
+        }
+
         if (Config::isReleaseOlder(11)) {
             QMessageBox::warning(
                 this, "Old release not supported",
