@@ -199,8 +199,10 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
             DownloadFilePremium(fileIdList[fileIndex], modIDmap[modIndex], modName);
         } else {
 #if defined Q_OS_LINUX and !defined USE_WEBENGINE
-            QMessageBox::information(this, tr("Not Supported"),
-                                     "Non-premium downloads not supported on this build");
+            QMessageBox::information(
+                this, tr("Not Supported"),
+                "Non-premium downloads not supported on this build. Download the Linux-Downloader "
+                "build from Nexus Mods or Github for non-premium mod downloads on Linux.");
             return;
 #endif
             DownloadFileRegular(fileIdList[fileIndex], modIDmap[modIndex], modName,
