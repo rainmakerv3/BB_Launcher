@@ -171,7 +171,6 @@ private:
     std::array<u8, 32> ekpfsKey;
     std::array<u8, 16> dataKey;
     std::array<u8, 16> tweakKey;
-    std::vector<u8> decNp;
 
     std::filesystem::path pkgpath;
     std::filesystem::path current_dir;
