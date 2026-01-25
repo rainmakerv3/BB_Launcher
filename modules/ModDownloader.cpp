@@ -180,9 +180,12 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         QString modName = ui->fileListWidget->currentItem()->text();
 
         if (fileNameList[fileIndex].right(3) != "zip" && sevenzipPath.empty()) {
-            QMessageBox::warning(this, "Error",
-                                 "Selected file is not a zip file. Valid 7zip must be set to "
-                                 "download. Aborting...");
+            QMessageBox::warning(
+                this, "Cannot download non-zip file",
+                "Selected file is not a zip file. A detected 7-zip installation is required to "
+                "download this file. To set the 7-zip installation, install 7-zip if you have not "
+                "then select the installed 7-zip exe/binary using the proper button located "
+                "towards the bottom part of the this interface.");
             return;
         }
 
