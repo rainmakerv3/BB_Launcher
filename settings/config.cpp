@@ -15,10 +15,6 @@ bool Config::SoundFixEnabled = true;
 bool Config::AutoUpdateEnabled = false;
 bool Config::PortableFolderinLauncherFolder = false;
 
-bool Config::isPSNSignedIn = false;
-bool Config::isConnectedToNetwork = false;
-std::string Config::httpHostOverride = "";
-
 bool Config::BackupSaveEnabled = false;
 int Config::BackupInterval = 10;
 int Config::BackupNumber = 2;
@@ -153,10 +149,6 @@ void LoadSettings() {
         TrophyKey = toml::find_or<std::string>(shadData, "Keys", "TrophyKey", "");
         DefaultControllerID =
             toml::find_or<std::string>(shadData, "General", "defaultControllerID", "");
-
-        isPSNSignedIn = toml::find_or<bool>(shadData, "General", "isPSNSignedIn", false);
-        isConnectedToNetwork = toml::find_or<bool>(shadData, "General", "isConnectedToNetwork", false);
-        httpHostOverride = toml::find_or<std::string>(shadData, "General", "httpHostOverride", "");
 
         if (shadData.contains("GUI")) {
             const toml::value& GUI = shadData.at("GUI");
