@@ -3,7 +3,7 @@
  <class>ShadSettings</class>
  <widget class="QDialog" name="ShadSettings">
   <property name="windowModality">
-   <enum>Qt::WindowModality::WindowModal</enum>
+   <enum>Qt::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>
@@ -22,6 +22,7 @@
   <property name="font">
    <font>
     <pointsize>11</pointsize>
+    <weight>50</weight>
     <bold>false</bold>
    </font>
   </property>
@@ -51,7 +52,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QScrollArea" name="generalTab">
       <property name="widgetResizable">
@@ -65,8 +66,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>981</width>
-         <height>584</height>
+         <width>985</width>
+         <height>618</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="generalTabVLayout" stretch="0,0">
@@ -79,6 +80,7 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
+                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -130,6 +132,7 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
+                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -185,6 +188,7 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
+                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -226,9 +230,6 @@
                    <property name="text">
                     <string>0.250</string>
                    </property>
-                   <property name="alignment">
-                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-                   </property>
                   </widget>
                  </item>
                 </layout>
@@ -240,9 +241,6 @@
                  </property>
                  <property name="value">
                   <number>250</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -258,6 +256,7 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
+                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -270,6 +269,7 @@
                  <property name="font">
                   <font>
                    <pointsize>9</pointsize>
+                   <weight>75</weight>
                    <bold>true</bold>
                   </font>
                  </property>
@@ -283,6 +283,7 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
+                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -332,9 +333,6 @@
                    <property name="text">
                     <string>100</string>
                    </property>
-                   <property name="alignment">
-                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-                   </property>
                   </widget>
                  </item>
                 </layout>
@@ -347,9 +345,6 @@
                  <property name="value">
                   <number>100</number>
                  </property>
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
-                 </property>
                 </widget>
                </item>
               </layout>
@@ -360,6 +355,7 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
+                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -381,7 +377,7 @@
                        <bool>true</bool>
                       </property>
                       <property name="correctionMode">
-                       <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
+                       <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
                       </property>
                       <property name="keyboardTracking">
                        <bool>false</bool>
@@ -415,7 +411,7 @@
                        <bool>true</bool>
                       </property>
                       <property name="correctionMode">
-                       <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
+                       <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
                       </property>
                       <property name="keyboardTracking">
                        <bool>false</bool>
@@ -462,6 +458,7 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
+                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -504,6 +501,7 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
+                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -577,7 +575,7 @@
                      </size>
                     </property>
                     <property name="layoutDirection">
-                     <enum>Qt::LayoutDirection::LeftToRight</enum>
+                     <enum>Qt::LeftToRight</enum>
                     </property>
                     <property name="wrapping">
                      <bool>false</bool>
@@ -585,11 +583,8 @@
                     <property name="frame">
                      <bool>true</bool>
                     </property>
-                    <property name="alignment">
-                     <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
-                    </property>
                     <property name="buttonSymbols">
-                     <enum>QAbstractSpinBox::ButtonSymbols::UpDownArrows</enum>
+                     <enum>QAbstractSpinBox::UpDownArrows</enum>
                     </property>
                     <property name="suffix">
                      <string notr="true"> seconds</string>
@@ -616,6 +611,7 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
+                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -697,6 +693,7 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
+                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -709,6 +706,7 @@
                  <property name="font">
                   <font>
                    <pointsize>9</pointsize>
+                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -727,6 +725,7 @@
                  <property name="font">
                   <font>
                    <pointsize>9</pointsize>
+                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -769,6 +768,7 @@
           <property name="font">
            <font>
             <pointsize>12</pointsize>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -828,6 +828,7 @@
        <property name="font">
         <font>
          <pointsize>9</pointsize>
+         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -839,7 +840,7 @@
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>190</y>
+         <y>140</y>
          <width>441</width>
          <height>81</height>
         </rect>
@@ -857,7 +858,7 @@
            <bool>true</bool>
           </property>
           <property name="correctionMode">
-           <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
+           <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
           </property>
           <property name="keyboardTracking">
            <bool>false</bool>
@@ -878,37 +879,11 @@
         </item>
        </layout>
       </widget>
-      <widget class="QCheckBox" name="networkConnectedCheckBox">
-        <property name="geometry">
-          <rect>
-            <x>30</x>
-            <y>125</y>
-            <width>400</width>
-            <height>25</height>
-          </rect>
-        </property>
-        <property name="text">
-          <string>Set "Network Connected" to True</string>
-        </property>
-      </widget>
-      <widget class="QCheckBox" name="psnSignInCheckBox">
-        <property name="geometry">
-          <rect>
-            <x>30</x>
-            <y>155</y>
-            <width>400</width>
-            <height>25</height>
-          </rect>
-        </property>
-        <property name="text">
-          <string>Set "PSN signed-in" to True</string>
-        </property>
-      </widget>
       <widget class="QGroupBox" name="dmemGroupBox">
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>280</y>
+         <y>240</y>
          <width>441</width>
          <height>91</height>
         </rect>
@@ -928,6 +903,77 @@
          </widget>
         </item>
        </layout>
+      </widget>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>360</y>
+         <width>441</width>
+         <height>231</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Network</string>
+       </property>
+       <widget class="QCheckBox" name="networkConnectedCheckBox">
+        <property name="geometry">
+         <rect>
+          <x>12</x>
+          <y>40</y>
+          <width>400</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Set &quot;Network Connected&quot; to True</string>
+        </property>
+       </widget>
+       <widget class="QCheckBox" name="psnSignInCheckBox">
+        <property name="geometry">
+         <rect>
+          <x>12</x>
+          <y>80</y>
+          <width>400</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Set &quot;PSN signed-in&quot; to True</string>
+        </property>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_2">
+        <property name="geometry">
+         <rect>
+          <x>12</x>
+          <y>120</y>
+          <width>381</width>
+          <height>81</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Host Override</string>
+        </property>
+        <widget class="QLineEdit" name="httpHostOverrideEdit">
+         <property name="geometry">
+          <rect>
+           <x>12</x>
+           <y>40</y>
+           <width>351</width>
+           <height>23</height>
+          </rect>
+         </property>
+         <property name="inputMask">
+          <string/>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="placeholderText">
+          <string>IP or URL</string>
+         </property>
+        </widget>
+       </widget>
       </widget>
      </widget>
      <widget class="QWidget" name="GlobalTab">
@@ -1025,7 +1071,7 @@
               <bool>true</bool>
              </property>
              <property name="correctionMode">
-              <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
+              <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
              </property>
              <property name="keyboardTracking">
               <bool>false</bool>
@@ -1068,7 +1114,7 @@
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::RestoreDefaults|QDialogButtonBox::StandardButton::Save</set>
+      <set>QDialogButtonBox::NoButton</set>
      </property>
     </widget>
    </item>
