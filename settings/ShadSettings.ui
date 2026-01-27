@@ -878,6 +878,16 @@
         </item>
        </layout>
       </widget>
+      <widget class="QCheckBox" name="psnSignInCheckBox">
+        <property name="text">
+          <string>Set &quot;PSN signed-in&quot; to True</string>
+        </property>
+      </widget>
+      <widget class="QCheckBox" name="networkConnectedCheckBox">
+        <property name="text">
+          <string>Set &quot;Network Connected&quot; to True</string>
+        </property>
+      </widget>
       <widget class="QGroupBox" name="dmemGroupBox">
        <property name="geometry">
         <rect>

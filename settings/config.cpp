@@ -15,6 +15,9 @@ bool Config::SoundFixEnabled = true;
 bool Config::AutoUpdateEnabled = false;
 bool Config::PortableFolderinLauncherFolder = false;
 
+bool Config::isPSNSignedIn = false;
+bool Config::isConnectedToNetwork = false;
+
 bool Config::BackupSaveEnabled = false;
 int Config::BackupInterval = 10;
 int Config::BackupNumber = 2;
@@ -150,6 +153,9 @@ void LoadSettings() {
         DefaultControllerID =
             toml::find_or<std::string>(shadData, "General", "defaultControllerID", "");
 
+        isPSNSignedIn = toml::find_or<bool>(shadData, "General", "isPSNSignedIn", false);
+        isConnectedToNetwork = toml::find_or<bool>(shadData, "General", "isConnectedToNetwork", false);
+
         if (shadData.contains("GUI")) {
             const toml::value& GUI = shadData.at("GUI");
             Config::externalSaveDir = toml::find_fs_path_or(GUI, "saveDataPath", {});
@@ -220,6 +226,12 @@ void SaveShadSettings(ShadSettings settings, bool is_game_specific) {
     }
 
     // game-specific only
+
+    if (settings.isPSNSignedIn.has_value())
+        data["General"]["isPSNSignedIn"] = settings.isPSNSignedIn.value();
+
+    if (settings.isConnectedToNetwork.has_value())
+        data["General"]["isConnectedToNetwork"] = settings.isConnectedToNetwork.value();
 
     // common
 
