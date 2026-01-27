@@ -51,3 +51,9 @@ Trophy viewing/unlocking
 Fully open source! Check out the Github page if you wanna build it yourself, contribute or just look at the source: https://github.com/rainmakerv3/BB_Launcher
 
 Thanks to FMOD stream thread and Az for their code contributions! Thanks also to Missake and Brad for helping to test, and to Noxde and Kyoski for a lot of help figuring out how to view save files!
+
+____________________________________
+
+BUILDING:
+
+https://github.com/rainmakerv3/BB_Launcher/documents/building-docker.md

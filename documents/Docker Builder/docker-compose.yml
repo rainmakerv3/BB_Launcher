@@ -1,0 +1,7 @@
+services:
+  cppsrc:
+    build:
+      context: ./.docker
+    volumes:
+      - ./src:/workspaces/cppsrc:cached
+    tty: true
