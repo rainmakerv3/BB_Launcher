@@ -11,9 +11,6 @@
 namespace Config {
 
 struct ShadSettings {
-    std::optional<bool> isPSNSignedIn;
-    std::optional<bool> isConnectedToNetwork;
-    std::optional<std::string> httpHostOverride;
     std::optional<std::string> defaultControllerID;
     std::optional<bool> useUnifiedInputConfig;
 };

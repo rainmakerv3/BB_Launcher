@@ -221,15 +221,6 @@ void SaveShadSettings(ShadSettings settings, bool is_game_specific) {
 
     // game-specific only
 
-    if (settings.isPSNSignedIn.has_value())
-        data["General"]["isPSNSignedIn"] = settings.isPSNSignedIn.value();
-
-    if (settings.isConnectedToNetwork.has_value())
-        data["General"]["isConnectedToNetwork"] = settings.isConnectedToNetwork.value();
-
-    if (settings.httpHostOverride.has_value())
-        data["General"]["httpHostOverride"] = settings.httpHostOverride.value();
-
     // common
 
     std::ofstream file(ShadConfig, std::ios::binary);

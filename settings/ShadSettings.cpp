@@ -207,11 +207,6 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
         ui->motionControlsCheckBox->installEventFilter(this);
         ui->DevkitCheckBox->installEventFilter(this);
         ui->backgroundControllerCheckBox->installEventFilter(this);
-
-        ui->networkConnectedCheckBox->installEventFilter(this);
-        ui->psnSignInCheckBox->installEventFilter(this);  
-
-        ui->httpHostOverrideEdit->installEventFilter(this);  
     }
 }
 
