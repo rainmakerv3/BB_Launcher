@@ -194,7 +194,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
             QMessageBox::information(
                 this, tr("Mod already exists"),
                 tr("%1 is already in your mod folder or active mod folder. Aborting...")
-                    .arg(QString::fromStdString(modName.toStdString())));
+                    .arg(modName));
             return;
         }
 
@@ -805,7 +805,7 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
             QMessageBox::information(
                 this, tr("Confirm Download"),
                 tr("%1 has been downloaded. You can activate it using the mod manager")
-                    .arg(modName.toStdString()));
+                    .arg(modName));
 
             QDir(extractPath).removeRecursively();
             QFile::remove(zipPath);
@@ -1137,7 +1137,7 @@ bool ModDownloader::GetOption(QStringList options, QString& modName, std::string
         QMessageBox::information(this, tr("Mod already exists"),
                                  tr("%1 is already in your mod folder or active mod folder. Select "
                                     "another option or cancel")
-                                     .arg(QString::fromStdString(modName.toStdString())));
+                                     .arg(modName));
 
         modName = oldModName;
         selected = GetOption(options, modName, option);

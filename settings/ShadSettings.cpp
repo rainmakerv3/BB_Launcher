@@ -163,13 +163,14 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
     connect(ui->deleteCacheButton, &QPushButton::clicked, this, [this]() {
         std::filesystem::path cachePath = Common::GetShadUserDir() / "cache" / Common::game_serial;
         if (!std::filesystem::exists(cachePath)) {
-            QMessageBox::information(
-                this, "Error", QString("No current shader cache for %1").arg(Common::game_serial));
+            QMessageBox::information(this, "Error",
+                                     QString("No current shader cache for %1")
+                                         .arg(QString::fromStdString(Common::game_serial)));
         } else {
             std::filesystem::remove_all(cachePath);
-            QMessageBox::information(
-                this, "Removal Completed",
-                QString("Shader cache for %1 successfully removed.").arg(Common::game_serial));
+            QMessageBox::information(this, "Removal Completed",
+                                     QString("Shader cache for %1 successfully removed.")
+                                         .arg(QString::fromStdString(Common::game_serial)));
         }
     });
 
