@@ -13,6 +13,7 @@ namespace Config {
 struct ShadSettings {
     std::optional<bool> isPSNSignedIn;
     std::optional<bool> isConnectedToNetwork;
+    std::optional<std::string> httpHostOverride;
     std::optional<std::string> defaultControllerID;
     std::optional<bool> useUnifiedInputConfig;
 };
@@ -41,8 +42,6 @@ std::string GetLastModifiedString(const std::filesystem::path& path);
 
 extern std::string theme;
 extern bool PortableFolderinLauncherFolder;
-extern bool isPSNSignedIn;
-extern bool isConnectedToNetwork;
 extern bool SoundFixEnabled;
 extern bool BackupSaveEnabled;
 extern int BackupInterval;

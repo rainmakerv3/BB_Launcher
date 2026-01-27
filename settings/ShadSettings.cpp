@@ -210,6 +210,8 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
 
         ui->networkConnectedCheckBox->installEventFilter(this);
         ui->psnSignInCheckBox->installEventFilter(this);  
+
+        ui->httpHostOverrideEdit->installEventFilter(this);  
     }
 }
 
@@ -281,6 +283,9 @@ void ShadSettings::LoadValuesFromConfig() {
         toml::find_or<bool>(data, "General", "isConnectedToNetwork", false));
     ui->psnSignInCheckBox->setChecked(
         toml::find_or<bool>(data, "General", "isPSNSignedIn", false)
+    );
+    ui->httpHostOverrideEdit->setText(
+        QString::fromStdString(toml::find_or<std::string>(data, "General", "httpHostOverride", ""))
     );
 
     QString translatedText_PresentMode = presentModeMap.key(
@@ -418,6 +423,8 @@ void ShadSettings::SaveSettings() {
         data["General"]["isConnectedToNetwork"] = ui->networkConnectedCheckBox->isChecked();
         data["General"]["isPSNSignedIn"] = ui->psnSignInCheckBox->isChecked();
 
+        data["General"]["httpHostOverride"] = ui->httpHostOverrideEdit->text().toStdString();
+
         data["GPU"]["readbacks"] = ui->ReadbacksCheckBox->isChecked();
         data["GPU"]["vblankFrequency"] = ui->vblankSpinBox->value();
     } else {
@@ -499,6 +506,7 @@ void ShadSettings::SetDefaults() {
         ui->dmemSpinBox->setValue(0);
         ui->networkConnectedCheckBox->setChecked(false);
         ui->psnSignInCheckBox->setChecked(false);
+        ui->httpHostOverrideEdit->setText("");
     } else {
         ui->discordRPCCheckbox->setChecked(true);
     }

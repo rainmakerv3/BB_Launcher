@@ -17,6 +17,7 @@ bool Config::PortableFolderinLauncherFolder = false;
 
 bool Config::isPSNSignedIn = false;
 bool Config::isConnectedToNetwork = false;
+std::string Config::httpHostOverride = "";
 
 bool Config::BackupSaveEnabled = false;
 int Config::BackupInterval = 10;
@@ -155,6 +156,7 @@ void LoadSettings() {
 
         isPSNSignedIn = toml::find_or<bool>(shadData, "General", "isPSNSignedIn", false);
         isConnectedToNetwork = toml::find_or<bool>(shadData, "General", "isConnectedToNetwork", false);
+        httpHostOverride = toml::find_or<std::string>(shadData, "General", "httpHostOverride", "");
 
         if (shadData.contains("GUI")) {
             const toml::value& GUI = shadData.at("GUI");
@@ -232,6 +234,9 @@ void SaveShadSettings(ShadSettings settings, bool is_game_specific) {
 
     if (settings.isConnectedToNetwork.has_value())
         data["General"]["isConnectedToNetwork"] = settings.isConnectedToNetwork.value();
+
+    if (settings.httpHostOverride.has_value())
+        data["General"]["httpHostOverride"] = settings.httpHostOverride.value();
 
     // common
 
