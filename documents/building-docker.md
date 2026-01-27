@@ -79,7 +79,7 @@ cmake --build ./build --parallel $(nproc)
 After a successful build, the executable is located at:
 
 ```bash
-./Build
+./build/BB_Launcer
 ```
 
 ## Step 4: VSCode Integration
