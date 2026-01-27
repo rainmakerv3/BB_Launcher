@@ -3,7 +3,7 @@
  <class>ShadSettings</class>
  <widget class="QDialog" name="ShadSettings">
   <property name="windowModality">
-   <enum>Qt::NonModal</enum>
+   <enum>Qt::WindowModality::WindowModal</enum>
   </property>
   <property name="geometry">
    <rect>
@@ -52,7 +52,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QScrollArea" name="generalTab">
       <property name="widgetResizable">
@@ -230,6 +230,9 @@
                    <property name="text">
                     <string>0.250</string>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
                   </widget>
                  </item>
                 </layout>
@@ -241,6 +244,9 @@
                  </property>
                  <property name="value">
                   <number>250</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -333,6 +339,9 @@
                    <property name="text">
                     <string>100</string>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
                   </widget>
                  </item>
                 </layout>
@@ -344,6 +353,9 @@
                  </property>
                  <property name="value">
                   <number>100</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -377,7 +389,7 @@
                        <bool>true</bool>
                       </property>
                       <property name="correctionMode">
-                       <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
+                       <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
                       </property>
                       <property name="keyboardTracking">
                        <bool>false</bool>
@@ -411,7 +423,7 @@
                        <bool>true</bool>
                       </property>
                       <property name="correctionMode">
-                       <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
+                       <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
                       </property>
                       <property name="keyboardTracking">
                        <bool>false</bool>
@@ -575,7 +587,7 @@
                      </size>
                     </property>
                     <property name="layoutDirection">
-                     <enum>Qt::LeftToRight</enum>
+                     <enum>Qt::LayoutDirection::LeftToRight</enum>
                     </property>
                     <property name="wrapping">
                      <bool>false</bool>
@@ -583,8 +595,11 @@
                     <property name="frame">
                      <bool>true</bool>
                     </property>
+                    <property name="alignment">
+                     <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
+                    </property>
                     <property name="buttonSymbols">
-                     <enum>QAbstractSpinBox::UpDownArrows</enum>
+                     <enum>QAbstractSpinBox::ButtonSymbols::UpDownArrows</enum>
                     </property>
                     <property name="suffix">
                      <string notr="true"> seconds</string>
@@ -858,7 +873,7 @@
            <bool>true</bool>
           </property>
           <property name="correctionMode">
-           <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
+           <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
           </property>
           <property name="keyboardTracking">
            <bool>false</bool>
@@ -942,7 +957,7 @@
          <string>Set &quot;PSN signed-in&quot; to True</string>
         </property>
        </widget>
-       <widget class="QGroupBox" name="groupBox_2">
+       <widget class="QGroupBox" name="httpOverrideGroupBox">
         <property name="geometry">
          <rect>
           <x>12</x>
@@ -1071,7 +1086,7 @@
               <bool>true</bool>
              </property>
              <property name="correctionMode">
-              <enum>QAbstractSpinBox::CorrectToPreviousValue</enum>
+              <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
              </property>
              <property name="keyboardTracking">
               <bool>false</bool>
@@ -1114,7 +1129,7 @@
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
-      <set>QDialogButtonBox::NoButton</set>
+      <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::RestoreDefaults|QDialogButtonBox::StandardButton::Save</set>
      </property>
     </widget>
    </item>
