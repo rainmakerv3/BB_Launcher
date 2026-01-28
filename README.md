@@ -12,6 +12,8 @@ ___________________________________
 
 INSTALLATION AND USAGE:
 
+For Windows only: Install VCRedist_x64 here - https://aka.ms/vs/17/release/vc_redist.x64.exe (Note: this is required for shadPS4 as well).
+
 Extract BBLauncher to any folder and run it, download shadPS4 through the build manager by clicking the "Manage builds" button. Set the shadPS4 install folder (named CUSA03173 or whatever the serial number of your game is).
 
 _____________________________________
