@@ -501,7 +501,7 @@ void ShadSettings::SetDefaults() {
         ui->dmemSpinBox->setValue(0);
         ui->networkConnectedCheckBox->setChecked(false);
         ui->psnSignInCheckBox->setChecked(false);
-        ui->httpHostOverrideEdit->setText("");
+        ui->httpHostOverrideEdit->setText("bbnet.yahargul.info");
     } else {
         ui->discordRPCCheckbox->setChecked(true);
     }
