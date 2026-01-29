@@ -280,7 +280,7 @@ void ShadSettings::LoadValuesFromConfig() {
         toml::find_or<bool>(data, "General", "isPSNSignedIn", false)
     );
     ui->httpHostOverrideEdit->setText(
-        QString::fromStdString(toml::find_or<std::string>(data, "General", "httpHostOverride", ""))
+        QString::fromStdString(toml::find_or<std::string>(data, "General", "httpHostOverride", "bbnet.yahargul.info"))
     );
 
     QString translatedText_PresentMode = presentModeMap.key(
