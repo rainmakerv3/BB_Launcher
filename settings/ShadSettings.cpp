@@ -274,6 +274,14 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->graphicsAdapterBox->setCurrentIndex(toml::find_or<int>(data, "Vulkan", "gpuId", -1) + 1);
     ui->pipelineCacheCheckBox->setChecked(
         toml::find_or<bool>(data, "Vulkan", "pipelineCacheEnable", false));
+    ui->networkConnectedCheckBox->setChecked(
+        toml::find_or<bool>(data, "General", "isConnectedToNetwork", false));
+    ui->psnSignInCheckBox->setChecked(
+        toml::find_or<bool>(data, "General", "isPSNSignedIn", false)
+    );
+    ui->httpHostOverrideEdit->setText(
+        QString::fromStdString(toml::find_or<std::string>(data, "General", "httpHostOverride", "bbnet.yahargul.info"))
+    );
 
     QString translatedText_PresentMode = presentModeMap.key(
         QString::fromStdString(toml::find_or<std::string>(data, "GPU", "presentMode", "Mailbox")));
@@ -407,6 +415,11 @@ void ShadSettings::SaveSettings() {
         data["General"]["isDevKit"] = ui->DevkitCheckBox->isChecked();
         data["General"]["extraDmemInMbytes"] = ui->dmemSpinBox->value();
 
+        data["General"]["isConnectedToNetwork"] = ui->networkConnectedCheckBox->isChecked();
+        data["General"]["isPSNSignedIn"] = ui->psnSignInCheckBox->isChecked();
+
+        data["General"]["httpHostOverride"] = ui->httpHostOverrideEdit->text().toStdString();
+
         data["GPU"]["readbacks"] = ui->ReadbacksCheckBox->isChecked();
         data["GPU"]["vblankFrequency"] = ui->vblankSpinBox->value();
     } else {
@@ -486,6 +499,9 @@ void ShadSettings::SetDefaults() {
         ui->ReadbacksCheckBox->setChecked(false);
         ui->DevkitCheckBox->setChecked(false);
         ui->dmemSpinBox->setValue(0);
+        ui->networkConnectedCheckBox->setChecked(false);
+        ui->psnSignInCheckBox->setChecked(false);
+        ui->httpHostOverrideEdit->setText("bbnet.yahargul.info");
     } else {
         ui->discordRPCCheckbox->setChecked(true);
     }
