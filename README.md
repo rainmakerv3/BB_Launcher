@@ -12,6 +12,8 @@ ___________________________________
 
 INSTALLATION AND USAGE:
 
+For Windows only: Install VCRedist_x64 here - https://aka.ms/vs/17/release/vc_redist.x64.exe (Note: this is required for shadPS4 as well).
+
 Extract BBLauncher to any folder and run it, download shadPS4 through the build manager by clicking the "Manage builds" button. Set the shadPS4 install folder (named CUSA03173 or whatever the serial number of your game is).
 
 _____________________________________
@@ -51,3 +53,9 @@ Trophy viewing/unlocking
 Fully open source! Check out the Github page if you wanna build it yourself, contribute or just look at the source: https://github.com/rainmakerv3/BB_Launcher
 
 Thanks to FMOD stream thread and Az for their code contributions! Thanks also to Missake and Brad for helping to test, and to Noxde and Kyoski for a lot of help figuring out how to view save files!
+
+____________________________________
+
+BUILDING:
+
+https://github.com/rainmakerv3/BB_Launcher/documents/building-docker.md
