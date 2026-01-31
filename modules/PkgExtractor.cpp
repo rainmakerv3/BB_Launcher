@@ -19,34 +19,15 @@
 #include "modules/PkgDeps/loader.h"
 #include "modules/PkgDeps/pkg.h"
 #include "settings/PSF/psf.h"
-#include "settings/formatting.h"
 
-PkgExtractor::PkgExtractor(QWidget* parent) : QDialog(parent) {
+PkgExtractor::PkgExtractor(std::shared_ptr<EmulatorSettings> emu_settings, QWidget* parent)
+    : m_emu_settings(std::move(emu_settings)), QDialog(parent) {
     setupUI();
     resize(600, 60);
     this->setWindowTitle(tr("PKG Extractor"));
 
-    std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
-    toml::value data;
-
-    if (!std::filesystem::exists(Common::GetShadUserDir() / "addcont"))
-        std::filesystem::create_directories(Common::GetShadUserDir() / "addcont");
-
-    try {
-        std::ifstream ifs;
-        ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-        ifs.open(shadConfigFile, std::ios_base::binary);
-        data = toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
-    } catch (std::exception& ex) {
-        // handle ?
-        return;
-    }
-
     std::filesystem::path dlcPath;
-    if (data.contains("GUI")) {
-        const toml::value& GUI = data.at("GUI");
-        dlcPath = toml::find_fs_path_or(GUI, "addonInstallDir", {});
-    }
+    dlcPath = m_emu_settings->GetAddonInstallDir();
 
     if (dlcPath.empty()) {
         dlcPath = Common::GetShadUserDir() / "addcont";
@@ -474,27 +455,7 @@ void PkgExtractor::browseDlc() {
 
     if (!dlcFolder.isEmpty()) {
         dlcLineEdit->setText(dlcFolder);
-
-        std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
-        toml::value data;
-
-        try {
-            std::ifstream ifs;
-            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-            ifs.open(shadConfigFile, std::ios_base::binary);
-            data =
-                toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
-        } catch (std::exception& ex) {
-            // handle ?
-            return;
-        }
-
-        std::filesystem::path dlcPath = Common::PathFromQString(dlcFolder);
-        data["GUI"]["addonInstallDir"] = std::string{fmt::UTF(dlcPath.u8string()).data};
-
-        std::ofstream file(shadConfigFile, std::ios::binary);
-        file << data;
-        file.close();
+        m_emu_settings->SetAddonInstallDir(dlcFolder.toStdString());
     }
 }
 

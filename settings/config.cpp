@@ -6,6 +6,7 @@
 #include <QRegularExpression>
 
 #include "config.h"
+#include "emulator_settings.h"
 #include "formatting.h"
 
 std::filesystem::path Config::SevenZipPath;
@@ -44,22 +45,6 @@ static std::string SelectedGamepad = "";
 #endif
 
 namespace Config {
-
-void CreateGSFile() {
-    std::string filename = Common::game_serial + ".toml";
-    std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
-
-    if (!std::filesystem::exists(gsConfig.parent_path()))
-        std::filesystem::create_directories(gsConfig.parent_path());
-
-    toml::ordered_value data;
-
-    data["General"]["extraDmemInMbytes"] = 0;
-
-    std::ofstream file(gsConfig, std::ios::binary);
-    file << data;
-    file.close();
-}
 
 void LoadSettings() {
     using namespace Config;
@@ -130,32 +115,12 @@ void LoadSettings() {
             Common::installPath.parent_path() / (Common::game_serial + "-patch");
     }
 
+    EmulatorSettings initial_settings;
+    initial_settings.Load();
+    Config::UnifiedInputConfig = initial_settings.IsUseUnifiedInputConfig();
+    Config::DefaultControllerID = initial_settings.GetDefaultControllerId();
+
     Config::SetTheme(theme);
-
-    std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
-    if (std::filesystem::exists(shadConfigFile)) {
-        toml::value shadData;
-        try {
-            std::ifstream ifs;
-            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-            ifs.open(shadConfigFile, std::ios_base::binary);
-            shadData =
-                toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
-        } catch (std::exception& ex) {
-            QMessageBox::critical(NULL, "Filesystem error", ex.what());
-            return;
-        }
-
-        UnifiedInputConfig = toml::find_or<bool>(shadData, "Input", "useUnifiedInputConfig", true);
-        TrophyKey = toml::find_or<std::string>(shadData, "Keys", "TrophyKey", "");
-        DefaultControllerID =
-            toml::find_or<std::string>(shadData, "General", "defaultControllerID", "");
-
-        if (shadData.contains("GUI")) {
-            const toml::value& GUI = shadData.at("GUI");
-            Config::externalSaveDir = toml::find_fs_path_or(GUI, "saveDataPath", {});
-        }
-    }
 }
 
 void CreateSettingsFile() {
@@ -182,53 +147,6 @@ void CreateSettingsFile() {
     std::ofstream file(SettingsFile, std::ios::binary);
     file << data;
     file.close();
-}
-
-void SaveShadSettings(ShadSettings settings, bool is_game_specific) {
-    using namespace Config;
-
-    std::filesystem::path ShadConfig =
-        is_game_specific
-            ? Common::GetShadUserDir() / "custom_configs" / (Common::game_serial + ".toml")
-            : Common::GetShadUserDir() / "config.toml";
-    toml::value data = toml::parse(ShadConfig);
-    std::error_code error;
-
-    if (std::filesystem::exists(ShadConfig, error)) {
-        try {
-            std::ifstream ifs;
-            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-            ifs.open(ShadConfig, std::ios_base::binary);
-            data = toml::parse(ifs, std::string{fmt::UTF(ShadConfig.filename().u8string()).data});
-        } catch (const std::exception& ex) {
-            QMessageBox::critical(NULL, "Filesystem error", ex.what());
-            return;
-        }
-    } else {
-        if (error) {
-            QMessageBox::critical(NULL, "Filesystem error",
-                                  QString::fromStdString(error.message()));
-        }
-    }
-
-    // global only
-    if (!is_game_specific) {
-        if (settings.useUnifiedInputConfig.has_value())
-            data["Input"]["useUnifiedInputConfig"] = settings.useUnifiedInputConfig.value();
-
-        if (settings.defaultControllerID.has_value())
-            data["General"]["defaultControllerID"] = settings.defaultControllerID.value();
-    }
-
-    // game-specific only
-
-    // common
-
-    std::ofstream file(ShadConfig, std::ios::binary);
-    file << data;
-    file.close();
-
-    SetTheme(theme);
 }
 
 void SaveLauncherSettings() {
@@ -511,29 +429,16 @@ bool isReleaseOlder(int minorVersion, int MajorVersion) {
 }
 
 int GetDmemValue() {
-    using namespace Config;
+    int dmem;
+    EmulatorSettings gs_settings;
 
-    toml::value gs_data;
-    std::filesystem::path shadConfigFile =
-        Common::GetShadUserDir() / "custom_configs" / (Common::game_serial + ".toml");
-
-    if (std::filesystem::exists(shadConfigFile)) {
-        try {
-            std::ifstream ifs;
-            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-            ifs.open(shadConfigFile, std::ios_base::binary);
-            gs_data =
-                toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
-        } catch (std::exception& ex) {
-            QMessageBox::critical(NULL, "Cannot read game_specific config", ex.what());
-            return 0;
-        }
-
-        int dmem = toml::find_or<int>(gs_data, "General", "extraDmemInMbytes", 0);
-        return dmem;
-    } else {
+    if (!gs_settings.Load(Common::game_serial)) {
         return 0;
+    } else {
+        dmem = gs_settings.GetExtraDmemInMBytes();
     }
+
+    return dmem;
 }
 
 } // namespace Config

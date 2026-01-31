@@ -5,6 +5,7 @@
 #include <QDialog>
 
 #include "modules/ipc/ipc_client.h"
+#include "settings/emulator_settings.h"
 
 namespace Ui {
 class ShadSettings;
@@ -13,7 +14,8 @@ class ShadSettings;
 class ShadSettings : public QDialog {
     Q_OBJECT
 public:
-    explicit ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_specific,
+    explicit ShadSettings(std::shared_ptr<EmulatorSettings> emu_settings,
+                          std::shared_ptr<IpcClient> ipc_client, bool game_specific,
                           QWidget* parent = nullptr);
     ~ShadSettings();
 
@@ -28,17 +30,33 @@ private:
     void UpdateDialog();
     void getPhysicalDevices();
 
+    bool IsSettingOverrideable(const char* setting_key, const QString& setting_group) const;
+    void MapUIControls();
+
     std::unique_ptr<Ui::ShadSettings> ui;
     std::shared_ptr<IpcClient> m_ipc_client;
+    std::shared_ptr<EmulatorSettings> m_game_specific_settings;
+    std::shared_ptr<EmulatorSettings> m_emu_settings;
+    std::shared_ptr<EmulatorSettings> m_original_settings;
 
     bool is_game_specific;
+    // GameInfo m_current_game;   // Add current game info
+    // std::string m_game_serial; // Game serial number
+
     std::map<std::string, int> languages;
     QString defaultTextEdit;
     int initialHeight;
 
+    // Map UI controls to their setting keys
+    QMap<QObject*, std::pair<const char*, QString>> m_uiSettingMap;
+
     const QMap<QString, QString> presentModeMap = {{tr("Mailbox (Vsync)"), "Mailbox"},
                                                    {tr("Fifo (Vsync)"), "Fifo"},
                                                    {tr("Immediate (No Vsync)"), "Immediate"}};
+
+    const QMap<QString, HideCursorState> cursorStateMap = {{tr("Never"), HideCursorState::Never},
+                                                           {tr("Idle"), HideCursorState::Idle},
+                                                           {tr("Always"), HideCursorState::Always}};
 
     const QVector<int> languageIndexes = {21, 23, 14, 6, 18, 1, 12, 22, 2, 4,  25, 24, 29, 5,  0, 9,
                                           15, 16, 17, 7, 26, 8, 11, 20, 3, 13, 27, 10, 19, 30, 28};

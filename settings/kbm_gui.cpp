@@ -19,8 +19,10 @@
 
 HelpDialog* HelpWindow;
 
-KBMSettings::KBMSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
-    : QDialog(parent), m_ipc_client(ipc_client), ui(new Ui::KBMSettings) {
+KBMSettings::KBMSettings(std::shared_ptr<EmulatorSettings> emu_settings,
+                         std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
+    : QDialog(parent), m_emu_settings(std::move(emu_settings)), m_ipc_client(ipc_client),
+      ui(new Ui::KBMSettings) {
 
     ui->setupUi(this);
     ui->PerGameCheckBox->setChecked(!Config::UnifiedInputConfig);
@@ -86,7 +88,7 @@ KBMSettings::KBMSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
 
     connect(ui->HelpButton, &QPushButton::clicked, this, &KBMSettings::onHelpClicked);
     connect(ui->TextEditorButton, &QPushButton::clicked, this, [this]() {
-        auto kbmWindow = new EditorDialog(this);
+        auto kbmWindow = new EditorDialog(m_emu_settings, this);
         kbmWindow->exec();
     });
 
@@ -340,10 +342,8 @@ void KBMSettings::SaveKBMConfig(bool CloseOnSave) {
     output_file.close();
 
     Config::UnifiedInputConfig = !ui->PerGameCheckBox->isChecked();
-
-    Config::ShadSettings settings;
-    settings.useUnifiedInputConfig = Config::UnifiedInputConfig;
-    Config::SaveShadSettings(settings);
+    m_emu_settings->SetUseUnifiedInputConfig(Config::UnifiedInputConfig);
+    m_emu_settings->Save();
 
     if (Config::GameRunning) {
         Config::UnifiedInputConfig ? m_ipc_client->reloadInputs("default")
