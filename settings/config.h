@@ -3,17 +3,11 @@
 #pragma once
 
 #include <filesystem>
-#include <optional>
 #include <SDL3/SDL_gamepad.h>
 
 #include "modules/Common.h"
 
 namespace Config {
-
-struct ShadSettings {
-    std::optional<std::string> defaultControllerID;
-    std::optional<bool> useUnifiedInputConfig;
-};
 
 struct Build {
     std::string path;
@@ -31,10 +25,8 @@ void CreateSettingsFile();
 bool isReleaseOlder(int minorVersion, int majorVersion = 0);
 Build GetCurrentBuildInfo();
 
-void SaveShadSettings(ShadSettings settings, bool is_game_specific = false);
 void SaveLauncherSettings();
 
-void CreateGSFile();
 std::string GetLastModifiedString(const std::filesystem::path& path);
 
 extern std::string theme;

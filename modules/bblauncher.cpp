@@ -36,6 +36,9 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     : QMainWindow(parent), noGUIset(noGUI), noinstancerunning(noInstanceRunning),
       ui(new Ui::BBLauncher) {
 
+    m_emu_settings->Load();
+    EmulatorSettings::SetInstance(m_emu_settings);
+
     m_ipc_client->gameClosedFunc = [this]() { onGameClosed(); };
     m_ipc_client->restartEmulatorFunc = [this]() { RestartEmulator(); };
     m_ipc_client->startGameFunc = [this]() { RunGame(); };
@@ -182,7 +185,8 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             return;
         }
 
-        ShadSettings* ShadSettingsWindow = new ShadSettings(m_ipc_client, false, this);
+        ShadSettings* ShadSettingsWindow =
+            new ShadSettings(m_emu_settings, m_ipc_client, false, this);
         ShadSettingsWindow->exec();
     });
 
@@ -205,22 +209,8 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             return;
         }
 
-        std::string filename = Common::game_serial + ".toml";
-        std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
-
-        if (!std::filesystem::exists(gsConfig)) {
-            if (QMessageBox::Yes ==
-                QMessageBox::question(this, "No game-specific config file found",
-                                      QString::fromStdString(gsConfig.string()) +
-                                          " not found. Do you want to create it?",
-                                      QMessageBox::Yes | QMessageBox::No)) {
-                Config::CreateGSFile();
-            } else {
-                return;
-            }
-        }
-
-        ShadSettings* ShadSettingsWindow = new ShadSettings(m_ipc_client, true, this);
+        ShadSettings* ShadSettingsWindow =
+            new ShadSettings(m_emu_settings, m_ipc_client, true, this);
         ShadSettingsWindow->exec();
     });
 
@@ -238,7 +228,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             return;
         }
 
-        KBMSettings* KBMWindow = new KBMSettings(m_ipc_client, this);
+        KBMSettings* KBMWindow = new KBMSettings(m_emu_settings, m_ipc_client, this);
         KBMWindow->exec();
     });
 
@@ -249,7 +239,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             return;
         }
 
-        ControlSettings* RemapWindow = new ControlSettings(m_ipc_client, this);
+        ControlSettings* RemapWindow = new ControlSettings(m_emu_settings, m_ipc_client, this);
         RemapWindow->exec();
     });
 

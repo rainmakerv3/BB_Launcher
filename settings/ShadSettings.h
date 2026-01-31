@@ -5,6 +5,7 @@
 #include <QDialog>
 
 #include "modules/ipc/ipc_client.h"
+#include "settings/emulator_settings.h"
 
 namespace Ui {
 class ShadSettings;
@@ -13,7 +14,8 @@ class ShadSettings;
 class ShadSettings : public QDialog {
     Q_OBJECT
 public:
-    explicit ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_specific,
+    explicit ShadSettings(std::shared_ptr<EmulatorSettings> emu_settings,
+                          std::shared_ptr<IpcClient> ipc_client, bool game_specific,
                           QWidget* parent = nullptr);
     ~ShadSettings();
 
@@ -30,6 +32,7 @@ private:
 
     std::unique_ptr<Ui::ShadSettings> ui;
     std::shared_ptr<IpcClient> m_ipc_client;
+    std::shared_ptr<EmulatorSettings> m_emu_settings;
 
     bool is_game_specific;
     std::map<std::string, int> languages;
@@ -39,6 +42,10 @@ private:
     const QMap<QString, QString> presentModeMap = {{tr("Mailbox (Vsync)"), "Mailbox"},
                                                    {tr("Fifo (Vsync)"), "Fifo"},
                                                    {tr("Immediate (No Vsync)"), "Immediate"}};
+
+    const QMap<QString, HideCursorState> cursorStateMap = {{tr("Never"), HideCursorState::Never},
+                                                           {tr("Idle"), HideCursorState::Idle},
+                                                           {tr("Always"), HideCursorState::Always}};
 
     const QVector<int> languageIndexes = {21, 23, 14, 6, 18, 1, 12, 22, 2, 4,  25, 24, 29, 5,  0, 9,
                                           15, 16, 17, 7, 26, 8, 11, 20, 3, 13, 27, 10, 19, 30, 28};

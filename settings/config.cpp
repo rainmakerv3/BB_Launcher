@@ -44,22 +44,6 @@ static std::string SelectedGamepad = "";
 
 namespace Config {
 
-void CreateGSFile() {
-    std::string filename = Common::game_serial + ".toml";
-    std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
-
-    if (!std::filesystem::exists(gsConfig.parent_path()))
-        std::filesystem::create_directories(gsConfig.parent_path());
-
-    toml::ordered_value data;
-
-    data["General"]["extraDmemInMbytes"] = 0;
-
-    std::ofstream file(gsConfig, std::ios::binary);
-    file << data;
-    file.close();
-}
-
 void LoadSettings() {
     using namespace Config;
 
@@ -181,53 +165,6 @@ void CreateSettingsFile() {
     std::ofstream file(SettingsFile, std::ios::binary);
     file << data;
     file.close();
-}
-
-void SaveShadSettings(ShadSettings settings, bool is_game_specific) {
-    using namespace Config;
-
-    std::filesystem::path ShadConfig =
-        is_game_specific
-            ? Common::GetShadUserDir() / "custom_configs" / (Common::game_serial + ".toml")
-            : Common::GetShadUserDir() / "config.toml";
-    toml::value data = toml::parse(ShadConfig);
-    std::error_code error;
-
-    if (std::filesystem::exists(ShadConfig, error)) {
-        try {
-            std::ifstream ifs;
-            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-            ifs.open(ShadConfig, std::ios_base::binary);
-            data = toml::parse(ifs, std::string{fmt::UTF(ShadConfig.filename().u8string()).data});
-        } catch (const std::exception& ex) {
-            QMessageBox::critical(NULL, "Filesystem error", ex.what());
-            return;
-        }
-    } else {
-        if (error) {
-            QMessageBox::critical(NULL, "Filesystem error",
-                                  QString::fromStdString(error.message()));
-        }
-    }
-
-    // global only
-    if (!is_game_specific) {
-        if (settings.useUnifiedInputConfig.has_value())
-            data["Input"]["useUnifiedInputConfig"] = settings.useUnifiedInputConfig.value();
-
-        if (settings.defaultControllerID.has_value())
-            data["General"]["defaultControllerID"] = settings.defaultControllerID.value();
-    }
-
-    // game-specific only
-
-    // common
-
-    std::ofstream file(ShadConfig, std::ios::binary);
-    file << data;
-    file.close();
-
-    SetTheme(theme);
 }
 
 void SaveLauncherSettings() {
