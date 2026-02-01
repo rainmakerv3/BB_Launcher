@@ -98,9 +98,7 @@ private:
         "log window for performance. May have adverse effects on emulation.";
     const QString logFiltertext =
         "Log Filter:\nFilters the log to only print specific information.\nExamples: Core "
-        " : Trace  Lib.Pad : Debug Common.Filesystem : Error* : Critical\nLevels: Trace, Debug, "
-        "Info, Warning, Error, Critical - in this order, a specific level silences all levels "
-        "preceding it in the list and logs every level after it.";
+        " : Trace  Lib.Pad : Debug Common.Filesystem : Error* : Critical";
     const QString disableTrophycheckBoxtext =
         "Disable Trophy Pop-ups:\nDisable in-game trophy notifications. Trophy progress can still "
         "be tracked using the Trophy Viewer (right-click the game in the main window).";
@@ -135,4 +133,10 @@ private:
     const QString RCASAttenuationtext =
         "Adjusts the intensity of the sharpening filter used by RCAS. Higher settings tend to "
         "improve sharpness but may cause additional visual artifacts.";
+    const QString PresentModetext =
+        "Mailbox: Frames synchronize with your screen's refresh rate.  Reduces latency but may "
+        "skip frames if running behind.\\nFifo: Frames synchronize with your screen's refresh "
+        "rate. New frames will be queued. All frames are presented but may increase latency.\\n"
+        "Immediate: Frames immediately present to your screen when ready. May result in "
+        "tearing.";
 };

@@ -213,6 +213,7 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
         ui->RCASLabel->installEventFilter(this);
         ui->RCASValue->installEventFilter(this);
         ui->RCASSlider->installEventFilter(this);
+        ui->presentModeGroupBox->installEventFilter(this);
     }
 }
 
@@ -364,6 +365,8 @@ void ShadSettings::updateNoteTextEdit(const QString& elementName) {
     } else if (elementName == "RCASLabel" || elementName == "RCASValue" ||
                elementName == "RCASSlider") {
         text = RCASAttenuationtext;
+    } else if (elementName == "presentModeGroupBox") {
+        text = PresentModetext;
     }
 
     ui->descriptionText->setText(text.replace("\\n", "\n"));
