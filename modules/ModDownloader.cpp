@@ -43,6 +43,13 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     this->setFixedSize(this->width(), this->height());
     manager = new QNetworkAccessManager(this);
 
+    if (Config::theme == "Dark") {
+        ui->modComboBox->setStyleSheet("QComboBox:disabled { color: darkgrey; text: black; }");
+    } else {
+        ui->modComboBox->setStyleSheet("QComboBox:disabled { background-color: lightgrey; color: "
+                                       "darkgrey; border: 1px solid darkgrey; }");
+    }
+
     if (!std::filesystem::exists(Common::ModPath)) {
         std::filesystem::create_directories(Common::ModPath);
     }
@@ -74,7 +81,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         GetApiKey();
 
     modIDmap = {
-        {0, 109},  // Vertex Explosion Mod
+        {0, 109},  // Vertex Explosion Fix
         {1, 70},   // 60 fps Cutscene Fix
         {2, 41},   // Sfx Fix Mods
         {3, 30},   // Xbox Controller Icons
@@ -97,7 +104,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         {20, 224}, // Start with any Weapon
     };
 
-    ui->modComboBox->addItem("Vertex Explosion Mod");
+    ui->modComboBox->addItem("Vertex Explosion Fix");
     ui->modComboBox->addItem("60 fps Cutscene Fix");
     ui->modComboBox->addItem("Sfx Fix Mods");
     ui->modComboBox->addItem("Xbox Controller Icons");
@@ -176,10 +183,10 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         }
 
         int modIndex = ui->modComboBox->currentIndex();
-        int fileIndex = ui->fileListWidget->currentRow();
+        DownloadFile selectedfile = DownloadFileVec[ui->fileListWidget->currentRow()];
         QString modName = ui->fileListWidget->currentItem()->text();
 
-        if (DownloadFileVec[fileIndex].filename.right(3) != "zip" && sevenzipPath.empty()) {
+        if (selectedfile.filename.right(3) != "zip" && sevenzipPath.empty()) {
             QMessageBox::warning(
                 this, "Cannot download non-zip file",
                 "Selected file is not a zip file. A detected 7-zip installation is required to "
@@ -199,7 +206,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         }
 
         if (isApiKeyPremium) {
-            DownloadFilePremium(DownloadFileVec[fileIndex].fileId, modIDmap[modIndex], modName);
+            DownloadFilePremium(selectedfile.fileId, modIDmap[modIndex], modName);
         } else {
 #if defined Q_OS_LINUX and !defined USE_WEBENGINE
             QMessageBox::information(
@@ -208,18 +215,17 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
                 "build from Nexus Mods or Github for non-premium mod downloads on Linux.");
             return;
 #endif
-            DownloadFileRegular(DownloadFileVec[fileIndex].fileId, modIDmap[modIndex], modName,
-                                DownloadFileVec[fileIndex].filename);
+            DownloadFileRegular(selectedfile.fileId, modIDmap[modIndex], modName,
+                                selectedfile.filename);
         }
     });
 
     connect(ui->fileListWidget, &QListWidget::itemSelectionChanged, this, [this]() {
-        int fileIndex = ui->fileListWidget->currentRow();
-        DownloadFileVec[fileIndex].desc.isEmpty()
-            ? ui->fileDesc->setText("No description")
-            : ui->fileDesc->setHtml(DownloadFileVec[fileIndex].desc);
+        DownloadFile selectedfile = DownloadFileVec[ui->fileListWidget->currentRow()];
+        selectedfile.desc.isEmpty() ? ui->fileDesc->setText("No description")
+                                    : ui->fileDesc->setHtml(selectedfile.desc);
 
-        float filesizeMB = static_cast<float>(DownloadFileVec[fileIndex].filesizeKb / 1024.f);
+        float filesizeMB = static_cast<float>(selectedfile.filesizeKb / 1024.f);
         ui->FilesizeValue->setText(QString("%1 MB").arg(QString::number(filesizeMB, 'f', 2)));
     });
 }
