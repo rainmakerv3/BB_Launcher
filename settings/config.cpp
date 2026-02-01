@@ -34,6 +34,7 @@ std::string Config::DefaultControllerID = "";
 
 std::filesystem::path Config::externalSaveDir;
 bool Config::GameRunning = false;
+
 static std::string SelectedGamepad = "";
 
 #if __APPLE__
@@ -507,6 +508,32 @@ bool isReleaseOlder(int minorVersion, int MajorVersion) {
     }
 
     return isOlder;
+}
+
+int GetDmemValue() {
+    using namespace Config;
+
+    toml::value gs_data;
+    std::filesystem::path shadConfigFile =
+        Common::GetShadUserDir() / "custom_configs" / (Common::game_serial + ".toml");
+
+    if (std::filesystem::exists(shadConfigFile)) {
+        try {
+            std::ifstream ifs;
+            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+            ifs.open(shadConfigFile, std::ios_base::binary);
+            gs_data =
+                toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
+        } catch (std::exception& ex) {
+            QMessageBox::critical(NULL, "Cannot read game_specific config", ex.what());
+            return 0;
+        }
+
+        int dmem = toml::find_or<int>(gs_data, "General", "extraDmemInMbytes", 0);
+        return dmem;
+    } else {
+        return 0;
+    }
 }
 
 } // namespace Config

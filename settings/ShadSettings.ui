@@ -784,19 +784,6 @@
       <attribute name="title">
        <string>Game-Specific and Experimental Settings</string>
       </attribute>
-      <widget class="QCheckBox" name="DevkitCheckBox">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>90</y>
-         <width>341</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Enable Devkit mode (enable for 1440p patch)</string>
-       </property>
-      </widget>
       <widget class="QCheckBox" name="ReadbacksCheckBox">
        <property name="geometry">
         <rect>
@@ -839,7 +826,7 @@
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>130</y>
+         <y>90</y>
          <width>441</width>
          <height>81</height>
         </rect>
@@ -882,13 +869,13 @@
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>230</y>
+         <y>190</y>
          <width>441</width>
          <height>91</height>
         </rect>
        </property>
        <property name="title">
-        <string>Additional Memory Allocation (Set to 5000+ for 4K support)</string>
+        <string>Additional Memory Allocation</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_22">
         <item>
@@ -902,6 +889,31 @@
          </widget>
         </item>
        </layout>
+      </widget>
+      <widget class="QLabel" name="dmemLabel">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>290</y>
+         <width>417</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>*Set to ~5000 for 1440p and ~8000 for 4K support</string>
+       </property>
       </widget>
      </widget>
      <widget class="QWidget" name="GlobalTab">

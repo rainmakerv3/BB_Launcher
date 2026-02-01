@@ -205,7 +205,6 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
         ui->heightGroupBox->installEventFilter(this);
         ui->heightDivider->installEventFilter(this);
         ui->motionControlsCheckBox->installEventFilter(this);
-        ui->DevkitCheckBox->installEventFilter(this);
         ui->backgroundControllerCheckBox->installEventFilter(this);
 
         ui->FSRCheckBox->installEventFilter(this);
@@ -261,7 +260,6 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->showSplashCheckBox->setChecked(toml::find_or<bool>(data, "General", "showSplash", false));
     ui->discordRPCCheckbox->setChecked(
         toml::find_or<bool>(data, "General", "enableDiscordRPC", false));
-    ui->DevkitCheckBox->setChecked(toml::find_or<bool>(data, "General", "isDevKit", false));
     ui->dmemSpinBox->setValue(toml::find_or<int>(data, "General", "extraDmemInMbytes", 0));
     ui->logTypeComboBox->setCurrentText(
         QString::fromStdString(toml::find_or<std::string>(data, "General", "logType", "sync")));
@@ -420,7 +418,6 @@ void ShadSettings::SaveSettings() {
     }
 
     if (is_game_specific) {
-        data["General"]["isDevKit"] = ui->DevkitCheckBox->isChecked();
         data["General"]["extraDmemInMbytes"] = ui->dmemSpinBox->value();
 
         data["GPU"]["readbacks"] = ui->ReadbacksCheckBox->isChecked();
@@ -500,7 +497,6 @@ void ShadSettings::SetDefaults() {
     if (is_game_specific) {
         ui->vblankSpinBox->setValue(60);
         ui->ReadbacksCheckBox->setChecked(false);
-        ui->DevkitCheckBox->setChecked(false);
         ui->dmemSpinBox->setValue(0);
     } else {
         ui->discordRPCCheckbox->setChecked(true);
