@@ -947,7 +947,14 @@
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QLineEdit" name="SavePathLineEdit"/>
+         <widget class="QLineEdit" name="SavePathLineEdit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="placeholderText">
+           <string>Use default save path</string>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="SavePathButton">
