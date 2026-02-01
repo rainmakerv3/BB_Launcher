@@ -45,10 +45,15 @@ private:
     bool isApiKeyPremium = false;
     std::filesystem::path sevenzipPath{};
 
-    QStringList fileList;
-    std::vector<int> fileIdList;
-    QStringList fileDescList;
-    QStringList fileNameList;
+    struct DownloadFile {
+        QString displayname;
+        int fileId;
+        QString desc;
+        QString filename;
+        int filesizeKb;
+    };
+
+    std::vector<DownloadFile> DownloadFileVec;
     QMap<int, int> modIDmap;
 
     QDialog* authorizationDialog;
