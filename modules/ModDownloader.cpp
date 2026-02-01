@@ -44,10 +44,12 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     manager = new QNetworkAccessManager(this);
 
     if (Config::theme == "Dark") {
-        ui->modComboBox->setStyleSheet("QComboBox:disabled { color: darkgrey; text: black; }");
+        ui->modComboBox->setStyleSheet(
+            "QComboBox:disabled { background-color: #222222; color: darkgrey; text: black; }");
     } else {
         ui->modComboBox->setStyleSheet("QComboBox:disabled { background-color: lightgrey; color: "
                                        "darkgrey; border: 1px solid darkgrey; }");
+        ui->modDesc->setStyleSheet("QTextBrowser { background-color: #222222; color: white; }");
     }
 
     if (!std::filesystem::exists(Common::ModPath)) {
