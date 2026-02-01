@@ -207,6 +207,12 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
         ui->motionControlsCheckBox->installEventFilter(this);
         ui->DevkitCheckBox->installEventFilter(this);
         ui->backgroundControllerCheckBox->installEventFilter(this);
+
+        ui->FSRCheckBox->installEventFilter(this);
+        ui->RCASCheckBox->installEventFilter(this);
+        ui->RCASLabel->installEventFilter(this);
+        ui->RCASValue->installEventFilter(this);
+        ui->RCASSlider->installEventFilter(this);
     }
 }
 
@@ -351,6 +357,13 @@ void ShadSettings::updateNoteTextEdit(const QString& elementName) {
         text = resolutionLayouttext;
     } else if (elementName == "heightDivider") {
         text = vblanktext;
+    } else if (elementName == "FSRCheckBox") {
+        text = FSRtext;
+    } else if (elementName == "RCASCheckBox") {
+        text = RCAStext;
+    } else if (elementName == "RCASLabel" || elementName == "RCASValue" ||
+               elementName == "RCASSlider") {
+        text = RCASAttenuationtext;
     }
 
     ui->descriptionText->setText(text.replace("\\n", "\n"));
