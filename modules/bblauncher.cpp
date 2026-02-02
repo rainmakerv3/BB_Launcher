@@ -787,9 +787,9 @@ void BBLauncher::StartEmulator(std::filesystem::path path, QStringList args) {
     Common::PathToQString(exe, Common::shadPs4Executable);
     QFileInfo fileInfo(exe);
     if (!fileInfo.exists()) {
-        QMessageBox::critical(
-            nullptr, tr("shadPS4"),
-            QString(tr("shadPS4 is not found!\nPlease change shadPS4 path in settings.")));
+        QMessageBox::critical(nullptr, tr("shadPS4 Build Not Found"),
+                              QString(tr("shadPS4 Build not found!\nClick Manage Builds to "
+                                         "download and select a shadPS4 build.")));
         return;
     }
 
