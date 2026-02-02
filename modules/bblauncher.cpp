@@ -266,6 +266,12 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
 
     connect(ui->OpenFoldersButton, &QPushButton::pressed, this, &BBLauncher::OpenFolders);
 
+    connect(ui->HelpButton, &QPushButton::clicked, this, [this]() {
+        QString link =
+            "https://docs.google.com/document/d/1UKYSAMz3y9PH3AOCow5KyIIlRHZ0wbjcAxHvjZwtjk0";
+        QDesktopServices::openUrl(link);
+    });
+
     connect(ui->HotkeyButton, &QPushButton::clicked, this, [this]() {
         if (Config::isReleaseOlder(11)) {
             QMessageBox::warning(this, "Old release not supported",
@@ -489,6 +495,8 @@ void BBLauncher::UpdateIcons() {
     ui->ModFolderButton->setIconSize(QSize(48, 48));
     ui->OpenFoldersButton->setIcon(QIcon(":open.png"));
     ui->OpenFoldersButton->setIconSize(QSize(48, 48));
+    ui->HelpButton->setIcon(QIcon(":help.png"));
+    ui->HelpButton->setIconSize(QSize(48, 48));
     ui->HotkeyButton->setIcon(QIcon(":hotkey.png"));
     ui->HotkeyButton->setIconSize(QSize(48, 48));
 
@@ -506,6 +514,7 @@ void BBLauncher::UpdateIcons() {
         ui->KBMButton->setIcon(RecolorIcon(ui->KBMButton->icon(), false));
         ui->ModFolderButton->setIcon(RecolorIcon(ui->ModFolderButton->icon(), false));
         ui->OpenFoldersButton->setIcon(RecolorIcon(ui->OpenFoldersButton->icon(), false));
+        ui->HelpButton->setIcon(RecolorIcon(ui->HelpButton->icon(), false));
         ui->HotkeyButton->setIcon(RecolorIcon(ui->HotkeyButton->icon(), false));
 
         ui->LaunchButton->setIcon(RecolorIcon(ui->LaunchButton->icon(), false));

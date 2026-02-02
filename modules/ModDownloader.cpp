@@ -586,7 +586,6 @@ void ModDownloader::GetModFiles(int modId) {
             }
 
             json file_array = jsonDoc["files"];
-            int files = 0;
 
             for (const auto& element : file_array) {
                 if (element.contains("category_name") && !element.at("category_name").is_null()) {
@@ -605,7 +604,6 @@ void ModDownloader::GetModFiles(int modId) {
                         DownloadFileVec.push_back(file);
                     }
                 }
-                files += 1;
             }
 
             for (const DownloadFile& File : DownloadFileVec) {
