@@ -88,8 +88,8 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         {2, 41},   // Sfx Fix Mods
         {3, 30},   // Xbox Controller Icons
         {4, 182},  // 4k Upscaled UI
-        {5, 160},  // Bloodborne Visual Upgrade Mod
-        {6, 430},  // SFX Texture Overhaul
+        {5, 441},  // Bigger Subtitles
+        {6, 160},  // Bloodborne Visual Upgrade Mod
         {7, 162},  // Disable FXAA
         {8, 114},  // Cloth physics mods
         {9, 102},  // Performance Drawparams
@@ -111,8 +111,8 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     ui->modComboBox->addItem("Sfx Fix Mods");
     ui->modComboBox->addItem("Xbox Controller Icons");
     ui->modComboBox->addItem("4K Upscaled UI");
+    ui->modComboBox->addItem("Bigger Subtitles");
     ui->modComboBox->addItem("Bloodborne Visual Upgrade Mod");
-    ui->modComboBox->addItem("SFX Texture Overhaul");
     ui->modComboBox->addItem("Disable FXAA");
     ui->modComboBox->addItem("Cloth physics mods");
     ui->modComboBox->addItem("Performance Drawparams");
