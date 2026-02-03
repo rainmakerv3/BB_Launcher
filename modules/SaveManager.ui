@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1004</width>
-    <height>601</height>
+    <height>488</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -77,7 +77,7 @@
      <x>180</x>
      <y>60</y>
      <width>281</width>
-     <height>392</height>
+     <height>261</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="SaveInfoLayout">
@@ -85,325 +85,351 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QGroupBox" name="NameNGGroupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_12">
-       <property name="leftMargin">
-        <number>9</number>
-       </property>
-       <property name="topMargin">
-        <number>9</number>
-       </property>
-       <property name="rightMargin">
-        <number>9</number>
-       </property>
-       <property name="bottomMargin">
-        <number>9</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="NameLabel">
-         <property name="font">
-          <font>
-           <bold>true</bold>
-          </font>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QGroupBox" name="NameNGGroupBox">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_12">
+         <property name="leftMargin">
+          <number>9</number>
          </property>
-         <property name="text">
-          <string>Name     </string>
+         <property name="topMargin">
+          <number>9</number>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="NameLineEdit">
-         <property name="enabled">
-          <bool>false</bool>
+         <property name="rightMargin">
+          <number>9</number>
          </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
+         <property name="bottomMargin">
+          <number>9</number>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="NGLabel">
-         <property name="text">
-          <string>NG #</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="NGValueLabel">
-         <property name="text">
-          <string>Value</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+         <item>
+          <widget class="QLabel" name="NameLabel">
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Name     </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="NameLineEdit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="NGLabel">
+           <property name="text">
+            <string>NG #</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="NGValueLabel">
+           <property name="text">
+            <string>-----</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
-     <widget class="QGroupBox" name="TimeLevelGroupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_11">
-       <property name="leftMargin">
-        <number>9</number>
-       </property>
-       <property name="topMargin">
-        <number>9</number>
-       </property>
-       <property name="rightMargin">
-        <number>9</number>
-       </property>
-       <property name="bottomMargin">
-        <number>9</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="PlaytimeLabel">
-         <property name="font">
-          <font>
-           <bold>true</bold>
-          </font>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <widget class="QGroupBox" name="TimeLevelGroupBox">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <property name="leftMargin">
+          <number>9</number>
          </property>
-         <property name="text">
-          <string>Playtime</string>
+         <property name="topMargin">
+          <number>9</number>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="TimeLineEdit">
-         <property name="enabled">
-          <bool>false</bool>
+         <property name="rightMargin">
+          <number>9</number>
          </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
+         <property name="bottomMargin">
+          <number>9</number>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="LevelLabel">
-         <property name="text">
-          <string>Level</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="LevelValueLabel">
-         <property name="text">
-          <string>Value</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+         <item>
+          <widget class="QLabel" name="PlaytimeLabel">
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Playtime</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="TimeLineEdit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="LevelLabel">
+           <property name="text">
+            <string>Level</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="LevelValueLabel">
+           <property name="text">
+            <string>-----</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
-     <widget class="QGroupBox" name="StrGroupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_5">
-       <item>
-        <widget class="QLabel" name="StrLabel">
-         <property name="layoutDirection">
-          <enum>Qt::LayoutDirection::LeftToRight</enum>
-         </property>
-         <property name="text">
-          <string>Strength</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="StrValLabel">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Shape::NoFrame</enum>
-         </property>
-         <property name="text">
-          <string>StrVal</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <widget class="QGroupBox" name="StrGroupBox">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QLabel" name="StrLabel">
+           <property name="layoutDirection">
+            <enum>Qt::LayoutDirection::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>Strength</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="StrValLabel">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::NoFrame</enum>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="SklGroupBox">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QLabel" name="SklLabel">
+           <property name="text">
+            <string>Skill</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="SklValLabel">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::NoFrame</enum>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
-     <widget class="QGroupBox" name="SklGroupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_6">
-       <item>
-        <widget class="QLabel" name="SklLabel">
-         <property name="text">
-          <string>Skill</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="SklValLabel">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Shape::NoFrame</enum>
-         </property>
-         <property name="text">
-          <string>SklVal</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_13">
+      <item>
+       <widget class="QGroupBox" name="EndGroupBox">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QLabel" name="EndLabel">
+           <property name="text">
+            <string>Endurance</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="EndValLabel">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::NoFrame</enum>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="VitGroupBox">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QLabel" name="VitLabel">
+           <property name="text">
+            <string>Vitality</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="VitValLabel">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::NoFrame</enum>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
-     <widget class="QGroupBox" name="EndGroupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_7">
-       <item>
-        <widget class="QLabel" name="EndLabel">
-         <property name="text">
-          <string>Endurance</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="EndValLabel">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Shape::NoFrame</enum>
-         </property>
-         <property name="text">
-          <string>EndVal</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="VitGroupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_9">
-       <item>
-        <widget class="QLabel" name="VitLabel">
-         <property name="text">
-          <string>Vitality</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="VitValLabel">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Shape::NoFrame</enum>
-         </property>
-         <property name="text">
-          <string>VitVal</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="BTGroupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_10">
-       <item>
-        <widget class="QLabel" name="BTLabel">
-         <property name="text">
-          <string>Bloodtinge</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="BTValLabel">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Shape::NoFrame</enum>
-         </property>
-         <property name="text">
-          <string>BTVal</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="ArcGroupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_8">
-       <item>
-        <widget class="QLabel" name="ArcLabel">
-         <property name="text">
-          <string>Arcane</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="ArcValLabel">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Shape::NoFrame</enum>
-         </property>
-         <property name="text">
-          <string>ArcVal</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_14">
+      <item>
+       <widget class="QGroupBox" name="BTGroupBox">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <widget class="QLabel" name="BTLabel">
+           <property name="text">
+            <string>Bloodtinge</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="BTValLabel">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::NoFrame</enum>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="ArcGroupBox">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QLabel" name="ArcLabel">
+           <property name="text">
+            <string>Arcane</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="ArcValLabel">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::NoFrame</enum>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -411,7 +437,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>570</y>
+     <y>450</y>
      <width>431</width>
      <height>20</height>
     </rect>
@@ -527,7 +553,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>520</y>
+     <y>400</y>
      <width>941</width>
      <height>31</height>
     </rect>
@@ -548,7 +574,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>460</y>
+     <y>340</y>
      <width>951</width>
      <height>51</height>
     </rect>
@@ -569,7 +595,7 @@
    <property name="geometry">
     <rect>
      <x>780</x>
-     <y>550</y>
+     <y>430</y>
      <width>201</width>
      <height>41</height>
     </rect>
@@ -603,7 +629,7 @@
      <x>700</x>
      <y>60</y>
      <width>281</width>
-     <height>392</height>
+     <height>261</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="BackupSaveInfoLayout">
@@ -611,325 +637,351 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="QGroupBox" name="BackupNameNGGroupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_16">
-       <property name="leftMargin">
-        <number>9</number>
-       </property>
-       <property name="topMargin">
-        <number>9</number>
-       </property>
-       <property name="rightMargin">
-        <number>9</number>
-       </property>
-       <property name="bottomMargin">
-        <number>9</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="BackupNameLabel">
-         <property name="font">
-          <font>
-           <bold>true</bold>
-          </font>
+     <layout class="QHBoxLayout" name="horizontalLayout_15">
+      <item>
+       <widget class="QGroupBox" name="BackupNameNGGroupBox">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_16">
+         <property name="leftMargin">
+          <number>9</number>
          </property>
-         <property name="text">
-          <string>Name     </string>
+         <property name="topMargin">
+          <number>9</number>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="BackupNameLineEdit">
-         <property name="enabled">
-          <bool>false</bool>
+         <property name="rightMargin">
+          <number>9</number>
          </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
+         <property name="bottomMargin">
+          <number>9</number>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="BackupNGLabel">
-         <property name="text">
-          <string>NG #</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="BackupNGValueLabel">
-         <property name="text">
-          <string>------</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+         <item>
+          <widget class="QLabel" name="BackupNameLabel">
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Name     </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="BackupNameLineEdit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="BackupNGLabel">
+           <property name="text">
+            <string>NG #</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="BackupNGValueLabel">
+           <property name="text">
+            <string>------</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
-     <widget class="QGroupBox" name="BackupTimeLevelGroupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_17">
-       <property name="leftMargin">
-        <number>9</number>
-       </property>
-       <property name="topMargin">
-        <number>9</number>
-       </property>
-       <property name="rightMargin">
-        <number>9</number>
-       </property>
-       <property name="bottomMargin">
-        <number>9</number>
-       </property>
-       <item>
-        <widget class="QLabel" name="BackupPlaytimeLabel">
-         <property name="font">
-          <font>
-           <bold>true</bold>
-          </font>
+     <layout class="QHBoxLayout" name="horizontalLayout_24">
+      <item>
+       <widget class="QGroupBox" name="BackupTimeLevelGroupBox">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_17">
+         <property name="leftMargin">
+          <number>9</number>
          </property>
-         <property name="text">
-          <string>Playtime</string>
+         <property name="topMargin">
+          <number>9</number>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="BackupTimeLineEdit">
-         <property name="enabled">
-          <bool>false</bool>
+         <property name="rightMargin">
+          <number>9</number>
          </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
+         <property name="bottomMargin">
+          <number>9</number>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="LevelLabel_2">
-         <property name="text">
-          <string>Level</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="BackupLevelValueLabel">
-         <property name="text">
-          <string>------</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+         <item>
+          <widget class="QLabel" name="BackupPlaytimeLabel">
+           <property name="font">
+            <font>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Playtime</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLineEdit" name="BackupTimeLineEdit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="LevelLabel_2">
+           <property name="text">
+            <string>Level</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="BackupLevelValueLabel">
+           <property name="text">
+            <string>------</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
-     <widget class="QGroupBox" name="BackupStrGroupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_18">
-       <item>
-        <widget class="QLabel" name="BackupStrLabel">
-         <property name="layoutDirection">
-          <enum>Qt::LayoutDirection::LeftToRight</enum>
-         </property>
-         <property name="text">
-          <string>Strength</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="BackupStrValLabel">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Shape::NoFrame</enum>
-         </property>
-         <property name="text">
-          <string>-</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_25">
+      <item>
+       <widget class="QGroupBox" name="BackupStrGroupBox">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_18">
+         <item>
+          <widget class="QLabel" name="BackupStrLabel">
+           <property name="layoutDirection">
+            <enum>Qt::LayoutDirection::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>Strength</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="BackupStrValLabel">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::NoFrame</enum>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="BackupSklGroupBox">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_19">
+         <item>
+          <widget class="QLabel" name="BackupSklLabel">
+           <property name="text">
+            <string>Skill</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="BackupSklValLabel">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::NoFrame</enum>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
-     <widget class="QGroupBox" name="BackupSklGroupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_19">
-       <item>
-        <widget class="QLabel" name="BackupSklLabel">
-         <property name="text">
-          <string>Skill</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="BackupSklValLabel">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Shape::NoFrame</enum>
-         </property>
-         <property name="text">
-          <string>-</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_26">
+      <item>
+       <widget class="QGroupBox" name="BackupEndGroupBox">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_20">
+         <item>
+          <widget class="QLabel" name="EndLabel_2">
+           <property name="text">
+            <string>Endurance</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="BackupEndValLabel">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::NoFrame</enum>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="BackupVitGroupBox">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_21">
+         <item>
+          <widget class="QLabel" name="BackupVitLabel">
+           <property name="text">
+            <string>Vitality</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="BackupVitValLabel">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::NoFrame</enum>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
-     <widget class="QGroupBox" name="BackupEndGroupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_20">
-       <item>
-        <widget class="QLabel" name="EndLabel_2">
-         <property name="text">
-          <string>Endurance</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="BackupEndValLabel">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Shape::NoFrame</enum>
-         </property>
-         <property name="text">
-          <string>-</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="BackupVitGroupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_21">
-       <item>
-        <widget class="QLabel" name="BackupVitLabel">
-         <property name="text">
-          <string>Vitality</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="BackupVitValLabel">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Shape::NoFrame</enum>
-         </property>
-         <property name="text">
-          <string>-</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="BackupBTGroupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_22">
-       <item>
-        <widget class="QLabel" name="BTLabel_2">
-         <property name="text">
-          <string>Bloodtinge</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="BackupBTValLabel">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Shape::NoFrame</enum>
-         </property>
-         <property name="text">
-          <string>-</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QGroupBox" name="BackupArcGroupBox">
-      <property name="title">
-       <string/>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_23">
-       <item>
-        <widget class="QLabel" name="BackupArcLabel">
-         <property name="text">
-          <string>Arcane</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="BackupArcValLabel">
-         <property name="font">
-          <font>
-           <pointsize>12</pointsize>
-          </font>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::Shape::NoFrame</enum>
-         </property>
-         <property name="text">
-          <string>-</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignmentFlag::AlignCenter</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+     <layout class="QHBoxLayout" name="horizontalLayout_27">
+      <item>
+       <widget class="QGroupBox" name="BackupBTGroupBox">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_22">
+         <item>
+          <widget class="QLabel" name="BTLabel_2">
+           <property name="text">
+            <string>Bloodtinge</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="BackupBTValLabel">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::NoFrame</enum>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="BackupArcGroupBox">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_23">
+         <item>
+          <widget class="QLabel" name="BackupArcLabel">
+           <property name="text">
+            <string>Arcane</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="BackupArcValLabel">
+           <property name="font">
+            <font>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Shape::NoFrame</enum>
+           </property>
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
     </item>
    </layout>
   </widget>
@@ -989,7 +1041,7 @@
      <x>486</x>
      <y>10</y>
      <width>20</width>
-     <height>441</height>
+     <height>311</height>
     </rect>
    </property>
    <property name="frameShadow">

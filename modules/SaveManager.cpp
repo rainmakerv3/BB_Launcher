@@ -68,8 +68,7 @@ SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveMana
     });
 
     ui->SelectSaveComboBox->setCurrentIndex(0);
-    if (!ui->SelectSaveComboBox->currentText().isEmpty())
-        OnSelectBackupSaveChanged();
+    OnSelectBackupSaveChanged();
 }
 
 void SaveManager::PopulateGameSaveSlots() {
@@ -192,7 +191,7 @@ void SaveManager::UpdateGameSaveValues() {
 }
 
 void SaveManager::UpdateBackupSaveValues() {
-    if (backupsaveslot == "") {
+    if (backupsaveslot == "" || ui->SelectSaveComboBox->currentText().isEmpty()) {
         return;
     }
 
@@ -289,16 +288,16 @@ void SaveManager::UpdateBackupSaveValues() {
 void SaveManager::OnGameSaveSlotChanged() {
     saveslot = ui->SaveSlotComboBox->currentText().toStdString();
     if (saveslot == "") {
-        ui->NameLineEdit->setText("no save slot selected");
-        ui->TimeLineEdit->setText("");
-        ui->StrValLabel->setText("");
-        ui->SklValLabel->setText("");
-        ui->VitValLabel->setText("");
-        ui->EndValLabel->setText("");
-        ui->BTValLabel->setText("");
-        ui->ArcValLabel->setText("");
-        ui->LevelValueLabel->setText("");
-        ui->NGValueLabel->setText("");
+        ui->NameLineEdit->setText("-");
+        ui->TimeLineEdit->setText("-");
+        ui->StrValLabel->setText("-");
+        ui->SklValLabel->setText("-");
+        ui->VitValLabel->setText("-");
+        ui->EndValLabel->setText("-");
+        ui->BTValLabel->setText("-");
+        ui->ArcValLabel->setText("-");
+        ui->LevelValueLabel->setText("-----");
+        ui->NGValueLabel->setText("-----");
     } else {
         UpdateGameSaveValues();
     }
@@ -306,17 +305,17 @@ void SaveManager::OnGameSaveSlotChanged() {
 
 void SaveManager::OnBackupSaveSlotChanged() {
     backupsaveslot = ui->BackupSaveSlotComboBox->currentText().toStdString();
-    if (backupsaveslot == "") {
-        ui->BackupNameLineEdit->setText("no save slot selected");
-        ui->BackupTimeLineEdit->setText("");
-        ui->BackupStrValLabel->setText("");
-        ui->BackupSklValLabel->setText("");
-        ui->BackupVitValLabel->setText("");
-        ui->BackupEndValLabel->setText("");
-        ui->BackupBTValLabel->setText("");
-        ui->BackupArcValLabel->setText("");
-        ui->BackupLevelValueLabel->setText("");
-        ui->BackupNGValueLabel->setText("");
+    if (backupsaveslot == "" || ui->SelectSaveComboBox->currentText().isEmpty()) {
+        ui->BackupNameLineEdit->setText("-");
+        ui->BackupTimeLineEdit->setText("-");
+        ui->BackupStrValLabel->setText("-");
+        ui->BackupSklValLabel->setText("-");
+        ui->BackupVitValLabel->setText("-");
+        ui->BackupEndValLabel->setText("-");
+        ui->BackupBTValLabel->setText("-");
+        ui->BackupArcValLabel->setText("-");
+        ui->BackupLevelValueLabel->setText("-----");
+        ui->BackupNGValueLabel->setText("-----");
     } else {
         UpdateBackupSaveValues();
     }
@@ -406,6 +405,10 @@ void SaveManager::DeleteManualBackupPressed() {
     }
 
     OnSelectBackupSaveChanged();
+    if (ui->BackupSaveSlotComboBox->count() == 0) {
+        ui->SelectSaveComboBox->removeItem(ui->SelectSaveComboBox->findText("MANUAL"));
+    }
+
     OnBackupSaveSlotChanged();
 }
 
@@ -431,6 +434,8 @@ void SaveManager::RestoreBackupPressed() {
         QMessageBox::information(this, "Save Restored",
                                  "Backup save restored: " + QString::fromStdString(backupsaveslot));
     }
+
+    PopulateGameSaveSlots();
 }
 
 void SaveManager::RestoreBackupFolderPressed() {
