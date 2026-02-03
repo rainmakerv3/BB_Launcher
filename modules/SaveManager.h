@@ -16,20 +16,24 @@ public:
     ~SaveManager();
 
 private slots:
-    void OnSaveSlotChanged();
-    void OnSelectSaveChanged();
-    void ManualBackupPressed();
-    void DeleteBackupPressed();
+    void OnGameSaveSlotChanged();
+    void OnBackupSaveSlotChanged();
+    void OnSelectBackupSaveChanged();
+    void CreateManualBackupPressed();
+    void DeleteManualBackupPressed();
     void RestoreBackupPressed();
     void RestoreBackupFolderPressed();
+    void PopulateGameSaveSlots();
 
 private:
-    void UpdateValues();
+    void UpdateGameSaveValues();
+    void UpdateBackupSaveValues();
     void PopulateBackupSlots();
+
     std::filesystem::path ExactSaveDir;
     std::filesystem::path Savefile;
-    std::string saveslot;
-    QStringList SaveSlotList;
+    std::string saveslot = "";
+    std::string backupsaveslot = "";
 
     Ui::SaveManager* ui;
     const std::filesystem::path BackupsDir = Common::GetBBLFilesPath() / "SaveBackups";
