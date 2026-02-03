@@ -1,61 +1,127 @@
-Just a dedicated launcher for Bloodborne on shadPS4
+# BBLauncher
 
-___________________________________
+A dedicated shadPS4 launcher focused entirely on *Bloodborne*, designed to simplify setup, modding, updates, and quality-of-life features while staying fully open source.
 
-COMMON ISSUES:
+---
 
-If you are getting this error message ("The procedure entry point..." errors when launching), redownload both shadPS4 and BBLauncher. Since BBLauncher no longer needs DLLs, this should no longer be an issue starting from BBLauncher version 12.00
+## Installation & Usage
 
-FOR LINUX: As of version 10.02, the BBLauncher folder with the extra files (previously was next to the AppImage), is now moved to the usr/share/BBLauncher folder. You can just transfer your old files to that folder to carry over mods/settings
+### Windows
 
-___________________________________
+1. Install **Visual C++ Redistributable (x64)**:
+   [https://aka.ms/vs/17/release/vc_redist.x64.exe](https://aka.ms/vs/17/release/vc_redist.x64.exe)
+   *(Required for shadPS4 as well.)*
+2. Extract **BBLauncher** to any folder.
+3. Run BBLauncher.
+4. Click **Manage Builds** and download shadPS4.
+5. Set the shadPS4 install folder (for example: `CUSA03173`, depending on your game serial).
 
-INSTALLATION AND USAGE:
+---
 
-For Windows only: Install VCRedist_x64 here - https://aka.ms/vs/17/release/vc_redist.x64.exe (Note: this is required for shadPS4 as well).
+## Skipping the GUI
 
-Extract BBLauncher to any folder and run it, download shadPS4 through the build manager by clicking the "Manage builds" button. Set the shadPS4 install folder (named CUSA03173 or whatever the serial number of your game is).
+Once the install folder is configured, the GUI can be skipped by launching BBLauncher with the following argument:
 
-_____________________________________
+```bash
+-n
+```
 
-SKIPPING GUI:
+On macOS, use:
 
-GUI can be skipped after setting up the install folder using command line argument -n (or --args -n on Mac)
+```bash
+--args -n
+```
 
-____________________________________
+---
 
-MOD INSTALLATION:
+## Mod Installation
 
-Place mods inside the BBLauncher/Mods folder. Click on the mod folder icon for easy access to this folder
+1. Place mods inside the following directory:
 
-It is highly recommended to install Bloodborne using the separate update folder option to make the most of the optimizations in BBLauncher's Mod Manager. Also, in the event a reinstall is needed, you would just have to reinstall the update instead of the entire game.
+```
+BBLauncher/Mods
+```
 
-***Inside the Mods folder should be a folder with the name of the mod, and that folder should only be valid Bloodborne folders such as dvdroot_ps4, or one of the Bloodborne subfolders such as sfx, parts, map, etc.
+2. Use the **mod folder icon** in the launcher for quick access.
 
-____________________________________
+### Recommended Setup
 
+It is **highly recommended** to install Bloodborne using a **separate update folder**. This allows BBLauncher’s Mod Manager to apply optimizations more effectively. If a reinstall is needed, only the update needs to be reinstalled, not the entire game.
 
-Complete version history: https://github.com/rainmakerv3/BB_Launcher/releases
+### Mod Folder Structure
 
-____________________________________
+Inside the `Mods` folder:
 
-FEATURES:
+* Each mod must be inside its **own folder**.
+* That folder should contain **only valid Bloodborne directories**, such as:
+  * `dvdroot_ps4`
+  * or individual subfolders like `sfx`, `parts`, `map`, etc.
 
-Fixes the sound glitch when you crash at 60 fps
-Creates backup saves after a configurable interval
-Mod manager (similar to the Generic Mod Manager on nexus, but automatically structures folders and adds error checks)
-Download mods directly from the app and make them available for use by the mod manager
-Update shadPS4, remap controls, and change its settings from the launcher
-Download and enable Bloodborne patches from the launcher
-View save info and restore backup saves with the GUI
-Trophy viewing/unlocking
+---
 
-Fully open source! Check out the Github page if you wanna build it yourself, contribute or just look at the source: https://github.com/rainmakerv3/BB_Launcher
+## Features
 
-Thanks to FMOD stream thread and Az for their code contributions! Thanks also to Missake and Brad for helping to test, and to Noxde and Kyoski for a lot of help figuring out how to view save files!
+* Fixes the **60 FPS crash sound glitch**
+* Automatic **save backups** at configurable intervals
+* Built-in **Mod Manager**
+  * Inspired by Generic Mod Manager (Nexus)
+  * Automatically structures folders
+  * Includes error checking
+* Download mods **directly from the launcher**
+* Update **shadPS4** from within the app
+* Remap controls and change shadPS4 settings
+* Download and enable **Bloodborne patches**
+* View save information and restore backups via GUI
+* **Trophy viewing and unlocking**
 
-____________________________________
+---
 
-BUILDING:
+## Common Issues
 
-https://github.com/rainmakerv3/BB_Launcher/documents/building-docker.md
+**"The procedure entry point…" error on launch (Windows):**
+If you encounter this error, re-download **both shadPS4 and BBLauncher**. Starting from **BBLauncher v12.00**, external DLLs are no longer required, so this issue should no longer occur.
+
+**Linux file location change:**
+As of **v10.02**, the BBLauncher data folder (previously located next to the AppImage) has been moved to:
+
+```
+/usr/share/BBLauncher
+```
+
+To keep your existing mods and settings, simply copy your old files into this directory.
+
+---
+
+## Version History
+
+Full release history is available here:
+
+[https://github.com/rainmakerv3/BB_Launcher/releases](https://github.com/rainmakerv3/BB_Launcher/releases)
+
+---
+
+## Building
+
+### Windows (VSCode)
+
+[https://github.com/rainmakerv3/BB_Launcher/documents/building-windows.md](https://github.com/rainmakerv3/BB_Launcher/documents/building-windows.md)
+
+### Docker:
+
+[https://github.com/rainmakerv3/BB_Launcher/documents/building-docker.md](https://github.com/rainmakerv3/BB_Launcher/documents/building-docker.md)
+
+---
+
+## Open Source
+
+BBLauncher is **fully open source**. You are welcome to build it yourself, contribute, or explore the source code:
+
+[https://github.com/rainmakerv3/BB_Launcher](https://github.com/rainmakerv3/BB_Launcher)
+
+---
+
+## Credits
+
+* **FMOD stream thread** and **Az** for code contributions
+* **Missake** and **Brad** for testing
+* **Noxde** and **Kyoski** for extensive help with save file research
