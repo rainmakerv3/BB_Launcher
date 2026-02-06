@@ -82,14 +82,18 @@ if(WIN32 AND NOT CMAKE_PREFIX_PATH)
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/DetectQtInstallation.cmake")
 endif ()
 
-if (WIN32)
+if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/qtstatic")
     set(Qt6_DIR "CMAKE_CURRENT_SOURCE_DIR}/qtstatic/lib/cmake/Qt6")
     set(Qt6Widgets_DIR "CMAKE_CURRENT_SOURCE_DIR}/qtstatic/lib/cmake/Qt6Widgets")
     set(Qt6Network_DIR "CMAKE_CURRENT_SOURCE_DIR}/qtstatic/lib/cmake/Qt6Network")
+endif()
+
+if (WIN32)
     set(WEBVIEW2_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/WebView2SDK/build/native/x64/WebView2LoaderStatic.lib")
     set(WEBVIEW2_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/WebView2SDK/build/native/include")
 endif()
+
 
 find_package(toml11 4.2.0 CONFIG)
 find_package(pugixml 1.14 CONFIG)
@@ -229,6 +233,10 @@ endif()
 
 if (APPLE)
     target_link_libraries(BB_Launcher PRIVATE date::date-tz)
+endif()
+
+if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_link_libraries(BB_Launcher PRIVATE bcrypt)
 endif()
 
 set_target_properties(BB_Launcher PROPERTIES
