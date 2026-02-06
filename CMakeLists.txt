@@ -192,8 +192,8 @@ set(PROJECT_SOURCES
     settings/LauncherSettings.h
     settings/LauncherSettings.cpp
     settings/LauncherSettings.ui
-    settings/RightClickButton.cpp    
-    settings/RightClickButton.h  
+    settings/right_click_button.cpp    
+    settings/right_click_button.h  
     settings/ShadCheatsPatches.cpp    
     settings/ShadCheatsPatches.h    
     settings/ShadSettings.h

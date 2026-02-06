@@ -7,8 +7,8 @@
 #include <QTimer>
 #include <SDL3/SDL_gamepad.h>
 
-#include "RightClickButton.h"
 #include "modules/ipc/ipc_client.h"
+#include "right_click_button.h"
 
 #ifdef _WIN32
 #define LCTRL_KEY 29

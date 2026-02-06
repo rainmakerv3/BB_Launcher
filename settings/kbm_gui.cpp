@@ -9,12 +9,12 @@
 #include <QTimer>
 #include <QWheelEvent>
 
-#include "RightClickButton.h"
 #include "config.h"
 #include "kbm_config_dialog.h"
 #include "kbm_gui.h"
 #include "kbm_help_dialog.h"
 #include "modules/Common.h"
+#include "right_click_button.h"
 #include "ui_kbm_gui.h"
 
 HelpDialog* HelpWindow;
