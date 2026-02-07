@@ -425,15 +425,7 @@ std::string GetLastModifiedString(const std::filesystem::path& path) {
         return "";
 
     std::chrono::time_point shadWriteTime = std::filesystem::last_write_time(path);
-
-#if __APPLE__
-    auto sec = std::chrono::duration_cast<std::chrono::seconds>(shadWriteTime.time_since_epoch());
-    auto time = date::sys_time<std::chrono::seconds>{sec};
-    std::string shadModifiedStringUTC = date::format("{:%F %T}", time);
-#else
-    auto shadTimePoint = std::chrono::clock_cast<std::chrono::system_clock>(shadWriteTime);
     std::string shadModifiedStringUTC = std::format("{:%F %T}", shadWriteTime);
-#endif
 
     return shadModifiedStringUTC;
 }
