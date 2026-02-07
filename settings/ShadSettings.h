@@ -43,7 +43,6 @@ private:
     // GameInfo m_current_game;   // Add current game info
     // std::string m_game_serial; // Game serial number
 
-    std::map<std::string, int> languages;
     QString defaultTextEdit;
     int initialHeight;
 
@@ -57,41 +56,6 @@ private:
     const QMap<QString, HideCursorState> cursorStateMap = {{tr("Never"), HideCursorState::Never},
                                                            {tr("Idle"), HideCursorState::Idle},
                                                            {tr("Always"), HideCursorState::Always}};
-
-    const QVector<int> languageIndexes = {21, 23, 14, 6, 18, 1, 12, 22, 2, 4,  25, 24, 29, 5,  0, 9,
-                                          15, 16, 17, 7, 26, 8, 11, 20, 3, 13, 27, 10, 19, 30, 28};
-
-    const QStringList languageNames = {"Arabic",
-                                       "Czech",
-                                       "Danish",
-                                       "Dutch",
-                                       "English (United Kingdom)",
-                                       "English (United States)",
-                                       "Finnish",
-                                       "French (Canada)",
-                                       "French (France)",
-                                       "German",
-                                       "Greek",
-                                       "Hungarian",
-                                       "Indonesian",
-                                       "Italian",
-                                       "Japanese",
-                                       "Korean",
-                                       "Norwegian (Bokmaal)",
-                                       "Polish",
-                                       "Portuguese (Brazil)",
-                                       "Portuguese (Portugal)",
-                                       "Romanian",
-                                       "Russian",
-                                       "Simplified Chinese",
-                                       "Spanish (Latin America)",
-                                       "Spanish (Spain)",
-                                       "Swedish",
-                                       "Thai",
-                                       "Traditional Chinese",
-                                       "Turkish",
-                                       "Ukrainian",
-                                       "Vietnamese"};
 
     // Descriptions
     const QString consoleLanguageGroupBoxtext =
@@ -157,4 +121,88 @@ private:
         "rate. New frames will be queued. All frames are presented but may increase latency.\\n"
         "Immediate: Frames immediately present to your screen when ready. May result in "
         "tearing.";
+
+    enum OrbisSystemParamLanguage : s32 {
+        ORBIS_SYSTEM_PARAM_LANG_JAPANESE = 0,
+        ORBIS_SYSTEM_PARAM_LANG_ENGLISH_US = 1,
+        ORBIS_SYSTEM_PARAM_LANG_FRENCH = 2,
+        ORBIS_SYSTEM_PARAM_LANG_SPANISH = 3,
+        ORBIS_SYSTEM_PARAM_LANG_GERMAN = 4,
+        ORBIS_SYSTEM_PARAM_LANG_ITALIAN = 5,
+        ORBIS_SYSTEM_PARAM_LANG_DUTCH = 6,
+        ORBIS_SYSTEM_PARAM_LANG_PORTUGUESE_PT = 7,
+        ORBIS_SYSTEM_PARAM_LANG_RUSSIAN = 8,
+        ORBIS_SYSTEM_PARAM_LANG_KOREAN = 9,
+        ORBIS_SYSTEM_PARAM_LANG_CHINESE_T = 10,
+        ORBIS_SYSTEM_PARAM_LANG_CHINESE_S = 11,
+        ORBIS_SYSTEM_PARAM_LANG_FINNISH = 12,
+        ORBIS_SYSTEM_PARAM_LANG_SWEDISH = 13,
+        ORBIS_SYSTEM_PARAM_LANG_DANISH = 14,
+        ORBIS_SYSTEM_PARAM_LANG_NORWEGIAN = 15,
+        ORBIS_SYSTEM_PARAM_LANG_POLISH = 16,
+        ORBIS_SYSTEM_PARAM_LANG_PORTUGUESE_BR = 17,
+        ORBIS_SYSTEM_PARAM_LANG_ENGLISH_GB = 18,
+        ORBIS_SYSTEM_PARAM_LANG_TURKISH = 19,
+        ORBIS_SYSTEM_PARAM_LANG_SPANISH_LA = 20,
+        ORBIS_SYSTEM_PARAM_LANG_ARABIC = 21,
+        ORBIS_SYSTEM_PARAM_LANG_FRENCH_CA = 22,
+        ORBIS_SYSTEM_PARAM_LANG_CZECH = 23,
+        ORBIS_SYSTEM_PARAM_LANG_HUNGARIAN = 24,
+        ORBIS_SYSTEM_PARAM_LANG_GREEK = 25,
+        ORBIS_SYSTEM_PARAM_LANG_ROMANIAN = 26,
+        ORBIS_SYSTEM_PARAM_LANG_THAI = 27,
+        ORBIS_SYSTEM_PARAM_LANG_VIETNAMESE = 28,
+        ORBIS_SYSTEM_PARAM_LANG_INDONESIAN = 29,
+        ORBIS_SYSTEM_PARAM_LANG_UKRAINIAN = 30,
+    };
+
+    const QMap<QString, s32> language_ids = {
+        {"ja", ORBIS_SYSTEM_PARAM_LANG_JAPANESE},
+        {"ja-JP", ORBIS_SYSTEM_PARAM_LANG_JAPANESE},
+        {"en", ORBIS_SYSTEM_PARAM_LANG_ENGLISH_US},
+        {"en-US", ORBIS_SYSTEM_PARAM_LANG_ENGLISH_US},
+        {"en-GB", ORBIS_SYSTEM_PARAM_LANG_ENGLISH_GB},
+        {"fr", ORBIS_SYSTEM_PARAM_LANG_FRENCH},
+        {"es", ORBIS_SYSTEM_PARAM_LANG_SPANISH},
+        {"es-ES", ORBIS_SYSTEM_PARAM_LANG_SPANISH},
+        {"de", ORBIS_SYSTEM_PARAM_LANG_GERMAN},
+        {"it", ORBIS_SYSTEM_PARAM_LANG_ITALIAN},
+        {"nl", ORBIS_SYSTEM_PARAM_LANG_DUTCH},
+        {"pt", ORBIS_SYSTEM_PARAM_LANG_PORTUGUESE_PT},
+        {"pt-PT", ORBIS_SYSTEM_PARAM_LANG_PORTUGUESE_PT},
+        {"pt-BR", ORBIS_SYSTEM_PARAM_LANG_PORTUGUESE_BR},
+        {"ru", ORBIS_SYSTEM_PARAM_LANG_RUSSIAN},
+        {"ko", ORBIS_SYSTEM_PARAM_LANG_KOREAN},
+        {"zh", ORBIS_SYSTEM_PARAM_LANG_CHINESE_T},
+        {"zh-HANT", ORBIS_SYSTEM_PARAM_LANG_CHINESE_T},
+        {"zh-HANS", ORBIS_SYSTEM_PARAM_LANG_CHINESE_S},
+        {"fi", ORBIS_SYSTEM_PARAM_LANG_FINNISH},
+        {"sv", ORBIS_SYSTEM_PARAM_LANG_SWEDISH},
+        {"da", ORBIS_SYSTEM_PARAM_LANG_DANISH},
+        {"no", ORBIS_SYSTEM_PARAM_LANG_NORWEGIAN},
+        {"nn", ORBIS_SYSTEM_PARAM_LANG_NORWEGIAN},
+        {"nb", ORBIS_SYSTEM_PARAM_LANG_NORWEGIAN},
+        {"pl", ORBIS_SYSTEM_PARAM_LANG_POLISH},
+        {"tr", ORBIS_SYSTEM_PARAM_LANG_TURKISH},
+        {"tr-TR", ORBIS_SYSTEM_PARAM_LANG_TURKISH},
+        {"es-419", ORBIS_SYSTEM_PARAM_LANG_SPANISH_LA},
+        {"ar-AE", ORBIS_SYSTEM_PARAM_LANG_ARABIC},
+        {"ar", ORBIS_SYSTEM_PARAM_LANG_ARABIC},
+        {"fr-CA", ORBIS_SYSTEM_PARAM_LANG_FRENCH_CA},
+        {"cs", ORBIS_SYSTEM_PARAM_LANG_CZECH},
+        {"cs-CZ", ORBIS_SYSTEM_PARAM_LANG_CZECH},
+        {"hu-HU", ORBIS_SYSTEM_PARAM_LANG_HUNGARIAN},
+        {"hu", ORBIS_SYSTEM_PARAM_LANG_HUNGARIAN},
+        {"el-GR", ORBIS_SYSTEM_PARAM_LANG_GREEK},
+        {"el", ORBIS_SYSTEM_PARAM_LANG_GREEK},
+        {"ro-RO", ORBIS_SYSTEM_PARAM_LANG_ROMANIAN},
+        {"ro", ORBIS_SYSTEM_PARAM_LANG_ROMANIAN},
+        {"th-TH", ORBIS_SYSTEM_PARAM_LANG_THAI},
+        {"th", ORBIS_SYSTEM_PARAM_LANG_THAI},
+        {"vi-VN", ORBIS_SYSTEM_PARAM_LANG_VIETNAMESE},
+        {"vi", ORBIS_SYSTEM_PARAM_LANG_VIETNAMESE},
+        {"id-ID", ORBIS_SYSTEM_PARAM_LANG_INDONESIAN},
+        {"id", ORBIS_SYSTEM_PARAM_LANG_INDONESIAN},
+        {"uk", ORBIS_SYSTEM_PARAM_LANG_UKRAINIAN},
+    };
 };

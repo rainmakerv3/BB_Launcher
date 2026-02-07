@@ -116,7 +116,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
 
     connect(ui->TrophyButton, &QPushButton::pressed, this, [this]() {
         QString trophyPath, gameTrpPath;
-        Common::PathToQString(trophyPath, Common::game_serial);
+        trophyPath = QString::fromStdString(Common::game_serial);
         Common::PathToQString(gameTrpPath, Common::installPath);
 
         if (std::filesystem::exists(Common::installUpdatePath)) {
@@ -138,7 +138,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
                                    ? Common::game_serial
                                    : PSFdata::getSavePath(Common::installPath);
         std::filesystem::path saveFile =
-            Common::GetSaveDir() / "1" / savePath / "SPRJ0005" / "userdata0010";
+            Common::GetSaveDir() / savePath / "SPRJ0005" / "userdata0010";
 
         if (!std::filesystem::exists(saveFile)) {
             QMessageBox::warning(this, "No saves detected",
@@ -356,7 +356,7 @@ void BBLauncher::StartBackupSave() {
     // Releases older than 0.9.0 will need to use the game serial as save folder
     std::string savePath =
         Config::isReleaseOlder(9) ? Common::game_serial : PSFdata::getSavePath(Common::installPath);
-    std::filesystem::path save_dir = Common::GetSaveDir() / "1" / savePath;
+    std::filesystem::path save_dir = Common::GetSaveDir() / savePath;
 
     auto backup_dir = BackupPath / "BACKUP1";
 
@@ -738,13 +738,12 @@ void BBLauncher::StartGameWithArgs(QStringList args) {
     }
 
     if (Config::SoundFixEnabled) {
-        std::filesystem::path savePath =
-            Common::GetSaveDir() / "1" / Common::game_serial / "SPRJ0005";
+        std::filesystem::path savePath = Common::GetSaveDir() / Common::game_serial / "SPRJ0005";
         if (Common::game_serial == "CUSA03173")
-            savePath = Common::GetSaveDir() / "1" / "CUSA00207" / "SPRJ0005";
+            savePath = Common::GetSaveDir() / "CUSA00207" / "SPRJ0005";
 
         if (Common::game_serial == "CUSA03023")
-            savePath = Common::GetSaveDir() / "1" / "CUSA01363" / "SPRJ0005";
+            savePath = Common::GetSaveDir() / "CUSA01363" / "SPRJ0005";
 
         if (std::filesystem::exists(savePath / "userdata0010")) {
             std::ofstream savefile1;
@@ -895,7 +894,7 @@ void BBLauncher::OpenFolders() {
         std::string savePath = Config::isReleaseOlder(9)
                                    ? Common::game_serial
                                    : PSFdata::getSavePath(Common::installPath);
-        path = Common::GetSaveDir() / "1" / savePath / "SPRJ0005";
+        path = Common::GetSaveDir() / savePath / "SPRJ0005";
     } else if (item == "Backup Saves Folder") {
         path = Common::GetBBLFilesPath() / "SaveBackups";
     } else if (item == "ShadPS4 Settings Folder") {

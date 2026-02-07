@@ -83,6 +83,21 @@ ShadSettings::ShadSettings(std::shared_ptr<EmulatorSettings> emu_settings,
 
     ui->buttonBox->button(QDialogButtonBox::StandardButton::Save)->setFocus();
 
+    QStringList locales;
+    for (const QString& code : language_ids.keys()) {
+        const QLocale locale(code);
+        QString locale_name = locale.nativeLanguageName();
+
+        if (locale.territory() != QLocale::AnyTerritory) {
+            locale_name += " (" + locale.nativeTerritoryName() + ")";
+        }
+
+        if (!locales.contains(locale_name))
+            locales.append(locale_name);
+    }
+
+    ui->consoleLanguageComboBox->addItems(locales);
+
     ui->fullscreenModeComboBox->addItem("Fullscreen (Borderless)");
     ui->fullscreenModeComboBox->addItem("Windowed");
     ui->fullscreenModeComboBox->addItem("Fullscreen");
@@ -188,15 +203,13 @@ ShadSettings::ShadSettings(std::shared_ptr<EmulatorSettings> emu_settings,
         return;
 
         QString initial_path;
-        Common::PathToQString(initial_path, Config::externalSaveDir);
-        QString save_data_path_string =
+        Common::PathToQString(initial_path, Config::externalHomeDir);
+        QString home_path_string =
             QFileDialog::getExistingDirectory(this, "Directory to save data", initial_path);
-        auto file_path = Common::PathFromQString(save_data_path_string);
+        auto file_path = Common::PathFromQString(home_path_string);
         if (!file_path.empty()) {
-            Config::externalSaveDir = file_path;
-            ui->SavePathLineEdit->setText(save_data_path_string);
-
-            // TODO: transfer savedir to emu settings
+            Config::externalHomeDir = file_path;
+            ui->HomePathLineEdit->setText(home_path_string);
         }
     });
 
@@ -273,6 +286,20 @@ void ShadSettings::LoadValuesFromConfig() {
         }
     }
 
+    QString selected_locale = "American English (United States)";
+    for (const QString& code : language_ids.keys()) {
+        const QLocale locale(code);
+        QString locale_name = locale.nativeLanguageName();
+
+        if (locale.territory() != QLocale::AnyTerritory) {
+            locale_name += " (" + locale.nativeTerritoryName() + ")";
+        }
+
+        if (language_ids[code] == m_emu_settings->GetConsoleLanguage())
+            selected_locale = locale_name;
+    }
+    ui->consoleLanguageComboBox->setCurrentText(selected_locale);
+
     ui->hideCursorComboBox->setCurrentIndex(m_emu_settings->GetCursorState());
     OnCursorStateChanged(ui->hideCursorComboBox->currentIndex());
     ui->idleTimeoutSpinBox->setValue(m_emu_settings->GetCursorHideTimeout());
@@ -313,8 +340,8 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->presentModeComboBox->setCurrentText(translatedText_PresentMode);
 
     QString save_data_path_string;
-    Common::PathToQString(save_data_path_string, Config::externalSaveDir);
-    ui->SavePathLineEdit->setText(save_data_path_string);
+    Common::PathToQString(save_data_path_string, Config::externalHomeDir);
+    ui->HomePathLineEdit->setText(save_data_path_string);
 
     ui->motionControlsCheckBox->setChecked(m_emu_settings->IsMotionControlsEnabled());
     ui->fullscreenModeComboBox->setCurrentText(
@@ -420,8 +447,6 @@ void ShadSettings::SaveSettings() {
     std::string trophy_loc = ui->popUpPosComboBox->currentText().toStdString();
     m_emu_settings->SetTrophyNotificationSide(trophy_loc);
 
-    m_emu_settings->SetDiscordRPCEnabled(ui->discordRPCCheckbox->isChecked());
-
     // ------------------ Graphics tab --------------------------------------------------------
     bool isFullscreen = ui->fullscreenModeComboBox->currentText() != tr("Windowed");
     m_emu_settings->SetFullScreen(isFullscreen);
@@ -453,15 +478,39 @@ void ShadSettings::SaveSettings() {
     // ------------------ Debug tab --------------------------------------------------------
     m_emu_settings->SetCopyGpuBuffers(ui->GPUBufferCheckBox->isChecked());
 
-    // ------------------ Experimental tab --------------------------------------------------------
-    m_emu_settings->SetReadbacksEnabled(ui->ReadbacksCheckBox->isChecked());
+    if (is_game_specific) {
+        m_emu_settings->SetReadbacksEnabled(ui->ReadbacksCheckBox->isChecked());
 
-    // m_emu_settings->SetPSNSignedIn(ui->psnSignInCheckBox->isChecked());
-    // m_emu_settings->SetConnectedToNetwork(ui->networkConnectedCheckBox->isChecked());
+        // m_emu_settings->SetPSNSignedIn(ui->psnSignInCheckBox->isChecked());
+        // m_emu_settings->SetConnectedToNetwork(ui->networkConnectedCheckBox->isChecked());
 
-    m_emu_settings->SetPipelineCacheEnabled(ui->pipelineCacheCheckBox->isChecked());
-    m_emu_settings->SetExtraDmemInMBytes(ui->dmemSpinBox->value());
-    m_emu_settings->SetVblankFrequency(ui->vblankSpinBox->value());
+        m_emu_settings->SetPipelineCacheEnabled(ui->pipelineCacheCheckBox->isChecked());
+        m_emu_settings->SetExtraDmemInMBytes(ui->dmemSpinBox->value());
+        m_emu_settings->SetVblankFrequency(ui->vblankSpinBox->value());
+
+    } else {
+        m_emu_settings->SetDiscordRPCEnabled(ui->discordRPCCheckbox->isChecked());
+        m_emu_settings->SetHomeDir(ui->HomePathLineEdit->text().toStdString());
+
+        QString code;
+        QString currentLocale = ui->consoleLanguageComboBox->currentText();
+        QList<QLocale> allLocales =
+            QLocale::matchingLocales(QLocale::AnyLanguage, QLocale::AnyScript, QLocale::AnyCountry);
+        for (int iLocale = 0; iLocale < allLocales.count(); iLocale++) {
+
+            QLocale locale = allLocales.at(iLocale);
+            QString locale_name = locale.nativeLanguageName();
+
+            if (locale.territory() != QLocale::AnyTerritory) {
+                locale_name += " (" + locale.nativeTerritoryName() + ")";
+            }
+
+            if (locale_name == currentLocale) {
+                code = allLocales.at(iLocale).bcp47Name();
+            }
+        }
+        m_emu_settings->SetConsoleLanguage(language_ids[code]);
+    }
 
     if (is_game_specific) {
         if (!m_emu_settings->Save(Common::game_serial)) {

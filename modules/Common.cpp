@@ -109,12 +109,28 @@ std::filesystem::path GetBBLFilesPath() {
 }
 
 std::filesystem::path GetSaveDir() {
-    std::filesystem::path path = Config::externalSaveDir;
+    std::filesystem::path path = Config::externalHomeDir;
 
     // Releases older than 0.6.0 do have have configurable save folder
     bool noConfigurableSaveFolder = Config::isReleaseOlder(6);
-    if (Config::externalSaveDir == "" || noConfigurableSaveFolder) {
-        path = Common::GetShadUserDir() / "savedata";
+    if (Config::externalHomeDir == "" || noConfigurableSaveFolder) {
+        path = Common::GetShadUserDir() / "home" / "1" / "savedata";
+    } else {
+        path = Config::externalHomeDir / "1" / "savedata";
+    }
+
+    return path;
+}
+
+std::filesystem::path GetTrophyDir() {
+    std::filesystem::path path = Config::externalHomeDir;
+
+    // Releases older than 0.6.0 do have have configurable save folder
+    bool noConfigurableSaveFolder = Config::isReleaseOlder(6);
+    if (Config::externalHomeDir == "" || noConfigurableSaveFolder) {
+        path = Common::GetShadUserDir() / "home" / "1" / "trophy" / "data";
+    } else {
+        path = Config::externalHomeDir / "1" / "trophy" / "data";
     }
 
     return path;

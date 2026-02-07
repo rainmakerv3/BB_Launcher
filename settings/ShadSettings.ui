@@ -104,46 +104,6 @@
                  </layout>
                 </widget>
                </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_4">
-                 <item>
-                  <widget class="QLabel" name="volumeLabel">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Volume</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="volumeValue">
-                   <property name="text">
-                    <string>100</string>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QSlider" name="volumeSlider">
-                 <property name="maximum">
-                  <number>500</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
               </layout>
              </widget>
             </item>
@@ -331,6 +291,46 @@
                 <widget class="QCheckBox" name="GPUBufferCheckBox">
                  <property name="text">
                   <string>Copy GPU Buffers (may fix PM4 crashes)</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                 <item>
+                  <widget class="QLabel" name="volumeLabel">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Volume</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="volumeValue">
+                   <property name="text">
+                    <string>100</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="QSlider" name="volumeSlider">
+                 <property name="maximum">
+                  <number>500</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -899,19 +899,6 @@
       <attribute name="title">
        <string>Global Settings and Trophy Key</string>
       </attribute>
-      <widget class="QCheckBox" name="discordRPCCheckbox">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>200</y>
-         <width>290</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string notr="true">Enable Discord Rich Presence</string>
-       </property>
-      </widget>
       <widget class="QGroupBox" name="SavePathGB">
        <property name="geometry">
         <rect>
@@ -922,16 +909,16 @@
         </rect>
        </property>
        <property name="title">
-        <string>Save Path</string>
+        <string>Custom Home Path (stores saves and trophy info)</string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QLineEdit" name="SavePathLineEdit">
+         <widget class="QLineEdit" name="HomePathLineEdit">
           <property name="readOnly">
            <bool>true</bool>
           </property>
           <property name="placeholderText">
-           <string>Use default save path</string>
+           <string>Use default home path</string>
           </property>
          </widget>
         </item>
@@ -964,6 +951,46 @@
             <width>0</width>
             <height>0</height>
            </size>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>200</y>
+         <width>321</width>
+         <height>81</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>shadPS4 Language</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <widget class="QComboBox" name="consoleLanguageComboBox"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>300</y>
+         <width>321</width>
+         <height>72</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Discord Rich Presence</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_12">
+        <item>
+         <widget class="QCheckBox" name="discordRPCCheckbox">
+          <property name="text">
+           <string notr="true">Enable Discord Rich Presence</string>
           </property>
          </widget>
         </item>

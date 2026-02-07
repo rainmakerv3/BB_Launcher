@@ -52,7 +52,7 @@ extern bool AutoUpdateVersionsEnabled;
 extern bool AutoUpdateShadEnabled;
 extern bool ShowChangeLog;
 
-extern std::filesystem::path externalSaveDir;
+extern std::filesystem::path externalHomeDir;
 extern bool GameRunning;
 
 const std::filesystem::path SettingsFile = Common::GetBBLFilesPath() / "LauncherSettings.toml";

@@ -25,6 +25,7 @@ std::filesystem::path GetShadUserDir();
 std::filesystem::path GetCurrentPath(bool getLinuxFilename = false);
 std::filesystem::path GetBBLFilesPath();
 std::filesystem::path GetSaveDir();
+std::filesystem::path GetTrophyDir();
 
 extern std::string game_serial;
 extern std::filesystem::path installPath;

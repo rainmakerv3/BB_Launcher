@@ -17,7 +17,7 @@ SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveMana
     // Releases older than 0.9.0 will need to use the game serial as save folder
     std::string savePath =
         Config::isReleaseOlder(9) ? Common::game_serial : PSFdata::getSavePath(Common::installPath);
-    ExactSaveDir = Common::GetSaveDir() / "1" / savePath / "SPRJ0005";
+    ExactSaveDir = Common::GetSaveDir() / savePath / "SPRJ0005";
 
     if (!std::filesystem::exists(BackupsDir)) {
         std::filesystem::create_directories(BackupsDir);

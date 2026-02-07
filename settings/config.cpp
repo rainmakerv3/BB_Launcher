@@ -33,7 +33,7 @@ std::string Config::TrophyKey = "";
 bool Config::UnifiedInputConfig = true;
 std::string Config::DefaultControllerID = "";
 
-std::filesystem::path Config::externalSaveDir;
+std::filesystem::path Config::externalHomeDir;
 bool Config::GameRunning = false;
 
 static std::string SelectedGamepad = "";
@@ -115,10 +115,12 @@ void LoadSettings() {
             Common::installPath.parent_path() / (Common::game_serial + "-patch");
     }
 
+    // TODO TROPHY KEY
     EmulatorSettings initial_settings;
     initial_settings.Load();
     Config::UnifiedInputConfig = initial_settings.IsUseUnifiedInputConfig();
     Config::DefaultControllerID = initial_settings.GetDefaultControllerId();
+    Config::externalHomeDir = initial_settings.GetHomeDir();
 
     Config::SetTheme(theme);
 }
