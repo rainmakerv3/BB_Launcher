@@ -169,10 +169,6 @@ void VersionDialog::onItemChanged(QTreeWidgetItem* item, int column) {
 }
 
 void VersionDialog::loadJson() {
-    QMessageBox::information(this, "Temporarily disabled",
-                             "Disabled because of incoming changes to how the json works which "
-                             "will probably break this.");
-    return;
     QString jsonPath =
         QFileDialog::getOpenFileName(this, "Select ShadPS4 versions.json file", QDir::homePath(),
                                      "shadPS4 versions json file (versions.json)");
@@ -205,6 +201,7 @@ void VersionDialog::loadJson() {
         bool alreadyExists = false;
         bool conflictingPrerelease = false;
         std::string name = entry.value("name", std::string("no name"));
+        std::string codename = entry.value("codename", std::string("no tag found"));
         std::filesystem::path buildPath = entry.value("path", std::string(""));
         const int size = buildInfo.size();
 
@@ -232,13 +229,16 @@ void VersionDialog::loadJson() {
             }
         }
 
-        for (auto build : buildInfo) {
-            if (build.path == buildPath) {
-                QMessageBox::information(this, "Build already added.",
-                                         "The build " + QString::fromStdString(buildPath.string()) +
-                                             " is already loaded. It will not be added.");
-                alreadyExists = true;
-                break;
+        if (!buildInfo.empty()) {
+            for (auto build : buildInfo) {
+                if (build.path == buildPath) {
+                    QMessageBox::information(this, "Build already added.",
+                                             "The build " +
+                                                 QString::fromStdString(buildPath.string()) +
+                                                 " is already loaded. It will not be added.");
+                    alreadyExists = true;
+                    break;
+                }
             }
         }
 
@@ -258,16 +258,18 @@ void VersionDialog::loadJson() {
             id = name;
         } else if (type == "Pre-release") {
             std::string folderName = buildPath.parent_path().string();
-            id = folderName.substr(folderName.length() - 40, 40);
+            id = codename;
         }
 
-        Config::Build b{
-            .path = std::string{fmt::UTF(buildPath.u8string()).data},
-            .type = type,
-            .id = id,
-            .modified = modifiedString,
-        };
-        buildInfo.push_back(b);
+        if (std::filesystem::exists(buildPath)) {
+            Config::Build b{
+                .path = std::string{fmt::UTF(buildPath.u8string()).data},
+                .type = type,
+                .id = id,
+                .modified = modifiedString,
+            };
+            buildInfo.push_back(b);
+        }
     }
 
     if (newBuildFound) {
