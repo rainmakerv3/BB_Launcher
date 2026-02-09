@@ -382,8 +382,19 @@ void SaveManager::CreateManualBackupPressed() {
     }
 
     std::string savename = ui->ManualSaveLineEdit->text().toStdString();
+
+    if (std::filesystem::exists(BackupsDir / "MANUAL" / savename)){
+        if (QMessageBox::No == QMessageBox::question(this, "Backup File Exists",
+                                                  QString("A backup with this name already exists.\n") +
+                                                  "Do you want to overwrite this backup?",
+                                                  QMessageBox::Yes | QMessageBox::No)) {
+                                                    return;
+                                                  }
+    }
+
     Savefile = ExactSaveDir / saveslot;
-    std::filesystem::copy_file(Savefile, BackupsDir / "MANUAL" / savename);
+    std::filesystem::copy_file(Savefile, BackupsDir / "MANUAL" / savename,
+                                std::filesystem::copy_options::overwrite_existing);
     QMessageBox::information(this, "Save Successful",
                              "Backup save created: " + QString::fromStdString(savename));
 
