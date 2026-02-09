@@ -24,6 +24,7 @@ int main(int argc, char* argv[]) {
     QtWebView::initialize();
 #endif
     QApplication a(argc, argv);
+    QApplication::setStyle("Fusion");
 
 // Check if CPU supports AVX2, show error and quit otherwise
 #if defined(_MSC_VER)

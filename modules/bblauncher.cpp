@@ -76,7 +76,6 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     ui->ShadLabel->setText(shadLabelString);
 
     this->setFixedSize(this->width(), this->height());
-    QApplication::setStyle("Fusion");
 
     QPalette palette = logDisplay->palette();
     palette.setColor(QPalette::Base, Qt::black);
