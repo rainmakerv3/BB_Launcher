@@ -25,12 +25,14 @@ Hotkeys::Hotkeys(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
     CheckGamePad();
     installEventFilter(this);
 
-    PadButtonsList = {ui->fpsButtonPad, ui->quitButtonPad, ui->fullscreenButtonPad,
-                      ui->pauseButtonPad, ui->reloadButtonPad};
+    PadButtonsList = {ui->fpsButtonPad,    ui->quitButtonPad,   ui->fullscreenButtonPad,
+                      ui->pauseButtonPad,  ui->reloadButtonPad, ui->volUpButtonPad,
+                      ui->volDownButtonPad};
 
-    KBButtonsList = {ui->fpsButtonKB,         ui->quitButtonKB,   ui->fullscreenButtonKB,
-                     ui->pauseButtonKB,       ui->reloadButtonKB, ui->renderdocButton,
-                     ui->mouseJoystickButton, ui->mouseGyroButton};
+    KBButtonsList = {ui->fpsButtonKB,         ui->quitButtonKB,    ui->fullscreenButtonKB,
+                     ui->pauseButtonKB,       ui->reloadButtonKB,  ui->renderdocButton,
+                     ui->mouseJoystickButton, ui->mouseGyroButton, ui->volUpButtonKB,
+                     ui->volDownButtonKB};
 
     connect(ui->buttonBox, &QDialogButtonBox::clicked, this, [this](QAbstractButton* button) {
         if (button == ui->buttonBox->button(QDialogButtonBox::Save)) {
@@ -96,12 +98,16 @@ void Hotkeys::SetDefault() {
     ui->quitButtonPad->setText("unmapped");
     ui->fullscreenButtonPad->setText("unmapped");
     ui->pauseButtonPad->setText("unmapped");
+    ui->volUpButtonPad->setText("unmapped");
+    ui->volDownButtonPad->setText("unmapped");
     ui->reloadButtonPad->setText("unmapped");
 
     ui->fpsButtonKB->setText("f10");
     ui->quitButtonKB->setText("lctrl, lshift, end");
     ui->fullscreenButtonKB->setText("f11");
     ui->pauseButtonKB->setText("f9");
+    ui->volUpButtonKB->setText("kpplus");
+    ui->volDownButtonKB->setText("kpminus");
     ui->reloadButtonKB->setText("f8");
 
     ui->renderdocButton->setText("f12");
@@ -141,6 +147,12 @@ void Hotkeys::SaveHotkeys(bool CloseOnSave) {
 
     add_mapping(ui->reloadButtonPad->text(), "hotkey_reload_inputs");
     add_mapping(ui->reloadButtonKB->text(), "hotkey_reload_inputs");
+    lines.push_back("");
+
+    add_mapping(ui->volUpButtonPad->text(), "hotkey_volume_up ");
+    add_mapping(ui->volUpButtonKB->text(), "hotkey_volume_up ");
+    add_mapping(ui->volDownButtonPad->text(), "hotkey_volume_down ");
+    add_mapping(ui->volDownButtonKB->text(), "hotkey_volume_down ");
     lines.push_back("");
 
     add_mapping(ui->renderdocButton->text(), "hotkey_renderdoc_capture");
@@ -283,6 +295,14 @@ void Hotkeys::LoadHotkeys() {
             ui->mouseJoystickButton->setText(QString::fromStdString(input_string));
         } else if (output_string.contains("hotkey_toggle_mouse_to_gyro")) {
             ui->mouseGyroButton->setText(QString::fromStdString(input_string));
+        } else if (output_string.contains("hotkey_volume_up")) {
+            controllerInputDetected
+                ? ui->volUpButtonPad->setText(QString::fromStdString(input_string))
+                : ui->volUpButtonKB->setText(QString::fromStdString(input_string));
+        } else if (output_string.contains("hotkey_volume_down")) {
+            controllerInputDetected
+                ? ui->volDownButtonPad->setText(QString::fromStdString(input_string))
+                : ui->volDownButtonKB->setText(QString::fromStdString(input_string));
         }
     }
 
@@ -847,25 +867,24 @@ void Hotkeys::pollSDLEvents() {
                 }
             }
 
-            /*
             if (event.type == SDL_EVENT_GAMEPAD_AXIS_MOTION) {
                 // SDL trigger axis values range from 0 to 32000, set mapping on half movement
                 // Set zone for trigger release signal arbitrarily at 5000
-                switch (Input) {
+                switch (event.gaxis.axis) {
                 case SDL_GAMEPAD_AXIS_LEFT_TRIGGER:
-                    if (Value > 16000) {
+                    if (event.gaxis.value > 16000) {
                         pressedButtons.insert(1, "l2");
                         L2Pressed = true;
-                    } else if (Value < 5000) {
+                    } else if (event.gaxis.value < 5000) {
                         if (L2Pressed && !R2Pressed)
                             CheckMapping(MappingButton);
                     }
                     break;
                 case SDL_GAMEPAD_AXIS_RIGHT_TRIGGER:
-                    if (Value > 16000) {
+                    if (event.gaxis.value > 16000) {
                         pressedButtons.insert(2, "r2");
                         R2Pressed = true;
-                    } else if (Value < 5000) {
+                    } else if (event.gaxis.value < 5000) {
                         if (R2Pressed && !L2Pressed)
                             CheckMapping(MappingButton);
                     }
@@ -874,7 +893,6 @@ void Hotkeys::pollSDLEvents() {
                     break;
                 }
             }
-            */
 
             if (event.type == SDL_EVENT_GAMEPAD_BUTTON_UP)
                 CheckMapping(MappingButton);

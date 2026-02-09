@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>988</width>
-    <height>635</height>
+    <width>1042</width>
+    <height>641</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,8 +21,8 @@
     <rect>
      <x>3</x>
      <y>2</y>
-     <width>981</width>
-     <height>591</height>
+     <width>1031</width>
+     <height>601</height>
     </rect>
    </property>
    <property name="widgetResizable">
@@ -33,8 +33,8 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>979</width>
-      <height>589</height>
+      <width>1029</width>
+      <height>599</height>
      </rect>
     </property>
     <widget class="QWidget" name="verticalLayoutWidget_3">
@@ -42,8 +42,8 @@
       <rect>
        <x>3</x>
        <y>7</y>
-       <width>971</width>
-       <height>581</height>
+       <width>1021</width>
+       <height>591</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="HotkeysLayout">
@@ -143,10 +143,6 @@
           </layout>
          </widget>
         </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayoutPad2">
         <item>
          <widget class="QGroupBox" name="fullscreenGroupboxPad">
           <property name="sizePolicy">
@@ -172,6 +168,10 @@
           </layout>
          </widget>
         </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayoutPad2">
         <item>
          <widget class="QGroupBox" name="pauseGroupboxPad">
           <property name="sizePolicy">
@@ -189,6 +189,50 @@
              <property name="focusPolicy">
               <enum>Qt::FocusPolicy::NoFocus</enum>
              </property>
+             <property name="text">
+              <string>unmapped</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="volUpGroupboxPad">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>Volume Up</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QRightClickButton" name="volUpButtonPad">
+             <property name="text">
+              <string>unmapped</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="volDownGroupboxPad">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>Volume Down</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_15">
+           <item>
+            <widget class="QRightClickButton" name="volDownButtonPad">
              <property name="text">
               <string>unmapped</string>
              </property>
@@ -311,10 +355,6 @@
           </layout>
          </widget>
         </item>
-       </layout>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayoutKB2">
         <item>
          <widget class="QGroupBox" name="fullscreenGroupboxKB">
           <property name="sizePolicy">
@@ -340,6 +380,10 @@
           </layout>
          </widget>
         </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayoutKB2">
         <item>
          <widget class="QGroupBox" name="pauseGroupboxKB">
           <property name="sizePolicy">
@@ -357,6 +401,50 @@
              <property name="focusPolicy">
               <enum>Qt::FocusPolicy::NoFocus</enum>
              </property>
+             <property name="text">
+              <string>unmapped</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>Volume Up</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_16">
+           <item>
+            <widget class="QRightClickButton" name="volUpButtonKB">
+             <property name="text">
+              <string>unmapped</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_4">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>Volume Down</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_17">
+           <item>
+            <widget class="QRightClickButton" name="volDownButtonKB">
              <property name="text">
               <string>unmapped</string>
              </property>
@@ -445,6 +533,19 @@
          </widget>
         </item>
         <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Orientation::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
          <spacer name="horizontalSpacer_3">
           <property name="orientation">
            <enum>Qt::Orientation::Horizontal</enum>
@@ -496,29 +597,7 @@
          </font>
         </property>
         <property name="text">
-         <string>Note: Triggers hotkeys disabled for now due to shadPS4 bug</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignmentFlag::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="tipLabel_3">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Tip: Unmap with right-click</string>
+         <string>Tip: Unmap inputs with right-click</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -532,9 +611,9 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>600</y>
-     <width>969</width>
+     <x>10</x>
+     <y>610</y>
+     <width>1021</width>
      <height>26</height>
     </rect>
    </property>
