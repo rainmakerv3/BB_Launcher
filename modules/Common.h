@@ -19,10 +19,12 @@ void PathToQString(QString& result, const std::filesystem::path& path);
 std::filesystem::path PathFromQString(const QString& path);
 std::string PathToU8(const std::filesystem::path& path);
 std::wstring Utf8ToUtf16(const std::string& utf8);
+
 std::filesystem::path GetShadUserDir();
 std::filesystem::path GetCurrentPath(bool getLinuxFilename = false);
 std::filesystem::path GetBBLFilesPath();
 std::filesystem::path GetSaveDir();
+std::filesystem::path GetDlcDir();
 
 extern std::string game_serial;
 extern std::filesystem::path installPath;

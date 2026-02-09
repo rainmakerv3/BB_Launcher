@@ -13,6 +13,8 @@ namespace Config {
 struct ShadSettings {
     std::optional<std::string> defaultControllerID;
     std::optional<bool> useUnifiedInputConfig;
+    std::optional<std::filesystem::path> dlcPath;
+    std::optional<std::filesystem::path> savePath;
 };
 
 struct Build {
@@ -61,6 +63,7 @@ extern bool AutoUpdateShadEnabled;
 extern bool ShowChangeLog;
 
 extern std::filesystem::path externalSaveDir;
+extern std::filesystem::path dlcDir;
 extern bool GameRunning;
 
 const std::filesystem::path SettingsFile = Common::GetBBLFilesPath() / "LauncherSettings.toml";

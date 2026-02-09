@@ -130,28 +130,31 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
         QString save_data_path_string =
             QFileDialog::getExistingDirectory(this, "Directory to save data", initial_path);
         auto file_path = Common::PathFromQString(save_data_path_string);
+
         if (!file_path.empty()) {
             Config::externalSaveDir = file_path;
             ui->SavePathLineEdit->setText(save_data_path_string);
 
-            std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
-            toml::value shadData;
-            try {
-                std::ifstream ifs;
-                ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-                ifs.open(shadConfigFile, std::ios_base::binary);
-                shadData = toml::parse(
-                    ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
-            } catch (std::exception& ex) {
-                QMessageBox::critical(NULL, "Filesystem error", ex.what());
-                return;
-            }
+            Config::ShadSettings settings;
+            settings.savePath = Config::externalSaveDir;
+            Config::SaveShadSettings(settings);
+        }
+    });
 
-            shadData["GUI"]["saveDataPath"] =
-                std::string{Common::PathToU8(Config::externalSaveDir)};
-            std::ofstream file(Common::GetShadUserDir() / "config.toml", std::ios::binary);
-            file << shadData;
-            file.close();
+    connect(ui->DlcPathButton, &QPushButton::clicked, this, [this]() {
+        QString initial_path;
+        Common::PathToQString(initial_path, Config::dlcDir);
+        QString dlc_path_string =
+            QFileDialog::getExistingDirectory(this, "Directory to dlc files", initial_path);
+        auto file_path = Common::PathFromQString(dlc_path_string);
+
+        if (!file_path.empty()) {
+            Config::dlcDir = file_path;
+            ui->DLCPathLineEdit->setText(dlc_path_string);
+
+            Config::ShadSettings settings;
+            settings.dlcPath = Config::dlcDir;
+            Config::SaveShadSettings(settings);
         }
     });
 
@@ -287,6 +290,10 @@ void ShadSettings::LoadValuesFromConfig() {
     QString save_data_path_string;
     Common::PathToQString(save_data_path_string, Config::externalSaveDir);
     ui->SavePathLineEdit->setText(save_data_path_string);
+
+    QString dlc_path_string;
+    Common::PathToQString(save_data_path_string, Config::dlcDir);
+    ui->DLCPathLineEdit->setText(save_data_path_string);
 
     ui->motionControlsCheckBox->setChecked(
         toml::find_or<bool>(data, "Input", "isMotionControlsEnabled", false));

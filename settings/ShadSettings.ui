@@ -51,7 +51,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QScrollArea" name="generalTab">
       <property name="widgetResizable">
@@ -917,19 +917,6 @@
       <attribute name="title">
        <string>Global Settings and Trophy Key</string>
       </attribute>
-      <widget class="QCheckBox" name="discordRPCCheckbox">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>200</y>
-         <width>290</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string notr="true">Enable Discord Rich Presence</string>
-       </property>
-      </widget>
       <widget class="QGroupBox" name="SavePathGB">
        <property name="geometry">
         <rect>
@@ -966,7 +953,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>110</y>
+         <y>230</y>
          <width>321</width>
          <height>75</height>
         </rect>
@@ -991,7 +978,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>250</y>
+         <y>420</y>
          <width>321</width>
          <height>123</height>
         </rect>
@@ -1035,6 +1022,60 @@
             </widget>
            </item>
           </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QGroupBox" name="SavePathGB_2">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>120</y>
+         <width>919</width>
+         <height>88</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>DLC Path (where dumped/extracted DLC files should be placed)</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QLineEdit" name="DLCPathLineEdit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="placeholderText">
+           <string>Use default dlc path</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="DlcPathButton">
+          <property name="text">
+           <string>Choose New Path</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>330</y>
+         <width>242</width>
+         <height>72</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Discord Rich Presence</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_12">
+        <item>
+         <widget class="QCheckBox" name="discordRPCCheckbox">
+          <property name="text">
+           <string notr="true">Enable Discord Rich Presence</string>
+          </property>
          </widget>
         </item>
        </layout>

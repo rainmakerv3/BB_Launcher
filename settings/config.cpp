@@ -33,6 +33,7 @@ bool Config::UnifiedInputConfig = true;
 std::string Config::DefaultControllerID = "";
 
 std::filesystem::path Config::externalSaveDir;
+std::filesystem::path Config::dlcDir;
 bool Config::GameRunning = false;
 
 static std::string SelectedGamepad = "";
@@ -154,6 +155,7 @@ void LoadSettings() {
         if (shadData.contains("GUI")) {
             const toml::value& GUI = shadData.at("GUI");
             Config::externalSaveDir = toml::find_fs_path_or(GUI, "saveDataPath", {});
+            Config::dlcDir = toml::find_fs_path_or(GUI, "addonInstallDir", {});
         }
     }
 }
@@ -218,6 +220,13 @@ void SaveShadSettings(ShadSettings settings, bool is_game_specific) {
 
         if (settings.defaultControllerID.has_value())
             data["General"]["defaultControllerID"] = settings.defaultControllerID.value();
+
+        if (settings.dlcPath.has_value())
+            data["GUI"]["addonInstallDir"] =
+                std::string{fmt::UTF(settings.dlcPath->u8string()).data};
+
+        if (settings.savePath.has_value())
+            data["GUI"]["saveDataPath"] = std::string{fmt::UTF(settings.savePath->u8string()).data};
     }
 
     // game-specific only
@@ -490,7 +499,7 @@ bool isReleaseOlder(int minorVersion, int MajorVersion) {
         if (match.hasMatch()) {
             int major = match.captured(1).toInt();
             int minor = match.captured(2).toInt();
-            int patch = match.captured(3).toInt();
+            // int patch = match.captured(3).toInt();
 
             if (major > MajorVersion)
                 isOlder = true;

@@ -889,7 +889,7 @@ QString BBLauncher::getPatchFile() {
 
 void BBLauncher::OpenFolders() {
     QStringList options = {"Log Folder", "Saves Folder", "Backup Saves Folder",
-                           "ShadPS4 Settings Folder"};
+                           "ShadPS4 Settings Folder", "DLC Folder"};
     bool selected = true;
     QString item = QInputDialog::getItem(this, "Select Folder", "Please choose a folder to open",
                                          options, 0, false, &selected);
@@ -910,6 +910,8 @@ void BBLauncher::OpenFolders() {
         path = Common::GetBBLFilesPath() / "SaveBackups";
     } else if (item == "ShadPS4 Settings Folder") {
         path = Common::GetShadUserDir();
+    } else if (item == "DLC Folder") {
+        path = Common::GetDlcDir();
     }
 
     if (!std::filesystem::exists(path)) {
