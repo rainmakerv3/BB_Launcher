@@ -67,6 +67,17 @@ SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveMana
         QDesktopServices::openUrl(QUrl::fromLocalFile(QSavePath));
     });
 
+    connect(ui->backupsFolderButton, &QPushButton::clicked, this, [this]() {
+        if (!std::filesystem::exists(BackupsDir)) {
+            QMessageBox::information(this, "Error", "Backups folder does not exist");
+            return;
+        }
+
+        QString QBackupsPath;
+        Common::PathToQString(QBackupsPath, BackupsDir);
+        QDesktopServices::openUrl(QUrl::fromLocalFile(QBackupsPath));
+    });
+
     ui->SelectSaveComboBox->setCurrentIndex(0);
     OnSelectBackupSaveChanged();
 }
