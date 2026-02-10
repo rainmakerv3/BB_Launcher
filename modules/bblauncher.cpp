@@ -30,6 +30,10 @@
 #include "settings/updater/CheckUpdate.h"
 #include "version_dialog.h"
 
+#ifdef _WIN32
+#include <intrin.h>
+#endif
+
 static bool save_backups = false;
 
 BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
@@ -89,7 +93,21 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     UpdateModList();
     UpdateIcons();
 
-    QObject::connect(m_ipc_client.get(), &IpcClient::LogEntrySent, this, &BBLauncher::PrintLog);
+#ifdef _WIN32
+    int cpuInfo[4] = {0};
+    __cpuidex(cpuInfo, 7, 0);
+    bool isHybrid = (cpuInfo[3] & (1 << 15)) != 0;
+
+    if (isHybrid) {
+        logDisplay->appendHtml(
+            "<b>REMINDER: CPU E-cores detected, you may be using an Intel 12th Gen - 14th Gen CPU. "
+            "To avoid crashes playing Bloodborne on Intel 12-14th Gen CPUs, you can use either the "
+            "Intel 12th Gen+ SFX workaround patch (recommended) or install the Sfx Fix "
+            "Mod</b>\n\n");
+    }
+#endif
+
+    connect(m_ipc_client.get(), &IpcClient::LogEntrySent, this, &BBLauncher::PrintLog);
     connect(ui->BBSelectButton, &QPushButton::pressed, this, &BBLauncher::BBSelectButton_isPressed);
     connect(ui->ShadSelectButton, &QPushButton::pressed, this,
             &BBLauncher::ShadSelectButton_isPressed);
