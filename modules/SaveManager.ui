@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1004</width>
+    <width>1001</width>
     <height>488</height>
    </rect>
   </property>
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>60</y>
      <width>161</width>
-     <height>130</height>
+     <height>140</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="ControlsLayout">
@@ -77,7 +77,7 @@
      <x>180</x>
      <y>60</y>
      <width>281</width>
-     <height>261</height>
+     <height>265</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="SaveInfoLayout">
@@ -438,7 +438,7 @@
     <rect>
      <x>20</x>
      <y>450</y>
-     <width>431</width>
+     <width>481</width>
      <height>20</height>
     </rect>
    </property>
@@ -451,8 +451,8 @@
     <rect>
      <x>530</x>
      <y>60</y>
-     <width>160</width>
-     <height>261</height>
+     <width>173</width>
+     <height>266</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="BackupControlsLayout">
@@ -553,9 +553,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>400</y>
+     <y>390</y>
      <width>941</width>
-     <height>31</height>
+     <height>41</height>
     </rect>
    </property>
    <property name="font">
@@ -594,13 +594,20 @@
   <widget class="QWidget" name="horizontalLayoutWidget_3">
    <property name="geometry">
     <rect>
-     <x>780</x>
+     <x>630</x>
      <y>430</y>
-     <width>201</width>
+     <width>362</width>
      <height>41</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="ButtonBoxLayout">
+    <item>
+     <widget class="QPushButton" name="backupsFolderButton">
+      <property name="text">
+       <string>Open Backups Folder</string>
+      </property>
+     </widget>
+    </item>
     <item>
      <widget class="QPushButton" name="saveFolderButton">
       <property name="text">
@@ -626,10 +633,10 @@
   <widget class="QWidget" name="verticalLayoutWidget_4">
    <property name="geometry">
     <rect>
-     <x>700</x>
+     <x>710</x>
      <y>60</y>
-     <width>281</width>
-     <height>261</height>
+     <width>271</width>
+     <height>265</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="BackupSaveInfoLayout">
