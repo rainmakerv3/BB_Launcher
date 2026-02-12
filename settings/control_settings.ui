@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1124</width>
-    <height>847</height>
+    <height>844</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,7 +44,7 @@
         <x>0</x>
         <y>0</y>
         <width>1096</width>
-        <height>810</height>
+        <height>817</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -138,6 +138,9 @@
                    <property name="title">
                     <string>Up</string>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignCenter</set>
+                   </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_4">
                     <item>
                      <widget class="QRightClickButton" name="DpadUpButton">
@@ -158,6 +161,9 @@
                  <widget class="QGroupBox" name="gb_dpad_left">
                   <property name="title">
                    <string>Left</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
                   </property>
                   <layout class="QVBoxLayout" name="gb_dpad_left_layout">
                    <property name="leftMargin">
@@ -186,6 +192,9 @@
                  <widget class="QGroupBox" name="gb_dpad_right">
                   <property name="title">
                    <string>Right</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
                   </property>
                   <layout class="QVBoxLayout" name="gb_dpad_right_layout">
                    <property name="leftMargin">
@@ -244,6 +253,9 @@
                    <property name="title">
                     <string>Down</string>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignCenter</set>
+                   </property>
                    <layout class="QHBoxLayout" name="horizontalLayout_3">
                     <item>
                      <widget class="QRightClickButton" name="DpadDownButton">
@@ -276,7 +288,10 @@
                  </sizepolicy>
                 </property>
                 <property name="title">
-                 <string>L1</string>
+                 <string notr="true">L1</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
                 </property>
                 <layout class="QVBoxLayout" name="gb_l1_layout">
                  <property name="leftMargin">
@@ -304,7 +319,10 @@
               <item>
                <widget class="QGroupBox" name="gb_l2">
                 <property name="title">
-                 <string>L2</string>
+                 <string notr="true">L2</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
                 </property>
                 <layout class="QVBoxLayout" name="gb_l2_layout">
                  <property name="leftMargin">
@@ -354,11 +372,21 @@
               </sizepolicy>
              </property>
              <property name="title">
-              <string>Left Stick Deadzone (def:2 max:127)</string>
+              <string>Left Stick Deadzone</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_15">
               <item>
-               <widget class="QLabel" name="LeftDeadzoneValue">
+               <widget class="QLabel" name="LeftDeadzoneMinLabel">
+                <property name="text">
+                 <string>Min Deadzone (def:2 max:127)</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignLeading</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="LeftDeadzoneMinValue">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
                   <horstretch>0</horstretch>
@@ -366,7 +394,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Left Deadzone</string>
+                 <string notr="true">2</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
@@ -374,7 +402,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QSlider" name="LeftDeadzoneSlider">
+               <widget class="QSlider" name="LeftDeadzoneMinSlider">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
                   <horstretch>0</horstretch>
@@ -385,6 +413,57 @@
                  <number>1</number>
                 </property>
                 <property name="maximum">
+                 <number>127</number>
+                </property>
+                <property name="value">
+                 <number>2</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="LeftDeadzoneMaxLabel">
+                <property name="text">
+                 <string>Max Deadzone (def:127 max:127)</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignLeading</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="LeftDeadzoneMaxValue">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string notr="true">127</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSlider" name="LeftDeadzoneMaxSlider">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>127</number>
+                </property>
+                <property name="value">
                  <number>127</number>
                 </property>
                 <property name="orientation">
@@ -463,6 +542,9 @@
                    <property name="title">
                     <string>Up</string>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignCenter</set>
+                   </property>
                    <layout class="QVBoxLayout" name="verticalLayout_10">
                     <item>
                      <widget class="QRightClickButton" name="LStickUpButton">
@@ -483,6 +565,9 @@
                  <widget class="QGroupBox" name="gb_left_stick_left">
                   <property name="title">
                    <string>Left</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
                   </property>
                   <layout class="QVBoxLayout" name="gb_left_stick_left_layout">
                    <property name="leftMargin">
@@ -517,6 +602,9 @@
                   </property>
                   <property name="title">
                    <string>Right</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
                   </property>
                   <layout class="QVBoxLayout" name="gb_left_stick_right_layout">
                    <property name="leftMargin">
@@ -574,6 +662,9 @@
                    </property>
                    <property name="title">
                     <string>Down</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignCenter</set>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_8">
                     <item>
@@ -855,7 +946,10 @@
                   </sizepolicy>
                  </property>
                  <property name="title">
-                  <string>L3</string>
+                  <string notr="true">L3</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
                  </property>
                  <layout class="QVBoxLayout" name="gb_l3_layout">
                   <property name="leftMargin">
@@ -884,6 +978,9 @@
                 <widget class="QGroupBox" name="gb_start">
                  <property name="title">
                   <string>Options</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
                  </property>
                  <layout class="QVBoxLayout" name="gb_start_layout">
                   <property name="leftMargin">
@@ -917,7 +1014,10 @@
                   </sizepolicy>
                  </property>
                  <property name="title">
-                  <string>R3</string>
+                  <string notr="true">R3</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
                  </property>
                  <layout class="QVBoxLayout" name="gb_r3_layout">
                   <property name="leftMargin">
@@ -951,6 +1051,9 @@
                  <property name="title">
                   <string>Touchpad Left</string>
                  </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                 </property>
                  <layout class="QHBoxLayout" name="horizontalLayout_5">
                   <item>
                    <widget class="QRightClickButton" name="TouchpadLeftButton">
@@ -967,6 +1070,9 @@
                  <property name="title">
                   <string>Touchpad Center</string>
                  </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
+                 </property>
                  <layout class="QVBoxLayout" name="verticalLayout_11">
                   <item>
                    <widget class="QRightClickButton" name="TouchpadCenterButton">
@@ -982,6 +1088,9 @@
                 <widget class="QGroupBox" name="gb_touchright">
                  <property name="title">
                   <string>Touchpad Right</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignmentFlag::AlignCenter</set>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_12">
                   <item>
@@ -1013,17 +1122,26 @@
                   <string>Color Adjustment</string>
                  </property>
                  <layout class="QVBoxLayout" name="verticalLayout_18">
+                  <property name="leftMargin">
+                   <number>6</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>6</number>
+                  </property>
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_9">
+                    <property name="spacing">
+                     <number>6</number>
+                    </property>
                     <item>
-                     <widget class="QLabel" name="RLabel">
+                     <widget class="QLabel" name="RLabel_text">
                       <property name="font">
                        <font>
                         <bold>false</bold>
                        </font>
                       </property>
                       <property name="text">
-                       <string notr="true">R: 000</string>
+                       <string>RED</string>
                       </property>
                      </widget>
                     </item>
@@ -1043,19 +1161,38 @@
                       </property>
                      </widget>
                     </item>
+                    <item>
+                     <widget class="QLabel" name="RLabel">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>25</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string notr="true">000</string>
+                      </property>
+                     </widget>
+                    </item>
                    </layout>
                   </item>
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_10">
                     <item>
-                     <widget class="QLabel" name="GLabel">
+                     <widget class="QLabel" name="GLabel_text">
                       <property name="font">
                        <font>
                         <bold>false</bold>
                        </font>
                       </property>
                       <property name="text">
-                       <string notr="true">G: 000</string>
+                       <string>GREEN</string>
                       </property>
                      </widget>
                     </item>
@@ -1075,19 +1212,38 @@
                       </property>
                      </widget>
                     </item>
+                    <item>
+                     <widget class="QLabel" name="GLabel">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>25</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string notr="true">000</string>
+                      </property>
+                     </widget>
+                    </item>
                    </layout>
                   </item>
                   <item>
                    <layout class="QHBoxLayout" name="horizontalLayout_11">
                     <item>
-                     <widget class="QLabel" name="BLabel">
+                     <widget class="QLabel" name="BLabel_text">
                       <property name="font">
                        <font>
                         <bold>false</bold>
                        </font>
                       </property>
                       <property name="text">
-                       <string notr="true">B: 255</string>
+                       <string>BLUE</string>
                       </property>
                      </widget>
                     </item>
@@ -1107,6 +1263,25 @@
                       </property>
                       <property name="orientation">
                        <enum>Qt::Orientation::Horizontal</enum>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QLabel" name="BLabel">
+                      <property name="sizePolicy">
+                       <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                       </sizepolicy>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>25</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string notr="true">255</string>
                       </property>
                      </widget>
                     </item>
@@ -1228,6 +1403,9 @@
                    <property name="title">
                     <string>Triangle</string>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignCenter</set>
+                   </property>
                    <layout class="QVBoxLayout" name="verticalLayout_3">
                     <item>
                      <widget class="QRightClickButton" name="TriangleButton">
@@ -1248,6 +1426,9 @@
                  <widget class="QGroupBox" name="gb_square">
                   <property name="title">
                    <string>Square</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
                   </property>
                   <layout class="QVBoxLayout" name="gb_square_layout">
                    <property name="leftMargin">
@@ -1276,6 +1457,9 @@
                  <widget class="QGroupBox" name="gb_circle">
                   <property name="title">
                    <string>Circle</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
                   </property>
                   <layout class="QVBoxLayout" name="gb_circle_layout">
                    <property name="leftMargin">
@@ -1334,6 +1518,9 @@
                    <property name="title">
                     <string>Cross</string>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignCenter</set>
+                   </property>
                    <layout class="QVBoxLayout" name="verticalLayout_5">
                     <item>
                      <widget class="QRightClickButton" name="CrossButton">
@@ -1366,7 +1553,10 @@
                  </sizepolicy>
                 </property>
                 <property name="title">
-                 <string>R1</string>
+                 <string notr="true">R1</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
                 </property>
                 <layout class="QVBoxLayout" name="gb_r1_layout">
                  <property name="leftMargin">
@@ -1394,7 +1584,10 @@
               <item>
                <widget class="QGroupBox" name="gb_r2">
                 <property name="title">
-                 <string>R2</string>
+                 <string notr="true">R2</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignCenter</set>
                 </property>
                 <layout class="QVBoxLayout" name="gb_r2_layout">
                  <property name="leftMargin">
@@ -1447,11 +1640,21 @@
               </sizepolicy>
              </property>
              <property name="title">
-              <string>Right Stick Deadzone (def:2, max:127)</string>
+              <string>Right Stick Deadzone</string>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_13">
               <item>
-               <widget class="QLabel" name="RightDeadzoneValue">
+               <widget class="QLabel" name="RightDeadzoneMinLabel">
+                <property name="text">
+                 <string>Min Deadzone (def:2 max:127)</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignLeading</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="RightDeadzoneMinValue">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
                   <horstretch>0</horstretch>
@@ -1459,7 +1662,7 @@
                  </sizepolicy>
                 </property>
                 <property name="text">
-                 <string>Right Deadzone</string>
+                 <string notr="true">2</string>
                 </property>
                 <property name="alignment">
                  <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
@@ -1467,7 +1670,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QSlider" name="RightDeadzoneSlider">
+               <widget class="QSlider" name="RightDeadzoneMinSlider">
                 <property name="sizePolicy">
                  <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
                   <horstretch>0</horstretch>
@@ -1478,6 +1681,57 @@
                  <number>1</number>
                 </property>
                 <property name="maximum">
+                 <number>127</number>
+                </property>
+                <property name="value">
+                 <number>2</number>
+                </property>
+                <property name="orientation">
+                 <enum>Qt::Orientation::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="RightDeadzoneMaxLabel">
+                <property name="text">
+                 <string>Max Deadzone (def:127 max:127)</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignLeading</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="RightDeadzoneMaxValue">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string notr="true">127</string>
+                </property>
+                <property name="alignment">
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSlider" name="RightDeadzoneMaxSlider">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="minimum">
+                 <number>1</number>
+                </property>
+                <property name="maximum">
+                 <number>127</number>
+                </property>
+                <property name="value">
                  <number>127</number>
                 </property>
                 <property name="orientation">
@@ -1556,6 +1810,9 @@
                    <property name="title">
                     <string>Up</string>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignCenter</set>
+                   </property>
                    <layout class="QVBoxLayout" name="verticalLayout_7">
                     <item>
                      <widget class="QRightClickButton" name="RStickUpButton">
@@ -1576,6 +1833,9 @@
                  <widget class="QGroupBox" name="gb_right_stick_left">
                   <property name="title">
                    <string>Left</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
                   </property>
                   <layout class="QVBoxLayout" name="gb_right_stick_left_layout">
                    <property name="leftMargin">
@@ -1604,6 +1864,9 @@
                  <widget class="QGroupBox" name="gb_right_stick_right">
                   <property name="title">
                    <string>Right</string>
+                  </property>
+                  <property name="alignment">
+                   <set>Qt::AlignmentFlag::AlignCenter</set>
                   </property>
                   <layout class="QVBoxLayout" name="gb_right_stick_right_layout">
                    <property name="leftMargin">
@@ -1662,6 +1925,9 @@
                    <property name="title">
                     <string>Down</string>
                    </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignCenter</set>
+                   </property>
                    <layout class="QVBoxLayout" name="verticalLayout_6">
                     <item>
                      <widget class="QRightClickButton" name="RStickDownButton">
@@ -1688,7 +1954,7 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_16">
+    <layout class="QHBoxLayout" name="horizontalLayout_23">
      <item>
       <widget class="QLabel" name="label">
        <property name="font">
@@ -1697,7 +1963,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Tip: Unmap with right-click</string>
+        <string>Tip: Unmap inputs with right-click</string>
        </property>
       </widget>
      </item>
@@ -1708,6 +1974,12 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LayoutDirection::LeftToRight</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
        </property>
        <property name="standardButtons">
         <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Cancel|QDialogButtonBox::StandardButton::RestoreDefaults|QDialogButtonBox::StandardButton::Save</set>
@@ -1725,7 +1997,7 @@
   <customwidget>
    <class>QRightClickButton</class>
    <extends>QPushButton</extends>
-   <header>settings/RightClickButton.h</header>
+   <header location="global">settings/right_click_button.h</header>
   </customwidget>
  </customwidgets>
  <resources>

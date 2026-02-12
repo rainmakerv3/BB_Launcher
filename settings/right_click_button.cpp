@@ -1,6 +1,6 @@
 #include <QMouseEvent>
 
-#include "RightClickButton.h"
+#include "right_click_button.h"
 
 QRightClickButton::QRightClickButton(QWidget *parent) :
     QPushButton(parent) {

@@ -13,7 +13,6 @@
 SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveManager) {
     ui->setupUi(this);
     this->setFixedSize(this->width(), this->height());
-    ui->SelectSaveComboBox->addItem("Current Save");
 
     // Releases older than 0.9.0 will need to use the game serial as save folder
     std::string savePath =
@@ -33,7 +32,58 @@ SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveMana
         }
     }
 
-    SaveSlotList.clear();
+    PopulateGameSaveSlots();
+
+    ui->LinkLabel->setText("<a href=\"https://www.nexusmods.com/bloodborne/mods/108/\">BBLauncher "
+                           "cannot edit saves, check out a great save editor here c/o Nox!</a>");
+    ui->LinkLabel->setTextFormat(Qt::RichText);
+    ui->LinkLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
+    ui->LinkLabel->setOpenExternalLinks(true);
+
+    connect(ui->ManualBackupButton, &QPushButton::pressed, this,
+            &SaveManager::CreateManualBackupPressed);
+    connect(ui->RestoreButton, &QPushButton::pressed, this, &SaveManager::RestoreBackupPressed);
+    connect(ui->DeleteBackupButton, &QPushButton::pressed, this,
+            &SaveManager::DeleteManualBackupPressed);
+    connect(ui->RestoreFolderButton, &QPushButton::pressed, this,
+            &SaveManager::RestoreBackupFolderPressed);
+
+    connect(ui->SelectSaveComboBox, &QComboBox::currentIndexChanged, this,
+            &SaveManager::OnSelectBackupSaveChanged);
+    connect(ui->SaveSlotComboBox, &QComboBox::currentIndexChanged, this,
+            &SaveManager::OnGameSaveSlotChanged);
+    connect(ui->BackupSaveSlotComboBox, &QComboBox::currentIndexChanged, this,
+            &SaveManager::OnBackupSaveSlotChanged);
+    connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QWidget::close);
+
+    connect(ui->saveFolderButton, &QPushButton::clicked, this, [this]() {
+        if (!std::filesystem::exists(ExactSaveDir)) {
+            QMessageBox::information(this, "Error", "Save folder does not exist");
+            return;
+        }
+
+        QString QSavePath;
+        Common::PathToQString(QSavePath, ExactSaveDir);
+        QDesktopServices::openUrl(QUrl::fromLocalFile(QSavePath));
+    });
+
+    connect(ui->backupsFolderButton, &QPushButton::clicked, this, [this]() {
+        if (!std::filesystem::exists(BackupsDir)) {
+            QMessageBox::information(this, "Error", "Backups folder does not exist");
+            return;
+        }
+
+        QString QBackupsPath;
+        Common::PathToQString(QBackupsPath, BackupsDir);
+        QDesktopServices::openUrl(QUrl::fromLocalFile(QBackupsPath));
+    });
+
+    ui->SelectSaveComboBox->setCurrentIndex(0);
+    OnSelectBackupSaveChanged();
+}
+
+void SaveManager::PopulateGameSaveSlots() {
+    QStringList SaveSlotList;
     for (int i = 0; i < 10; i++) {
         std::string slot = "userdata000" + std::to_string(i);
         Savefile = ExactSaveDir / slot;
@@ -49,60 +99,26 @@ SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveMana
         }
     }
 
+    ui->OverwriteSlotComboBox->clear();
     ui->OverwriteSlotComboBox->addItems(SaveSlotList);
 
-    ui->LinkLabel->setText("<a href=\"https://www.nexusmods.com/bloodborne/mods/108/\">BBLauncher "
-                           "cannot edit saves, check out a great save editor here c/o Nox!</a>");
-    ui->LinkLabel->setTextFormat(Qt::RichText);
-    ui->LinkLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
-    ui->LinkLabel->setOpenExternalLinks(true);
-
-    connect(ui->ManualBackupButton, &QPushButton::pressed, this, &SaveManager::ManualBackupPressed);
-    connect(ui->RestoreButton, &QPushButton::pressed, this, &SaveManager::RestoreBackupPressed);
-    connect(ui->DeleteBackupButton, &QPushButton::pressed, this, &SaveManager::DeleteBackupPressed);
-    connect(ui->RestoreFolderButton, &QPushButton::pressed, this,
-            &SaveManager::RestoreBackupFolderPressed);
-
-    connect(ui->SaveSlotComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-            [this] { OnSaveSlotChanged(); });
-    connect(ui->SelectSaveComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-            [this] { OnSelectSaveChanged(); });
-    connect(ui->buttonBox, &QDialogButtonBox::rejected, this, &QWidget::close);
-
-    connect(ui->saveFolderButton, &QPushButton::clicked, this, [this]() {
-        if (!std::filesystem::exists(ExactSaveDir)) {
-            QMessageBox::information(this, "Error", "Save folder does not exist");
-            return;
-        }
-
-        QString QSavePath;
-        Common::PathToQString(QSavePath, ExactSaveDir);
-        QDesktopServices::openUrl(QUrl::fromLocalFile(QSavePath));
-    });
+    ui->SaveSlotComboBox->clear();
+    ui->SaveSlotComboBox->addItems(SaveSlotList);
 
     saveslot = "userdata0000";
     ui->SaveSlotComboBox->setCurrentText(QString::fromStdString(saveslot));
     Savefile = ExactSaveDir / saveslot;
-
-    OnSelectSaveChanged();
+    UpdateGameSaveValues();
 }
 
-void SaveManager::UpdateValues() {
-    // all offsets are consistent relative to this inventory string
-
+void SaveManager::UpdateGameSaveValues() {
     if (saveslot == "") {
         return;
     }
 
-    if (ui->SelectSaveComboBox->currentText() == "Current Save") {
-        Savefile = ExactSaveDir / saveslot;
-    } else if (ui->SelectSaveComboBox->currentText() == "MANUAL") {
-        Savefile = BackupsDir / "MANUAL" / saveslot;
-    } else {
-        std::string BackupFolder = ui->SelectSaveComboBox->currentText().toStdString();
-        Savefile = BackupsDir / BackupFolder / "SPRJ0005" / saveslot;
-    }
+    Savefile = ExactSaveDir / saveslot;
 
+    // searches for 40 F0 FF FF - offsets are always the same distance from this value
     std::ifstream file(Savefile, std::ios::in | std::ios::binary);
     uint filesize = std::filesystem::file_size(Savefile);
     uint offset;
@@ -110,14 +126,14 @@ void SaveManager::UpdateValues() {
     for (uint i = 10000; i < filesize; i++) { // probably safe to start at 10k
         file.seekg(i);
         file.read(reinterpret_cast<char*>(&invsearch), 4);
-        if (invsearch == 4294963264) { // 40 F0 FF FF
+        if (invsearch == 4294963264) { // converted 40 F0 FF FF
             offset = i;
             break;
         }
     }
 
     // Playtime
-    file.seekg(8); // static offset
+    file.seekg(8);
     uint time;
     file.read(reinterpret_cast<char*>(&time), 4);
     int hours = time / 3600000;
@@ -185,47 +201,145 @@ void SaveManager::UpdateValues() {
     file.close();
 }
 
-void SaveManager::OnSaveSlotChanged() {
+void SaveManager::UpdateBackupSaveValues() {
+    if (backupsaveslot == "" || ui->SelectSaveComboBox->currentText().isEmpty()) {
+        return;
+    }
+
+    if (ui->SelectSaveComboBox->currentText() == "MANUAL") {
+        Savefile = BackupsDir / "MANUAL" / backupsaveslot;
+    } else {
+        std::string BackupFolder = ui->SelectSaveComboBox->currentText().toStdString();
+        Savefile = BackupsDir / BackupFolder / "SPRJ0005" / backupsaveslot;
+    }
+
+    // searches for 40 F0 FF FF - offsets are always the same distance from this value
+    std::ifstream file(Savefile, std::ios::in | std::ios::binary);
+    uint filesize = std::filesystem::file_size(Savefile);
+    uint offset;
+    uint invsearch;
+    for (uint i = 10000; i < filesize; i++) { // probably safe to start at 10k
+        file.seekg(i);
+        file.read(reinterpret_cast<char*>(&invsearch), 4);
+        if (invsearch == 4294963264) { // converted 40 F0 FF FF
+            offset = i;
+            break;
+        }
+    }
+
+    // Playtime
+    file.seekg(8);
+    uint time;
+    file.read(reinterpret_cast<char*>(&time), 4);
+    int hours = time / 3600000;
+    int remainder = time % 3600000;
+    int minutes = remainder / 60000;
+
+    QString Qhours = QString::number(hours);
+    QString Qminutes = QString("%1").arg(minutes, 2, 10, QChar('0'));
+    ui->BackupTimeLineEdit->setText(Qhours + ":" + Qminutes);
+
+    //  Name
+    file.seekg(offset - 468);
+    std::string name(sizeof(name), '\0');
+    file.read(&name[0], sizeof(name));
+    name.erase(std::remove(name.begin(), name.end(), '\0'), name.end());
+    ui->BackupNameLineEdit->setText(QString::fromStdString(name));
+
+    // Str
+    file.seekg(offset - 548);
+    uint str;
+    file.read(reinterpret_cast<char*>(&str), 4);
+    ui->BackupStrValLabel->setText(QString::number(str));
+
+    // Skl
+    file.seekg(offset - 540);
+    uint skl;
+    file.read(reinterpret_cast<char*>(&skl), 4);
+    ui->BackupSklValLabel->setText(QString::number(skl));
+
+    // Vit
+    file.seekg(offset - 572);
+    uint vit;
+    file.read(reinterpret_cast<char*>(&vit), 4);
+    ui->BackupVitValLabel->setText(QString::number(vit));
+
+    // End
+    file.seekg(offset - 564);
+    uint end;
+    file.read(reinterpret_cast<char*>(&end), 4);
+    ui->BackupEndValLabel->setText(QString::number(end));
+
+    // Bloodtinge
+    file.seekg(offset - 532);
+    uint btg;
+    file.read(reinterpret_cast<char*>(&btg), 4);
+    ui->BackupBTValLabel->setText(QString::number(btg));
+
+    // Arcane
+    file.seekg(offset - 524);
+    uint arc;
+    file.read(reinterpret_cast<char*>(&arc), 4);
+    ui->BackupArcValLabel->setText(QString::number(arc));
+
+    // Level
+    file.seekg(offset - 492);
+    uint lvl;
+    file.read(reinterpret_cast<char*>(&lvl), sizeof(lvl));
+    ui->BackupLevelValueLabel->setText(QString::number(lvl));
+
+    // NG
+    file.seekg(offset + 68362);
+    uint NGnum;
+    file.read(reinterpret_cast<char*>(&NGnum), 4);
+    ui->BackupNGValueLabel->setText(QString::number(NGnum));
+    file.close();
+}
+
+void SaveManager::OnGameSaveSlotChanged() {
     saveslot = ui->SaveSlotComboBox->currentText().toStdString();
     if (saveslot == "") {
-        ui->NameLineEdit->setText("no save slot selected");
-        ui->TimeLineEdit->setText("");
-        ui->StrValLabel->setText("");
-        ui->SklValLabel->setText("");
-        ui->VitValLabel->setText("");
-        ui->EndValLabel->setText("");
-        ui->BTValLabel->setText("");
-        ui->ArcValLabel->setText("");
-        ui->LevelValueLabel->setText("");
-        ui->NGValueLabel->setText("");
+        ui->NameLineEdit->setText("-");
+        ui->TimeLineEdit->setText("-");
+        ui->StrValLabel->setText("-");
+        ui->SklValLabel->setText("-");
+        ui->VitValLabel->setText("-");
+        ui->EndValLabel->setText("-");
+        ui->BTValLabel->setText("-");
+        ui->ArcValLabel->setText("-");
+        ui->LevelValueLabel->setText("-----");
+        ui->NGValueLabel->setText("-----");
     } else {
-        UpdateValues();
+        UpdateGameSaveValues();
     }
 }
 
-void SaveManager::OnSelectSaveChanged() {
-    if (ui->SelectSaveComboBox->currentText() == "Current Save") {
-        ui->ManualBackupButton->show();
-        ui->ManualBackupLabel->show();
-        ui->ManualSaveLineEdit->show();
-        ui->RestoreButton->hide();
-        ui->RestoreFolderButton->hide();
-        ui->OverwriteSlotLabel->hide();
-        ui->OverwriteSlotComboBox->hide();
-        ui->DeleteBackupButton->hide();
-    } else if (ui->SelectSaveComboBox->currentText() == "MANUAL") {
-        ui->ManualBackupButton->hide();
-        ui->ManualBackupLabel->hide();
-        ui->ManualSaveLineEdit->hide();
+void SaveManager::OnBackupSaveSlotChanged() {
+    backupsaveslot = ui->BackupSaveSlotComboBox->currentText().toStdString();
+    if (backupsaveslot == "" || ui->SelectSaveComboBox->currentText().isEmpty()) {
+        ui->BackupNameLineEdit->setText("-");
+        ui->BackupTimeLineEdit->setText("-");
+        ui->BackupStrValLabel->setText("-");
+        ui->BackupSklValLabel->setText("-");
+        ui->BackupVitValLabel->setText("-");
+        ui->BackupEndValLabel->setText("-");
+        ui->BackupBTValLabel->setText("-");
+        ui->BackupArcValLabel->setText("-");
+        ui->BackupLevelValueLabel->setText("-----");
+        ui->BackupNGValueLabel->setText("-----");
+    } else {
+        UpdateBackupSaveValues();
+    }
+}
+
+void SaveManager::OnSelectBackupSaveChanged() {
+    if (ui->SelectSaveComboBox->currentText() == "MANUAL") {
         ui->RestoreButton->show();
         ui->RestoreFolderButton->hide();
         ui->OverwriteSlotLabel->show();
         ui->OverwriteSlotComboBox->show();
         ui->DeleteBackupButton->show();
     } else {
-        ui->ManualBackupButton->hide();
-        ui->ManualBackupLabel->hide();
-        ui->ManualSaveLineEdit->hide();
         ui->RestoreButton->show();
         ui->RestoreFolderButton->show();
         ui->OverwriteSlotLabel->show();
@@ -233,11 +347,9 @@ void SaveManager::OnSelectSaveChanged() {
         ui->DeleteBackupButton->hide();
     }
 
-    ui->SaveSlotComboBox->clear();
+    ui->BackupSaveSlotComboBox->clear();
     QStringList BackupSlotList;
-    if (ui->SelectSaveComboBox->currentText() == "Current Save") {
-        ui->SaveSlotComboBox->addItems(SaveSlotList);
-    } else if (ui->SelectSaveComboBox->currentText() == "MANUAL") {
+    if (ui->SelectSaveComboBox->currentText() == "MANUAL") {
         if (std::filesystem::exists(BackupsDir / "MANUAL")) {
             QString Slot;
             for (auto& FileEntry : std::filesystem::directory_iterator(BackupsDir / "MANUAL")) {
@@ -245,7 +357,7 @@ void SaveManager::OnSelectSaveChanged() {
                 BackupSlotList.append(Slot);
             }
         }
-        ui->SaveSlotComboBox->addItems(BackupSlotList);
+        ui->BackupSaveSlotComboBox->addItems(BackupSlotList);
     } else {
         for (int i = 0; i < 10; i++) {
             std::string BackupFolder = ui->SelectSaveComboBox->currentText().toStdString();
@@ -261,14 +373,15 @@ void SaveManager::OnSelectSaveChanged() {
                 BackupSlotList.append(QString::fromStdString(slot));
             }
         }
-        ui->SaveSlotComboBox->addItems(BackupSlotList);
+        ui->BackupSaveSlotComboBox->addItems(BackupSlotList);
     }
-    ui->SaveSlotComboBox->setCurrentIndex(0);
-    saveslot = ui->SaveSlotComboBox->currentText().toStdString();
-    UpdateValues();
+
+    ui->BackupSaveSlotComboBox->setCurrentIndex(0);
+    backupsaveslot = ui->BackupSaveSlotComboBox->currentText().toStdString();
+    UpdateBackupSaveValues();
 }
 
-void SaveManager::ManualBackupPressed() {
+void SaveManager::CreateManualBackupPressed() {
     if (ui->ManualSaveLineEdit->text() == "") {
         QMessageBox::warning(this, "No Slot Name",
                              "Input a file name for your manual backup save.");
@@ -280,18 +393,31 @@ void SaveManager::ManualBackupPressed() {
     }
 
     std::string savename = ui->ManualSaveLineEdit->text().toStdString();
+
+    if (std::filesystem::exists(BackupsDir / "MANUAL" / savename)){
+        if (QMessageBox::No == QMessageBox::question(this, "Backup File Exists",
+                                                  QString("A backup with this name already exists.\n") +
+                                                  "Do you want to overwrite this backup?",
+                                                  QMessageBox::Yes | QMessageBox::No)) {
+                                                    return;
+                                                  }
+    }
+
     Savefile = ExactSaveDir / saveslot;
-    std::filesystem::copy_file(Savefile, BackupsDir / "MANUAL" / savename);
+    std::filesystem::copy_file(Savefile, BackupsDir / "MANUAL" / savename,
+                                std::filesystem::copy_options::overwrite_existing);
     QMessageBox::information(this, "Save Successful",
                              "Backup save created: " + QString::fromStdString(savename));
 
-    if (ui->SelectSaveComboBox->findText("MANUAL") == -1) {
+    if (ui->SelectSaveComboBox->findText("MANUAL") == -1)
         ui->SelectSaveComboBox->addItem("MANUAL");
-    }
+
+    if (ui->SelectSaveComboBox->currentText().isEmpty())
+        ui->SelectSaveComboBox->setCurrentText("MANUAL");
 }
 
-void SaveManager::DeleteBackupPressed() {
-    QString savename = ui->SaveSlotComboBox->currentText();
+void SaveManager::DeleteManualBackupPressed() {
+    QString savename = ui->BackupSaveSlotComboBox->currentText();
     if (QMessageBox::Yes == QMessageBox::question(this, "Delete Save Confirmation",
                                                   "This will permanently delete the save named " +
                                                       savename + ".\n\nProceed with deletion?",
@@ -299,8 +425,13 @@ void SaveManager::DeleteBackupPressed() {
         std::filesystem::remove(BackupsDir / "MANUAL" / savename.toStdString());
         QMessageBox::information(this, "Save Deleted", "Backup save deleted: " + savename);
     }
-    OnSelectSaveChanged();
-    OnSaveSlotChanged();
+
+    OnSelectBackupSaveChanged();
+    if (ui->BackupSaveSlotComboBox->count() == 0) {
+        ui->SelectSaveComboBox->removeItem(ui->SelectSaveComboBox->findText("MANUAL"));
+    }
+
+    OnBackupSaveSlotChanged();
 }
 
 void SaveManager::RestoreBackupPressed() {
@@ -315,25 +446,29 @@ void SaveManager::RestoreBackupPressed() {
         std::string selectedsave = ui->SelectSaveComboBox->currentText().toStdString();
         std::filesystem::path BackupFile;
         if (selectedsave == "MANUAL") {
-            BackupFile = BackupsDir / "MANUAL" / saveslot;
+            BackupFile = BackupsDir / "MANUAL" / backupsaveslot;
         } else {
-            BackupFile = BackupsDir / selectedsave / "SPRJ0005" / saveslot;
+            BackupFile = BackupsDir / selectedsave / "SPRJ0005" / backupsaveslot;
         }
 
         std::filesystem::copy(BackupFile, ExactSaveDir / overwriteslot,
                               std::filesystem::copy_options::overwrite_existing);
         QMessageBox::information(this, "Save Restored",
-                                 "Backup save restored: " + QString::fromStdString(saveslot));
+                                 "Backup save restored: " + QString::fromStdString(backupsaveslot));
     }
+
+    PopulateGameSaveSlots();
 }
 
 void SaveManager::RestoreBackupFolderPressed() {
+    std::string selectedsave = ui->SelectSaveComboBox->currentText().toStdString();
     if (QMessageBox::Yes ==
         QMessageBox::question(this, "Overwrite Save Confirmation",
-                              "WARNING: This will permanently overwrite your existing save folder"
-                              ".\n\nProceed with backup restore?",
+                              QString("WARNING: This will permanently overwrite your existing save "
+                                      "folder with %1.\n\nProceed with backup restore?")
+                                  .arg(QString::fromStdString(selectedsave)),
                               QMessageBox::Yes | QMessageBox::No)) {
-        std::string selectedsave = ui->SelectSaveComboBox->currentText().toStdString();
+
         std::filesystem::path BackupFolder = BackupsDir / selectedsave / "SPRJ0005";
         std::filesystem::copy(BackupFolder, ExactSaveDir,
                               std::filesystem::copy_options::overwrite_existing |
@@ -341,6 +476,8 @@ void SaveManager::RestoreBackupFolderPressed() {
         QMessageBox::information(this, "Backup Folder Restored",
                                  "Backup Folder restored: " + QString::fromStdString(selectedsave));
     }
+
+    PopulateGameSaveSlots();
 }
 
 SaveManager::~SaveManager() {

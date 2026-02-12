@@ -52,7 +52,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QScrollArea" name="generalTab">
       <property name="widgetResizable">
@@ -799,63 +799,11 @@
       <attribute name="title">
        <string>Game-Specific and Experimental Settings</string>
       </attribute>
-      <widget class="QCheckBox" name="DevkitCheckBox">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>90</y>
-         <width>341</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Enable Devkit mode (enable for 1440p patch)</string>
-       </property>
-      </widget>
-      <widget class="QCheckBox" name="ReadbacksCheckBox">
-       <property name="geometry">
-        <rect>
-         <x>30</x>
-         <y>30</y>
-         <width>413</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string notr="true">Enable Readbacks </string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="readbacksNoteLabel">
-       <property name="geometry">
-        <rect>
-         <x>40</x>
-         <y>60</y>
-         <width>413</width>
-         <height>16</height>
-        </rect>
-       </property>
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="font">
-        <font>
-         <pointsize>9</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>*fixes vertex explosions, performance heavy</string>
-       </property>
-      </widget>
       <widget class="QGroupBox" name="heightDivider">
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>140</y>
+         <y>103</y>
          <width>441</width>
          <height>81</height>
         </rect>
@@ -898,13 +846,13 @@
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>240</y>
+         <y>190</y>
          <width>441</width>
          <height>91</height>
         </rect>
        </property>
        <property name="title">
-        <string>Additional Memory Allocation (Set to 5000+ for 4K support)</string>
+        <string>Additional Memory Allocation</string>
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_22">
         <item>
@@ -913,7 +861,26 @@
            <string>MB</string>
           </property>
           <property name="maximum">
-           <number>16000</number>
+           <number>30000</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="dmemLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>*Set to ~4000 for 1440p and ~8000 for 4K support</string>
           </property>
          </widget>
         </item>
@@ -923,7 +890,48 @@
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>360</y>
+         <y>6</y>
+         <width>441</width>
+         <height>91</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Readbacks</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_8">
+        <item>
+         <widget class="QCheckBox" name="ReadbacksCheckBox">
+          <property name="text">
+           <string notr="true">Enable Readbacks </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="readbacksNoteLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>*fixes vertex explosions, performance heavy</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>300</y>
          <width>441</width>
          <height>231</height>
         </rect>
@@ -995,19 +1003,6 @@
       <attribute name="title">
        <string>Global Settings and Trophy Key</string>
       </attribute>
-      <widget class="QCheckBox" name="discordRPCCheckbox">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>200</y>
-         <width>290</width>
-         <height>25</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string notr="true">Enable Discord Rich Presence</string>
-       </property>
-      </widget>
       <widget class="QGroupBox" name="SavePathGB">
        <property name="geometry">
         <rect>
@@ -1022,7 +1017,14 @@
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QLineEdit" name="SavePathLineEdit"/>
+         <widget class="QLineEdit" name="SavePathLineEdit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="placeholderText">
+           <string>Use default save path</string>
+          </property>
+         </widget>
         </item>
         <item>
          <widget class="QPushButton" name="SavePathButton">
@@ -1037,7 +1039,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>110</y>
+         <y>230</y>
          <width>321</width>
          <height>75</height>
         </rect>
@@ -1062,7 +1064,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>250</y>
+         <y>420</y>
          <width>321</width>
          <height>123</height>
         </rect>
@@ -1106,6 +1108,60 @@
             </widget>
            </item>
           </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QGroupBox" name="SavePathGB_2">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>120</y>
+         <width>919</width>
+         <height>88</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>DLC Path (where dumped/extracted DLC files should be placed)</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QLineEdit" name="DLCPathLineEdit">
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+          <property name="placeholderText">
+           <string>Use default dlc path</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="DlcPathButton">
+          <property name="text">
+           <string>Choose New Path</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>330</y>
+         <width>242</width>
+         <height>72</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Discord Rich Presence</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_12">
+        <item>
+         <widget class="QCheckBox" name="discordRPCCheckbox">
+          <property name="text">
+           <string notr="true">Enable Discord Rich Presence</string>
+          </property>
          </widget>
         </item>
        </layout>

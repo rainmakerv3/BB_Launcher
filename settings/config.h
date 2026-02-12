@@ -13,6 +13,8 @@ namespace Config {
 struct ShadSettings {
     std::optional<std::string> defaultControllerID;
     std::optional<bool> useUnifiedInputConfig;
+    std::optional<std::filesystem::path> dlcPath;
+    std::optional<std::filesystem::path> savePath;
 };
 
 struct Build {
@@ -30,6 +32,7 @@ std::string_view GetDefaultKeyboardConfig();
 void CreateSettingsFile();
 bool isReleaseOlder(int minorVersion, int majorVersion = 0);
 Build GetCurrentBuildInfo();
+int GetDmemValue();
 
 void SaveShadSettings(ShadSettings settings, bool is_game_specific = false);
 void SaveLauncherSettings();
@@ -60,6 +63,7 @@ extern bool AutoUpdateShadEnabled;
 extern bool ShowChangeLog;
 
 extern std::filesystem::path externalSaveDir;
+extern std::filesystem::path dlcDir;
 extern bool GameRunning;
 
 const std::filesystem::path SettingsFile = Common::GetBBLFilesPath() / "LauncherSettings.toml";

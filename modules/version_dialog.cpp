@@ -169,10 +169,6 @@ void VersionDialog::onItemChanged(QTreeWidgetItem* item, int column) {
 }
 
 void VersionDialog::loadJson() {
-    QMessageBox::information(this, "Temporarily disabled",
-                             "Disabled because of incoming changes to how the json works which "
-                             "will probably break this.");
-    return;
     QString jsonPath =
         QFileDialog::getOpenFileName(this, "Select ShadPS4 versions.json file", QDir::homePath(),
                                      "shadPS4 versions json file (versions.json)");
@@ -205,6 +201,7 @@ void VersionDialog::loadJson() {
         bool alreadyExists = false;
         bool conflictingPrerelease = false;
         std::string name = entry.value("name", std::string("no name"));
+        std::string codename = entry.value("codename", std::string("no tag found"));
         std::filesystem::path buildPath = entry.value("path", std::string(""));
         const int size = buildInfo.size();
 
@@ -218,7 +215,7 @@ void VersionDialog::loadJson() {
         }
 
         if (type == "Pre-release") {
-            for (auto build : buildInfo) {
+            for (const Config::Build& build : buildInfo) {
                 if (build.type == "Pre-release") {
                     QMessageBox::information(
                         this, "Pre-release already exists.",
@@ -232,13 +229,16 @@ void VersionDialog::loadJson() {
             }
         }
 
-        for (auto build : buildInfo) {
-            if (build.path == buildPath) {
-                QMessageBox::information(this, "Build already added.",
-                                         "The build " + QString::fromStdString(buildPath.string()) +
-                                             " is already loaded. It will not be added.");
-                alreadyExists = true;
-                break;
+        if (!buildInfo.empty()) {
+            for (const Config::Build& build : buildInfo) {
+                if (build.path == buildPath) {
+                    QMessageBox::information(this, "Build already added.",
+                                             "The build " +
+                                                 QString::fromStdString(buildPath.string()) +
+                                                 " is already loaded. It will not be added.");
+                    alreadyExists = true;
+                    break;
+                }
             }
         }
 
@@ -258,16 +258,18 @@ void VersionDialog::loadJson() {
             id = name;
         } else if (type == "Pre-release") {
             std::string folderName = buildPath.parent_path().string();
-            id = folderName.substr(folderName.length() - 40, 40);
+            id = codename;
         }
 
-        Config::Build b{
-            .path = std::string{fmt::UTF(buildPath.u8string()).data},
-            .type = type,
-            .id = id,
-            .modified = modifiedString,
-        };
-        buildInfo.push_back(b);
+        if (std::filesystem::exists(buildPath)) {
+            Config::Build b{
+                .path = std::string{fmt::UTF(buildPath.u8string()).data},
+                .type = type,
+                .id = id,
+                .modified = modifiedString,
+            };
+            buildInfo.push_back(b);
+        }
     }
 
     if (newBuildFound) {
@@ -345,6 +347,11 @@ void VersionDialog::CheckVersionsList(const bool showMessage) {
                     ui->downloadTreeWidget->addTopLevelItem(preReleaseItem);
                 }
 
+                // Add online test build
+                QTreeWidgetItem* onlineItem = new QTreeWidgetItem();
+                onlineItem->setText(0, "Online Test Build");
+                ui->downloadTreeWidget->addTopLevelItem(onlineItem);
+
                 // Add the others
                 for (QTreeWidgetItem* item : otherItems) {
                     ui->downloadTreeWidget->addTopLevelItem(item);
@@ -392,7 +399,7 @@ void VersionDialog::InstallSelectedVersion() {
     QString apiUrl;
     if (versionName == "Pre-release") {
         apiUrl = "https://api.github.com/repos/shadps4-emu/shadPS4/releases";
-        for (auto build : buildInfo) {
+        for (const Config::Build& build : buildInfo) {
             if (build.type == "Pre-release") {
                 QMessageBox::information(
                     this, "Pre-release already downloaded.",
@@ -402,11 +409,21 @@ void VersionDialog::InstallSelectedVersion() {
                 return;
             }
         }
+    } else if (versionName == "Online Test Build") {
+        apiUrl = QString("https://api.github.com/repos/rainmakerv3/"
+                         "shadPS4/releases/tags/OnlineTest");
+        for (const Config::Build& build : buildInfo) {
+            if (build.id == "OnlineTest") {
+                QMessageBox::information(this, "Error",
+                                         "This version has already been downloaded.");
+                return;
+            }
+        }
     } else {
         apiUrl = QString("https://api.github.com/repos/shadps4-emu/"
                          "shadPS4/releases/tags/%1")
                      .arg(versionName);
-        for (auto build : buildInfo) {
+        for (const Config::Build& build : buildInfo) {
             if (build.id == versionName.toStdString()) {
                 QMessageBox::information(this, "Error",
                                          "This version has already been downloaded.");
@@ -547,6 +564,9 @@ void VersionDialog::InstallSelectedVersion() {
                             if (versionName == "Pre-release") {
                                 folderName = "Pre-release";
                                 buildId = release["tag_name"].toString().right(40);
+                            } else if (versionName == "Online Test Build") {
+                                folderName = "OnlineTest";
+                                buildId = "OnlineTest";
                             } else {
                                 folderName = release["tag_name"].toString();
                                 buildId = release["tag_name"].toString();
@@ -562,6 +582,10 @@ void VersionDialog::InstallSelectedVersion() {
 
                             std::string type =
                                 versionName == "Pre-release" ? "Pre-release" : "Release";
+
+                            if (versionName == "Online Test Build")
+                                type = "Local";
+
                             QString exeName;
 #ifdef Q_OS_WIN
                             exeName = "/shadPS4.exe";
@@ -581,7 +605,6 @@ void VersionDialog::InstallSelectedVersion() {
                                                              ". Set permissions manually before launching.");
                             }
 #endif
-
 
                             Config::Build build;
                             build.path = fullExePath.toStdString();
@@ -744,7 +767,7 @@ void VersionDialog::checkUpdatePre(const bool showMessage) {
     preReleaseFolder = "";
     QString localHash = "";
 
-    for (auto build : buildInfo) {
+    for (const Config::Build& build : buildInfo) {
         if (build.type == "Pre-release") {
             hasPreRelease = true;
             std::filesystem::path preReleasePath = build.path;

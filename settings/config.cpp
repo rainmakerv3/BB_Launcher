@@ -33,7 +33,9 @@ bool Config::UnifiedInputConfig = true;
 std::string Config::DefaultControllerID = "";
 
 std::filesystem::path Config::externalSaveDir;
+std::filesystem::path Config::dlcDir;
 bool Config::GameRunning = false;
+
 static std::string SelectedGamepad = "";
 
 #if __APPLE__
@@ -153,6 +155,7 @@ void LoadSettings() {
         if (shadData.contains("GUI")) {
             const toml::value& GUI = shadData.at("GUI");
             Config::externalSaveDir = toml::find_fs_path_or(GUI, "saveDataPath", {});
+            Config::dlcDir = toml::find_fs_path_or(GUI, "addonInstallDir", {});
         }
     }
 }
@@ -217,6 +220,13 @@ void SaveShadSettings(ShadSettings settings, bool is_game_specific) {
 
         if (settings.defaultControllerID.has_value())
             data["General"]["defaultControllerID"] = settings.defaultControllerID.value();
+
+        if (settings.dlcPath.has_value())
+            data["GUI"]["addonInstallDir"] =
+                std::string{fmt::UTF(settings.dlcPath->u8string()).data};
+
+        if (settings.savePath.has_value())
+            data["GUI"]["saveDataPath"] = std::string{fmt::UTF(settings.savePath->u8string()).data};
     }
 
     // game-specific only
@@ -424,15 +434,7 @@ std::string GetLastModifiedString(const std::filesystem::path& path) {
         return "";
 
     std::chrono::time_point shadWriteTime = std::filesystem::last_write_time(path);
-
-#if __APPLE__
-    auto sec = std::chrono::duration_cast<std::chrono::seconds>(shadWriteTime.time_since_epoch());
-    auto time = date::sys_time<std::chrono::seconds>{sec};
-    std::string shadModifiedStringUTC = date::format("{:%F %T}", time);
-#else
-    auto shadTimePoint = std::chrono::clock_cast<std::chrono::system_clock>(shadWriteTime);
     std::string shadModifiedStringUTC = std::format("{:%F %T}", shadWriteTime);
-#endif
 
     return shadModifiedStringUTC;
 }
@@ -497,7 +499,7 @@ bool isReleaseOlder(int minorVersion, int MajorVersion) {
         if (match.hasMatch()) {
             int major = match.captured(1).toInt();
             int minor = match.captured(2).toInt();
-            int patch = match.captured(3).toInt();
+            // int patch = match.captured(3).toInt();
 
             if (major > MajorVersion)
                 isOlder = true;
@@ -507,6 +509,32 @@ bool isReleaseOlder(int minorVersion, int MajorVersion) {
     }
 
     return isOlder;
+}
+
+int GetDmemValue() {
+    using namespace Config;
+
+    toml::value gs_data;
+    std::filesystem::path shadConfigFile =
+        Common::GetShadUserDir() / "custom_configs" / (Common::game_serial + ".toml");
+
+    if (std::filesystem::exists(shadConfigFile)) {
+        try {
+            std::ifstream ifs;
+            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+            ifs.open(shadConfigFile, std::ios_base::binary);
+            gs_data =
+                toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
+        } catch (std::exception& ex) {
+            QMessageBox::critical(NULL, "Cannot read game_specific config", ex.what());
+            return 0;
+        }
+
+        int dmem = toml::find_or<int>(gs_data, "General", "extraDmemInMbytes", 0);
+        return dmem;
+    } else {
+        return 0;
+    }
 }
 
 } // namespace Config

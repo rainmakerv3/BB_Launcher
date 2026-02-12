@@ -3,8 +3,8 @@
 
 #include <QDialog>
 
-#include "RightClickButton.h"
 #include "modules/ipc/ipc_client.h"
+#include "right_click_button.h"
 
 namespace Ui {
 class KBMSettings;

@@ -31,6 +31,7 @@
 #include "ShadCheatsPatches.h"
 #include "modules/Common.h"
 #include "settings/PSF/psf.h"
+#include "settings/config.h"
 
 QImage icon;
 QString gameVersion;
@@ -381,6 +382,9 @@ void CheatsPatches::onSaveButtonClicked() {
         return;
     }
 
+    const QStringList HighResPatches = {"2560x1440", "3840x2160", "2560x1080", "3440x1440",
+                                        "3840x1080"};
+
     QByteArray xmlData = file.readAll();
     file.close();
 
@@ -391,6 +395,8 @@ void CheatsPatches::onSaveButtonClicked() {
 
     QXmlStreamReader xmlReader(xmlData);
     bool insideMetadata = false;
+    bool highResPatchNoDmem = false;
+    int dmem = Config::GetDmemValue();
 
     while (!xmlReader.atEnd()) {
         xmlReader.readNext();
@@ -404,6 +410,13 @@ void CheatsPatches::onSaveButtonClicked() {
                 bool isEnabled = false;
                 bool hasIsEnabled = false;
                 bool foundPatchInfo = false;
+                bool isHighResPatch = false;
+
+                for (const QString& patch : HighResPatches) {
+                    if (name.contains(patch)) {
+                        isHighResPatch = true;
+                    }
+                }
 
                 // Check and update the isEnabled attribute
                 for (const QXmlStreamAttribute& attr : xmlReader.attributes()) {
@@ -457,12 +470,18 @@ void CheatsPatches::onSaveButtonClicked() {
                     }
                     xmlWriter.writeAttribute("isEnabled", isEnabled ? "true" : "false");
                 }
+
+                if (isEnabled && isHighResPatch && dmem == 0) {
+                    highResPatchNoDmem = true;
+                }
+
             } else {
                 xmlWriter.writeStartElement(xmlReader.name().toString());
                 for (const QXmlStreamAttribute& attr : xmlReader.attributes()) {
                     xmlWriter.writeAttribute(attr.name().toString(), attr.value().toString());
                 }
             }
+
         } else if (xmlReader.isEndElement()) {
             if (xmlReader.name() == QStringLiteral("Metadata")) {
                 insideMetadata = false;
@@ -489,6 +508,15 @@ void CheatsPatches::onSaveButtonClicked() {
                               tr("Failed to parse XML: ") + "\n" + xmlReader.errorString());
     } else {
         QMessageBox::information(this, "Success", "Options saved successfully.");
+    }
+
+    if (highResPatchNoDmem) {
+        QMessageBox::information(
+            this, "Note on Resolution Patch",
+            "A high resolution patch is enabled, but the Additional Memory Allocation setting is "
+            "set to 0. This could potentially causes crashes and texture errors. To prevent this, "
+            "go to game-specific settings, and set the proper value for Additional Memory "
+            "Allocation as stated in the patch description.");
     }
 }
 

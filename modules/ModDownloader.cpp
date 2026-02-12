@@ -43,6 +43,15 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     this->setFixedSize(this->width(), this->height());
     manager = new QNetworkAccessManager(this);
 
+    if (Config::theme == "Dark") {
+        ui->modComboBox->setStyleSheet(
+            "QComboBox:disabled { background-color: #222222; color: darkgrey; text: black; }");
+    } else {
+        ui->modComboBox->setStyleSheet("QComboBox:disabled { background-color: lightgrey; color: "
+                                       "darkgrey; border: 1px solid darkgrey; }");
+        ui->modDesc->setStyleSheet("QTextBrowser { background-color: #222222; color: white; }");
+    }
+
     if (!std::filesystem::exists(Common::ModPath)) {
         std::filesystem::create_directories(Common::ModPath);
     }
@@ -74,13 +83,13 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         GetApiKey();
 
     modIDmap = {
-        {0, 109},  // Vertex Explosion Mod
+        {0, 109},  // Vertex Explosion Fix
         {1, 70},   // 60 fps Cutscene Fix
         {2, 41},   // Sfx Fix Mods
         {3, 30},   // Xbox Controller Icons
         {4, 182},  // 4k Upscaled UI
-        {5, 160},  // Bloodborne Visual Upgrade Mod
-        {6, 430},  // SFX Texture Overhaul
+        {5, 441},  // Bigger Subtitles
+        {6, 160},  // Bloodborne Visual Upgrade Mod
         {7, 162},  // Disable FXAA
         {8, 114},  // Cloth physics mods
         {9, 102},  // Performance Drawparams
@@ -97,13 +106,13 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         {20, 224}, // Start with any Weapon
     };
 
-    ui->modComboBox->addItem("Vertex Explosion Mod");
+    ui->modComboBox->addItem("Vertex Explosion Fix");
     ui->modComboBox->addItem("60 fps Cutscene Fix");
     ui->modComboBox->addItem("Sfx Fix Mods");
     ui->modComboBox->addItem("Xbox Controller Icons");
     ui->modComboBox->addItem("4K Upscaled UI");
+    ui->modComboBox->addItem("Bigger Subtitles");
     ui->modComboBox->addItem("Bloodborne Visual Upgrade Mod");
-    ui->modComboBox->addItem("SFX Texture Overhaul");
     ui->modComboBox->addItem("Disable FXAA");
     ui->modComboBox->addItem("Cloth physics mods");
     ui->modComboBox->addItem("Performance Drawparams");
@@ -176,10 +185,10 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         }
 
         int modIndex = ui->modComboBox->currentIndex();
-        int fileIndex = ui->fileListWidget->currentRow();
+        DownloadFile selectedfile = DownloadFileVec[ui->fileListWidget->currentRow()];
         QString modName = ui->fileListWidget->currentItem()->text();
 
-        if (fileNameList[fileIndex].right(3) != "zip" && sevenzipPath.empty()) {
+        if (selectedfile.filename.right(3) != "zip" && sevenzipPath.empty()) {
             QMessageBox::warning(
                 this, "Cannot download non-zip file",
                 "Selected file is not a zip file. A detected 7-zip installation is required to "
@@ -199,7 +208,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         }
 
         if (isApiKeyPremium) {
-            DownloadFilePremium(fileIdList[fileIndex], modIDmap[modIndex], modName);
+            DownloadFilePremium(selectedfile.fileId, modIDmap[modIndex], modName);
         } else {
 #if defined Q_OS_LINUX and !defined USE_WEBENGINE
             QMessageBox::information(
@@ -208,15 +217,18 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
                 "build from Nexus Mods or Github for non-premium mod downloads on Linux.");
             return;
 #endif
-            DownloadFileRegular(fileIdList[fileIndex], modIDmap[modIndex], modName,
-                                fileNameList[fileIndex]);
+            DownloadFileRegular(selectedfile.fileId, modIDmap[modIndex], modName,
+                                selectedfile.filename);
         }
     });
 
-    connect(ui->fileListWidget, &QListWidget::itemClicked, this, [this]() {
-        int fileIndex = ui->fileListWidget->currentRow();
-        fileDescList[fileIndex].isEmpty() ? ui->fileDesc->setText("No description")
-                                          : ui->fileDesc->setHtml(fileDescList[fileIndex]);
+    connect(ui->fileListWidget, &QListWidget::itemSelectionChanged, this, [this]() {
+        DownloadFile selectedfile = DownloadFileVec[ui->fileListWidget->currentRow()];
+        selectedfile.desc.isEmpty() ? ui->fileDesc->setText("No description")
+                                    : ui->fileDesc->setHtml(selectedfile.desc);
+
+        float filesizeMB = static_cast<float>(selectedfile.filesizeKb / 1024.f);
+        ui->FilesizeValue->setText(QString("%1 MB").arg(QString::number(filesizeMB, 'f', 2)));
     });
 }
 
@@ -445,17 +457,19 @@ bool ModDownloader::ValidateApi() {
 }
 
 void ModDownloader::LoadModInfo(int modId) {
+    ui->fileListWidget->setEnabled(false);
+    ui->modComboBox->setEnabled(false);
+    ui->fileListWidget->clear();
+    ui->fileListWidget->addItem("Loading...");
+    ui->fileDesc->setText("Selected File Description");
+    ui->FilesizeValue->setText("No selection");
+
     QString url =
         "https://api.nexusmods.com/v1/games/bloodborne/mods/" + QString::number(modId) + ".json";
     QNetworkRequest request(url);
     request.setRawHeader("Accept", "application/json");
     request.setRawHeader("Content-Type", "application/json");
     request.setRawHeader("apikey", apiKey.toUtf8());
-
-    QString name;
-    QString author;
-    int timestamp;
-    QString version;
 
     QNetworkReply* reply = manager->get(request);
     connect(reply, &QNetworkReply::finished, [=, this]() {
@@ -514,10 +528,11 @@ void ModDownloader::LoadModInfo(int modId) {
 
             GetModFiles(modId);
         } else {
-            ui->validApiLabel->setStyleSheet("color: red;");
-            ui->validApiLabel->setText("No Valid Nexus Mods API Key Set");
             QMessageBox::warning(this, tr("Error"),
                                  QString(tr("Network error:") + "\n" + reply->errorString()));
+            ui->fileListWidget->clear();
+            ui->fileListWidget->addItem("Loading failed");
+            ui->modComboBox->setEnabled(true);
         }
 
         reply->deleteLater();
@@ -556,14 +571,12 @@ void ModDownloader::GetModFiles(int modId) {
     request.setRawHeader("Content-Type", "application/json");
     request.setRawHeader("apikey", apiKey.toUtf8());
 
-    fileIdList.clear();
-    fileList.clear();
-    fileDescList.clear();
-    fileNameList.clear();
-
     QNetworkReply* reply = manager->get(request);
     connect(reply, &QNetworkReply::finished, [=, this]() {
         if (reply->error() == QNetworkReply::NoError) {
+            ui->fileListWidget->clear();
+            DownloadFileVec.clear();
+
             QByteArray jsonData = reply->readAll();
             std::string json_string(jsonData.constData(), jsonData.length());
 
@@ -573,28 +586,37 @@ void ModDownloader::GetModFiles(int modId) {
             }
 
             json file_array = jsonDoc["files"];
+
             for (const auto& element : file_array) {
                 if (element.contains("category_name") && !element.at("category_name").is_null()) {
                     std::string catName = element.at("category_name").get<std::string>();
-                    int fileId = element.at("file_id").get<int>();
                     if (catName == "MAIN") {
-                        fileList.push_back(
-                            QString::fromStdString(element.at("name").get<std::string>()));
-                        fileIdList.push_back(element.at("file_id").get<int>());
-                        fileDescList.push_back(BbcodeToHtml(
-                            QString::fromStdString(element.at("description").get<std::string>())));
-                        fileNameList.push_back(
-                            QString::fromStdString(element.at("file_name").get<std::string>()));
+                        DownloadFile file = {
+                            .displayname =
+                                QString::fromStdString(element.at("name").get<std::string>()),
+                            .fileId = element.at("file_id").get<int>(),
+                            .desc = BbcodeToHtml(QString::fromStdString(
+                                element.at("description").get<std::string>())),
+                            .filename =
+                                QString::fromStdString(element.at("file_name").get<std::string>()),
+                            .filesizeKb = element.at("size_kb").get<int>(),
+                        };
+                        DownloadFileVec.push_back(file);
                     }
                 }
             }
 
-            ui->fileListWidget->clear();
-            ui->fileListWidget->addItems(fileList);
-            ui->fileDesc->setText("Selected File Description");
+            for (const DownloadFile& File : DownloadFileVec) {
+                ui->fileListWidget->addItem(File.displayname);
+            }
+            ui->fileListWidget->setEnabled(true);
+            ui->modComboBox->setEnabled(true);
         } else {
             QMessageBox::warning(this, tr("Error"),
                                  QString(tr("Network error:") + "\n" + reply->errorString()));
+            ui->fileListWidget->clear();
+            ui->fileListWidget->addItem("Loading failed");
+            ui->modComboBox->setEnabled(true);
         }
 
         reply->deleteLater();

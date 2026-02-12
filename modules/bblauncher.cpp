@@ -30,6 +30,10 @@
 #include "settings/updater/CheckUpdate.h"
 #include "version_dialog.h"
 
+#ifdef _WIN32
+#include <intrin.h>
+#endif
+
 static bool save_backups = false;
 
 BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
@@ -76,7 +80,6 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     ui->ShadLabel->setText(shadLabelString);
 
     this->setFixedSize(this->width(), this->height());
-    QApplication::setStyle("Fusion");
 
     QPalette palette = logDisplay->palette();
     palette.setColor(QPalette::Base, Qt::black);
@@ -90,7 +93,21 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     UpdateModList();
     UpdateIcons();
 
-    QObject::connect(m_ipc_client.get(), &IpcClient::LogEntrySent, this, &BBLauncher::PrintLog);
+#ifdef _WIN32
+    int cpuInfo[4] = {0};
+    __cpuidex(cpuInfo, 7, 0);
+    bool isHybrid = (cpuInfo[3] & (1 << 15)) != 0;
+
+    if (isHybrid) {
+        logDisplay->appendHtml(
+            "<b>REMINDER: CPU E-cores detected, you may be using an Intel 12th Gen - 14th Gen CPU. "
+            "To avoid crashes playing Bloodborne on Intel 12-14th Gen CPUs, you can use either the "
+            "Intel 12th Gen+ SFX workaround patch (recommended) or install the Sfx Fix "
+            "Mod</b>\n\n");
+    }
+#endif
+
+    connect(m_ipc_client.get(), &IpcClient::LogEntrySent, this, &BBLauncher::PrintLog);
     connect(ui->BBSelectButton, &QPushButton::pressed, this, &BBLauncher::BBSelectButton_isPressed);
     connect(ui->ShadSelectButton, &QPushButton::pressed, this,
             &BBLauncher::ShadSelectButton_isPressed);
@@ -265,6 +282,12 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->OpenFoldersButton, &QPushButton::pressed, this, &BBLauncher::OpenFolders);
+
+    connect(ui->HelpButton, &QPushButton::clicked, this, [this]() {
+        QString link =
+            "https://docs.google.com/document/d/1UKYSAMz3y9PH3AOCow5KyIIlRHZ0wbjcAxHvjZwtjk0";
+        QDesktopServices::openUrl(link);
+    });
 
     connect(ui->HotkeyButton, &QPushButton::clicked, this, [this]() {
         if (Config::isReleaseOlder(11)) {
@@ -489,6 +512,8 @@ void BBLauncher::UpdateIcons() {
     ui->ModFolderButton->setIconSize(QSize(48, 48));
     ui->OpenFoldersButton->setIcon(QIcon(":open.png"));
     ui->OpenFoldersButton->setIconSize(QSize(48, 48));
+    ui->HelpButton->setIcon(QIcon(":help.png"));
+    ui->HelpButton->setIconSize(QSize(48, 48));
     ui->HotkeyButton->setIcon(QIcon(":hotkey.png"));
     ui->HotkeyButton->setIconSize(QSize(48, 48));
 
@@ -506,6 +531,7 @@ void BBLauncher::UpdateIcons() {
         ui->KBMButton->setIcon(RecolorIcon(ui->KBMButton->icon(), false));
         ui->ModFolderButton->setIcon(RecolorIcon(ui->ModFolderButton->icon(), false));
         ui->OpenFoldersButton->setIcon(RecolorIcon(ui->OpenFoldersButton->icon(), false));
+        ui->HelpButton->setIcon(RecolorIcon(ui->HelpButton->icon(), false));
         ui->HotkeyButton->setIcon(RecolorIcon(ui->HotkeyButton->icon(), false));
 
         ui->LaunchButton->setIcon(RecolorIcon(ui->LaunchButton->icon(), false));
@@ -778,9 +804,9 @@ void BBLauncher::StartEmulator(std::filesystem::path path, QStringList args) {
     Common::PathToQString(exe, Common::shadPs4Executable);
     QFileInfo fileInfo(exe);
     if (!fileInfo.exists()) {
-        QMessageBox::critical(
-            nullptr, tr("shadPS4"),
-            QString(tr("shadPS4 is not found!\nPlease change shadPS4 path in settings.")));
+        QMessageBox::critical(nullptr, tr("shadPS4 Build Not Found"),
+                              QString(tr("shadPS4 Build not found!\nClick Manage Builds to "
+                                         "download and select a shadPS4 build.")));
         return;
     }
 
@@ -881,7 +907,7 @@ QString BBLauncher::getPatchFile() {
 
 void BBLauncher::OpenFolders() {
     QStringList options = {"Log Folder", "Saves Folder", "Backup Saves Folder",
-                           "ShadPS4 Settings Folder"};
+                           "ShadPS4 Settings Folder", "DLC Folder"};
     bool selected = true;
     QString item = QInputDialog::getItem(this, "Select Folder", "Please choose a folder to open",
                                          options, 0, false, &selected);
@@ -902,6 +928,8 @@ void BBLauncher::OpenFolders() {
         path = Common::GetBBLFilesPath() / "SaveBackups";
     } else if (item == "ShadPS4 Settings Folder") {
         path = Common::GetShadUserDir();
+    } else if (item == "DLC Folder") {
+        path = Common::GetDlcDir();
     }
 
     if (!std::filesystem::exists(path)) {

@@ -130,28 +130,31 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
         QString save_data_path_string =
             QFileDialog::getExistingDirectory(this, "Directory to save data", initial_path);
         auto file_path = Common::PathFromQString(save_data_path_string);
+
         if (!file_path.empty()) {
             Config::externalSaveDir = file_path;
             ui->SavePathLineEdit->setText(save_data_path_string);
 
-            std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
-            toml::value shadData;
-            try {
-                std::ifstream ifs;
-                ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-                ifs.open(shadConfigFile, std::ios_base::binary);
-                shadData = toml::parse(
-                    ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
-            } catch (std::exception& ex) {
-                QMessageBox::critical(NULL, "Filesystem error", ex.what());
-                return;
-            }
+            Config::ShadSettings settings;
+            settings.savePath = Config::externalSaveDir;
+            Config::SaveShadSettings(settings);
+        }
+    });
 
-            shadData["GUI"]["saveDataPath"] =
-                std::string{Common::PathToU8(Config::externalSaveDir)};
-            std::ofstream file(Common::GetShadUserDir() / "config.toml", std::ios::binary);
-            file << shadData;
-            file.close();
+    connect(ui->DlcPathButton, &QPushButton::clicked, this, [this]() {
+        QString initial_path;
+        Common::PathToQString(initial_path, Config::dlcDir);
+        QString dlc_path_string =
+            QFileDialog::getExistingDirectory(this, "Directory to dlc files", initial_path);
+        auto file_path = Common::PathFromQString(dlc_path_string);
+
+        if (!file_path.empty()) {
+            Config::dlcDir = file_path;
+            ui->DLCPathLineEdit->setText(dlc_path_string);
+
+            Config::ShadSettings settings;
+            settings.dlcPath = Config::dlcDir;
+            Config::SaveShadSettings(settings);
         }
     });
 
@@ -205,8 +208,14 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
         ui->heightGroupBox->installEventFilter(this);
         ui->heightDivider->installEventFilter(this);
         ui->motionControlsCheckBox->installEventFilter(this);
-        ui->DevkitCheckBox->installEventFilter(this);
         ui->backgroundControllerCheckBox->installEventFilter(this);
+
+        ui->FSRCheckBox->installEventFilter(this);
+        ui->RCASCheckBox->installEventFilter(this);
+        ui->RCASLabel->installEventFilter(this);
+        ui->RCASValue->installEventFilter(this);
+        ui->RCASSlider->installEventFilter(this);
+        ui->presentModeGroupBox->installEventFilter(this);
     }
 }
 
@@ -254,7 +263,6 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->showSplashCheckBox->setChecked(toml::find_or<bool>(data, "General", "showSplash", false));
     ui->discordRPCCheckbox->setChecked(
         toml::find_or<bool>(data, "General", "enableDiscordRPC", false));
-    ui->DevkitCheckBox->setChecked(toml::find_or<bool>(data, "General", "isDevKit", false));
     ui->dmemSpinBox->setValue(toml::find_or<int>(data, "General", "extraDmemInMbytes", 0));
     ui->logTypeComboBox->setCurrentText(
         QString::fromStdString(toml::find_or<std::string>(data, "General", "logType", "sync")));
@@ -290,6 +298,10 @@ void ShadSettings::LoadValuesFromConfig() {
     QString save_data_path_string;
     Common::PathToQString(save_data_path_string, Config::externalSaveDir);
     ui->SavePathLineEdit->setText(save_data_path_string);
+
+    QString dlc_path_string;
+    Common::PathToQString(save_data_path_string, Config::dlcDir);
+    ui->DLCPathLineEdit->setText(save_data_path_string);
 
     ui->motionControlsCheckBox->setChecked(
         toml::find_or<bool>(data, "Input", "isMotionControlsEnabled", false));
@@ -359,6 +371,15 @@ void ShadSettings::updateNoteTextEdit(const QString& elementName) {
         text = resolutionLayouttext;
     } else if (elementName == "heightDivider") {
         text = vblanktext;
+    } else if (elementName == "FSRCheckBox") {
+        text = FSRtext;
+    } else if (elementName == "RCASCheckBox") {
+        text = RCAStext;
+    } else if (elementName == "RCASLabel" || elementName == "RCASValue" ||
+               elementName == "RCASSlider") {
+        text = RCASAttenuationtext;
+    } else if (elementName == "presentModeGroupBox") {
+        text = PresentModetext;
     }
 
     ui->descriptionText->setText(text.replace("\\n", "\n"));
@@ -412,7 +433,6 @@ void ShadSettings::SaveSettings() {
     }
 
     if (is_game_specific) {
-        data["General"]["isDevKit"] = ui->DevkitCheckBox->isChecked();
         data["General"]["extraDmemInMbytes"] = ui->dmemSpinBox->value();
 
         data["General"]["isConnectedToNetwork"] = ui->networkConnectedCheckBox->isChecked();
@@ -497,7 +517,6 @@ void ShadSettings::SetDefaults() {
     if (is_game_specific) {
         ui->vblankSpinBox->setValue(60);
         ui->ReadbacksCheckBox->setChecked(false);
-        ui->DevkitCheckBox->setChecked(false);
         ui->dmemSpinBox->setValue(0);
         ui->networkConnectedCheckBox->setChecked(false);
         ui->psnSignInCheckBox->setChecked(false);

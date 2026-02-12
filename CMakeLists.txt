@@ -4,7 +4,12 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 project(BB_Launcher LANGUAGES CXX)
-set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+elseif (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
+endif()
 
 if(APPLE)
     enable_language(OBJC)
@@ -82,14 +87,18 @@ if(WIN32 AND NOT CMAKE_PREFIX_PATH)
     include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/DetectQtInstallation.cmake")
 endif ()
 
-if (WIN32)
+if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/qtstatic")
     set(Qt6_DIR "CMAKE_CURRENT_SOURCE_DIR}/qtstatic/lib/cmake/Qt6")
     set(Qt6Widgets_DIR "CMAKE_CURRENT_SOURCE_DIR}/qtstatic/lib/cmake/Qt6Widgets")
     set(Qt6Network_DIR "CMAKE_CURRENT_SOURCE_DIR}/qtstatic/lib/cmake/Qt6Network")
+endif()
+
+if (WIN32)
     set(WEBVIEW2_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/WebView2SDK/build/native/x64/WebView2LoaderStatic.lib")
     set(WEBVIEW2_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/WebView2SDK/build/native/include")
 endif()
+
 
 find_package(toml11 4.2.0 CONFIG)
 find_package(pugixml 1.14 CONFIG)
@@ -192,8 +201,8 @@ set(PROJECT_SOURCES
     settings/LauncherSettings.h
     settings/LauncherSettings.cpp
     settings/LauncherSettings.ui
-    settings/RightClickButton.cpp    
-    settings/RightClickButton.h  
+    settings/right_click_button.cpp    
+    settings/right_click_button.h  
     settings/ShadCheatsPatches.cpp    
     settings/ShadCheatsPatches.h    
     settings/ShadSettings.h
@@ -229,6 +238,10 @@ endif()
 
 if (APPLE)
     target_link_libraries(BB_Launcher PRIVATE date::date-tz)
+endif()
+
+if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_link_libraries(BB_Launcher PRIVATE bcrypt)
 endif()
 
 set_target_properties(BB_Launcher PROPERTIES

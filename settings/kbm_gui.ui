@@ -53,8 +53,8 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>-16</y>
-        <width>1196</width>
+        <y>0</y>
+        <width>1206</width>
         <height>858</height>
        </rect>
       </property>
@@ -2032,7 +2032,7 @@
   <customwidget>
    <class>QRightClickButton</class>
    <extends>QPushButton</extends>
-   <header>settings/RightClickButton.h</header>
+   <header location="global">settings/right_click_button.h</header>
   </customwidget>
  </customwidgets>
  <resources>

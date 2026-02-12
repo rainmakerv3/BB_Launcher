@@ -33,7 +33,7 @@ std::filesystem::path installPath;
 std::filesystem::path installUpdatePath;
 std::filesystem::path shadPs4Executable;
 
-const char VERSION[] = "Release13.05";
+const char VERSION[] = "Release13.06";
 
 std::filesystem::path GetCurrentPath(bool getLinuxFileName) {
     std::filesystem::path currentPath;
@@ -113,8 +113,18 @@ std::filesystem::path GetSaveDir() {
 
     // Releases older than 0.6.0 do have have configurable save folder
     bool noConfigurableSaveFolder = Config::isReleaseOlder(6);
-    if (Config::externalSaveDir == "" || noConfigurableSaveFolder) {
+    if (Config::externalSaveDir == "" || noConfigurableSaveFolder ||
+        !std::filesystem::exists(Config::externalSaveDir)) {
         path = Common::GetShadUserDir() / "savedata";
+    }
+
+    return path;
+}
+
+std::filesystem::path GetDlcDir() {
+    std::filesystem::path path = Config::dlcDir;
+    if (Config::dlcDir == "" || !std::filesystem::exists(Config::dlcDir)) {
+        path = Common::GetShadUserDir() / "addcont";
     }
 
     return path;

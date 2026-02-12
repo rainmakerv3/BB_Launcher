@@ -24,6 +24,7 @@ int main(int argc, char* argv[]) {
     QtWebView::initialize();
 #endif
     QApplication a(argc, argv);
+    QApplication::setStyle("Fusion");
 
 // Check if CPU supports AVX2, show error and quit otherwise
 #if defined(_MSC_VER)
@@ -39,12 +40,16 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 #elif defined(__clang__) || defined(__GNUC__)
+
+#ifndef __APPLE__
     if (!__builtin_cpu_supports("avx2")) {
         QMessageBox::information(nullptr, "Unsupported CPU",
                                  "CPU does not support AVX2 instructions. BBLauncher and ShadPS4 "
                                  "both require CPU that support AVX2. Quitting application...");
         return 0;
     }
+#endif
+
 #endif
 
     QCommandLineParser parser;

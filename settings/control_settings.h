@@ -6,8 +6,8 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_gamepad.h>
 
-#include "RightClickButton.h"
 #include "modules/ipc/ipc_client.h"
+#include "right_click_button.h"
 
 namespace Ui {
 class ControlSettings;
