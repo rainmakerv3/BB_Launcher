@@ -1364,7 +1364,9 @@ void CheatsPatches::applyCheat(const QString& modName, bool enabled) {
 
 void CheatsPatches::uncheckAllCheatCheckBoxes() {
     for (auto& cheatCheckBox : m_cheatCheckBoxes) {
+        cheatCheckBox->blockSignals(true);
         cheatCheckBox->setChecked(false);
+        cheatCheckBox->blockSignals(false);
     }
     showErrorMessage = true;
 }
