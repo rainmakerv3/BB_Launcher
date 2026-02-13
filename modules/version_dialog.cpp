@@ -36,6 +36,12 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
     ui->showChangelogCheckBox->setChecked(Config::ShowChangeLog);
     ui->versionListUpdateCheckBox->setChecked(Config::AutoUpdateVersionsEnabled);
 
+    ui->LinkLabel->setText(
+        "<a "
+        "href=\"https://docs.google.com/document/d/"
+        "1UKYSAMz3y9PH3AOCow5KyIIlRHZ0wbjcAxHvjZwtjk0\">Refer to -Online Test Build- section of "
+        "the help document for details and instructions on how to use the Online Test Build</a>");
+
     connect(ui->versionListUpdateCheckBox, &QCheckBox::toggled, this, [this](bool checked) {
         Config::AutoUpdateVersionsEnabled = checked;
         Config::SaveLauncherSettings();
