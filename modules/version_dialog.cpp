@@ -662,8 +662,8 @@ void VersionDialog::LoadInstalledList() {
 
         item->setText(1, QString::fromStdString(buildInfo[i].type));
         item->setText(2, id);
-        item->setText(3, QString::fromStdString(buildInfo[i].path));
-        item->setText(4, QString::fromStdString(buildInfo[i].modified));
+        item->setText(3, QString::fromStdString(buildInfo[i].modified).left(10));
+        item->setText(4, QString::fromStdString(buildInfo[i].path));
 
         if (buildInfo[i].path == Common::shadPs4Executable.string()) {
             item->setCheckState(0, Qt::Checked);
@@ -673,12 +673,13 @@ void VersionDialog::LoadInstalledList() {
     }
 
     ui->installedTreeWidget->setColumnCount(5);
-    ui->installedTreeWidget->setColumnHidden(4, true);
     ui->installedTreeWidget->resizeColumnToContents(0);
     ui->installedTreeWidget->resizeColumnToContents(1);
     ui->installedTreeWidget->resizeColumnToContents(2);
+    ui->installedTreeWidget->resizeColumnToContents(3);
     ui->installedTreeWidget->setColumnWidth(1, ui->installedTreeWidget->columnWidth(1) + 10);
     ui->installedTreeWidget->setColumnWidth(2, ui->installedTreeWidget->columnWidth(2) + 10);
+    ui->installedTreeWidget->setColumnWidth(3, ui->installedTreeWidget->columnWidth(3) + 10);
 }
 
 QStringList VersionDialog::LoadDownloadCache() {

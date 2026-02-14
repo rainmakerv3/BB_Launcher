@@ -161,12 +161,12 @@
            </column>
            <column>
             <property name="text">
-             <string>Path</string>
+             <string>Date</string>
             </property>
            </column>
            <column>
             <property name="text">
-             <string>Modified date</string>
+             <string>Path</string>
             </property>
            </column>
           </widget>
