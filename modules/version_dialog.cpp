@@ -1268,7 +1268,7 @@ void VersionDialog::RemoveItem(bool alsoDelete) {
         return;
     }
 
-    QString fullPath = selectedItem->text(3);
+    QString fullPath = selectedItem->text(4);
     QString msg;
 
     if (!alsoDelete) {
