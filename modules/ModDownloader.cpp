@@ -104,6 +104,8 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         {18, 168}, // 2B mod
         {19, 93},  // Debug Menu Restoration (needs debug menu patch enabled)
         {20, 224}, // Start with any Weapon
+        {21, 47}, // Super cheeky AI Upscaled UI
+        {22, 181}, // Better 60FPS Cloth Physics (modifies parts)
     };
 
     ui->modComboBox->addItem("Vertex Explosion Fix");
@@ -127,6 +129,8 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     ui->modComboBox->addItem("2B mod");
     ui->modComboBox->addItem("Debug Menu Restoration (needs debug menu patch enabled)");
     ui->modComboBox->addItem("Start with any Weapon");
+    ui->modComboBox->addItem("Super cheeky AI Upscaled UI");
+    ui->modComboBox->addItem("Better 60FPS Cloth Physics (modifies parts)");
 
     if (apiKey.isEmpty()) {
         ui->validApiLabel->setStyleSheet("color: red;");
@@ -685,9 +689,13 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
             [progressBar, label](qint64 bytesReceived, qint64 bytesTotal) {
                 if (bytesTotal > 0)
                     progressBar->setValue(static_cast<int>((bytesReceived * 100) / bytesTotal));
-                label->setText(QString("%1 / %2 bytes downloaded")
-                                   .arg(QString::number(bytesReceived))
-                                   .arg(bytesTotal));
+
+                QLocale locale;
+                label->setText(QString("%1 / %2 downloaded")
+                                   .arg(locale.formattedDataSize(
+                                       bytesReceived, 2, QLocale::DataSizeTraditionalFormat))
+                                   .arg(locale.formattedDataSize(
+                                       bytesTotal, 2, QLocale::DataSizeTraditionalFormat)));
             });
 
     QString zipPath;
