@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1122</width>
-    <height>421</height>
+    <height>459</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -298,6 +298,27 @@
      </item>
     </layout>
    </widget>
+  </widget>
+  <widget class="QLabel" name="LinkLabel">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>430</y>
+     <width>1031</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Save Editor Link</string>
+   </property>
+   <property name="openExternalLinks">
+    <bool>true</bool>
+   </property>
   </widget>
  </widget>
  <resources/>
