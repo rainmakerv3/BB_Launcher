@@ -156,7 +156,7 @@ VersionDialog::~VersionDialog() {
 void VersionDialog::onItemChanged(QTreeWidgetItem* item, int column) {
     if (column == 0) {
         if (item->checkState(0) == Qt::Checked) {
-            QString fullPath = item->text(3);
+            QString fullPath = item->text(4);
             Common::shadPs4Executable = Common::PathFromQString(fullPath);
             Config::SaveLauncherSettings();
 

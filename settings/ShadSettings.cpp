@@ -287,9 +287,8 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->psnSignInCheckBox->setChecked(
         toml::find_or<bool>(data, "General", "isPSNSignedIn", false)
     );
-    ui->httpHostOverrideEdit->setText(
-        QString::fromStdString(toml::find_or<std::string>(data, "General", "httpHostOverride", "bbnet.yahargul.info"))
-    );
+    ui->httpHostOverrideEdit->setText(QString::fromStdString(
+        toml::find_or<std::string>(data, "General", "httpHostOverride", "thehuntersdream.com")));
 
     QString translatedText_PresentMode = presentModeMap.key(
         QString::fromStdString(toml::find_or<std::string>(data, "GPU", "presentMode", "Mailbox")));
@@ -520,7 +519,7 @@ void ShadSettings::SetDefaults() {
         ui->dmemSpinBox->setValue(0);
         ui->networkConnectedCheckBox->setChecked(false);
         ui->psnSignInCheckBox->setChecked(false);
-        ui->httpHostOverrideEdit->setText("bbnet.yahargul.info");
+        ui->httpHostOverrideEdit->setText("thehuntersdream.com");
     } else {
         ui->discordRPCCheckbox->setChecked(true);
     }
