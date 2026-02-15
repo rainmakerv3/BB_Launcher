@@ -122,7 +122,7 @@ BBLauncher is **fully open source**. You are welcome to build it yourself, contr
 
 ## Credits
 
-* **FMOD stream thread** and **Az** for code contributions
+* **FMOD stream thread**,  **LucasPicoli**, and **Az** for code contributions
 * **Missake** and **Brad** for testing
 * **Noxde** and **Kyoski** for extensive help with save file research
 * [**Par274**](https://github.com/par274) for contributions include documentation cleanups (README), Docker configuration, and Windows build pipeline documentation.
