@@ -87,30 +87,33 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         {1, 70},   // 60 fps Cutscene Fix
         {2, 41},   // Sfx Fix Mods
         {3, 30},   // Xbox Controller Icons
-        {4, 182},  // 4k Upscaled UI
-        {5, 441},  // Bigger Subtitles
-        {6, 160},  // Bloodborne Visual Upgrade Mod
-        {7, 162},  // Disable FXAA
-        {8, 114},  // Cloth physics mods
-        {9, 102},  // Performance Drawparams
-        {10, 206}, // Estus Vial and Bullet
-        {11, 223}, // Stake of Marika
-        {12, 257}, // Estus of Marika
-        {13, 19},  // Bloodborne Enhanced
-        {14, 107}, // More Options at Lamps
-        {15, 6},   // Great One Beast Restored
-        {16, 156}, // Jump on L3
-        {17, 28},  // Boczekek's FPS boost
-        {18, 168}, // 2B mod
-        {19, 93},  // Debug Menu Restoration (needs debug menu patch enabled)
-        {20, 224}, // Start with any Weapon
+        {4, 182},  // 4k Upscaled UI (for Xbox/Switch layout)
+        {5, 47},   // 4k Upscaled UI (for original PlayStation layout)
+        {6, 441},  // Bigger Subtitles
+        {7, 160},  // Bloodborne Visual Upgrade Mod
+        {8, 162},  // Disable FXAA
+        {9, 114},  // Cloth physics mods
+        {10, 102}, // Performance Drawparams
+        {11, 206}, // Estus Vial and Bullet
+        {12, 223}, // Stake of Marika
+        {13, 257}, // Estus of Marika
+        {14, 19},  // Bloodborne Enhanced
+        {15, 107}, // More Options at Lamps
+        {16, 6},   // Great One Beast Restored
+        {17, 156}, // Jump on L3
+        {18, 28},  // Boczekek's FPS boost
+        {19, 168}, // 2B mod
+        {20, 93},  // Debug Menu Restoration (needs debug menu patch enabled)
+        {21, 224}, // Start with any Weapon
+        {22, 181}, // Better 60FPS Cloth Physics (modifies parts)
     };
 
     ui->modComboBox->addItem("Vertex Explosion Fix");
     ui->modComboBox->addItem("60 fps Cutscene Fix");
     ui->modComboBox->addItem("Sfx Fix Mods");
     ui->modComboBox->addItem("Xbox Controller Icons");
-    ui->modComboBox->addItem("4K Upscaled UI");
+    ui->modComboBox->addItem("4K Upscaled UI (for Xbox/Switch layout)");
+    ui->modComboBox->addItem("4K Upscaled UI (for original PlayStation layout)");
     ui->modComboBox->addItem("Bigger Subtitles");
     ui->modComboBox->addItem("Bloodborne Visual Upgrade Mod");
     ui->modComboBox->addItem("Disable FXAA");
@@ -127,6 +130,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     ui->modComboBox->addItem("2B mod");
     ui->modComboBox->addItem("Debug Menu Restoration (needs debug menu patch enabled)");
     ui->modComboBox->addItem("Start with any Weapon");
+    ui->modComboBox->addItem("Better 60FPS Cloth Physics (modifies parts)");
 
     if (apiKey.isEmpty()) {
         ui->validApiLabel->setStyleSheet("color: red;");
@@ -686,9 +690,13 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
             [progressBar, label](qint64 bytesReceived, qint64 bytesTotal) {
                 if (bytesTotal > 0)
                     progressBar->setValue(static_cast<int>((bytesReceived * 100) / bytesTotal));
-                label->setText(QString("%1 / %2 bytes downloaded")
-                                   .arg(QString::number(bytesReceived))
-                                   .arg(bytesTotal));
+
+                QLocale locale;
+                label->setText(QString("%1 / %2 downloaded")
+                                   .arg(locale.formattedDataSize(
+                                       bytesReceived, 2, QLocale::DataSizeTraditionalFormat))
+                                   .arg(locale.formattedDataSize(
+                                       bytesTotal, 2, QLocale::DataSizeTraditionalFormat)));
             });
 
     QString zipPath;
