@@ -93,7 +93,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         {7, 160},  // Bloodborne Visual Upgrade Mod
         {8, 162},  // Disable FXAA
         {9, 114},  // Cloth physics mods
-        {10, 102},  // Performance Drawparams
+        {10, 102}, // Performance Drawparams
         {11, 206}, // Estus Vial and Bullet
         {12, 223}, // Stake of Marika
         {13, 257}, // Estus of Marika
