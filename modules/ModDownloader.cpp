@@ -680,6 +680,7 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
     layout->addWidget(label);
     progressDialog->setLayout(layout);
     progressDialog->show();
+    ui->downloadButton->setEnabled(false);
 
     connect(downloadReply, &QNetworkReply::downloadProgress, this,
             [progressBar, label](qint64 bytesReceived, qint64 bytesTotal) {
@@ -707,8 +708,10 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
         return;
     }
 
-    connect(progressDialog, &QDialog::rejected, this,
-            [zipPath, file, downloadReply]() { downloadReply->abort(); });
+    connect(progressDialog, &QDialog::rejected, this, [this, zipPath, file, downloadReply]() {
+        downloadReply->abort();
+        ui->downloadButton->setEnabled(true);
+    });
 
     connect(downloadReply, &QNetworkReply::readyRead, this,
             [file, downloadReply]() { file->write(downloadReply->readAll()); });
@@ -831,6 +834,7 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
 
             QDir(extractPath).removeRecursively();
             QFile::remove(zipPath);
+            ui->downloadButton->setEnabled(true);
         } else {
             QMessageBox::warning(
                 this, tr("Download incomplete"),
@@ -841,6 +845,7 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
             progressDialog->close();
             progressDialog->deleteLater();
             QFile::remove(zipPath);
+            ui->downloadButton->setEnabled(true);
         }
     });
 }
