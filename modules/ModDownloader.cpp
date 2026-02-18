@@ -92,20 +92,20 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         {6, 441},  // Bigger Subtitles
         {7, 160},  // Bloodborne Visual Upgrade Mod
         {8, 162},  // Disable FXAA
-        {9, 114},  // Cloth physics mods
-        {10, 102}, // Performance Drawparams
-        {11, 206}, // Estus Vial and Bullet
-        {12, 223}, // Stake of Marika
-        {13, 257}, // Estus of Marika
-        {14, 19},  // Bloodborne Enhanced
-        {15, 107}, // More Options at Lamps
-        {16, 6},   // Great One Beast Restored
-        {17, 156}, // Jump on L3
-        {18, 28},  // Boczekek's FPS boost
-        {19, 168}, // 2B mod
-        {20, 93},  // Debug Menu Restoration (needs debug menu patch enabled)
-        {21, 224}, // Start with any Weapon
-        {22, 181}, // Better 60FPS Cloth Physics (modifies parts)
+        {9, 181},  // Better 60FPS Cloth Physics (modifies parts)
+        {10, 114}, // Disable cloth physics mods
+        {11, 102}, // Performance Drawparams
+        {12, 206}, // Estus Vial and Bullet
+        {13, 223}, // Stake of Marika
+        {14, 257}, // Estus of Marika
+        {15, 19},  // Bloodborne Enhanced
+        {16, 107}, // More Options at Lamps
+        {17, 6},   // Great One Beast Restored
+        {18, 156}, // Jump on L3
+        {19, 28},  // Boczekek's FPS boost
+        {20, 168}, // 2B mod
+        {21, 93},  // Debug Menu Restoration (needs debug menu patch enabled)
+        {22, 224}, // Start with any Weapon
     };
 
     ui->modComboBox->addItem("Vertex Explosion Fix");
@@ -117,7 +117,8 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     ui->modComboBox->addItem("Bigger Subtitles");
     ui->modComboBox->addItem("Bloodborne Visual Upgrade Mod");
     ui->modComboBox->addItem("Disable FXAA");
-    ui->modComboBox->addItem("Cloth physics mods");
+    ui->modComboBox->addItem("Better 60FPS Cloth Physics (modifies parts)");
+    ui->modComboBox->addItem("Disable cloth physics mods");
     ui->modComboBox->addItem("Performance Drawparams");
     ui->modComboBox->addItem("Estus Vial and Bullet");
     ui->modComboBox->addItem("Stake of Marika");
@@ -130,7 +131,6 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     ui->modComboBox->addItem("2B mod");
     ui->modComboBox->addItem("Debug Menu Restoration (needs debug menu patch enabled)");
     ui->modComboBox->addItem("Start with any Weapon");
-    ui->modComboBox->addItem("Better 60FPS Cloth Physics (modifies parts)");
 
     if (apiKey.isEmpty()) {
         ui->validApiLabel->setStyleSheet("color: red;");
