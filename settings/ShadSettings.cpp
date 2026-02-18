@@ -252,6 +252,7 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->heightSpinBox->setValue(toml::find_or<int>(data, "GPU", "screenHeight", 720));
     ui->vblankSpinBox->setValue(toml::find_or<int>(data, "GPU", "vblankFrequency", 60));
     ui->ReadbacksCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "readbacks", false));
+    ui->DMACheckBox->setChecked(toml::find_or<bool>(data, "GPU", "directMemoryAccess", false));
     ui->GPUBufferCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "copyGPUBuffers", false));
     ui->disableTrophycheckBox->setChecked(
         toml::find_or<bool>(data, "General", "isTrophyPopupDisabled", false));
@@ -440,6 +441,7 @@ void ShadSettings::SaveSettings() {
         data["General"]["httpHostOverride"] = ui->httpHostOverrideEdit->text().toStdString();
 
         data["GPU"]["readbacks"] = ui->ReadbacksCheckBox->isChecked();
+        data["GPU"]["directMemoryAccess"] = ui->DMACheckBox->isChecked();
         data["GPU"]["vblankFrequency"] = ui->vblankSpinBox->value();
     } else {
         data["General"]["enableDiscordRPC"] = ui->discordRPCCheckbox->isChecked();
@@ -516,6 +518,7 @@ void ShadSettings::SetDefaults() {
     if (is_game_specific) {
         ui->vblankSpinBox->setValue(60);
         ui->ReadbacksCheckBox->setChecked(false);
+        ui->DMACheckBox->setChecked(false);
         ui->dmemSpinBox->setValue(0);
         ui->networkConnectedCheckBox->setChecked(false);
         ui->psnSignInCheckBox->setChecked(false);

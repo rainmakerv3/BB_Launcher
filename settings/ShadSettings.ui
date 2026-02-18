@@ -22,7 +22,6 @@
   <property name="font">
    <font>
     <pointsize>11</pointsize>
-    <weight>50</weight>
     <bold>false</bold>
    </font>
   </property>
@@ -52,7 +51,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QScrollArea" name="generalTab">
       <property name="widgetResizable">
@@ -66,8 +65,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>985</width>
-         <height>618</height>
+         <width>981</width>
+         <height>584</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="generalTabVLayout" stretch="0,0">
@@ -80,7 +79,6 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -132,7 +130,6 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -188,7 +185,6 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -262,7 +258,6 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -275,7 +270,6 @@
                  <property name="font">
                   <font>
                    <pointsize>9</pointsize>
-                   <weight>75</weight>
                    <bold>true</bold>
                   </font>
                  </property>
@@ -289,7 +283,6 @@
                  <property name="font">
                   <font>
                    <pointsize>8</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -367,7 +360,6 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -470,7 +462,6 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -513,7 +504,6 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -626,7 +616,6 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -708,7 +697,6 @@
               <property name="font">
                <font>
                 <pointsize>9</pointsize>
-                <weight>50</weight>
                 <bold>false</bold>
                </font>
               </property>
@@ -721,7 +709,6 @@
                  <property name="font">
                   <font>
                    <pointsize>9</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -740,7 +727,6 @@
                  <property name="font">
                   <font>
                    <pointsize>9</pointsize>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -783,7 +769,6 @@
           <property name="font">
            <font>
             <pointsize>12</pointsize>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -803,9 +788,9 @@
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>103</y>
+         <y>105</y>
          <width>441</width>
-         <height>81</height>
+         <height>101</height>
         </rect>
        </property>
        <property name="title">
@@ -840,13 +825,35 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QLabel" name="dmaNoteLabel_2">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>*set to desired fps cap if using the uncap FPS patch or disabling vsync</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
       <widget class="QGroupBox" name="dmemGroupBox">
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>190</y>
+         <y>220</y>
          <width>441</width>
          <height>91</height>
         </rect>
@@ -880,7 +887,7 @@
            </font>
           </property>
           <property name="text">
-           <string>*Set to ~4000 for 1440p and ~8000 for 4K support</string>
+           <string>*set to ~4000 for 1440p and ~8000 for 4K support</string>
           </property>
          </widget>
         </item>
@@ -930,8 +937,8 @@
       <widget class="QGroupBox" name="groupBox">
        <property name="geometry">
         <rect>
-         <x>30</x>
-         <y>300</y>
+         <x>490</x>
+         <y>5</y>
          <width>441</width>
          <height>231</height>
         </rect>
@@ -997,6 +1004,50 @@
          </property>
         </widget>
        </widget>
+      </widget>
+      <widget class="QGroupBox" name="dmaGroupBox">
+       <property name="geometry">
+        <rect>
+         <x>29</x>
+         <y>324</y>
+         <width>441</width>
+         <height>111</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>Direct Memory Access</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_13">
+        <item>
+         <widget class="QCheckBox" name="DMACheckBox">
+          <property name="text">
+           <string notr="true">Enable Direct Memory Access</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="dmaNoteLabel">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>*may fix green artifacts with Shadows of the Hunt mod, unneeded if not using that mod</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
      <widget class="QWidget" name="GlobalTab">
