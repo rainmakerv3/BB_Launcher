@@ -104,7 +104,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         {18, 156}, // Jump on L3
         {19, 28},  // Boczekek's FPS boost
         {20, 168}, // 2B mod
-        {21, 93},  // Debug Menu Restoration (needs debug menu patch enabled)
+        {21, 253}, // Debug Menu Restoration (needs debug menu patch enabled)
         {22, 224}, // Start with any Weapon
     };
 
@@ -594,7 +594,8 @@ void ModDownloader::GetModFiles(int modId) {
             for (const auto& element : file_array) {
                 if (element.contains("category_name") && !element.at("category_name").is_null()) {
                     std::string catName = element.at("category_name").get<std::string>();
-                    if (catName == "MAIN") {
+                    if (catName == "MAIN" ||
+                        element.at("name").get<std::string>() == "Debug menu") {
                         DownloadFile file = {
                             .displayname =
                                 QString::fromStdString(element.at("name").get<std::string>()),
