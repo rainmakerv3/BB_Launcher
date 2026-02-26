@@ -60,6 +60,8 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
     defaultTextEdit = "Point your mouse at an option to display its description.";
     ui->descriptionText->setText(defaultTextEdit);
 
+    ui->networkGroupBox->setVisible(false);
+
     if (game_specific) {
         QPushButton* deleteButton = new QPushButton("Delete Game-specific config");
         ui->buttonBox->addButton(deleteButton, QDialogButtonBox::ActionRole);

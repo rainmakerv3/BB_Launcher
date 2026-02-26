@@ -42,6 +42,8 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
         "1UKYSAMz3y9PH3AOCow5KyIIlRHZ0wbjcAxHvjZwtjk0\">Refer to -Online Test Build- section of "
         "the help document for details and instructions on how to use the Online Test Build</a>");
 
+    ui->LinkLabel->setVisible(false);
+
     connect(ui->versionListUpdateCheckBox, &QCheckBox::toggled, this, [this](bool checked) {
         Config::AutoUpdateVersionsEnabled = checked;
         Config::SaveLauncherSettings();
@@ -353,10 +355,12 @@ void VersionDialog::CheckVersionsList(const bool showMessage) {
                     ui->downloadTreeWidget->addTopLevelItem(preReleaseItem);
                 }
 
+                /*
                 // Add online test build
                 QTreeWidgetItem* onlineItem = new QTreeWidgetItem();
                 onlineItem->setText(0, "Online Test Build");
                 ui->downloadTreeWidget->addTopLevelItem(onlineItem);
+                */
 
                 // Add the others
                 for (QTreeWidgetItem* item : otherItems) {

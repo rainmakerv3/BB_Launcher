@@ -51,7 +51,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QScrollArea" name="generalTab">
       <property name="widgetResizable">
@@ -934,7 +934,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QGroupBox" name="groupBox">
+      <widget class="QGroupBox" name="networkGroupBox">
        <property name="geometry">
         <rect>
          <x>490</x>
