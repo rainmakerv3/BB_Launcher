@@ -194,7 +194,7 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
     {
         ui->consoleLanguageGroupBox->installEventFilter(this);
         ui->FullscreenModeGroupBox->installEventFilter(this);
-        ui->ReadbacksCheckBox->installEventFilter(this);
+        ui->readbacksModeComboBox->installEventFilter(this);
         ui->GPUBufferCheckBox->installEventFilter(this);
         ui->discordRPCCheckbox->installEventFilter(this);
         ui->userName->installEventFilter(this);
@@ -253,7 +253,8 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->widthSpinBox->setValue(toml::find_or<int>(data, "GPU", "screenWidth", 1280));
     ui->heightSpinBox->setValue(toml::find_or<int>(data, "GPU", "screenHeight", 720));
     ui->vblankSpinBox->setValue(toml::find_or<int>(data, "GPU", "vblankFrequency", 60));
-    ui->ReadbacksCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "readbacks", false));
+    ui->readbacksModeComboBox->setCurrentIndex(
+        toml::find_or<int>(data, "GPU", "readbacksMode", false));
     ui->DMACheckBox->setChecked(toml::find_or<bool>(data, "GPU", "directMemoryAccess", false));
     ui->GPUBufferCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "copyGPUBuffers", false));
     ui->disableTrophycheckBox->setChecked(
@@ -442,7 +443,7 @@ void ShadSettings::SaveSettings() {
 
         data["General"]["httpHostOverride"] = ui->httpHostOverrideEdit->text().toStdString();
 
-        data["GPU"]["readbacks"] = ui->ReadbacksCheckBox->isChecked();
+        data["GPU"]["readbacksMode"] = ui->readbacksModeComboBox->currentIndex();
         data["GPU"]["directMemoryAccess"] = ui->DMACheckBox->isChecked();
         data["GPU"]["vblankFrequency"] = ui->vblankSpinBox->value();
     } else {
@@ -519,7 +520,7 @@ void ShadSettings::SetDefaults() {
 
     if (is_game_specific) {
         ui->vblankSpinBox->setValue(60);
-        ui->ReadbacksCheckBox->setChecked(false);
+        ui->readbacksModeComboBox->setCurrentIndex(0);
         ui->DMACheckBox->setChecked(false);
         ui->dmemSpinBox->setValue(0);
         ui->networkConnectedCheckBox->setChecked(false);

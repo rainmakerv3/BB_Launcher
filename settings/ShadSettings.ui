@@ -51,7 +51,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QScrollArea" name="generalTab">
       <property name="widgetResizable">
@@ -788,7 +788,7 @@
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>105</y>
+         <y>151</y>
          <width>441</width>
          <height>101</height>
         </rect>
@@ -840,7 +840,7 @@
            </font>
           </property>
           <property name="text">
-           <string>*set to desired fps cap if using the uncap FPS patch or disabling vsync</string>
+           <string>*Set to desired fps cap if using the uncap FPS patch or disabling vsync</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
@@ -853,7 +853,7 @@
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>220</y>
+         <y>266</y>
          <width>441</width>
          <height>91</height>
         </rect>
@@ -887,7 +887,7 @@
            </font>
           </property>
           <property name="text">
-           <string>*set to ~4000 for 1440p and ~8000 for 4K support</string>
+           <string>*Set to ~4000 for 1440p and ~8000 for 4K support</string>
           </property>
          </widget>
         </item>
@@ -899,7 +899,7 @@
          <x>30</x>
          <y>6</y>
          <width>441</width>
-         <height>91</height>
+         <height>131</height>
         </rect>
        </property>
        <property name="title">
@@ -907,10 +907,22 @@
        </property>
        <layout class="QVBoxLayout" name="verticalLayout_8">
         <item>
-         <widget class="QCheckBox" name="ReadbacksCheckBox">
-          <property name="text">
-           <string notr="true">Enable Readbacks </string>
-          </property>
+         <widget class="QComboBox" name="readbacksModeComboBox">
+          <item>
+           <property name="text">
+            <string>Disabled</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Low</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>High</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item>
@@ -928,7 +940,10 @@
            </font>
           </property>
           <property name="text">
-           <string>*fixes vertex explosions, performance heavy</string>
+           <string>*Note: Compatible with shadPS4 builds Feb. 28 2026 or later. Fixes vertex explosions - low has much better performance than high, at the cost of some traversal/loading stutter</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -937,7 +952,7 @@
       <widget class="QGroupBox" name="networkGroupBox">
        <property name="geometry">
         <rect>
-         <x>490</x>
+         <x>520</x>
          <y>5</y>
          <width>441</width>
          <height>231</height>
@@ -1009,7 +1024,7 @@
        <property name="geometry">
         <rect>
          <x>29</x>
-         <y>324</y>
+         <y>370</y>
          <width>441</width>
          <height>111</height>
         </rect>
@@ -1040,7 +1055,7 @@
            </font>
           </property>
           <property name="text">
-           <string>*may fix green artifacts with Shadows of the Hunt mod, unneeded if not using that mod</string>
+           <string>*May fix green artifacts with BB PC Remaster mod, unneeded if not using that mod</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
