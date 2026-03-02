@@ -915,12 +915,12 @@
           </item>
           <item>
            <property name="text">
-            <string>Low</string>
+            <string>Relaxed</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>High</string>
+            <string>Precise</string>
            </property>
           </item>
          </widget>
@@ -940,7 +940,7 @@
            </font>
           </property>
           <property name="text">
-           <string>*Note: Compatible with shadPS4 builds Feb. 28 2026 or later. Fixes vertex explosions - low has much better performance than high, at the cost of some traversal/loading stutter</string>
+           <string>*Note: Compatible with shadPS4 builds Feb. 28 2026 or later. Fixes vertex explosions - Relaxed has much better performance than Precise, at the cost of some traversal/loading stutter</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
