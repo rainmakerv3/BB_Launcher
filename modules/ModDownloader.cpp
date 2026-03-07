@@ -1131,8 +1131,8 @@ void ModDownloader::ExtractZip(QString inpath, QString outpath) {
 void ModDownloader::SetSevenzipPath() {
     QString exePath;
 #ifdef _WIN32
-    exePath = QFileDialog::getOpenFileName(this, "Select ShadPS4 executable (ex. shadPS4.exe)",
-                                           QDir::currentPath(), "Executables (7z.exe)");
+    exePath = QFileDialog::getOpenFileName(this, "Select 7z executable", QDir::currentPath(),
+                                           "Executables (7z.exe)");
 #else
     exePath = QFileDialog::getOpenFileName(this, "Select 7-zip binary", QDir::homePath(),
                                            "7z Binary (7z*)");
