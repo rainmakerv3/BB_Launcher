@@ -146,7 +146,7 @@ jobs:
       run: |
         mkdir upload
         mv ${{github.workspace}}/build/BB_Launcher.app upload
-        macdeployqt upload/BB_Launcher.app
+        macdeployqt upload/BB_Launcher.app -qmldir=${{github.workspace}}/dist
         tar cf BB_Launcher-macos-qt.tar.gz -C upload .
     - uses: actions/upload-artifact@v4
       with:

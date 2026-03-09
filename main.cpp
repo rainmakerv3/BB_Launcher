@@ -20,6 +20,10 @@ void customMessageHandler(QtMsgType, const QMessageLogContext&, const QString&) 
 
 int main(int argc, char* argv[]) {
 
+#ifdef Q_OS_MAC
+    qputenv("QT_WEBVIEW_PLUGIN", "native");
+#endif
+
 #ifndef USE_WEBENGINE
     QtWebView::initialize();
 #endif
