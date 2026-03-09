@@ -305,11 +305,6 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         checkUpdate->exec();
     }
 
-    if (Config::AutoUpdateShadEnabled) {
-        auto versionDialog = new VersionDialog(this);
-        versionDialog->checkUpdatePre(false);
-    }
-
     if (Config::AutoUpdateVersionsEnabled) {
         auto versionDialog = new VersionDialog(this);
         versionDialog->CheckVersionsList(false);
