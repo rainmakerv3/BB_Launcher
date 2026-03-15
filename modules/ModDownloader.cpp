@@ -1112,7 +1112,16 @@ void ModDownloader::ExtractZip(QString inpath, QString outpath) {
 
     QFuture<void> future = QtConcurrent::run([this, &qmz, progressBar, label]() {
         for (int i = 0; i < qmz.count(); ++i) {
-            qmz.extractIndex(i);
+            try {
+                qmz.extractIndex(i);
+            } catch (std::exception& ex) {
+                QMessageBox::warning(
+                    this,
+                    "Error extracting zip. Mod may not work correctly if activated. You can try "
+                    "deleting the downloaded folder and redownloading it.",
+                    ex.what());
+                break;
+            }
             emit FileExtracted(i);
         }
     });
