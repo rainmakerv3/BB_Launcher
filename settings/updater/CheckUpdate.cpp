@@ -161,24 +161,7 @@ void CheckUpdate::CheckForUpdates(const bool showMessage) {
         QJsonArray jsonArray = jsonDoc.array();
         for (const QJsonValue& value : jsonArray) {
             jsonObj = value.toObject();
-            if (jsonObj.contains("name") && jsonObj["name"].toString().contains("New BBLauncher")) {
-                if (QMessageBox::No ==
-                    QMessageBox::question(
-                        this, "Update Warning",
-                        "You are updating from the old BBLauncher to the New BBLauncher. ShadPS4 "
-                        "settings, trophy keys, and other settings will no longer work due to the "
-                        "need to support the newest shadPS4 settings code which is not compatible "
-                        "with older versions. Only use the New BBLauncher if you want to use "
-                        "shadPS4 15.1 or later.\n\n Proceed with update?",
-                        QMessageBox::Yes | QMessageBox::No)) {
-                    return;
-                } else {
-                    break;
-                }
-            }
-
-            if (jsonObj.contains("name") && !jsonObj["name"].toString().contains("Pre-release") &&
-                !jsonObj["name"].toString().contains("Downloader")) {
+            if (jsonObj.contains("name") && !jsonObj["name"].toString().contains("Pre-release")) {
                 break;
             }
         }
