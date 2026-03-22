@@ -182,12 +182,17 @@ set(PROJECT_SOURCES
     modules/TrophyDeps/trp.h
     settings/PSF/psf.cpp
     settings/PSF/psf.h
+    settings/updater/BuildInfo.h
+    settings/updater/CheckUpdate.cpp
+    settings/updater/CheckUpdate.h
     settings/formatting.h
     settings/config.cpp
     settings/config.h
     settings/control_settings.cpp
     settings/control_settings.h
     settings/control_settings.ui
+    settings/emulator_settings.cpp
+    settings/emulator_settings.h
     settings/hotkeys.cpp
     settings/hotkeys.h
     settings/hotkeys.ui
@@ -208,9 +213,12 @@ set(PROJECT_SOURCES
     settings/ShadSettings.h
     settings/ShadSettings.cpp
     settings/ShadSettings.ui
-    settings/updater/BuildInfo.h
-    settings/updater/CheckUpdate.cpp
-    settings/updater/CheckUpdate.h
+    settings/table_item_delegate.h
+    settings/table_item_delegate.cpp
+    settings/user_manager.h
+    settings/user_manager.cpp
+    settings/user_manager_dialog.h
+    settings/user_manager_dialog.cpp
     dist/BBIcon.icns
     ${CMAKE_CURRENT_BINARY_DIR}/settings/updater/BuildInfo.cpp
     ${RESOURCE_FILES}

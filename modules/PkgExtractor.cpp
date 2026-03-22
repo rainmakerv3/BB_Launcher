@@ -19,18 +19,22 @@
 #include "modules/PkgDeps/loader.h"
 #include "modules/PkgDeps/pkg.h"
 #include "settings/PSF/psf.h"
-#include "settings/config.h"
-#include "settings/formatting.h"
 
-PkgExtractor::PkgExtractor(QWidget* parent) : QDialog(parent) {
+PkgExtractor::PkgExtractor(std::shared_ptr<EmulatorSettings> emu_settings, QWidget* parent)
+    : m_emu_settings(std::move(emu_settings)), QDialog(parent) {
     setupUI();
     resize(600, 60);
     this->setWindowTitle(tr("PKG Extractor"));
 
+    std::filesystem::path dlcPath;
+    dlcPath = m_emu_settings->GetAddonInstallDir();
+
     if (!std::filesystem::exists(Common::GetShadUserDir() / "addcont"))
         std::filesystem::create_directories(Common::GetShadUserDir() / "addcont");
 
-    std::filesystem::path dlcPath = Common::GetDlcDir();
+    if (dlcPath.empty()) {
+        dlcPath = Common::GetShadUserDir() / "addcont";
+    }
 
     QString qDlcPath;
     Common::PathToQString(qDlcPath, dlcPath);
@@ -454,12 +458,8 @@ void PkgExtractor::browseDlc() {
 
     if (!dlcFolder.isEmpty()) {
         dlcLineEdit->setText(dlcFolder);
-        auto file_path = Common::PathFromQString(dlcFolder);
-        Config::dlcDir = file_path;
-
-        Config::ShadSettings settings;
-        settings.dlcPath = Common::PathFromQString(dlcFolder);
-        Config::SaveShadSettings(settings);
+        m_emu_settings->SetAddonInstallDir(dlcFolder.toStdString());
+        m_emu_settings->Save();
     }
 }
 

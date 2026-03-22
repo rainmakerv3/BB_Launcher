@@ -8,16 +8,14 @@
 #include "SaveManager.h"
 #include "modules/ui_SaveManager.h"
 #include "settings/PSF/psf.h"
-#include "settings/config.h"
 
 SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveManager) {
     ui->setupUi(this);
     this->setFixedSize(this->width(), this->height());
 
     // Releases older than 0.9.0 will need to use the game serial as save folder
-    std::string savePath =
-        Config::isReleaseOlder(9) ? Common::game_serial : PSFdata::getSavePath(Common::installPath);
-    ExactSaveDir = Common::GetSaveDir() / "1" / savePath / "SPRJ0005";
+    std::string savePath = PSFdata::getSavePath(Common::installPath);
+    ExactSaveDir = Common::GetSaveDir() / savePath / "SPRJ0005";
 
     if (!std::filesystem::exists(BackupsDir)) {
         std::filesystem::create_directories(BackupsDir);

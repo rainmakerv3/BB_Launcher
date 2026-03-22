@@ -56,12 +56,6 @@ void IpcClient::resumeGame() {
 }
 
 void IpcClient::stopEmulator() {
-    if (Config::isReleaseOlder(11)) {
-        QMessageBox::information(nullptr, "BBLauncher",
-                                 "Not supported on releases older than 0.11.0");
-        return;
-    }
-
     if (!Config::GameRunning) {
         QMessageBox::information(nullptr, "BBLauncher", "No runnning game to stop");
         return;
@@ -76,12 +70,6 @@ void IpcClient::restartEmulator() {
 }
 
 void IpcClient::toggleFullscreen() {
-    if (Config::isReleaseOlder(11)) {
-        QMessageBox::information(nullptr, "BBLauncher",
-                                 "Not supported on releases older than 0.11.0");
-        return;
-    }
-
     if (!Config::GameRunning) {
         QMessageBox::information(nullptr, "BBLauncher", "No runnning game to toggle fullscreen");
         return;

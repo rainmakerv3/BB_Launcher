@@ -5,6 +5,7 @@
 
 #include "modules/ipc/ipc_client.h"
 #include "right_click_button.h"
+#include "settings/emulator_settings.h"
 
 namespace Ui {
 class KBMSettings;
@@ -13,7 +14,8 @@ class KBMSettings;
 class KBMSettings : public QDialog {
     Q_OBJECT
 public:
-    explicit KBMSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent = nullptr);
+    explicit KBMSettings(std::shared_ptr<EmulatorSettings> emu_settings,
+                         std::shared_ptr<IpcClient> ipc_client, QWidget* parent = nullptr);
     ~KBMSettings();
 
 signals:
@@ -29,6 +31,7 @@ private Q_SLOTS:
 private:
     std::unique_ptr<Ui::KBMSettings> ui;
     std::shared_ptr<IpcClient> m_ipc_client;
+    std::shared_ptr<EmulatorSettings> m_emu_settings;
 
 #ifdef _WIN32
 #define LCTRL_KEY 29

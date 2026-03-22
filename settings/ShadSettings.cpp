@@ -3,6 +3,8 @@
 
 #include <QFileDialog>
 #include <QHoverEvent>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QMessageBox>
 #include <QStandardPaths>
 
@@ -11,16 +13,76 @@
 
 #include "ShadSettings.h"
 #include "config.h"
-#include "formatting.h"
 #include "modules/Common.h"
 #include "settings/ui_ShadSettings.h"
+#include "user_manager_dialog.h"
 
 static std::vector<QString> m_physical_devices;
 
-ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_specific,
+// Normalize paths consistently for equality checks
+static inline std::string NormalizePath(const std::filesystem::path& p) {
+    // Convert to a normalized lexical path
+    auto np = p.lexically_normal();
+
+    // Convert to UTF-8 string
+    auto u8 = np.generic_u8string();
+    std::string s(u8.begin(), u8.end());
+
+#ifdef _WIN32
+    // Windows paths: drive letters are case-insensitive to normalize case
+    // Example: "C:/Games" vs "c:/Games"
+    if (s.size() >= 2 && s[1] == ':')
+        s[0] = static_cast<char>(std::toupper(static_cast<unsigned char>(s[0])));
+#endif
+
+    return s;
+}
+
+// Equality operators
+inline bool operator==(GameInstallDir const& a, GameInstallDir const& b) {
+    return a.enabled == b.enabled && NormalizePath(a.path) == NormalizePath(b.path);
+}
+
+inline bool operator!=(GameInstallDir const& a, GameInstallDir const& b) {
+    return !(a == b);
+}
+
+ShadSettings::ShadSettings(std::shared_ptr<EmulatorSettings> emu_settings,
+                           std::shared_ptr<IpcClient> ipc_client, bool game_specific,
                            QWidget* parent)
-    : is_game_specific(game_specific), m_ipc_client(ipc_client), QDialog(parent),
-      ui(new Ui::ShadSettings) {
+    : m_emu_settings(std::move(emu_settings)), is_game_specific(game_specific),
+      m_ipc_client(ipc_client), QDialog(parent), ui(new Ui::ShadSettings) {
+
+    if (is_game_specific) {
+        std::string filename = Common::game_serial + ".json";
+        std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
+
+        if (!std::filesystem::exists(gsConfig)) {
+            if (QMessageBox::Yes ==
+                QMessageBox::question(this, "No game-specific config file found",
+                                      QString::fromStdString(gsConfig.string()) +
+                                          " not found. Do you want to create it?",
+                                      QMessageBox::Yes | QMessageBox::No)) {
+                const std::filesystem::path cfgDir = Common::GetShadUserDir() / "custom_configs";
+                std::filesystem::create_directories(cfgDir);
+                const std::filesystem::path path = cfgDir / (Common::game_serial + ".json");
+
+                m_emu_settings->Load();
+                m_emu_settings->Save(Common::game_serial);
+
+            } else {
+                return;
+            }
+        }
+    }
+
+    std::filesystem::path keysJson = Common::GetShadUserDir() / "keys.json";
+    Common::PathToQString(keysJsonPath, keysJson);
+
+    if (!std::filesystem::exists(keysJson)) {
+        CreateKeysJson();
+    }
+
     ui->setupUi(this);
     getPhysicalDevices();
     ui->tabWidgetSettings->setUsesScrollButtons(false);
@@ -28,20 +90,22 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
 
     ui->tabWidgetSettings->setCurrentIndex(0);
 
-    if (game_specific) {
-        ui->tabWidgetSettings->setTabVisible(2, false);
-    } else {
-        ui->tabWidgetSettings->setTabVisible(1, false);
-    }
-
-    // hide old version settings for new versions
-    if (!Config::isReleaseOlder(11)) {
-        ui->oldVersionsGroupBox->setVisible(false);
-    }
-
     ui->buttonBox->button(QDialogButtonBox::StandardButton::Save)->setFocus();
 
-    ui->consoleLanguageComboBox->addItems(languageNames);
+    QStringList locales;
+    for (const QString& code : language_ids.keys()) {
+        const QLocale locale(code);
+        QString locale_name = locale.nativeLanguageName();
+
+        if (locale.territory() != QLocale::AnyTerritory) {
+            locale_name += " (" + locale.nativeTerritoryName() + ")";
+        }
+
+        if (!locales.contains(locale_name))
+            locales.append(locale_name);
+    }
+
+    ui->consoleLanguageComboBox->addItems(locales);
 
     ui->fullscreenModeComboBox->addItem("Fullscreen (Borderless)");
     ui->fullscreenModeComboBox->addItem("Windowed");
@@ -56,18 +120,40 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
         ui->graphicsAdapterBox->addItem(device);
     }
 
+    if (is_game_specific) {
+        // We need to load game-specific settings
+        m_original_settings = std::make_shared<EmulatorSettings>();
+        *m_original_settings = *m_emu_settings; // Backup original
+
+        // Create and load game-specific settings
+        m_game_specific_settings = std::make_shared<EmulatorSettings>();
+        m_game_specific_settings->Load("");                  // Load global
+        m_game_specific_settings->Load(Common::game_serial); // Apply overrides
+
+        // Use game-specific settings
+        m_emu_settings.swap(m_game_specific_settings);
+
+        this->setWindowTitle(
+            tr("Custom Settings for %1").arg(QString::fromStdString(Common::game_serial)));
+        ui->tabWidgetSettings->setTabVisible(2, false);
+
+        MapUIControls();
+    } else {
+        this->setWindowTitle(tr("Global Settings"));
+        ui->tabWidgetSettings->setTabVisible(1, false);
+    }
+
     LoadValuesFromConfig();
+
     defaultTextEdit = "Point your mouse at an option to display its description.";
     ui->descriptionText->setText(defaultTextEdit);
-
-    ui->networkGroupBox->setVisible(false);
 
     if (game_specific) {
         QPushButton* deleteButton = new QPushButton("Delete Game-specific config");
         ui->buttonBox->addButton(deleteButton, QDialogButtonBox::ActionRole);
 
         connect(deleteButton, &QPushButton::pressed, this, [this]() {
-            std::string filename = Common::game_serial + ".toml";
+            std::string filename = Common::game_serial + ".json";
             std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
 
             if (QMessageBox::Yes ==
@@ -81,21 +167,14 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
     }
 
     connect(this, &QDialog::rejected, this, [this]() {
-        toml::value data = toml::parse(Common::GetShadUserDir() / "config.toml");
-        toml::value gs_data;
-        is_game_specific ? gs_data = toml::parse(Common::GetShadUserDir() / "custom_configs" /
-                                                 (Common::game_serial + ".toml"))
-                         : gs_data = data;
-
         // reset real-time widgets to config value if not saved
-        int sliderValue = toml::find_or<int>(gs_data, "General", "volumeSlider", 100);
+        int sliderValue = m_emu_settings->GetVolumeSlider();
         ui->volumeSlider->setValue(sliderValue);
 
         if (Config::GameRunning) {
-            m_ipc_client->setFsr(toml::find_or<bool>(gs_data, "GPU", "fsrEnabled", true));
-            m_ipc_client->setRcas(toml::find_or<bool>(gs_data, "GPU", "rcasEnabled", true));
-            m_ipc_client->setRcasAttenuation(
-                toml::find_or<int>(gs_data, "GPU", "rcasAttenuation", 250));
+            m_ipc_client->setFsr(m_emu_settings->IsFsrEnabled());
+            m_ipc_client->setRcas(m_emu_settings->IsRcasEnabled());
+            m_ipc_client->setRcasAttenuation(m_emu_settings->GetRcasAttenuation());
         }
 
         QWidget::close();
@@ -127,19 +206,19 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
     });
 
     connect(ui->SavePathButton, &QPushButton::clicked, this, [this]() {
+        QMessageBox::information(this, "Not implemented yet",
+                                 "Recent shadPS4 changes require a new implementation for this, "
+                                 "disabled in the meantime");
+        return;
+
         QString initial_path;
-        Common::PathToQString(initial_path, Config::externalSaveDir);
-        QString save_data_path_string =
-            QFileDialog::getExistingDirectory(this, "Directory to save data", initial_path);
-        auto file_path = Common::PathFromQString(save_data_path_string);
-
+        Common::PathToQString(initial_path, Config::externalHomeDir);
+        QString home_path_string =
+            QFileDialog::getExistingDirectory(this, "Set home folder", initial_path);
+        auto file_path = Common::PathFromQString(home_path_string);
         if (!file_path.empty()) {
-            Config::externalSaveDir = file_path;
-            ui->SavePathLineEdit->setText(save_data_path_string);
-
-            Config::ShadSettings settings;
-            settings.savePath = Config::externalSaveDir;
-            Config::SaveShadSettings(settings);
+            Config::externalHomeDir = file_path;
+            ui->HomePathLineEdit->setText(home_path_string);
         }
     });
 
@@ -154,9 +233,8 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
             Config::dlcDir = file_path;
             ui->DLCPathLineEdit->setText(dlc_path_string);
 
-            Config::ShadSettings settings;
-            settings.dlcPath = Config::dlcDir;
-            Config::SaveShadSettings(settings);
+            m_emu_settings->SetAddonInstallDir(file_path);
+            m_emu_settings->Save();
         }
     });
 
@@ -179,6 +257,11 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
         }
     });
 
+    connect(ui->usersButton, &QPushButton::clicked, this, [this]() {
+        UserManagerDialog* userManager = new UserManagerDialog(m_emu_settings, this);
+        userManager->exec();
+    });
+
     if (Config::GameRunning) {
         connect(ui->RCASSlider, &QSlider::valueChanged, this,
                 [this](int value) { m_ipc_client->setRcasAttenuation(value); });
@@ -192,12 +275,10 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
 
     // Descriptions
     {
-        ui->consoleLanguageGroupBox->installEventFilter(this);
         ui->FullscreenModeGroupBox->installEventFilter(this);
         ui->readbacksModeComboBox->installEventFilter(this);
         ui->GPUBufferCheckBox->installEventFilter(this);
         ui->discordRPCCheckbox->installEventFilter(this);
-        ui->userName->installEventFilter(this);
         ui->trophyKeyLineEdit->installEventFilter(this);
         ui->logTypeGroupBox->installEventFilter(this);
         ui->logFilter->installEventFilter(this);
@@ -222,98 +303,98 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
 }
 
 void ShadSettings::LoadValuesFromConfig() {
-    std::string filename = Common::game_serial + ".toml";
-    std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
-    std::filesystem::path shadConfigFile =
-        is_game_specific ? gsConfig : Common::GetShadUserDir() / "config.toml";
-
-    toml::value data;
-
-    try {
-        std::ifstream ifs;
-        ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-        ifs.open(shadConfigFile, std::ios_base::binary);
-        data = toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
-    } catch (std::exception& ex) {
-        // handle ?
-        return;
+    if (is_game_specific) {
+        if (!m_emu_settings->Load(Common::game_serial)) {
+            QMessageBox::information(this, "Error", "Unable to load settings");
+            return;
+        }
+    } else {
+        if (!m_emu_settings->Load()) {
+            QMessageBox::information(this, "Error", "Unable to load settings");
+            return;
+        }
     }
 
-    const QVector<int> languageIndexes = {21, 23, 14, 6, 18, 1, 12, 22, 2, 4,  25, 24, 29, 5,  0, 9,
-                                          15, 16, 17, 7, 26, 8, 11, 20, 3, 13, 27, 10, 19, 30, 28};
+    QString selected_locale = "American English (United States)";
+    for (const QString& code : language_ids.keys()) {
+        const QLocale locale(code);
+        QString locale_name = locale.nativeLanguageName();
 
-    ui->consoleLanguageComboBox->setCurrentIndex(
-        std::distance(languageIndexes.begin(),
-                      std::find(languageIndexes.begin(), languageIndexes.end(),
-                                toml::find_or<int>(data, "Settings", "consoleLanguage", 1))) %
-        languageIndexes.size());
-    ui->hideCursorComboBox->setCurrentIndex(toml::find_or<int>(data, "Input", "cursorState", 1));
-    OnCursorStateChanged(toml::find_or<int>(data, "Input", "cursorState", 1));
-    ui->idleTimeoutSpinBox->setValue(toml::find_or<int>(data, "Input", "cursorHideTimeout", 5));
-    ui->widthSpinBox->setValue(toml::find_or<int>(data, "GPU", "screenWidth", 1280));
-    ui->heightSpinBox->setValue(toml::find_or<int>(data, "GPU", "screenHeight", 720));
-    ui->vblankSpinBox->setValue(toml::find_or<int>(data, "GPU", "vblankFrequency", 60));
-    ui->readbacksModeComboBox->setCurrentIndex(
-        toml::find_or<int>(data, "GPU", "readbacksMode", false));
-    ui->DMACheckBox->setChecked(toml::find_or<bool>(data, "GPU", "directMemoryAccess", false));
-    ui->GPUBufferCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "copyGPUBuffers", false));
-    ui->disableTrophycheckBox->setChecked(
-        toml::find_or<bool>(data, "General", "isTrophyPopupDisabled", false));
+        if (locale.territory() != QLocale::AnyTerritory) {
+            locale_name += " (" + locale.nativeTerritoryName() + ")";
+        }
+
+        if (language_ids[code] == m_emu_settings->GetConsoleLanguage())
+            selected_locale = locale_name;
+    }
+    ui->consoleLanguageComboBox->setCurrentText(selected_locale);
+
+    ui->hideCursorComboBox->setCurrentIndex(m_emu_settings->GetCursorState());
+    OnCursorStateChanged(ui->hideCursorComboBox->currentIndex());
+    ui->idleTimeoutSpinBox->setValue(m_emu_settings->GetCursorHideTimeout());
+    ui->widthSpinBox->setValue(m_emu_settings->GetWindowWidth());
+    ui->heightSpinBox->setValue(m_emu_settings->GetWindowHeight());
+    ui->vblankSpinBox->setValue(m_emu_settings->GetVblankFrequency());
+    ui->readbacksModeComboBox->setCurrentIndex(m_emu_settings->GetReadbacksMode());
+    ui->GPUBufferCheckBox->setChecked(m_emu_settings->IsCopyGpuBuffers());
+    ui->disableTrophycheckBox->setChecked(m_emu_settings->IsTrophyPopupDisabled());
     ui->popUpPosComboBox->setCurrentText(
-        QString::fromStdString(toml::find_or<std::string>(data, "General", "sideTrophy", "right")));
-    ui->popUpDurationSpinBox->setValue(
-        toml::find_or<double>(data, "General", "trophyNotificationDuration", 6.0));
+        QString::fromStdString(m_emu_settings->GetTrophyNotificationSide()));
+    ui->popUpDurationSpinBox->setValue(m_emu_settings->GetTrophyNotificationDuration());
+    ui->psnSignInCheckBox->setChecked(m_emu_settings->IsPSNSignedIn());
+    ui->networkConnectedCheckBox->setChecked(m_emu_settings->IsConnectedToNetwork());
 
-    ui->showSplashCheckBox->setChecked(toml::find_or<bool>(data, "General", "showSplash", false));
-    ui->discordRPCCheckbox->setChecked(
-        toml::find_or<bool>(data, "General", "enableDiscordRPC", false));
-    ui->dmemSpinBox->setValue(toml::find_or<int>(data, "General", "extraDmemInMbytes", 0));
-    ui->logTypeComboBox->setCurrentText(
-        QString::fromStdString(toml::find_or<std::string>(data, "General", "logType", "sync")));
-    ui->logFilterLineEdit->setText(
-        QString::fromStdString(toml::find_or<std::string>(data, "General", "logFilter", "")));
-    ui->userNameLineEdit->setText(
-        QString::fromStdString(toml::find_or<std::string>(data, "General", "userName", "shadPS4")));
-    ui->trophyKeyLineEdit->setText(
-        QString::fromStdString(toml::find_or<std::string>(data, "Keys", "TrophyKey", "")));
-    ui->trophyKeyLineEdit->setEchoMode(QLineEdit::Password);
-    ui->FSRCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "fsrEnabled", true));
-    ui->RCASCheckBox->setChecked(toml::find_or<bool>(data, "GPU", "rcasEnabled", true));
-    ui->RCASSlider->setValue(toml::find_or<int>(data, "GPU", "rcasAttenuation", 250));
+    ui->showSplashCheckBox->setChecked(m_emu_settings->IsShowSplash());
+    ui->discordRPCCheckbox->setChecked(m_emu_settings->IsDiscordRPCEnabled());
+    ui->dmemSpinBox->setValue(m_emu_settings->GetExtraDmemInMBytes());
+    ui->logTypeComboBox->setCurrentText(QString::fromStdString(m_emu_settings->GetLogType()));
+    ui->logFilterLineEdit->setText(QString::fromStdString(m_emu_settings->GetLogFilter()));
+
+    ui->FSRCheckBox->setChecked(m_emu_settings->IsFsrEnabled());
+    ui->RCASCheckBox->setChecked(m_emu_settings->IsRcasEnabled());
+    ui->RCASSlider->setValue(m_emu_settings->GetRcasAttenuation());
     ui->RCASValue->setText(QString::number(ui->RCASSlider->value() / 1000.0, 'f', 3));
-    ui->volumeSlider->setValue(toml::find_or<int>(data, "General", "volumeSlider", 100));
+    ui->volumeSlider->setValue(m_emu_settings->GetVolumeSlider());
     ui->volumeValue->setText(QString::number(ui->volumeSlider->value()) + "%");
-    ui->graphicsAdapterBox->setCurrentIndex(toml::find_or<int>(data, "Vulkan", "gpuId", -1) + 1);
-    ui->pipelineCacheCheckBox->setChecked(
-        toml::find_or<bool>(data, "Vulkan", "pipelineCacheEnable", false));
-    ui->networkConnectedCheckBox->setChecked(
-        toml::find_or<bool>(data, "General", "isConnectedToNetwork", false));
-    ui->psnSignInCheckBox->setChecked(
-        toml::find_or<bool>(data, "General", "isPSNSignedIn", false)
-    );
-    ui->httpHostOverrideEdit->setText(QString::fromStdString(
-        toml::find_or<std::string>(data, "General", "httpHostOverride", "thehuntersdream.com")));
+    ui->graphicsAdapterBox->setCurrentIndex(m_emu_settings->GetGpuId() + 1);
+    ui->pipelineCacheCheckBox->setChecked(m_emu_settings->IsPipelineCacheEnabled());
 
-    QString translatedText_PresentMode = presentModeMap.key(
-        QString::fromStdString(toml::find_or<std::string>(data, "GPU", "presentMode", "Mailbox")));
+    QString translatedText_PresentMode =
+        presentModeMap.key(QString::fromStdString(m_emu_settings->GetPresentMode()));
     ui->presentModeComboBox->setCurrentText(translatedText_PresentMode);
 
-    QString save_data_path_string;
-    Common::PathToQString(save_data_path_string, Config::externalSaveDir);
-    ui->SavePathLineEdit->setText(save_data_path_string);
+    QString home_path_string;
+    Common::PathToQString(home_path_string, Config::externalHomeDir);
+    ui->HomePathLineEdit->setText(home_path_string);
 
-    QString dlc_path_string;
-    Common::PathToQString(save_data_path_string, Config::dlcDir);
-    ui->DLCPathLineEdit->setText(save_data_path_string);
+    ui->motionControlsCheckBox->setChecked(m_emu_settings->IsMotionControlsEnabled());
+    ui->fullscreenModeComboBox->setCurrentText(
+        QString::fromStdString(m_emu_settings->GetFullScreenMode()));
+    ui->backgroundControllerCheckBox->setChecked(m_emu_settings->IsBackgroundControllerInput());
 
-    ui->motionControlsCheckBox->setChecked(
-        toml::find_or<bool>(data, "Input", "isMotionControlsEnabled", false));
-    ui->fullscreenModeComboBox->setCurrentText(QString::fromStdString(
-        toml::find_or<std::string>(data, "GPU", "FullscreenMode", "Windowed")));
-    ui->backgroundControllerCheckBox->setChecked(
-        toml::find_or<bool>(data, "Input", "backgroundControllerInput", false));
+    QFile file(keysJsonPath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        // handle
+    }
 
-    ui->vblankDividerSpinBox->setValue(toml::find_or<int>(data, "GPU", "vblankDivider", 1));
+    QByteArray jsonData = file.readAll();
+    file.close();
+
+    QJsonDocument doc = QJsonDocument::fromJson(jsonData);
+    if (doc.isNull()) {
+        // handle
+    }
+
+    QString key;
+    QJsonObject obj = doc.object();
+    QJsonValue nameValue = obj.value("TrophyKeySet");
+    if (nameValue.isObject()) {
+        QJsonObject releaseObj = nameValue.toObject();
+        key = releaseObj.value("ReleaseTrophyKey").toString();
+    }
+
+    ui->trophyKeyLineEdit->setText(key);
+    ui->trophyKeyLineEdit->setEchoMode(QLineEdit::Password);
 }
 
 void ShadSettings::OnCursorStateChanged(int index) {
@@ -342,8 +423,6 @@ void ShadSettings::updateNoteTextEdit(const QString& elementName) {
         text = GPUBufferCheckBoxtext;
     } else if (elementName == "discordRPCCheckbox") {
         text = discordRPCCheckboxtext;
-    } else if (elementName == "userName") {
-        text = userNametext;
     } else if (elementName == "trophyKeyLineEdit") {
         text = TrophyKeytext;
     } else if (elementName == "logTypeGroupBox") {
@@ -406,90 +485,117 @@ bool ShadSettings::eventFilter(QObject* obj, QEvent* event) {
 }
 
 void ShadSettings::SaveSettings() {
-    toml::value data;
-    std::string filename = Common::game_serial + ".toml";
-    std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
-    std::filesystem::path shadConfigFile =
-        is_game_specific ? gsConfig : Common::GetShadUserDir() / "config.toml";
+    m_emu_settings->SetShowSplash(ui->showSplashCheckBox->isChecked());
+    m_emu_settings->SetVolumeSlider(ui->volumeSlider->value());
+    m_emu_settings->SetTrophyPopupDisabled(ui->disableTrophycheckBox->isChecked());
+    m_emu_settings->SetTrophyNotificationDuration(ui->popUpDurationSpinBox->value());
 
-    std::error_code error;
-    if (std::filesystem::exists(shadConfigFile, error)) {
-        try {
-            std::ifstream ifs;
-            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-            ifs.open(shadConfigFile, std::ios_base::binary);
-            data =
-                toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
-        } catch (const std::exception& ex) {
-            // handle
-            return;
-        }
+    std::string trophy_loc = ui->popUpPosComboBox->currentText().toStdString();
+    m_emu_settings->SetTrophyNotificationSide(trophy_loc);
+
+    // ------------------ Graphics tab --------------------------------------------------------
+    bool isFullscreen = ui->fullscreenModeComboBox->currentText() != tr("Windowed");
+    m_emu_settings->SetFullScreen(isFullscreen);
+    m_emu_settings->SetPresentMode(
+        presentModeMap.value(ui->presentModeComboBox->currentText()).toStdString());
+    m_emu_settings->SetFullScreenMode(ui->fullscreenModeComboBox->currentText().toStdString());
+
+    m_emu_settings->SetWindowHeight(ui->heightSpinBox->value());
+    m_emu_settings->SetWindowWidth(ui->widthSpinBox->value());
+
+    m_emu_settings->SetFsrEnabled(ui->FSRCheckBox->isChecked());
+    m_emu_settings->SetRcasEnabled(ui->RCASCheckBox->isChecked());
+    m_emu_settings->SetRcasAttenuation(ui->RCASSlider->value());
+
+    // First options is auto selection -1, so gpuId on the GUI will always have to subtract 1
+    // when setting and add 1 when getting to select the correct gpu in Qt
+    m_emu_settings->SetGpuId(ui->graphicsAdapterBox->currentIndex() - 1);
+
+    // ------------------ Input tab --------------------------------------------------------
+    m_emu_settings->SetCursorState(cursorStateMap.value(ui->hideCursorComboBox->currentText()));
+    m_emu_settings->SetCursorHideTimeout(ui->idleTimeoutSpinBox->value());
+    m_emu_settings->SetMotionControlsEnabled(ui->motionControlsCheckBox->isChecked());
+    m_emu_settings->SetBackgroundControllerInput(ui->backgroundControllerCheckBox->isChecked());
+
+    // ------------------ Log tab --------------------------------------------------------
+    m_emu_settings->SetLogFilter(ui->logFilterLineEdit->text().toStdString());
+    m_emu_settings->SetLogType(ui->logTypeComboBox->currentText().toStdString());
+
+    // ------------------ Debug tab --------------------------------------------------------
+    m_emu_settings->SetCopyGpuBuffers(ui->GPUBufferCheckBox->isChecked());
+
+    if (is_game_specific) {
+        m_emu_settings->SetReadbacksMode(ui->readbacksModeComboBox->currentIndex());
+        m_emu_settings->SetPSNSignedIn(ui->psnSignInCheckBox->isChecked());
+        m_emu_settings->SetConnectedToNetwork(ui->networkConnectedCheckBox->isChecked());
+        m_emu_settings->SetPipelineCacheEnabled(ui->pipelineCacheCheckBox->isChecked());
+        m_emu_settings->SetExtraDmemInMBytes(ui->dmemSpinBox->value());
+        m_emu_settings->SetVblankFrequency(ui->vblankSpinBox->value());
     } else {
-        if (error) {
+        m_emu_settings->SetDiscordRPCEnabled(ui->discordRPCCheckbox->isChecked());
+        m_emu_settings->SetHomeDir(ui->HomePathLineEdit->text().toStdString());
+
+        QString code;
+        QString currentLocale = ui->consoleLanguageComboBox->currentText();
+        QList<QLocale> allLocales =
+            QLocale::matchingLocales(QLocale::AnyLanguage, QLocale::AnyScript, QLocale::AnyCountry);
+        for (int iLocale = 0; iLocale < allLocales.count(); iLocale++) {
+
+            QLocale locale = allLocales.at(iLocale);
+            QString locale_name = locale.nativeLanguageName();
+
+            if (locale.territory() != QLocale::AnyTerritory) {
+                locale_name += " (" + locale.nativeTerritoryName() + ")";
+            }
+
+            if (locale_name == currentLocale) {
+                code = allLocales.at(iLocale).bcp47Name();
+            }
+        }
+        m_emu_settings->SetConsoleLanguage(language_ids[code]);
+
+        QFile file(keysJsonPath);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             // handle
         }
-    }
+        QByteArray jsonData = file.readAll();
+        file.close();
 
-    // Save old release settings
-    if (Config::isReleaseOlder(11)) {
-        data["GPU"]["vblankDivider"] = ui->vblankDividerSpinBox->value();
+        QJsonDocument doc = QJsonDocument::fromJson(jsonData);
+        if (doc.isNull()) {
+            // handle
+        }
+
+        QString key = ui->trophyKeyLineEdit->text();
+        Config::TrophyKey = key.toStdString();
+        QJsonObject obj = doc.object();
+        QJsonValue trophyKeySetObj = obj.value("TrophyKeySet");
+        if (trophyKeySetObj.isObject()) {
+            QJsonObject releaseObj = trophyKeySetObj.toObject();
+            releaseObj["ReleaseTrophyKey"] = key;
+            obj["TrophyKeySet"] = releaseObj;
+        }
+
+        doc.setObject(obj);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
+            // handle
+        }
+
+        file.write(doc.toJson(QJsonDocument::Indented));
+        file.close();
     }
 
     if (is_game_specific) {
-        data["General"]["extraDmemInMbytes"] = ui->dmemSpinBox->value();
-
-        data["General"]["isConnectedToNetwork"] = ui->networkConnectedCheckBox->isChecked();
-        data["General"]["isPSNSignedIn"] = ui->psnSignInCheckBox->isChecked();
-
-        data["General"]["httpHostOverride"] = ui->httpHostOverrideEdit->text().toStdString();
-
-        data["GPU"]["readbacksMode"] = ui->readbacksModeComboBox->currentIndex();
-        data["GPU"]["directMemoryAccess"] = ui->DMACheckBox->isChecked();
-        data["GPU"]["vblankFrequency"] = ui->vblankSpinBox->value();
+        if (!m_emu_settings->Save(Common::game_serial)) {
+            QMessageBox::information(this, "Error", "Unable to save settings");
+            return;
+        }
     } else {
-        data["General"]["enableDiscordRPC"] = ui->discordRPCCheckbox->isChecked();
-
-        data["Keys"]["TrophyKey"] = ui->trophyKeyLineEdit->text().toStdString();
-
-        Config::TrophyKey = ui->trophyKeyLineEdit->text().toStdString();
+        if (!m_emu_settings->Save()) {
+            QMessageBox::information(this, "Error", "Unable to save settings");
+            return;
+        }
     }
-
-    data["General"]["isTrophyPopupDisabled"] = ui->disableTrophycheckBox->isChecked();
-    data["General"]["sideTrophy"] = ui->popUpPosComboBox->currentText().toStdString();
-    data["General"]["trophyNotificationDuration"] = ui->popUpDurationSpinBox->value();
-    data["General"]["logFilter"] = ui->logFilterLineEdit->text().toStdString();
-    data["General"]["logType"] = ui->logTypeComboBox->currentText().toStdString();
-    data["General"]["userName"] = ui->userNameLineEdit->text().toStdString();
-    data["General"]["volumeSlider"] = ui->volumeSlider->value();
-    data["General"]["showSplash"] = ui->showSplashCheckBox->isChecked();
-
-    data["Input"]["cursorState"] = ui->hideCursorComboBox->currentIndex();
-    data["Input"]["cursorHideTimeout"] = ui->idleTimeoutSpinBox->value();
-    data["Input"]["isMotionControlsEnabled"] = ui->motionControlsCheckBox->isChecked();
-    data["Input"]["backgroundControllerInput"] = ui->backgroundControllerCheckBox->isChecked();
-
-    data["GPU"]["screenWidth"] = ui->widthSpinBox->value();
-    data["GPU"]["screenHeight"] = ui->heightSpinBox->value();
-    data["GPU"]["copyGPUBuffers"] = ui->GPUBufferCheckBox->isChecked();
-    data["GPU"]["fsrEnabled"] = ui->FSRCheckBox->isChecked();
-    data["GPU"]["rcasEnabled"] = ui->RCASCheckBox->isChecked();
-    data["GPU"]["rcasAttenuation"] = ui->RCASSlider->value();
-    data["GPU"]["FullscreenMode"] = ui->fullscreenModeComboBox->currentText().toStdString();
-    data["GPU"]["presentMode"] =
-        presentModeMap.value(ui->presentModeComboBox->currentText()).toStdString();
-
-    bool isFullscreen = ui->fullscreenModeComboBox->currentText() != "Windowed";
-    data["GPU"]["Fullscreen"] = isFullscreen;
-
-    data["Vulkan"]["gpuId"] = ui->graphicsAdapterBox->currentIndex() - 1;
-    data["Vulkan"]["pipelineCacheEnable"] = ui->pipelineCacheCheckBox->isChecked();
-
-    data["Settings"]["consoleLanguage"] =
-        languageIndexes[ui->consoleLanguageComboBox->currentIndex()];
-
-    std::ofstream file(shadConfigFile, std::ios::binary);
-    file << data;
-    file.close();
 }
 
 void ShadSettings::SetDefaults() {
@@ -505,7 +611,6 @@ void ShadSettings::SetDefaults() {
     ui->GPUBufferCheckBox->setChecked(false);
     ui->logTypeComboBox->setCurrentText("sync");
     ui->logFilterLineEdit->setText("");
-    ui->userNameLineEdit->setText("shadPS4");
     ui->motionControlsCheckBox->setChecked(false);
     ui->backgroundControllerCheckBox->setChecked(false);
     ui->fullscreenModeComboBox->setCurrentText("Windowed");
@@ -581,4 +686,127 @@ void ShadSettings::getPhysicalDevices() {
     vkDestroyInstance(instance, nullptr);
 }
 
-ShadSettings::~ShadSettings() {}
+ShadSettings::~ShadSettings() {
+    // Clean up game-specific settings when dialog closes
+    if (m_game_specific_settings) {
+        // If we swapped settings, swap them back
+        if (is_game_specific) {
+            if (m_original_settings) {
+                // Restore original settings
+                m_emu_settings.swap(m_game_specific_settings);
+            }
+        }
+
+        // Clear the shared_ptr
+        m_game_specific_settings.reset();
+    }
+
+    // Also clear original settings
+    if (m_original_settings) {
+        m_original_settings.reset();
+    }
+}
+
+bool ShadSettings::IsSettingOverrideable(const char* setting_key,
+                                         const QString& setting_group) const {
+    // Check if the setting is in the overrideable list for the given group
+    if (setting_group == "General") {
+        for (const auto& item : m_emu_settings->GetGeneralOverrideableFields()) {
+            if (std::string(item.key) == setting_key) {
+                return true;
+            }
+        }
+    } else if (setting_group == "Debug") {
+        for (const auto& item : m_emu_settings->GetDebugOverrideableFields()) {
+            if (std::string(item.key) == setting_key) {
+                return true;
+            }
+        }
+    } else if (setting_group == "Input") {
+        for (const auto& item : m_emu_settings->GetInputOverrideableFields()) {
+            if (std::string(item.key) == setting_key) {
+                return true;
+            }
+        }
+    } else if (setting_group == "Audio") {
+        for (const auto& item : m_emu_settings->GetAudioOverrideableFields()) {
+            if (std::string(item.key) == setting_key) {
+                return true;
+            }
+        }
+    } else if (setting_group == "GPU") {
+        for (const auto& item : m_emu_settings->GetGPUOverrideableFields()) {
+            if (std::string(item.key) == setting_key) {
+                return true;
+            }
+        }
+    } else if (setting_group == "Vulkan") {
+        for (const auto& item : m_emu_settings->GetVulkanOverrideableFields()) {
+            if (std::string(item.key) == setting_key) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+void ShadSettings::MapUIControls() {
+    // General Settings
+    m_uiSettingMap[ui->showSplashCheckBox] = {"show_splash", "General"};
+    m_uiSettingMap[ui->volumeSlider] = {"volume_slider", "General"};
+    m_uiSettingMap[ui->disableTrophycheckBox] = {"trophy_popup_disabled", "General"};
+    m_uiSettingMap[ui->popUpDurationSpinBox] = {"trophy_notification_duration", "General"};
+    m_uiSettingMap[ui->popUpPosComboBox] = {"trophy_notification_side", "General"};
+    m_uiSettingMap[ui->discordRPCCheckbox] = {"discord_rpc_enabled", "General"};
+
+    // GPU Settings
+    m_uiSettingMap[ui->graphicsAdapterBox] = {"gpu_id", "Vulkan"}; // Note: This is in Vulkan group
+    m_uiSettingMap[ui->heightSpinBox] = {"window_height", "GPU"};
+    m_uiSettingMap[ui->widthSpinBox] = {"window_width", "GPU"};
+    m_uiSettingMap[ui->FSRCheckBox] = {"fsr_enabled", "GPU"};
+    m_uiSettingMap[ui->RCASCheckBox] = {"rcas_enabled", "GPU"};
+    m_uiSettingMap[ui->RCASSlider] = {"rcas_attenuation", "GPU"};
+    m_uiSettingMap[ui->GPUBufferCheckBox] = {"copy_gpu_buffers", "GPU"};
+    m_uiSettingMap[ui->fullscreenModeComboBox] = {"full_screen_mode", "GPU"};
+    m_uiSettingMap[ui->presentModeComboBox] = {"present_mode", "GPU"};
+    m_uiSettingMap[ui->readbacksModeComboBox] = {"readbacks_mode", "GPU"};
+
+    // Input Settings
+    m_uiSettingMap[ui->hideCursorComboBox] = {"cursor_state", "Input"};
+    m_uiSettingMap[ui->idleTimeoutSpinBox] = {"cursor_hide_timeout", "Input"};
+    m_uiSettingMap[ui->motionControlsCheckBox] = {"motion_controls_enabled", "Input"};
+    m_uiSettingMap[ui->backgroundControllerCheckBox] = {"background_controller_input", "Input"};
+
+    // Debug Settings
+    m_uiSettingMap[ui->logFilterLineEdit] = {"log_filter", "General"};
+    m_uiSettingMap[ui->logTypeComboBox] = {"log_type", "General"};
+
+    // Vulkan Settings
+    m_uiSettingMap[ui->pipelineCacheCheckBox] = {"pipeline_cache_enabled", "Vulkan"};
+
+    // Experimental/Other Settings
+    m_uiSettingMap[ui->psnSignInCheckBox] = {"psn_signed_in", "General"};
+    m_uiSettingMap[ui->networkConnectedCheckBox] = {"connected_to_network", "General"};
+    m_uiSettingMap[ui->dmemSpinBox] = {"extra_dmem_in_mbytes", "General"};
+    m_uiSettingMap[ui->vblankSpinBox] = {"vblank_frequency", "GPU"};
+}
+
+void ShadSettings::CreateKeysJson() {
+    QJsonObject releaseObject;
+    releaseObject["ReleaseTrophyKey"] = "";
+
+    QJsonObject rootObject;
+    rootObject["TrophyKeySet"] = releaseObject;
+
+    QJsonDocument doc(rootObject);
+    QByteArray jsonData = doc.toJson(QJsonDocument::Indented);
+
+    QFile file(keysJsonPath);
+    if (!file.open(QIODevice::WriteOnly)) {
+        // handle
+    }
+
+    file.write(jsonData);
+    file.close();
+}

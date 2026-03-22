@@ -48,6 +48,8 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     logDisplay = new QAnsiTextEdit(this);
     ui->logLayout->addWidget(logDisplay);
 
+    EmulatorSettings::SetInstance(m_emu_settings);
+    m_emu_settings->Load();
     Config::LoadSettings();
 
     if (Common::shadPs4Executable == "" || !std::filesystem::exists(Common::shadPs4Executable)) {
@@ -120,7 +122,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             [this]() { m_ipc_client->toggleFullscreen(); });
 
     connect(ui->pkgButton, &QPushButton::pressed, this, [this]() {
-        PkgExtractor* Extractor = new PkgExtractor(this);
+        PkgExtractor* Extractor = new PkgExtractor(m_emu_settings, this);
         Extractor->exec();
     });
 
@@ -131,7 +133,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
 
     connect(ui->TrophyButton, &QPushButton::pressed, this, [this]() {
         QString trophyPath, gameTrpPath;
-        Common::PathToQString(trophyPath, Common::game_serial);
+        trophyPath = QString::fromStdString(Common::game_serial);
         Common::PathToQString(gameTrpPath, Common::installPath);
 
         if (std::filesystem::exists(Common::installUpdatePath)) {
@@ -148,12 +150,9 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         if (!CheckBBInstall())
             return;
 
-        // Releases older than 0.9.0 will need to use the game serial as save folder
-        std::string savePath = Config::isReleaseOlder(9)
-                                   ? Common::game_serial
-                                   : PSFdata::getSavePath(Common::installPath);
+        std::string savePath = PSFdata::getSavePath(Common::installPath);
         std::filesystem::path saveFile =
-            Common::GetSaveDir() / "1" / savePath / "SPRJ0005" / "userdata0010";
+            Common::GetSaveDir() / savePath / "SPRJ0005" / "userdata0010";
 
         if (!std::filesystem::exists(saveFile)) {
             QMessageBox::warning(this, "No saves detected",
@@ -191,15 +190,16 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         if (!CheckBBInstall())
             return;
 
-        if (!std::filesystem::exists(Common::GetShadUserDir() / "config.toml")) {
+        if (!std::filesystem::exists(Common::GetShadUserDir() / "config.json")) {
             QMessageBox::warning(
                 this, "No global config file found",
-                QString::fromStdString((Common::GetShadUserDir() / "config.toml").string() +
+                QString::fromStdString((Common::GetShadUserDir() / "config.json").string() +
                                        " not found. Run shadPS4 once to generate it."));
             return;
         }
 
-        ShadSettings* ShadSettingsWindow = new ShadSettings(m_ipc_client, false, this);
+        ShadSettings* ShadSettingsWindow =
+            new ShadSettings(m_emu_settings, m_ipc_client, false, this);
         ShadSettingsWindow->exec();
     });
 
@@ -207,37 +207,16 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         if (!CheckBBInstall())
             return;
 
-        if (!std::filesystem::exists(Common::GetShadUserDir() / "config.toml")) {
+        if (!std::filesystem::exists(Common::GetShadUserDir() / "config.json")) {
             QMessageBox::warning(
                 this, "No config files found",
-                QString::fromStdString((Common::GetShadUserDir() / "config.toml").string() +
+                QString::fromStdString((Common::GetShadUserDir() / "config.json").string() +
                                        " not found. Run shadPS4 once to generate it."));
             return;
         }
 
-        if (Config::isReleaseOlder(11)) {
-            QMessageBox::warning(
-                this, "Old release not supported",
-                "Releases older than v0.11.0 do not support game-specific configs");
-            return;
-        }
-
-        std::string filename = Common::game_serial + ".toml";
-        std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
-
-        if (!std::filesystem::exists(gsConfig)) {
-            if (QMessageBox::Yes ==
-                QMessageBox::question(this, "No game-specific config file found",
-                                      QString::fromStdString(gsConfig.string()) +
-                                          " not found. Do you want to create it?",
-                                      QMessageBox::Yes | QMessageBox::No)) {
-                Config::CreateGSFile();
-            } else {
-                return;
-            }
-        }
-
-        ShadSettings* ShadSettingsWindow = new ShadSettings(m_ipc_client, true, this);
+        ShadSettings* ShadSettingsWindow =
+            new ShadSettings(m_emu_settings, m_ipc_client, true, this);
         ShadSettingsWindow->exec();
     });
 
@@ -249,24 +228,12 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->KBMButton, &QPushButton::clicked, this, [this]() {
-        if (Config::isReleaseOlder(7)) {
-            QMessageBox::warning(this, "Old release not supported",
-                                 "Releases older than v0.7.0 do not support input remapping");
-            return;
-        }
-
-        KBMSettings* KBMWindow = new KBMSettings(m_ipc_client, this);
+        KBMSettings* KBMWindow = new KBMSettings(m_emu_settings, m_ipc_client, this);
         KBMWindow->exec();
     });
 
     connect(ui->ControllerButton, &QPushButton::clicked, this, [this]() {
-        if (Config::isReleaseOlder(7)) {
-            QMessageBox::warning(this, "Old release not supported",
-                                 "Releases older than v0.7.0 do not support input remapping");
-            return;
-        }
-
-        ControlSettings* RemapWindow = new ControlSettings(m_ipc_client, this);
+        ControlSettings* RemapWindow = new ControlSettings(m_emu_settings, m_ipc_client, this);
         RemapWindow->exec();
     });
 
@@ -290,12 +257,6 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->HotkeyButton, &QPushButton::clicked, this, [this]() {
-        if (Config::isReleaseOlder(11)) {
-            QMessageBox::warning(this, "Old release not supported",
-                                 "Releases older than v0.11.0 do not support custom hotkeys");
-            return;
-        }
-
         Hotkeys* HKWindow = new Hotkeys(m_ipc_client, this);
         HKWindow->exec();
     });
@@ -377,9 +338,8 @@ void BBLauncher::StartBackupSave() {
     }
 
     // Releases older than 0.9.0 will need to use the game serial as save folder
-    std::string savePath =
-        Config::isReleaseOlder(9) ? Common::game_serial : PSFdata::getSavePath(Common::installPath);
-    std::filesystem::path save_dir = Common::GetSaveDir() / "1" / savePath;
+    std::string savePath = PSFdata::getSavePath(Common::installPath);
+    std::filesystem::path save_dir = Common::GetSaveDir() / savePath;
 
     auto backup_dir = BackupPath / "BACKUP1";
 
@@ -566,12 +526,6 @@ void BBLauncher::RunGame() {
 }
 
 void BBLauncher::RestartEmulator() {
-    if (Config::isReleaseOlder(11)) {
-        QMessageBox::information(nullptr, "BBLauncher",
-                                 "Not supported on releases older than 0.11.0");
-        return;
-    }
-
     if (!Config::GameRunning) {
         QMessageBox::information(nullptr, "BBLauncher", "No runnning game to restart");
         return;
@@ -761,13 +715,12 @@ void BBLauncher::StartGameWithArgs(QStringList args) {
     }
 
     if (Config::SoundFixEnabled) {
-        std::filesystem::path savePath =
-            Common::GetSaveDir() / "1" / Common::game_serial / "SPRJ0005";
+        std::filesystem::path savePath = Common::GetSaveDir() / Common::game_serial / "SPRJ0005";
         if (Common::game_serial == "CUSA03173")
-            savePath = Common::GetSaveDir() / "1" / "CUSA00207" / "SPRJ0005";
+            savePath = Common::GetSaveDir() / "CUSA00207" / "SPRJ0005";
 
         if (Common::game_serial == "CUSA03023")
-            savePath = Common::GetSaveDir() / "1" / "CUSA01363" / "SPRJ0005";
+            savePath = Common::GetSaveDir() / "CUSA01363" / "SPRJ0005";
 
         if (std::filesystem::exists(savePath / "userdata0010")) {
             std::ofstream savefile1;
@@ -805,99 +758,16 @@ void BBLauncher::StartEmulator(std::filesystem::path path, QStringList args) {
         return;
     }
 
-    // Releases older than 0.11.0 will active patch file appended
-    bool usePatchFile = Config::isReleaseOlder(11);
-
     QStringList gameArgs{"--game", QString::fromStdWString(path.wstring())};
-    QStringList patchArgs{"--patch", getPatchFile()};
     QStringList final_args;
 
     final_args.append(args);
     final_args.append(gameArgs);
-    if (usePatchFile)
-        final_args.append(patchArgs);
 
     QString workDir = fileInfo.absolutePath();
     m_ipc_client->startEmulator(fileInfo, final_args, workDir);
 
     Config::GameRunning = true;
-}
-
-QString BBLauncher::getPatchFile() {
-    QString patchDir;
-    Common::PathToQString(patchDir, (Common::GetShadUserDir() / "patches"));
-    QDir dir(patchDir);
-    QStringList folders = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-    QString patchFile = "";
-
-    for (const QString& folder : folders) {
-        QString filesJsonPath = patchDir + "/" + folder + "/files.json";
-
-        QFile jsonFile(filesJsonPath);
-        if (!jsonFile.open(QIODevice::ReadOnly)) {
-            // LOG_ERROR(Loader, "Unable to open files.json for reading in repository {}",
-            //         folder.toStdString());
-            continue;
-        }
-        const QByteArray jsonData = jsonFile.readAll();
-        jsonFile.close();
-
-        const QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
-        const QJsonObject jsonObject = jsonDoc.object();
-        const QString serial = QString::fromStdString(Common::game_serial);
-        QString selectedFileName;
-
-        for (auto it = jsonObject.constBegin(); it != jsonObject.constEnd(); ++it) {
-            const QString filePath = it.key();
-            const QJsonArray idsArray = it.value().toArray();
-            if (idsArray.contains(QJsonValue(serial))) {
-                selectedFileName = filePath;
-                break;
-            }
-        }
-
-        const QString filePath = patchDir + "/" + folder + "/" + selectedFileName;
-        QFile file(filePath);
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            // LOG_ERROR(Loader, "Unable to open the file for reading.");
-            continue;
-        }
-        const QByteArray xmlData = file.readAll();
-        file.close();
-
-        QXmlStreamReader xmlReader(xmlData);
-        bool isEnabled = false;
-        std::string currentPatchName;
-
-        while (!xmlReader.atEnd()) {
-            xmlReader.readNext();
-
-            if (!xmlReader.isStartElement()) {
-                continue;
-            }
-
-            if (xmlReader.name() == QStringLiteral("Metadata")) {
-                isEnabled = false;
-                for (const QXmlStreamAttribute& attr : xmlReader.attributes()) {
-                    if (attr.name() == QStringLiteral("isEnabled")) {
-                        isEnabled = (attr.value().toString() == "true");
-                        if (isEnabled) {
-                            patchFile = filePath;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (patchFile != "")
-                break;
-        }
-
-        if (patchFile != "")
-            break;
-    }
-
-    return patchFile;
 }
 
 void BBLauncher::OpenFolders() {
@@ -915,10 +785,8 @@ void BBLauncher::OpenFolders() {
         path = Common::GetShadUserDir() / "log";
     } else if (item == "Saves Folder") {
         // Releases older than 0.9.0 will need to use the game serial as save folder
-        std::string savePath = Config::isReleaseOlder(9)
-                                   ? Common::game_serial
-                                   : PSFdata::getSavePath(Common::installPath);
-        path = Common::GetSaveDir() / "1" / savePath / "SPRJ0005";
+        std::string savePath = PSFdata::getSavePath(Common::installPath);
+        path = Common::GetSaveDir() / savePath / "SPRJ0005";
     } else if (item == "Backup Saves Folder") {
         path = Common::GetBBLFilesPath() / "SaveBackups";
     } else if (item == "ShadPS4 Settings Folder") {

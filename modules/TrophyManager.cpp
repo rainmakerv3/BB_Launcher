@@ -271,8 +271,8 @@ void TrophyViewer::TabChanged() {
 void TrophyViewer::TrophyIDChanged() {
     QString indexstring = ui->TrophyIDBox->currentText();
     int index = indexstring.toInt();
-    const auto trophyDir = Common::GetShadUserDir() / "game_data" / Common::game_serial /
-                           "TrophyFiles" / "trophy00" / "Icons";
+    const auto trophyDir =
+        Common::GetTrophyDir() / Common::game_serial / "TrophyFiles" / "trophy00" / "Icons";
     QString trophyDirQt;
     Common::PathToQString(trophyDirQt, trophyDir);
 
@@ -309,8 +309,8 @@ void TrophyViewer::UpdateStats() {
 void TrophyViewer::UnlockTrophy() {
     int ID = ui->TrophyIDBox->currentText().toInt();
 
-    const auto trophy_dir =
-        Common::GetShadUserDir() / "game_data" / Common::game_serial / "TrophyFiles";
+    // TODO:: VERIFY
+    const auto trophy_dir = Common::GetTrophyDir() / Common::game_serial / "TrophyFiles";
     auto trophy_file = trophy_dir / "trophy00" / "Xml" / "TROP.XML";
 
     pugi::xml_document doc;
@@ -370,8 +370,7 @@ void TrophyViewer::UnlockTrophy() {
 void TrophyViewer::LockTrophy() {
     int ID = ui->TrophyIDBox->currentText().toInt();
 
-    const auto trophy_dir =
-        Common::GetShadUserDir() / "game_data" / Common::game_serial / "TrophyFiles";
+    const auto trophy_dir = Common::GetTrophyDir() / Common::game_serial / "TrophyFiles";
     auto trophy_file = trophy_dir / "trophy00" / "Xml" / "TROP.XML";
 
     pugi::xml_document doc;
@@ -435,8 +434,7 @@ void TrophyViewer::LockAllTrophies() {
         return;
     }
 
-    const auto trophy_dir =
-        Common::GetShadUserDir() / "game_data" / Common::game_serial / "TrophyFiles";
+    const auto trophy_dir = Common::GetTrophyDir() / Common::game_serial / "TrophyFiles";
     auto trophy_file = trophy_dir / "trophy00" / "Xml" / "TROP.XML";
 
     pugi::xml_document doc;
@@ -493,8 +491,7 @@ bool TrophyViewer::RefreshValues(QString title) {
     trpTimeUnlocked.clear();
     icons.clear();
 
-    const auto trophyDir =
-        Common::GetShadUserDir() / "game_data" / Common::game_serial / "TrophyFiles";
+    const auto trophyDir = Common::GetTrophyDir() / Common::game_serial / "TrophyFiles";
     QString trophyDirQt;
     Common::PathToQString(trophyDirQt, trophyDir);
 

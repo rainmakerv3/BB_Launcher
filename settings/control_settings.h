@@ -8,6 +8,7 @@
 
 #include "modules/ipc/ipc_client.h"
 #include "right_click_button.h"
+#include "settings/emulator_settings.h"
 
 namespace Ui {
 class ControlSettings;
@@ -16,7 +17,8 @@ class ControlSettings;
 class ControlSettings : public QDialog {
     Q_OBJECT
 public:
-    explicit ControlSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent = nullptr);
+    explicit ControlSettings(std::shared_ptr<EmulatorSettings> emu_settings,
+                             std::shared_ptr<IpcClient> ipc_client, QWidget* parent = nullptr);
     ~ControlSettings();
 
 signals:
@@ -36,6 +38,7 @@ private Q_SLOTS:
 private:
     std::unique_ptr<Ui::ControlSettings> ui;
     std::shared_ptr<IpcClient> m_ipc_client;
+    std::shared_ptr<EmulatorSettings> m_emu_settings;
 
     bool eventFilter(QObject* obj, QEvent* event) override;
     void AddBoxItems();

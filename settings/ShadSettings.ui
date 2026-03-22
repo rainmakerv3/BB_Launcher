@@ -105,21 +105,43 @@
                 </widget>
                </item>
                <item>
-                <widget class="QGroupBox" name="userName">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
+                <layout class="QHBoxLayout" name="horizontalLayout_4">
+                 <item>
+                  <widget class="QLabel" name="volumeLabel">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
+                   <property name="text">
+                    <string>Volume</string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="volumeValue">
+                   <property name="text">
+                    <string>100</string>
+                   </property>
+                   <property name="alignment">
+                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="QSlider" name="volumeSlider">
+                 <property name="maximum">
+                  <number>500</number>
                  </property>
-                 <property name="title">
-                  <string notr="true">Username</string>
+                 <property name="value">
+                  <number>100</number>
                  </property>
-                 <layout class="QVBoxLayout" name="userNameLayout1">
-                  <item>
-                   <widget class="QLineEdit" name="userNameLineEdit"/>
-                  </item>
-                 </layout>
+                 <property name="orientation">
+                  <enum>Qt::Orientation::Horizontal</enum>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -309,46 +331,6 @@
                 <widget class="QCheckBox" name="GPUBufferCheckBox">
                  <property name="text">
                   <string>Copy GPU Buffers (may fix PM4 crashes)</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_4">
-                 <item>
-                  <widget class="QLabel" name="volumeLabel">
-                   <property name="sizePolicy">
-                    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                     <horstretch>0</horstretch>
-                     <verstretch>0</verstretch>
-                    </sizepolicy>
-                   </property>
-                   <property name="text">
-                    <string>Volume</string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="volumeValue">
-                   <property name="text">
-                    <string>100</string>
-                   </property>
-                   <property name="alignment">
-                    <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <widget class="QSlider" name="volumeSlider">
-                 <property name="maximum">
-                  <number>500</number>
-                 </property>
-                 <property name="value">
-                  <number>100</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Orientation::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -788,7 +770,7 @@
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>151</y>
+         <y>171</y>
          <width>441</width>
          <height>101</height>
         </rect>
@@ -853,7 +835,7 @@
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>266</y>
+         <y>286</y>
          <width>441</width>
          <height>91</height>
         </rect>
@@ -897,7 +879,7 @@
        <property name="geometry">
         <rect>
          <x>30</x>
-         <y>6</y>
+         <y>26</y>
          <width>441</width>
          <height>131</height>
         </rect>
@@ -952,14 +934,14 @@
       <widget class="QGroupBox" name="networkGroupBox">
        <property name="geometry">
         <rect>
-         <x>520</x>
-         <y>5</y>
+         <x>510</x>
+         <y>25</y>
          <width>441</width>
          <height>231</height>
         </rect>
        </property>
        <property name="title">
-        <string>Network</string>
+        <string>Network (currently in development)</string>
        </property>
        <widget class="QCheckBox" name="networkConnectedCheckBox">
         <property name="geometry">
@@ -1024,7 +1006,7 @@
        <property name="geometry">
         <rect>
          <x>29</x>
-         <y>370</y>
+         <y>390</y>
          <width>441</width>
          <height>111</height>
         </rect>
@@ -1073,22 +1055,22 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>10</y>
+         <y>20</y>
          <width>919</width>
          <height>88</height>
         </rect>
        </property>
        <property name="title">
-        <string>Save Path</string>
+        <string>Home Folder</string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QLineEdit" name="SavePathLineEdit">
+         <widget class="QLineEdit" name="HomePathLineEdit">
           <property name="readOnly">
            <bool>true</bool>
           </property>
           <property name="placeholderText">
-           <string>Use default save path</string>
+           <string>Use default path</string>
           </property>
          </widget>
         </item>
@@ -1105,7 +1087,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>230</y>
+         <y>240</y>
          <width>321</width>
          <height>75</height>
         </rect>
@@ -1126,63 +1108,11 @@
         </item>
        </layout>
       </widget>
-      <widget class="QGroupBox" name="oldVersionsGroupBox">
-       <property name="geometry">
-        <rect>
-         <x>20</x>
-         <y>420</y>
-         <width>321</width>
-         <height>123</height>
-        </rect>
-       </property>
-       <property name="title">
-        <string>Old Version Settings</string>
-       </property>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <widget class="QGroupBox" name="vblankDividerGroupBox">
-          <property name="title">
-           <string notr="true">Vblank Divider (for Release v.10.0 and older)</string>
-          </property>
-          <layout class="QVBoxLayout" name="vblankLayout_2">
-           <item>
-            <widget class="QSpinBox" name="vblankDividerSpinBox">
-             <property name="frame">
-              <bool>true</bool>
-             </property>
-             <property name="accelerated">
-              <bool>true</bool>
-             </property>
-             <property name="correctionMode">
-              <enum>QAbstractSpinBox::CorrectionMode::CorrectToNearestValue</enum>
-             </property>
-             <property name="keyboardTracking">
-              <bool>false</bool>
-             </property>
-             <property name="suffix">
-              <string/>
-             </property>
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>9999</number>
-             </property>
-             <property name="value">
-              <number>1</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </widget>
       <widget class="QGroupBox" name="SavePathGB_2">
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>120</y>
+         <y>130</y>
          <width>919</width>
          <height>88</height>
         </rect>
@@ -1197,7 +1127,7 @@
            <bool>true</bool>
           </property>
           <property name="placeholderText">
-           <string>Use default dlc path</string>
+           <string>Use default path</string>
           </property>
          </widget>
         </item>
@@ -1214,7 +1144,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>330</y>
+         <y>340</y>
          <width>242</width>
          <height>72</height>
         </rect>
@@ -1227,6 +1157,28 @@
          <widget class="QCheckBox" name="discordRPCCheckbox">
           <property name="text">
            <string notr="true">Enable Discord Rich Presence</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QGroupBox" name="userGroupBox">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>430</y>
+         <width>241</width>
+         <height>75</height>
+        </rect>
+       </property>
+       <property name="title">
+        <string>User Management</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QPushButton" name="usersButton">
+          <property name="text">
+           <string>Manage</string>
           </property>
          </widget>
         </item>

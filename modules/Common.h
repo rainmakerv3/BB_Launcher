@@ -13,6 +13,8 @@ using u16 = std::uint16_t;
 using u32 = std::uint32_t;
 using u64 = std::uint64_t;
 
+using s32 = std::int32_t;
+
 namespace Common {
 
 void PathToQString(QString& result, const std::filesystem::path& path);
@@ -25,6 +27,7 @@ std::filesystem::path GetCurrentPath(bool getLinuxFilename = false);
 std::filesystem::path GetBBLFilesPath();
 std::filesystem::path GetSaveDir();
 std::filesystem::path GetDlcDir();
+std::filesystem::path GetTrophyDir();
 
 extern std::string game_serial;
 extern std::filesystem::path installPath;

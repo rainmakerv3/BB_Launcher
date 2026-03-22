@@ -297,8 +297,8 @@ void VersionDialog::CheckVersionsList(const bool showMessage) {
                 QList<QTreeWidgetItem*> otherItems;
                 bool foundPreRelease = false;
 
-                //  > v.0.5.0
-                auto isVersionGreaterThan = [](int version, const QString& tagName) -> bool {
+                //  > v.0.16.0
+                auto isVersionGreaterThan_0_15_0 = [](const QString& tagName) -> bool {
                     QRegularExpression versionRegex(R"(v\.?(\d+)\.(\d+)\.(\d+))");
                     QRegularExpressionMatch match = versionRegex.match(tagName);
                     if (match.hasMatch()) {
@@ -308,9 +308,9 @@ void VersionDialog::CheckVersionsList(const bool showMessage) {
 
                         if (major > 0)
                             return true;
-                        if (major == 0 && minor >= version)
+                        if (major == 0 && minor >= 15)
                             return true;
-                        if (major == 0 && minor == version && patch > 0)
+                        if (major == 0 && minor == 15 && patch > 0)
                             return true;
                     }
                     return false;
@@ -323,12 +323,7 @@ void VersionDialog::CheckVersionsList(const bool showMessage) {
                     if (tagName.contains("Pre-release", Qt::CaseInsensitive)) {
                         continue;
                     }
-
-                    if (!isVersionGreaterThan(5, tagName)) {
-                        continue;
-                    }
-
-                    if (isVersionGreaterThan(16, tagName)) {
+                    if (!isVersionGreaterThan_0_15_0(tagName)) {
                         continue;
                     }
 

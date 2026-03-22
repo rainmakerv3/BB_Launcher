@@ -33,7 +33,7 @@ std::filesystem::path installPath;
 std::filesystem::path installUpdatePath;
 std::filesystem::path shadPs4Executable;
 
-const char VERSION[] = "Release13.07";
+const char VERSION[] = "Release14.00";
 
 std::filesystem::path GetCurrentPath(bool getLinuxFileName) {
     std::filesystem::path currentPath;
@@ -80,10 +80,7 @@ std::filesystem::path GetShadUserDir() {
 #elif _WIN32
         TCHAR appdata[MAX_PATH] = {0};
         SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appdata);
-
-        // Releases older than 0.7.0 do have global user folder
-        if (!Config::isReleaseOlder(7))
-            user_dir = std::filesystem::path(appdata) / "shadPS4";
+        user_dir = std::filesystem::path(appdata) / "shadPS4";
 #endif
     }
     return user_dir;
@@ -109,13 +106,11 @@ std::filesystem::path GetBBLFilesPath() {
 }
 
 std::filesystem::path GetSaveDir() {
-    std::filesystem::path path = Config::externalSaveDir;
-
-    // Releases older than 0.6.0 do have have configurable save folder
-    bool noConfigurableSaveFolder = Config::isReleaseOlder(6);
-    if (Config::externalSaveDir == "" || noConfigurableSaveFolder ||
-        !std::filesystem::exists(Config::externalSaveDir)) {
-        path = Common::GetShadUserDir() / "savedata";
+    std::filesystem::path path = Config::externalHomeDir;
+    if (Config::externalHomeDir == "") {
+        path = Common::GetShadUserDir() / "home" / "1" / "savedata";
+    } else {
+        path = Config::externalHomeDir / "1" / "savedata";
     }
 
     return path;
@@ -127,6 +122,11 @@ std::filesystem::path GetDlcDir() {
         path = Common::GetShadUserDir() / "addcont";
     }
 
+    return path;
+}
+
+std::filesystem::path GetTrophyDir() {
+    std::filesystem::path path = Config::externalHomeDir;
     return path;
 }
 
