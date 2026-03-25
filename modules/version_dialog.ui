@@ -265,7 +265,7 @@
            <item>
             <widget class="QCheckBox" name="showChangelogCheckBox">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="text">
               <string>Always Show Changelog</string>
@@ -285,7 +285,7 @@
            <item>
             <widget class="QCheckBox" name="checkOnStartupCheckBox">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="text">
               <string>Check pre-release updates at startup</string>

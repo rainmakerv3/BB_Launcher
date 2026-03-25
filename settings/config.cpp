@@ -87,7 +87,8 @@ void LoadSettings() {
     DefaultFolderString = toml::find_or<std::string>(data, "shadUpdater", "DefaultFolder", "");
     AutoUpdateVersionsEnabled =
         toml::find_or<bool>(data, "shadUpdater", "AutoUpdateVersionsEnabled", true);
-    AutoUpdateShadEnabled = false;
+    AutoUpdateShadEnabled =
+        toml::find_or<bool>(data, "shadUpdater", "AutoUpdateShadEnabled", false);
 
     if (data.contains("Launcher")) {
         const toml::value& launcher = data.at("Launcher");
