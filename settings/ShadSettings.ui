@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1005</width>
-    <height>748</height>
+    <height>726</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -66,7 +66,7 @@
          <x>0</x>
          <y>0</y>
          <width>981</width>
-         <height>584</height>
+         <height>562</height>
         </rect>
        </property>
        <layout class="QVBoxLayout" name="generalTabVLayout" stretch="0,0">
@@ -86,24 +86,6 @@
                <string notr="true">System</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_9">
-               <item>
-                <widget class="QGroupBox" name="consoleLanguageGroupBox">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="title">
-                  <string notr="true">Console Language</string>
-                 </property>
-                 <layout class="QVBoxLayout" name="settingsLayout">
-                  <item>
-                   <widget class="QComboBox" name="consoleLanguageComboBox"/>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_4">
                  <item>
@@ -141,6 +123,26 @@
                  </property>
                  <property name="orientation">
                   <enum>Qt::Orientation::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="pipelineCacheCheckBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>9</pointsize>
+                   <bold>true</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>Enable Shader Cache</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="deleteCacheButton">
+                 <property name="text">
+                  <string>Delete BB Shader Cache</string>
                  </property>
                 </widget>
                </item>
@@ -287,26 +289,6 @@
                <string notr="true">Emulator</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_4">
-               <item>
-                <widget class="QCheckBox" name="pipelineCacheCheckBox">
-                 <property name="font">
-                  <font>
-                   <pointsize>9</pointsize>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Enable Shader Cache</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="deleteCacheButton">
-                 <property name="text">
-                  <string>Delete BB Shader Cache</string>
-                 </property>
-                </widget>
-               </item>
                <item>
                 <widget class="QCheckBox" name="showSplashCheckBox">
                  <property name="text">
@@ -921,8 +903,8 @@
       <widget class="QGroupBox" name="networkGroupBox">
        <property name="geometry">
         <rect>
-         <x>510</x>
-         <y>25</y>
+         <x>512</x>
+         <y>27</y>
          <width>441</width>
          <height>231</height>
         </rect>
@@ -1042,7 +1024,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>350</y>
+         <y>370</y>
          <width>919</width>
          <height>88</height>
         </rect>
@@ -1074,8 +1056,8 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>140</y>
-         <width>321</width>
+         <y>90</y>
+         <width>351</width>
          <height>75</height>
         </rect>
        </property>
@@ -1099,7 +1081,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>30</y>
+         <y>270</y>
          <width>919</width>
          <height>88</height>
         </rect>
@@ -1131,8 +1113,8 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>240</y>
-         <width>242</width>
+         <y>180</y>
+         <width>351</width>
          <height>72</height>
         </rect>
        </property>
@@ -1152,10 +1134,10 @@
       <widget class="QGroupBox" name="userGroupBox">
        <property name="geometry">
         <rect>
-         <x>20</x>
-         <y>470</y>
-         <width>241</width>
-         <height>75</height>
+         <x>490</x>
+         <y>10</y>
+         <width>351</width>
+         <height>71</height>
         </rect>
        </property>
        <property name="title">
@@ -1168,6 +1150,30 @@
            <string>Manage</string>
           </property>
          </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QGroupBox" name="consoleLanguageGroupBox">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>10</y>
+         <width>351</width>
+         <height>71</height>
+        </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title">
+        <string notr="true">Console Language</string>
+       </property>
+       <layout class="QVBoxLayout" name="settingsLayout">
+        <item>
+         <widget class="QComboBox" name="consoleLanguageComboBox"/>
         </item>
        </layout>
       </widget>

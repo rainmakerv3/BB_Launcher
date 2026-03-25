@@ -132,6 +132,7 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
         ui->tabWidgetSettings->setTabVisible(1, false);
     }
 
+    ui->networkGroupBox->setVisible(false);
     ui->HomeFolderGroupBox->setVisible(false);
     ui->userGroupBox->setVisible(false);
 
@@ -328,6 +329,7 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->heightSpinBox->setValue(EmulatorSettings.GetWindowHeight());
     ui->vblankSpinBox->setValue(EmulatorSettings.GetVblankFrequency());
     ui->readbacksModeComboBox->setCurrentIndex(EmulatorSettings.GetReadbacksMode());
+    ui->DMACheckBox->setChecked(EmulatorSettings.IsDirectMemoryAccessEnabled());
     ui->GPUBufferCheckBox->setChecked(EmulatorSettings.IsCopyGpuBuffers());
     ui->disableTrophycheckBox->setChecked(EmulatorSettings.IsTrophyPopupDisabled());
     ui->popUpPosComboBox->setCurrentText(
@@ -536,7 +538,8 @@ void ShadSettings::SaveSettings() {
         EmulatorSettings.SetPipelineCacheEnabled(ui->pipelineCacheCheckBox->isChecked(),
                                                  is_game_specific);
         EmulatorSettings.SetExtraDmemInMBytes(ui->dmemSpinBox->value(), is_game_specific);
-        EmulatorSettings.SetVblankFrequency(ui->vblankSpinBox->value(), is_game_specific);
+        EmulatorSettings.SetDirectMemoryAccessEnabled(ui->DMACheckBox->isChecked(),
+                                                      is_game_specific);
     } else {
         EmulatorSettings.SetDiscordRPCEnabled(ui->discordRPCCheckbox->isChecked());
         EmulatorSettings.SetHomeDir(ui->HomePathLineEdit->text().toStdString());
@@ -749,6 +752,7 @@ void ShadSettings::MapUIControls() {
     m_uiSettingMap[ui->popUpDurationSpinBox] = {"trophy_notification_duration", "General"};
     m_uiSettingMap[ui->popUpPosComboBox] = {"trophy_notification_side", "General"};
     m_uiSettingMap[ui->discordRPCCheckbox] = {"discord_rpc_enabled", "General"};
+    m_uiSettingMap[ui->consoleLanguageComboBox] = {"console_language", "General"};
 
     // GPU Settings
     m_uiSettingMap[ui->graphicsAdapterBox] = {"gpu_id", "Vulkan"}; // Note: This is in Vulkan group
@@ -760,7 +764,6 @@ void ShadSettings::MapUIControls() {
     m_uiSettingMap[ui->GPUBufferCheckBox] = {"copy_gpu_buffers", "GPU"};
     m_uiSettingMap[ui->fullscreenModeComboBox] = {"full_screen_mode", "GPU"};
     m_uiSettingMap[ui->presentModeComboBox] = {"present_mode", "GPU"};
-    m_uiSettingMap[ui->readbacksModeComboBox] = {"readbacks_mode", "GPU"};
 
     // Input Settings
     m_uiSettingMap[ui->hideCursorComboBox] = {"cursor_state", "Input"};
@@ -780,6 +783,8 @@ void ShadSettings::MapUIControls() {
     m_uiSettingMap[ui->networkConnectedCheckBox] = {"connected_to_network", "General"};
     m_uiSettingMap[ui->dmemSpinBox] = {"extra_dmem_in_mbytes", "General"};
     m_uiSettingMap[ui->vblankSpinBox] = {"vblank_frequency", "GPU"};
+    m_uiSettingMap[ui->DMACheckBox] = {"direct_memory_access_enabled", "GPU"};
+    m_uiSettingMap[ui->readbacksModeComboBox] = {"readbacks_mode", "GPU"};
 }
 
 void ShadSettings::CreateKeysJson() {
