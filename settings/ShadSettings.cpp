@@ -540,6 +540,7 @@ void ShadSettings::SaveSettings() {
         EmulatorSettings.SetExtraDmemInMBytes(ui->dmemSpinBox->value(), is_game_specific);
         EmulatorSettings.SetDirectMemoryAccessEnabled(ui->DMACheckBox->isChecked(),
                                                       is_game_specific);
+        EmulatorSettings.SetVblankFrequency(ui->vblankSpinBox->value(), is_game_specific);
     } else {
         EmulatorSettings.SetDiscordRPCEnabled(ui->discordRPCCheckbox->isChecked());
         EmulatorSettings.SetHomeDir(ui->HomePathLineEdit->text().toStdString());
