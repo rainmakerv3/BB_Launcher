@@ -51,7 +51,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QScrollArea" name="generalTab">
       <property name="widgetResizable">
@@ -297,19 +297,6 @@
                  </property>
                  <property name="text">
                   <string>Enable Shader Cache</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="shaderCacheReqLabel">
-                 <property name="font">
-                  <font>
-                   <pointsize>8</pointsize>
-                   <bold>false</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>*requires latest shadps4 pre-release/nightly</string>
                  </property>
                 </widget>
                </item>
@@ -755,7 +742,7 @@
            </font>
           </property>
           <property name="text">
-           <string>NOTE: Game-Specific config will override global config if it exists (compatible with shadPS4 11.0 and later)</string>
+           <string>NOTE: Game-Specific config will override global config if it exists</string>
           </property>
          </widget>
         </item>
@@ -922,7 +909,7 @@
            </font>
           </property>
           <property name="text">
-           <string>*Note: Compatible with shadPS4 builds Feb. 28 2026 or later. Fixes vertex explosions - Relaxed has much better performance than Precise, at the cost of some traversal/loading stutter</string>
+           <string>*Note: Fixes vertex explosions - Relaxed has much better performance than Precise, at the cost of some traversal/loading stutter</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
