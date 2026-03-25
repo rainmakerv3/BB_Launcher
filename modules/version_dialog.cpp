@@ -32,25 +32,32 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
     this->setFixedSize(this->width(), this->height());
 
     ui->FolderLabel->setText(QString::fromStdString(Config::DefaultFolderString));
-    ui->checkOnStartupCheckBox->setChecked(false);
-    ui->checkOnStartupCheckBox->setEnabled(false);
-    ui->showChangelogCheckBox->setChecked(false);
-    ui->showChangelogCheckBox->setEnabled(false);
+    ui->checkOnStartupCheckBox->setChecked(Config::AutoUpdateShadEnabled);
+    ui->showChangelogCheckBox->setChecked(Config::ShowChangeLog);
     ui->versionListUpdateCheckBox->setChecked(Config::AutoUpdateVersionsEnabled);
 
     ui->LinkLabel->setText(
-        "Pre-releases and releases later than 0.15.0 are not compatible with this version");
+        "<a "
+        "href=\"https://docs.google.com/document/d/"
+        "1UKYSAMz3y9PH3AOCow5KyIIlRHZ0wbjcAxHvjZwtjk0\">Refer to -Online Test Build- section of "
+        "the help document for details and instructions on how to use the Online Test Build</a>");
+
+    ui->LinkLabel->setVisible(false);
 
     connect(ui->versionListUpdateCheckBox, &QCheckBox::toggled, this, [this](bool checked) {
         Config::AutoUpdateVersionsEnabled = checked;
         Config::SaveLauncherSettings();
     });
 
-    connect(ui->checkOnStartupCheckBox, &QCheckBox::toggled, this,
-            [this](bool checked) { Config::AutoUpdateShadEnabled = false; });
+    connect(ui->checkOnStartupCheckBox, &QCheckBox::toggled, this, [this](bool checked) {
+        Config::AutoUpdateShadEnabled = checked;
+        Config::SaveLauncherSettings();
+    });
 
-    connect(ui->showChangelogCheckBox, &QCheckBox::toggled, this,
-            [this](bool checked) { Config::ShowChangeLog = true; });
+    connect(ui->showChangelogCheckBox, &QCheckBox::toggled, this, [this](bool checked) {
+        Config::ShowChangeLog = checked;
+        Config::SaveLauncherSettings();
+    });
 
     networkManager = new QNetworkAccessManager(this);
 
@@ -298,7 +305,7 @@ void VersionDialog::CheckVersionsList(const bool showMessage) {
                 bool foundPreRelease = false;
 
                 //  > v.0.16.0
-                auto isVersionGreaterThan_0_15_0 = [](const QString& tagName) -> bool {
+                auto isVersionGreaterThan_0_16_0 = [](const QString& tagName) -> bool {
                     QRegularExpression versionRegex(R"(v\.?(\d+)\.(\d+)\.(\d+))");
                     QRegularExpressionMatch match = versionRegex.match(tagName);
                     if (match.hasMatch()) {
@@ -308,9 +315,9 @@ void VersionDialog::CheckVersionsList(const bool showMessage) {
 
                         if (major > 0)
                             return true;
-                        if (major == 0 && minor >= 15)
+                        if (major == 0 && minor >= 16)
                             return true;
-                        if (major == 0 && minor == 15 && patch > 0)
+                        if (major == 0 && minor == 16 && patch > 0)
                             return true;
                     }
                     return false;
@@ -320,16 +327,32 @@ void VersionDialog::CheckVersionsList(const bool showMessage) {
                     QJsonObject tagObj = value.toObject();
                     QString tagName = tagObj["name"].toString();
 
-                    if (tagName.contains("Pre-release", Qt::CaseInsensitive)) {
-                        continue;
+                    if (tagName.startsWith("Pre-release", Qt::CaseInsensitive)) {
+                        if (!foundPreRelease) {
+                            preReleaseItem = new QTreeWidgetItem();
+                            preReleaseItem->setText(0, "Pre-release");
+                            foundPreRelease = true;
+                        }
                     }
-                    if (!isVersionGreaterThan_0_15_0(tagName)) {
+
+                    if (!isVersionGreaterThan_0_16_0(tagName)) {
                         continue;
                     }
 
                     QTreeWidgetItem* item = new QTreeWidgetItem();
                     item->setText(0, tagName);
                     otherItems.append(item);
+                }
+
+                // If you didn't find Pre-release, add it manually
+                if (!foundPreRelease) {
+                    preReleaseItem = new QTreeWidgetItem();
+                    preReleaseItem->setText(0, "Pre-release");
+                }
+
+                // Add Pre-release first
+                if (preReleaseItem) {
+                    ui->downloadTreeWidget->addTopLevelItem(preReleaseItem);
                 }
 
                 /*
@@ -727,6 +750,11 @@ void VersionDialog::PopulateDownloadTree(const QStringList& versions) {
 
     for (const QString& tagName : versions) {
         if (tagName.startsWith("Pre-release", Qt::CaseInsensitive)) {
+            if (!foundPreRelease) {
+                preReleaseItem = new QTreeWidgetItem();
+                preReleaseItem->setText(0, "Pre-release");
+                foundPreRelease = true;
+            }
             continue;
         }
         QTreeWidgetItem* item = new QTreeWidgetItem();
@@ -734,17 +762,19 @@ void VersionDialog::PopulateDownloadTree(const QStringList& versions) {
         otherItems.append(item);
     }
 
+    if (!foundPreRelease) {
+        preReleaseItem = new QTreeWidgetItem();
+        preReleaseItem->setText(0, "Pre-release");
+    }
+
+    if (preReleaseItem)
+        ui->downloadTreeWidget->addTopLevelItem(preReleaseItem);
+
     for (QTreeWidgetItem* item : otherItems)
         ui->downloadTreeWidget->addTopLevelItem(item);
 }
 
 void VersionDialog::checkUpdatePre(const bool showMessage) {
-    QMessageBox::information(
-        this, "Update not compatible",
-        "Newest pre-releases are not supported by this version. Check "
-        "BBLauncher on Nexus Mods or BBLauncher Github for a compatible version");
-    return;
-
     hasPreRelease = false;
     preReleaseFolder = "";
     QString localHash = "";
