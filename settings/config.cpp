@@ -94,7 +94,7 @@ void LoadSettings() {
 
         SevenZipPath = toml::find_fs_path_or(launcher, "SevenZipPath", {});
         Common::installPath = toml::find_fs_path_or(launcher, "installPath", {});
-        Common::shadPs4Executable = toml::find_fs_path_or(launcher, "shadPath", {});
+        Common::shadPs4Executable = toml::find_fs_path_or(launcher, "shadPath-New", {});
     }
 
     if (std::filesystem::exists(Common::installPath)) {
@@ -178,7 +178,7 @@ void CreateSettingsFile() {
     toml::value data;
 
     data["Launcher"]["installPath"] = "";
-    data["Launcher"]["shadPath"] = "";
+    data["Launcher"]["shadPath-New"] = "";
     data["Launcher"]["Theme"] = "Dark";
     data["Launcher"]["SoundFixEnabled"] = true;
     data["Launcher"]["AutoUpdateEnabled"] = false;
@@ -219,7 +219,8 @@ void SaveLauncherSettings() {
     data["Launcher"]["SoundFixEnabled"] = SoundFixEnabled;
     data["Launcher"]["AutoUpdateEnabled"] = AutoUpdateEnabled;
     data["Launcher"]["installPath"] = std::string{fmt::UTF(Common::installPath.u8string()).data};
-    data["Launcher"]["shadPath"] = std::string{fmt::UTF(Common::shadPs4Executable.u8string()).data};
+    data["Launcher"]["shadPath-New"] =
+        std::string{fmt::UTF(Common::shadPs4Executable.u8string()).data};
     data["Launcher"]["PortableFolderinLauncherFolder"] = PortableFolderinLauncherFolder;
 
     data["Backups"]["BackupSaveEnabled"] = BackupSaveEnabled;

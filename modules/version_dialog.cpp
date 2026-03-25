@@ -717,7 +717,7 @@ QStringList VersionDialog::LoadDownloadCache() {
     QStringList cachedVersions;
     QString BBLPath;
     Common::PathToQString(BBLPath, Common::GetBBLFilesPath());
-    QString cachePath = BBLPath + "/cache.version";
+    QString cachePath = BBLPath + "/cache-new.version";
 
     QFile file(cachePath);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -731,7 +731,7 @@ QStringList VersionDialog::LoadDownloadCache() {
 void VersionDialog::SaveDownloadCache(const QStringList& versions) {
     QString BBLPath;
     Common::PathToQString(BBLPath, Common::GetBBLFilesPath());
-    QString cachePath = BBLPath + "/cache.version";
+    QString cachePath = BBLPath + "/cache-new.version";
     QFile file(cachePath);
 
     if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -1193,14 +1193,14 @@ void VersionDialog::SaveBuilds() {
         }
     }
 
-    if (data.contains("Builds")) {
-        data.as_table().erase("Builds");
+    if (data.contains("Builds-New")) {
+        data.as_table().erase("Builds-New");
     }
 
     for (int i = 0; i < buildInfo.size(); i++) {
         toml::array arr = toml::array{buildInfo[i].path, buildInfo[i].type, buildInfo[i].id,
                                       buildInfo[i].modified};
-        data["Builds"][std::to_string(i + 1)] = arr;
+        data["Builds-New"][std::to_string(i + 1)] = arr;
     }
 
     std::ofstream file(Config::SettingsFile, std::ios::binary);
@@ -1230,14 +1230,14 @@ void VersionDialog::GetBuildInfo() {
         }
     }
 
-    if (!data.contains("Builds"))
+    if (!data.contains("Builds-New"))
         return;
 
     bool missingBuild = false;
     int buildCounter = 1;
     while (true) {
         const auto arr =
-            toml::find_or<toml::array>(data.at("Builds"), std::to_string(buildCounter), {});
+            toml::find_or<toml::array>(data.at("Builds-New"), std::to_string(buildCounter), {});
 
         if (arr.empty())
             break;
