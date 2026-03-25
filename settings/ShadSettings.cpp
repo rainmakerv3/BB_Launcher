@@ -66,9 +66,8 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
                 std::filesystem::create_directories(cfgDir);
                 const std::filesystem::path path = cfgDir / (Common::game_serial + ".json");
 
-                EmulatorSettings.Load();
+                EmulatorSettings.Load(Common::game_serial);
                 EmulatorSettings.Save(Common::game_serial);
-
             } else {
                 return;
             }
@@ -475,52 +474,62 @@ bool ShadSettings::eventFilter(QObject* obj, QEvent* event) {
 }
 
 void ShadSettings::SaveSettings() {
-    EmulatorSettings.SetShowSplash(ui->showSplashCheckBox->isChecked());
-    EmulatorSettings.SetVolumeSlider(ui->volumeSlider->value());
-    EmulatorSettings.SetTrophyPopupDisabled(ui->disableTrophycheckBox->isChecked());
-    EmulatorSettings.SetTrophyNotificationDuration(ui->popUpDurationSpinBox->value());
+    EmulatorSettings.SetShowSplash(ui->showSplashCheckBox->isChecked(), is_game_specific);
+    EmulatorSettings.SetVolumeSlider(ui->volumeSlider->value(), is_game_specific);
+    EmulatorSettings.SetTrophyPopupDisabled(ui->disableTrophycheckBox->isChecked(),
+                                            is_game_specific);
+    EmulatorSettings.SetTrophyNotificationDuration(ui->popUpDurationSpinBox->value(),
+                                                   is_game_specific);
 
     std::string trophy_loc = ui->popUpPosComboBox->currentText().toStdString();
-    EmulatorSettings.SetTrophyNotificationSide(trophy_loc);
+    EmulatorSettings.SetTrophyNotificationSide(trophy_loc, is_game_specific);
 
     // ------------------ Graphics tab --------------------------------------------------------
     bool isFullscreen = ui->fullscreenModeComboBox->currentText() != tr("Windowed");
-    EmulatorSettings.SetFullScreen(isFullscreen);
+    EmulatorSettings.SetFullScreen(isFullscreen, is_game_specific);
     EmulatorSettings.SetPresentMode(
-        presentModeMap.value(ui->presentModeComboBox->currentText()).toStdString());
-    EmulatorSettings.SetFullScreenMode(ui->fullscreenModeComboBox->currentText().toStdString());
+        presentModeMap.value(ui->presentModeComboBox->currentText()).toStdString(),
+        is_game_specific);
+    EmulatorSettings.SetFullScreenMode(ui->fullscreenModeComboBox->currentText().toStdString(),
+                                       is_game_specific);
 
-    EmulatorSettings.SetWindowHeight(ui->heightSpinBox->value());
-    EmulatorSettings.SetWindowWidth(ui->widthSpinBox->value());
+    EmulatorSettings.SetWindowHeight(ui->heightSpinBox->value(), is_game_specific);
+    EmulatorSettings.SetWindowWidth(ui->widthSpinBox->value(), is_game_specific);
 
-    EmulatorSettings.SetFsrEnabled(ui->FSRCheckBox->isChecked());
-    EmulatorSettings.SetRcasEnabled(ui->RCASCheckBox->isChecked());
-    EmulatorSettings.SetRcasAttenuation(ui->RCASSlider->value());
+    EmulatorSettings.SetFsrEnabled(ui->FSRCheckBox->isChecked(), is_game_specific);
+    EmulatorSettings.SetRcasEnabled(ui->RCASCheckBox->isChecked(), is_game_specific);
+    EmulatorSettings.SetRcasAttenuation(ui->RCASSlider->value(), is_game_specific);
 
     // First options is auto selection -1, so gpuId on the GUI will always have to subtract 1
     // when setting and add 1 when getting to select the correct gpu in Qt
-    EmulatorSettings.SetGpuId(ui->graphicsAdapterBox->currentIndex() - 1);
+    EmulatorSettings.SetGpuId(ui->graphicsAdapterBox->currentIndex() - 1, is_game_specific);
 
     // ------------------ Input tab --------------------------------------------------------
-    EmulatorSettings.SetCursorState(cursorStateMap.value(ui->hideCursorComboBox->currentText()));
-    EmulatorSettings.SetCursorHideTimeout(ui->idleTimeoutSpinBox->value());
-    EmulatorSettings.SetMotionControlsEnabled(ui->motionControlsCheckBox->isChecked());
-    EmulatorSettings.SetBackgroundControllerInput(ui->backgroundControllerCheckBox->isChecked());
+    EmulatorSettings.SetCursorState(cursorStateMap.value(ui->hideCursorComboBox->currentText()),
+                                    is_game_specific);
+    EmulatorSettings.SetCursorHideTimeout(ui->idleTimeoutSpinBox->value(), is_game_specific);
+    EmulatorSettings.SetMotionControlsEnabled(ui->motionControlsCheckBox->isChecked(),
+                                              is_game_specific);
+    EmulatorSettings.SetBackgroundControllerInput(ui->backgroundControllerCheckBox->isChecked(),
+                                                  is_game_specific);
 
     // ------------------ Log tab --------------------------------------------------------
-    EmulatorSettings.SetLogFilter(ui->logFilterLineEdit->text().toStdString());
-    EmulatorSettings.SetLogType(ui->logTypeComboBox->currentText().toStdString());
+    EmulatorSettings.SetLogFilter(ui->logFilterLineEdit->text().toStdString(), is_game_specific);
+    EmulatorSettings.SetLogType(ui->logTypeComboBox->currentText().toStdString(), is_game_specific);
 
     // ------------------ Debug tab --------------------------------------------------------
-    EmulatorSettings.SetCopyGpuBuffers(ui->GPUBufferCheckBox->isChecked());
+    EmulatorSettings.SetCopyGpuBuffers(ui->GPUBufferCheckBox->isChecked(), is_game_specific);
 
     if (is_game_specific) {
-        EmulatorSettings.SetReadbacksMode(ui->readbacksModeComboBox->currentIndex());
-        EmulatorSettings.SetPSNSignedIn(ui->psnSignInCheckBox->isChecked());
-        EmulatorSettings.SetConnectedToNetwork(ui->networkConnectedCheckBox->isChecked());
-        EmulatorSettings.SetPipelineCacheEnabled(ui->pipelineCacheCheckBox->isChecked());
-        EmulatorSettings.SetExtraDmemInMBytes(ui->dmemSpinBox->value());
-        EmulatorSettings.SetVblankFrequency(ui->vblankSpinBox->value());
+        EmulatorSettings.SetReadbacksMode(ui->readbacksModeComboBox->currentIndex(),
+                                          is_game_specific);
+        EmulatorSettings.SetPSNSignedIn(ui->psnSignInCheckBox->isChecked(), is_game_specific);
+        EmulatorSettings.SetConnectedToNetwork(ui->networkConnectedCheckBox->isChecked(),
+                                               is_game_specific);
+        EmulatorSettings.SetPipelineCacheEnabled(ui->pipelineCacheCheckBox->isChecked(),
+                                                 is_game_specific);
+        EmulatorSettings.SetExtraDmemInMBytes(ui->dmemSpinBox->value(), is_game_specific);
+        EmulatorSettings.SetVblankFrequency(ui->vblankSpinBox->value(), is_game_specific);
     } else {
         EmulatorSettings.SetDiscordRPCEnabled(ui->discordRPCCheckbox->isChecked());
         EmulatorSettings.SetHomeDir(ui->HomePathLineEdit->text().toStdString());
