@@ -108,9 +108,9 @@ std::filesystem::path GetBBLFilesPath() {
 std::filesystem::path GetSaveDir() {
     std::filesystem::path path = Config::externalHomeDir;
     if (Config::externalHomeDir == "") {
-        path = Common::GetShadUserDir() / "home" / "1" / "savedata";
+        path = Common::GetShadUserDir() / "savedata" / "1";
     } else {
-        path = Config::externalHomeDir / "1" / "savedata";
+        path = Config::externalHomeDir / "1";
     }
 
     return path;

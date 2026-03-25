@@ -120,7 +120,30 @@ void LoadSettings() {
 
     Config::UnifiedInputConfig = EmulatorSettings.IsUseUnifiedInputConfig();
     Config::DefaultControllerID = EmulatorSettings.GetDefaultControllerId();
-    Config::externalHomeDir = EmulatorSettings.GetHomeDir();
+
+    // To do: delete when no longer needed
+    std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
+    if (std::filesystem::exists(shadConfigFile)) {
+        toml::value shadData;
+        try {
+            std::ifstream ifs;
+            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+            ifs.open(shadConfigFile, std::ios_base::binary);
+            shadData =
+                toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
+
+            if (shadData.contains("GUI")) {
+                const toml::value& GUI = shadData.at("GUI");
+                Config::externalHomeDir = toml::find_fs_path_or(GUI, "saveDataPath", {});
+                Config::dlcDir = toml::find_fs_path_or(GUI, "addonInstallDir", {});
+            }
+
+        } catch (std::exception& ex) {
+            // handle
+        }
+    }
+
+    // Config::externalHomeDir = EmulatorSettings.GetHomeDir();
 
     QString keysJsonPath;
     std::filesystem::path keysJson = Common::GetShadUserDir() / "keys.json";
