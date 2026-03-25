@@ -23,7 +23,7 @@ KBMSettings::KBMSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
     : QDialog(parent), m_ipc_client(ipc_client), ui(new Ui::KBMSettings) {
 
     ui->setupUi(this);
-    ui->PerGameCheckBox->setChecked(!Config::UnifiedInputConfig);
+    ui->PerGameCheckBox->setChecked(!EmulatorSettings.IsUseUnifiedInputConfig());
     ui->TextEditorButton->setFocus();
     this->setFocusPolicy(Qt::StrongFocus);
 
@@ -339,13 +339,13 @@ void KBMSettings::SaveKBMConfig(bool CloseOnSave) {
     }
     output_file.close();
 
-    Config::UnifiedInputConfig = !ui->PerGameCheckBox->isChecked();
-    EmulatorSettings.SetUseUnifiedInputConfig(Config::UnifiedInputConfig);
+    EmulatorSettings.SetUseUnifiedInputConfig(!ui->PerGameCheckBox->isChecked());
     EmulatorSettings.Save();
 
     if (Config::GameRunning) {
-        Config::UnifiedInputConfig ? m_ipc_client->reloadInputs("default")
-                                   : m_ipc_client->reloadInputs(Common::game_serial);
+        EmulatorSettings.IsUseUnifiedInputConfig()
+            ? m_ipc_client->reloadInputs("default")
+            : m_ipc_client->reloadInputs(Common::game_serial);
     }
 
     if (CloseOnSave)

@@ -51,7 +51,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QScrollArea" name="generalTab">
       <property name="widgetResizable">
@@ -1051,11 +1051,11 @@
       <attribute name="title">
        <string>Global Settings and Trophy Key</string>
       </attribute>
-      <widget class="QGroupBox" name="SavePathGB">
+      <widget class="QGroupBox" name="HomeFolderGroupBox">
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>20</y>
+         <y>350</y>
          <width>919</width>
          <height>88</height>
         </rect>
@@ -1075,7 +1075,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="SavePathButton">
+         <widget class="QPushButton" name="HomePathButton">
           <property name="text">
            <string>Choose New Path</string>
           </property>
@@ -1087,7 +1087,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>240</y>
+         <y>140</y>
          <width>321</width>
          <height>75</height>
         </rect>
@@ -1112,7 +1112,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>130</y>
+         <y>30</y>
          <width>919</width>
          <height>88</height>
         </rect>
@@ -1144,7 +1144,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>340</y>
+         <y>240</y>
          <width>242</width>
          <height>72</height>
         </rect>
@@ -1166,7 +1166,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>430</y>
+         <y>470</y>
          <width>241</width>
          <height>75</height>
         </rect>

@@ -37,9 +37,6 @@ extern bool BackupSaveEnabled;
 extern int BackupInterval;
 extern int BackupNumber;
 extern bool AutoUpdateEnabled;
-extern bool UnifiedInputConfig;
-extern std::string TrophyKey;
-extern std::string DefaultControllerID;
 extern std::string ApiKey;
 extern std::filesystem::path SevenZipPath;
 
@@ -52,9 +49,11 @@ extern bool AutoUpdateVersionsEnabled;
 extern bool AutoUpdateShadEnabled;
 extern bool ShowChangeLog;
 
-extern std::filesystem::path externalHomeDir;
-extern std::filesystem::path dlcDir;
 extern bool GameRunning;
+extern bool GameSpecificConfigUsed;
+
+extern std::string TrophyKey;
+extern std::filesystem::path externalSaveDir;
 
 const std::filesystem::path SettingsFile = Common::GetBBLFilesPath() / "LauncherSettings.toml";
 

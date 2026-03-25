@@ -33,12 +33,10 @@ bool Config::ShowChangeLog = true;
 std::string Config::DefaultFolderString = "";
 
 std::string Config::TrophyKey = "";
-bool Config::UnifiedInputConfig = true;
-std::string Config::DefaultControllerID = "";
+std::filesystem::path Config::externalSaveDir;
 
-std::filesystem::path Config::externalHomeDir;
-std::filesystem::path Config::dlcDir;
 bool Config::GameRunning = false;
+bool Config::GameSpecificConfigUsed = false;
 
 static std::string SelectedGamepad = "";
 
@@ -118,9 +116,6 @@ void LoadSettings() {
             Common::installPath.parent_path() / (Common::game_serial + "-patch");
     }
 
-    Config::UnifiedInputConfig = EmulatorSettings.IsUseUnifiedInputConfig();
-    Config::DefaultControllerID = EmulatorSettings.GetDefaultControllerId();
-
     // To do: delete when no longer needed
     std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
     if (std::filesystem::exists(shadConfigFile)) {
@@ -136,16 +131,13 @@ void LoadSettings() {
 
             if (shadData.contains("GUI")) {
                 const toml::value& GUI = shadData.at("GUI");
-                externalHomeDir = toml::find_fs_path_or(GUI, "saveDataPath", {});
+                externalSaveDir = toml::find_fs_path_or(GUI, "saveDataPath", {});
             }
 
         } catch (std::exception& ex) {
             // handle
         }
     }
-
-    // Config::externalHomeDir = EmulatorSettings.GetHomeDir();
-    dlcDir = EmulatorSettings.GetAddonInstallDir();
 
     QString keysJsonPath;
     std::filesystem::path keysJson = Common::GetShadUserDir() / "keys.json";
@@ -491,11 +483,11 @@ namespace GamepadSelect {
 
 int GetDefaultGamepad(SDL_JoystickID* gamepadIDs, int gamepadCount) {
     char GUIDbuf[33];
-    if (Config::DefaultControllerID != "") {
+    if (EmulatorSettings.GetDefaultControllerId() != "") {
         for (int i = 0; i < gamepadCount; i++) {
             SDL_GUIDToString(SDL_GetGamepadGUIDForID(gamepadIDs[i]), GUIDbuf, 33);
             std::string currentGUID = std::string(GUIDbuf);
-            if (currentGUID == Config::DefaultControllerID) {
+            if (currentGUID == EmulatorSettings.GetDefaultControllerId()) {
                 return i;
             }
         }

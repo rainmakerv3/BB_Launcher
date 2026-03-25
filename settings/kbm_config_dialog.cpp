@@ -50,11 +50,13 @@ EditorDialog::EditorDialog(QWidget* parent) : QDialog(parent) {
     loadInstalledGames();
 
     QCheckBox* unifiedInputCheckBox = new QCheckBox("Use Per-Game configs", this);
-    unifiedInputCheckBox->setChecked(!Config::UnifiedInputConfig);
+    unifiedInputCheckBox->setChecked(!EmulatorSettings.IsUseUnifiedInputConfig());
 
     // Connect checkbox signal
-    connect(unifiedInputCheckBox, &QCheckBox::toggled, this,
-            [](bool checked) { Config::UnifiedInputConfig = !checked; });
+    connect(unifiedInputCheckBox, &QCheckBox::toggled, this, [](bool checked) {
+        EmulatorSettings.SetUseUnifiedInputConfig(!checked);
+        EmulatorSettings.Save();
+    });
     // Create Save, Cancel, and Help buttons
 
     QPushButton* saveButton = new QPushButton("Save", this);
@@ -105,9 +107,6 @@ void EditorDialog::loadFile(QString game) {
 }
 
 void EditorDialog::saveFile(QString game) {
-    EmulatorSettings.SetUseUnifiedInputConfig(Config::UnifiedInputConfig);
-    EmulatorSettings.Save();
-
     const auto config_file = Config::GetFoolproofKbmConfigFile(game.toStdString());
     QFile file(config_file);
 

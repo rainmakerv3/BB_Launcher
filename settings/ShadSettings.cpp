@@ -132,6 +132,9 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
         ui->tabWidgetSettings->setTabVisible(1, false);
     }
 
+    ui->HomeFolderGroupBox->setVisible(false);
+    ui->userGroupBox->setVisible(false);
+
     LoadValuesFromConfig();
 
     defaultTextEdit = "Point your mouse at an option to display its description.";
@@ -194,12 +197,13 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
             m_ipc_client->adjustVol(value, is_game_specific);
     });
 
-    connect(ui->SavePathButton, &QPushButton::clicked, this, [this]() {
+    connect(ui->HomePathButton, &QPushButton::clicked, this, [this]() {
         QMessageBox::information(this, "Not implemented yet",
                                  "Recent shadPS4 changes require a new implementation for this, "
                                  "disabled in the meantime");
         return;
 
+        /*
         QString initial_path;
         Common::PathToQString(initial_path, Config::externalHomeDir);
         QString home_path_string =
@@ -209,19 +213,18 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
             Config::externalHomeDir = file_path;
             ui->HomePathLineEdit->setText(home_path_string);
         }
+        */
     });
 
     connect(ui->DlcPathButton, &QPushButton::clicked, this, [this]() {
         QString initial_path;
-        Common::PathToQString(initial_path, Config::dlcDir);
+        Common::PathToQString(initial_path, EmulatorSettings.GetAddonInstallDir());
         QString dlc_path_string =
             QFileDialog::getExistingDirectory(this, "Directory to dlc files", initial_path);
         auto file_path = Common::PathFromQString(dlc_path_string);
 
         if (!file_path.empty()) {
-            Config::dlcDir = file_path;
             ui->DLCPathLineEdit->setText(dlc_path_string);
-
             EmulatorSettings.SetAddonInstallDir(file_path);
             EmulatorSettings.Save();
         }
@@ -353,8 +356,12 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->presentModeComboBox->setCurrentText(translatedText_PresentMode);
 
     QString home_path_string;
-    Common::PathToQString(home_path_string, Config::externalHomeDir);
+    Common::PathToQString(home_path_string, EmulatorSettings.GetHomeDir());
     ui->HomePathLineEdit->setText(home_path_string);
+
+    QString dlc_path_string;
+    Common::PathToQString(dlc_path_string, EmulatorSettings.GetAddonInstallDir());
+    ui->DLCPathLineEdit->setText(dlc_path_string);
 
     ui->motionControlsCheckBox->setChecked(EmulatorSettings.IsMotionControlsEnabled());
     ui->fullscreenModeComboBox->setCurrentText(

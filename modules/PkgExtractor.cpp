@@ -458,7 +458,7 @@ void PkgExtractor::browseDlc() {
 
     if (!dlcFolder.isEmpty()) {
         dlcLineEdit->setText(dlcFolder);
-        EmulatorSettings.SetAddonInstallDir(dlcFolder.toStdString());
+        EmulatorSettings.SetAddonInstallDir(Common::PathFromQString(dlcFolder));
         EmulatorSettings.Save();
     }
 }

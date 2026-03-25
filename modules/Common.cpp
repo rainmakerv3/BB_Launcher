@@ -7,6 +7,7 @@
 #include "Common.h"
 #include "scope_exit.h"
 #include "settings/config.h"
+#include "settings/emulator_settings.h"
 
 #ifdef Q_OS_MAC
 #include <CoreFoundation/CFBundle.h>
@@ -106,19 +107,19 @@ std::filesystem::path GetBBLFilesPath() {
 }
 
 std::filesystem::path GetSaveDir() {
-    std::filesystem::path path = Config::externalHomeDir;
-    if (Config::externalHomeDir == "") {
+    std::filesystem::path path;
+    if (Config::externalSaveDir == "") {
         path = Common::GetShadUserDir() / "savedata" / "1";
     } else {
-        path = Config::externalHomeDir / "1";
+        path = Config::externalSaveDir / "1";
     }
 
     return path;
 }
 
 std::filesystem::path GetDlcDir() {
-    std::filesystem::path path = Config::dlcDir;
-    if (Config::dlcDir == "" || !std::filesystem::exists(Config::dlcDir)) {
+    std::filesystem::path path = EmulatorSettings.GetAddonInstallDir();
+    if (path == "" || !std::filesystem::exists(path)) {
         path = Common::GetShadUserDir() / "addcont";
     }
 

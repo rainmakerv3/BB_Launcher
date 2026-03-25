@@ -10,6 +10,7 @@
 #include "config.h"
 #include "hotkeys.h"
 #include "modules/Common.h"
+#include "settings/emulator_settings.h"
 #include "ui_hotkeys.h"
 
 Hotkeys::Hotkeys(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
@@ -329,8 +330,8 @@ void Hotkeys::CheckGamePad() {
         return;
     }
 
-    int defaultIndex =
-        GamepadSelect::GetIndexfromGUID(h_gamepads, gamepad_count, Config::DefaultControllerID);
+    int defaultIndex = GamepadSelect::GetIndexfromGUID(h_gamepads, gamepad_count,
+                                                       EmulatorSettings.GetDefaultControllerId());
     int activeIndex = GamepadSelect::GetIndexfromGUID(h_gamepads, gamepad_count,
                                                       GamepadSelect::GetSelectedGamepad());
 

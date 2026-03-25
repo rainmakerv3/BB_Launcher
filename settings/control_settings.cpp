@@ -18,7 +18,7 @@
 ControlSettings::ControlSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
     : QDialog(parent), m_ipc_client(ipc_client), ui(new Ui::ControlSettings) {
     ui->setupUi(this);
-    ui->PerGameCheckBox->setChecked(!Config::UnifiedInputConfig);
+    ui->PerGameCheckBox->setChecked(!EmulatorSettings.IsUseUnifiedInputConfig());
 
     SDL_InitSubSystem(SDL_INIT_GAMEPAD);
     SDL_InitSubSystem(SDL_INIT_EVENTS);
@@ -127,7 +127,8 @@ ControlSettings::ControlSettings(std::shared_ptr<IpcClient> ipc_client, QWidget*
         std::string GUID =
             GamepadSelect::GetGUIDString(gamepads, ui->ActiveGamepadBox->currentIndex());
         ui->DefaultGamepadLabel->setText(tr("ID: ") + QString::fromStdString(GUID).right(16));
-        Config::DefaultControllerID = GUID;
+        EmulatorSettings.SetDefaultControllerId(GUID);
+        EmulatorSettings.Save();
         QMessageBox::information(this, tr("Default Controller Selected"),
                                  tr("Active controller set as default"));
     });
@@ -135,7 +136,8 @@ ControlSettings::ControlSettings(std::shared_ptr<IpcClient> ipc_client, QWidget*
     connect(ui->RemoveDefaultGamepadButton, &QPushButton::clicked, this, [this]() {
         ui->DefaultGamepadName->setText(tr("No default selected"));
         ui->DefaultGamepadLabel->setText(tr("n/a"));
-        Config::DefaultControllerID = "";
+        EmulatorSettings.SetDefaultControllerId("");
+        EmulatorSettings.Save();
         QMessageBox::information(this, tr("Default Controller Removed"),
                                  tr("Default controller setting removed"));
     });
@@ -350,14 +352,13 @@ void ControlSettings::SaveControllerConfig(bool CloseOnSave) {
     }
     output_file.close();
 
-    Config::UnifiedInputConfig = !ui->PerGameCheckBox->isChecked();
-    EmulatorSettings.SetUseUnifiedInputConfig(Config::UnifiedInputConfig);
-    EmulatorSettings.SetDefaultControllerId(Config::DefaultControllerID);
+    EmulatorSettings.SetUseUnifiedInputConfig(!ui->PerGameCheckBox->isChecked());
     EmulatorSettings.Save();
 
     if (Config::GameRunning) {
-        Config::UnifiedInputConfig ? m_ipc_client->reloadInputs("default")
-                                   : m_ipc_client->reloadInputs(Common::game_serial);
+        EmulatorSettings.IsUseUnifiedInputConfig()
+            ? m_ipc_client->reloadInputs("default")
+            : m_ipc_client->reloadInputs(Common::game_serial);
     }
 
     if (CloseOnSave)
@@ -731,8 +732,8 @@ void ControlSettings::CheckGamePad() {
     }
 
     QString defaultGUID = "";
-    int defaultIndex =
-        GamepadSelect::GetIndexfromGUID(gamepads, gamepad_count, Config::DefaultControllerID);
+    int defaultIndex = GamepadSelect::GetIndexfromGUID(gamepads, gamepad_count,
+                                                       EmulatorSettings.GetDefaultControllerId());
     int activeIndex = GamepadSelect::GetIndexfromGUID(gamepads, gamepad_count,
                                                       GamepadSelect::GetSelectedGamepad());
 
