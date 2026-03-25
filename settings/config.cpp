@@ -132,10 +132,11 @@ void LoadSettings() {
             shadData =
                 toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
 
+            TrophyKey = toml::find_or<std::string>(shadData, "Keys", "TrophyKey", "");
+
             if (shadData.contains("GUI")) {
                 const toml::value& GUI = shadData.at("GUI");
-                Config::externalHomeDir = toml::find_fs_path_or(GUI, "saveDataPath", {});
-                Config::dlcDir = toml::find_fs_path_or(GUI, "addonInstallDir", {});
+                externalHomeDir = toml::find_fs_path_or(GUI, "saveDataPath", {});
             }
 
         } catch (std::exception& ex) {
@@ -144,6 +145,7 @@ void LoadSettings() {
     }
 
     // Config::externalHomeDir = EmulatorSettings.GetHomeDir();
+    dlcDir = EmulatorSettings.GetAddonInstallDir();
 
     QString keysJsonPath;
     std::filesystem::path keysJson = Common::GetShadUserDir() / "keys.json";

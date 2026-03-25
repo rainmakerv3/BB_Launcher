@@ -126,7 +126,7 @@ std::filesystem::path GetDlcDir() {
 }
 
 std::filesystem::path GetTrophyDir() {
-    std::filesystem::path path = Config::externalHomeDir;
+    std::filesystem::path path = Common::GetShadUserDir() / "game_data";
     return path;
 }
 
