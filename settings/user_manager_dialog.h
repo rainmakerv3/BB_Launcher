@@ -9,17 +9,14 @@
 #include <QDialog>
 #include <QTableWidget>
 
-#include "modules/PkgDeps/types.h"
-
 class GUISettings;
-class EmulatorSettings;
+class EmulatorSettingsImpl;
 
 class UserManagerDialog : public QDialog {
     Q_OBJECT
 
 public:
-    explicit UserManagerDialog(std::shared_ptr<EmulatorSettings> emulator_settings,
-                               QWidget* parent = nullptr);
+    explicit UserManagerDialog(QWidget* parent = nullptr);
 
 private Q_SLOTS:
     void OnUserCreate();
@@ -65,7 +62,8 @@ private:
     void closeEvent(QCloseEvent* event) override;
 
     QTableWidget* m_table = nullptr;
-    std::shared_ptr<EmulatorSettings> m_emu_settings;
+    std::shared_ptr<GUISettings> m_gui_settings;
+    std::shared_ptr<EmulatorSettingsImpl> m_emu_settings;
     int m_active_user;
 
     QPushButton* push_create_user;

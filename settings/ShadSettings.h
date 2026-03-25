@@ -14,8 +14,7 @@ class ShadSettings;
 class ShadSettings : public QDialog {
     Q_OBJECT
 public:
-    explicit ShadSettings(std::shared_ptr<EmulatorSettings> emu_settings,
-                          std::shared_ptr<IpcClient> ipc_client, bool game_specific,
+    explicit ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_specific,
                           QWidget* parent = nullptr);
     ~ShadSettings();
 
@@ -36,9 +35,6 @@ private:
 
     std::unique_ptr<Ui::ShadSettings> ui;
     std::shared_ptr<IpcClient> m_ipc_client;
-    std::shared_ptr<EmulatorSettings> m_game_specific_settings;
-    std::shared_ptr<EmulatorSettings> m_emu_settings;
-    std::shared_ptr<EmulatorSettings> m_original_settings;
 
     bool is_game_specific;
     // GameInfo m_current_game;   // Add current game info

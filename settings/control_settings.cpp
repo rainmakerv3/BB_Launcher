@@ -8,15 +8,15 @@
 #include <QPushButton>
 #include <QTimer>
 #include <QtConcurrent/QtConcurrentRun>
+
 #include "config.h"
 #include "control_settings.h"
 #include "modules/Common.h"
+#include "settings/emulator_settings.h"
 #include "settings/ui_control_settings.h"
 
-ControlSettings::ControlSettings(std::shared_ptr<EmulatorSettings> emu_settings,
-                                 std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
-    : QDialog(parent), m_emu_settings(std::move(emu_settings)), m_ipc_client(ipc_client),
-      ui(new Ui::ControlSettings) {
+ControlSettings::ControlSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
+    : QDialog(parent), m_ipc_client(ipc_client), ui(new Ui::ControlSettings) {
     ui->setupUi(this);
     ui->PerGameCheckBox->setChecked(!Config::UnifiedInputConfig);
 
@@ -351,9 +351,9 @@ void ControlSettings::SaveControllerConfig(bool CloseOnSave) {
     output_file.close();
 
     Config::UnifiedInputConfig = !ui->PerGameCheckBox->isChecked();
-    m_emu_settings->SetUseUnifiedInputConfig(Config::UnifiedInputConfig);
-    m_emu_settings->SetDefaultControllerId(Config::DefaultControllerID);
-    m_emu_settings->Save();
+    EmulatorSettings.SetUseUnifiedInputConfig(Config::UnifiedInputConfig);
+    EmulatorSettings.SetDefaultControllerId(Config::DefaultControllerID);
+    EmulatorSettings.Save();
 
     if (Config::GameRunning) {
         Config::UnifiedInputConfig ? m_ipc_client->reloadInputs("default")

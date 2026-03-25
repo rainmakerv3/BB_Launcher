@@ -23,8 +23,7 @@ QString previous_game = "default";
 bool isHelpOpen = false;
 HelpDialog* helpDialog;
 
-EditorDialog::EditorDialog(std::shared_ptr<EmulatorSettings> emu_settings, QWidget* parent)
-    : m_emu_settings(std::move(emu_settings)), QDialog(parent) {
+EditorDialog::EditorDialog(QWidget* parent) : QDialog(parent) {
 
     setWindowTitle("Edit Keyboard + Mouse and Controller input bindings");
     resize(600, 400);
@@ -106,8 +105,8 @@ void EditorDialog::loadFile(QString game) {
 }
 
 void EditorDialog::saveFile(QString game) {
-    m_emu_settings->SetUseUnifiedInputConfig(Config::UnifiedInputConfig);
-    m_emu_settings->Save();
+    EmulatorSettings.SetUseUnifiedInputConfig(Config::UnifiedInputConfig);
+    EmulatorSettings.Save();
 
     const auto config_file = Config::GetFoolproofKbmConfigFile(game.toStdString());
     QFile file(config_file);

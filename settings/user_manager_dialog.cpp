@@ -4,13 +4,13 @@
 #include <QHeaderView>
 #include <QtWidgets>
 
-#include "settings/emulator_settings.h"
+#include "emulator_settings.h"
+#include "modules/Common.h"
 #include "table_item_delegate.h"
 #include "user_manager_dialog.h"
+#include "user_settings.h"
 
-UserManagerDialog::UserManagerDialog(std::shared_ptr<EmulatorSettings> emulator_settings,
-                                     QWidget* parent)
-    : QDialog(parent), m_emu_settings(std::move(emulator_settings)) {
+UserManagerDialog::UserManagerDialog(QWidget* parent) : QDialog(parent) {
     setWindowTitle(tr("User Manager"));
     setMinimumSize(QSize(600, 400));
     setModal(true);
@@ -69,7 +69,7 @@ UserManagerDialog::UserManagerDialog(std::shared_ptr<EmulatorSettings> emulator_
     vbox_main->addLayout(hbox_buttons);
     setLayout(vbox_main);
 
-    m_active_user = m_emu_settings->GetUserManager().GetUsers().default_user_id;
+    m_active_user = UserManagement.GetDefaultUser().user_id;
     UpdateTable();
 
     // Button enabling lambda
@@ -106,8 +106,7 @@ void UserManagerDialog::UpdateTable(bool mark_only) {
     QFont bold_font;
     bold_font.setBold(true);
 
-    auto& manager = m_emu_settings->GetUserManager();
-    const auto& users = manager.GetAllUsers();
+    const auto& users = UserManagement.GetAllUsers();
 
     if (mark_only) {
         for (int i = 0; i < m_table->rowCount(); ++i) {
@@ -147,9 +146,8 @@ void UserManagerDialog::UpdateTable(bool mark_only) {
         m_table->setItem(row, 2, color_item);
 
         // Controller port
-        QString controller_text = (u.controller_port >= 1 && u.controller_port <= 4)
-                                      ? QString::number(u.controller_port)
-                                      : "-";
+        QString controller_text =
+            (u.player_index >= 1 && u.player_index <= 4) ? QString::number(u.player_index) : "-";
         QTableWidgetItem* controller_item = new QTableWidgetItem(controller_text);
         controller_item->setFlags(controller_item->flags() & ~Qt::ItemIsEditable);
         m_table->setItem(row, 3, controller_item);
@@ -181,16 +179,15 @@ u32 UserManagerDialog::GetUserKey() const {
     if (!ok)
         return 0;
 
-    const auto& users = m_emu_settings->GetUserManager().GetAllUsers();
+    const auto& users = UserManagement.GetAllUsers();
     auto it =
         std::find_if(users.begin(), users.end(), [id](const User& u) { return u.user_id == id; });
     return (it != users.end()) ? id : 0;
 }
 
 void UserManagerDialog::OnUserCreate() {
-    auto& manager = m_emu_settings->GetUserManager();
     int smallest = 1;
-    for (auto& u : manager.GetAllUsers()) {
+    for (auto& u : UserManagement.GetAllUsers()) {
         if (u.user_id == smallest)
             ++smallest;
         else
@@ -225,8 +222,8 @@ void UserManagerDialog::OnUserCreate() {
         u.user_id = smallest;
         u.user_name = name.toStdString();
         u.user_color = 0;
-        u.controller_port = -1;
-        manager.AddUser(u);
+        u.player_index = -1;
+        UserManagement.AddUser(u);
         UpdateTable();
         dialog.accept();
     });
@@ -238,11 +235,10 @@ void UserManagerDialog::OnUserRemove() {
     u32 id = GetUserKey();
     if (id == 0)
         return;
-    auto& manager = m_emu_settings->GetUserManager();
     if (QMessageBox::question(this, tr("Delete Confirmation"), tr("Delete user ID %1?").arg(id),
                               QMessageBox::Yes | QMessageBox::No,
                               QMessageBox::No) == QMessageBox::Yes) {
-        manager.RemoveUser(id);
+        UserManagement.RemoveUser(id);
         UpdateTable();
     }
 }
@@ -251,8 +247,7 @@ void UserManagerDialog::OnUserRename() {
     u32 id = GetUserKey();
     if (id == 0)
         return;
-    auto& manager = m_emu_settings->GetUserManager();
-    User* user = manager.GetUserByID(id);
+    User* user = UserManagement.GetUserByID(id);
     if (!user)
         return;
 
@@ -277,7 +272,7 @@ void UserManagerDialog::OnUserRename() {
     QObject::connect(&buttons, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
 
     if (dialog.exec() == QDialog::Accepted) {
-        manager.RenameUser(id, edit.text().trimmed().toStdString());
+        UserManagement.RenameUser(id, edit.text().trimmed().toStdString());
         UpdateTable();
     }
 }
@@ -286,8 +281,7 @@ void UserManagerDialog::OnUserSetDefault() {
     u32 id = GetUserKey();
     if (id == 0)
         return;
-    auto& manager = m_emu_settings->GetUserManager();
-    manager.SetDefaultUser(id);
+    UserManagement.SetDefaultUser(id);
     m_active_user = id;
     UpdateTable();
 }
@@ -296,8 +290,7 @@ void UserManagerDialog::OnUserSetColor() {
     u32 id = GetUserKey();
     if (id == 0)
         return;
-    auto& manager = m_emu_settings->GetUserManager();
-    User* user = manager.GetUserByID(id);
+    User* user = UserManagement.GetUserByID(id);
     if (!user)
         return;
 
@@ -316,21 +309,19 @@ void UserManagerDialog::OnUserSetControllerPort() {
     if (user_id == 0)
         return;
 
-    auto& manager = m_emu_settings->GetUserManager();
-
     // Current port of the selected user
-    User* user = manager.GetUserByID(user_id);
+    User* user = UserManagement.GetUserByID(user_id);
     if (!user)
         return;
 
     bool ok = false;
     int new_port =
         QInputDialog::getInt(this, tr("Set Controller Port"), tr("Assign port (1-4) to this user:"),
-                             user->controller_port > 0 ? user->controller_port : 1, // default
+                             user->player_index > 0 ? user->player_index : 1, // default
                              1, 4, 1, &ok);
 
     if (ok) {
-        manager.SetControllerPort(user_id, new_port);
+        UserManagement.SetControllerPort(user_id, new_port);
         UpdateTable();
     }
 }
@@ -349,7 +340,7 @@ void UserManagerDialog::OnSort(int logicalIndex) {
 }
 
 void UserManagerDialog::closeEvent(QCloseEvent* event) {
-    m_emu_settings->Save(); // Save any changes to users before exiting
+    // m_emu_settings->Save(); // Save any changes to users before exiting
     QDialog::closeEvent(event);
 }
 
@@ -382,8 +373,7 @@ void UserManagerDialog::ShowContextMenu(const QPoint& pos) {
 
     connect(show_dir_act, &QAction::triggered, this, [this, key]() {
         QString userDirPath;
-        Common::PathToQString(userDirPath,
-                              EmulatorSettings::GetInstance()->GetHomeDir() / std::to_string(key));
+        Common::PathToQString(userDirPath, EmulatorSettings.GetHomeDir() / std::to_string(key));
         QDesktopServices::openUrl(QUrl::fromLocalFile(userDirPath));
     });
 

@@ -118,11 +118,9 @@ void LoadSettings() {
             Common::installPath.parent_path() / (Common::game_serial + "-patch");
     }
 
-    EmulatorSettings initial_settings;
-    initial_settings.Load();
-    Config::UnifiedInputConfig = initial_settings.IsUseUnifiedInputConfig();
-    Config::DefaultControllerID = initial_settings.GetDefaultControllerId();
-    Config::externalHomeDir = initial_settings.GetHomeDir();
+    Config::UnifiedInputConfig = EmulatorSettings.IsUseUnifiedInputConfig();
+    Config::DefaultControllerID = EmulatorSettings.GetDefaultControllerId();
+    Config::externalHomeDir = EmulatorSettings.GetHomeDir();
 
     QString keysJsonPath;
     std::filesystem::path keysJson = Common::GetShadUserDir() / "keys.json";
@@ -450,14 +448,15 @@ bool isReleaseOlder(int minorVersion, int MajorVersion) {
 
 int GetDmemValue() {
     int dmem;
-    EmulatorSettings gs_settings;
 
-    if (!gs_settings.Load(Common::game_serial)) {
+    if (!EmulatorSettings.Load(Common::game_serial)) {
+        EmulatorSettings.Load();
         return 0;
     } else {
-        dmem = gs_settings.GetExtraDmemInMBytes();
+        dmem = EmulatorSettings.GetExtraDmemInMBytes();
     }
 
+    EmulatorSettings.Load();
     return dmem;
 }
 

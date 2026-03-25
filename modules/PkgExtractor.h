@@ -8,14 +8,11 @@
 #include <QDialog>
 #include <QLineEdit>
 
-#include "settings/emulator_settings.h"
-
 class PkgExtractor : public QDialog {
     Q_OBJECT
 
 public:
-    explicit PkgExtractor(std::shared_ptr<EmulatorSettings> emu_settings,
-                          QWidget* parent = nullptr);
+    explicit PkgExtractor(QWidget* parent = nullptr);
     ~PkgExtractor();
 
 private:
@@ -27,8 +24,6 @@ private:
     std::optional<std::filesystem::path> FindGameByID(const std::filesystem::path& dir,
                                                       const std::string& game_id, int max_depth);
     std::vector<std::string> SplitString(const std::string& str, char delimiter);
-
-    std::shared_ptr<EmulatorSettings> m_emu_settings;
 
     QLineEdit* pkgLineEdit;
     QLineEdit* outputLineEdit;

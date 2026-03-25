@@ -47,11 +47,10 @@ inline bool operator!=(GameInstallDir const& a, GameInstallDir const& b) {
     return !(a == b);
 }
 
-ShadSettings::ShadSettings(std::shared_ptr<EmulatorSettings> emu_settings,
-                           std::shared_ptr<IpcClient> ipc_client, bool game_specific,
+ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_specific,
                            QWidget* parent)
-    : m_emu_settings(std::move(emu_settings)), is_game_specific(game_specific),
-      m_ipc_client(ipc_client), QDialog(parent), ui(new Ui::ShadSettings) {
+    : is_game_specific(game_specific), m_ipc_client(ipc_client), QDialog(parent),
+      ui(new Ui::ShadSettings) {
 
     if (is_game_specific) {
         std::string filename = Common::game_serial + ".json";
@@ -67,8 +66,8 @@ ShadSettings::ShadSettings(std::shared_ptr<EmulatorSettings> emu_settings,
                 std::filesystem::create_directories(cfgDir);
                 const std::filesystem::path path = cfgDir / (Common::game_serial + ".json");
 
-                m_emu_settings->Load();
-                m_emu_settings->Save(Common::game_serial);
+                EmulatorSettings.Load();
+                EmulatorSettings.Save(Common::game_serial);
 
             } else {
                 return;
@@ -122,16 +121,7 @@ ShadSettings::ShadSettings(std::shared_ptr<EmulatorSettings> emu_settings,
 
     if (is_game_specific) {
         // We need to load game-specific settings
-        m_original_settings = std::make_shared<EmulatorSettings>();
-        *m_original_settings = *m_emu_settings; // Backup original
-
-        // Create and load game-specific settings
-        m_game_specific_settings = std::make_shared<EmulatorSettings>();
-        m_game_specific_settings->Load("");                  // Load global
-        m_game_specific_settings->Load(Common::game_serial); // Apply overrides
-
-        // Use game-specific settings
-        m_emu_settings.swap(m_game_specific_settings);
+        EmulatorSettings.Load(Common::game_serial);
 
         this->setWindowTitle(
             tr("Custom Settings for %1").arg(QString::fromStdString(Common::game_serial)));
@@ -168,13 +158,13 @@ ShadSettings::ShadSettings(std::shared_ptr<EmulatorSettings> emu_settings,
 
     connect(this, &QDialog::rejected, this, [this]() {
         // reset real-time widgets to config value if not saved
-        int sliderValue = m_emu_settings->GetVolumeSlider();
+        int sliderValue = EmulatorSettings.GetVolumeSlider();
         ui->volumeSlider->setValue(sliderValue);
 
         if (Config::GameRunning) {
-            m_ipc_client->setFsr(m_emu_settings->IsFsrEnabled());
-            m_ipc_client->setRcas(m_emu_settings->IsRcasEnabled());
-            m_ipc_client->setRcasAttenuation(m_emu_settings->GetRcasAttenuation());
+            m_ipc_client->setFsr(EmulatorSettings.IsFsrEnabled());
+            m_ipc_client->setRcas(EmulatorSettings.IsRcasEnabled());
+            m_ipc_client->setRcasAttenuation(EmulatorSettings.GetRcasAttenuation());
         }
 
         QWidget::close();
@@ -233,8 +223,8 @@ ShadSettings::ShadSettings(std::shared_ptr<EmulatorSettings> emu_settings,
             Config::dlcDir = file_path;
             ui->DLCPathLineEdit->setText(dlc_path_string);
 
-            m_emu_settings->SetAddonInstallDir(file_path);
-            m_emu_settings->Save();
+            EmulatorSettings.SetAddonInstallDir(file_path);
+            EmulatorSettings.Save();
         }
     });
 
@@ -258,7 +248,7 @@ ShadSettings::ShadSettings(std::shared_ptr<EmulatorSettings> emu_settings,
     });
 
     connect(ui->usersButton, &QPushButton::clicked, this, [this]() {
-        UserManagerDialog* userManager = new UserManagerDialog(m_emu_settings, this);
+        UserManagerDialog* userManager = new UserManagerDialog(this);
         userManager->exec();
     });
 
@@ -304,12 +294,12 @@ ShadSettings::ShadSettings(std::shared_ptr<EmulatorSettings> emu_settings,
 
 void ShadSettings::LoadValuesFromConfig() {
     if (is_game_specific) {
-        if (!m_emu_settings->Load(Common::game_serial)) {
+        if (!EmulatorSettings.Load(Common::game_serial)) {
             QMessageBox::information(this, "Error", "Unable to load settings");
             return;
         }
     } else {
-        if (!m_emu_settings->Load()) {
+        if (!EmulatorSettings.Load()) {
             QMessageBox::information(this, "Error", "Unable to load settings");
             return;
         }
@@ -324,53 +314,53 @@ void ShadSettings::LoadValuesFromConfig() {
             locale_name += " (" + locale.nativeTerritoryName() + ")";
         }
 
-        if (language_ids[code] == m_emu_settings->GetConsoleLanguage())
+        if (language_ids[code] == EmulatorSettings.GetConsoleLanguage())
             selected_locale = locale_name;
     }
     ui->consoleLanguageComboBox->setCurrentText(selected_locale);
 
-    ui->hideCursorComboBox->setCurrentIndex(m_emu_settings->GetCursorState());
+    ui->hideCursorComboBox->setCurrentIndex(EmulatorSettings.GetCursorState());
     OnCursorStateChanged(ui->hideCursorComboBox->currentIndex());
-    ui->idleTimeoutSpinBox->setValue(m_emu_settings->GetCursorHideTimeout());
-    ui->widthSpinBox->setValue(m_emu_settings->GetWindowWidth());
-    ui->heightSpinBox->setValue(m_emu_settings->GetWindowHeight());
-    ui->vblankSpinBox->setValue(m_emu_settings->GetVblankFrequency());
-    ui->readbacksModeComboBox->setCurrentIndex(m_emu_settings->GetReadbacksMode());
-    ui->GPUBufferCheckBox->setChecked(m_emu_settings->IsCopyGpuBuffers());
-    ui->disableTrophycheckBox->setChecked(m_emu_settings->IsTrophyPopupDisabled());
+    ui->idleTimeoutSpinBox->setValue(EmulatorSettings.GetCursorHideTimeout());
+    ui->widthSpinBox->setValue(EmulatorSettings.GetWindowWidth());
+    ui->heightSpinBox->setValue(EmulatorSettings.GetWindowHeight());
+    ui->vblankSpinBox->setValue(EmulatorSettings.GetVblankFrequency());
+    ui->readbacksModeComboBox->setCurrentIndex(EmulatorSettings.GetReadbacksMode());
+    ui->GPUBufferCheckBox->setChecked(EmulatorSettings.IsCopyGpuBuffers());
+    ui->disableTrophycheckBox->setChecked(EmulatorSettings.IsTrophyPopupDisabled());
     ui->popUpPosComboBox->setCurrentText(
-        QString::fromStdString(m_emu_settings->GetTrophyNotificationSide()));
-    ui->popUpDurationSpinBox->setValue(m_emu_settings->GetTrophyNotificationDuration());
-    ui->psnSignInCheckBox->setChecked(m_emu_settings->IsPSNSignedIn());
-    ui->networkConnectedCheckBox->setChecked(m_emu_settings->IsConnectedToNetwork());
+        QString::fromStdString(EmulatorSettings.GetTrophyNotificationSide()));
+    ui->popUpDurationSpinBox->setValue(EmulatorSettings.GetTrophyNotificationDuration());
+    ui->psnSignInCheckBox->setChecked(EmulatorSettings.IsPSNSignedIn());
+    ui->networkConnectedCheckBox->setChecked(EmulatorSettings.IsConnectedToNetwork());
 
-    ui->showSplashCheckBox->setChecked(m_emu_settings->IsShowSplash());
-    ui->discordRPCCheckbox->setChecked(m_emu_settings->IsDiscordRPCEnabled());
-    ui->dmemSpinBox->setValue(m_emu_settings->GetExtraDmemInMBytes());
-    ui->logTypeComboBox->setCurrentText(QString::fromStdString(m_emu_settings->GetLogType()));
-    ui->logFilterLineEdit->setText(QString::fromStdString(m_emu_settings->GetLogFilter()));
+    ui->showSplashCheckBox->setChecked(EmulatorSettings.IsShowSplash());
+    ui->discordRPCCheckbox->setChecked(EmulatorSettings.IsDiscordRPCEnabled());
+    ui->dmemSpinBox->setValue(EmulatorSettings.GetExtraDmemInMBytes());
+    ui->logTypeComboBox->setCurrentText(QString::fromStdString(EmulatorSettings.GetLogType()));
+    ui->logFilterLineEdit->setText(QString::fromStdString(EmulatorSettings.GetLogFilter()));
 
-    ui->FSRCheckBox->setChecked(m_emu_settings->IsFsrEnabled());
-    ui->RCASCheckBox->setChecked(m_emu_settings->IsRcasEnabled());
-    ui->RCASSlider->setValue(m_emu_settings->GetRcasAttenuation());
+    ui->FSRCheckBox->setChecked(EmulatorSettings.IsFsrEnabled());
+    ui->RCASCheckBox->setChecked(EmulatorSettings.IsRcasEnabled());
+    ui->RCASSlider->setValue(EmulatorSettings.GetRcasAttenuation());
     ui->RCASValue->setText(QString::number(ui->RCASSlider->value() / 1000.0, 'f', 3));
-    ui->volumeSlider->setValue(m_emu_settings->GetVolumeSlider());
+    ui->volumeSlider->setValue(EmulatorSettings.GetVolumeSlider());
     ui->volumeValue->setText(QString::number(ui->volumeSlider->value()) + "%");
-    ui->graphicsAdapterBox->setCurrentIndex(m_emu_settings->GetGpuId() + 1);
-    ui->pipelineCacheCheckBox->setChecked(m_emu_settings->IsPipelineCacheEnabled());
+    ui->graphicsAdapterBox->setCurrentIndex(EmulatorSettings.GetGpuId() + 1);
+    ui->pipelineCacheCheckBox->setChecked(EmulatorSettings.IsPipelineCacheEnabled());
 
     QString translatedText_PresentMode =
-        presentModeMap.key(QString::fromStdString(m_emu_settings->GetPresentMode()));
+        presentModeMap.key(QString::fromStdString(EmulatorSettings.GetPresentMode()));
     ui->presentModeComboBox->setCurrentText(translatedText_PresentMode);
 
     QString home_path_string;
     Common::PathToQString(home_path_string, Config::externalHomeDir);
     ui->HomePathLineEdit->setText(home_path_string);
 
-    ui->motionControlsCheckBox->setChecked(m_emu_settings->IsMotionControlsEnabled());
+    ui->motionControlsCheckBox->setChecked(EmulatorSettings.IsMotionControlsEnabled());
     ui->fullscreenModeComboBox->setCurrentText(
-        QString::fromStdString(m_emu_settings->GetFullScreenMode()));
-    ui->backgroundControllerCheckBox->setChecked(m_emu_settings->IsBackgroundControllerInput());
+        QString::fromStdString(EmulatorSettings.GetFullScreenMode()));
+    ui->backgroundControllerCheckBox->setChecked(EmulatorSettings.IsBackgroundControllerInput());
 
     QFile file(keysJsonPath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -485,55 +475,55 @@ bool ShadSettings::eventFilter(QObject* obj, QEvent* event) {
 }
 
 void ShadSettings::SaveSettings() {
-    m_emu_settings->SetShowSplash(ui->showSplashCheckBox->isChecked());
-    m_emu_settings->SetVolumeSlider(ui->volumeSlider->value());
-    m_emu_settings->SetTrophyPopupDisabled(ui->disableTrophycheckBox->isChecked());
-    m_emu_settings->SetTrophyNotificationDuration(ui->popUpDurationSpinBox->value());
+    EmulatorSettings.SetShowSplash(ui->showSplashCheckBox->isChecked());
+    EmulatorSettings.SetVolumeSlider(ui->volumeSlider->value());
+    EmulatorSettings.SetTrophyPopupDisabled(ui->disableTrophycheckBox->isChecked());
+    EmulatorSettings.SetTrophyNotificationDuration(ui->popUpDurationSpinBox->value());
 
     std::string trophy_loc = ui->popUpPosComboBox->currentText().toStdString();
-    m_emu_settings->SetTrophyNotificationSide(trophy_loc);
+    EmulatorSettings.SetTrophyNotificationSide(trophy_loc);
 
     // ------------------ Graphics tab --------------------------------------------------------
     bool isFullscreen = ui->fullscreenModeComboBox->currentText() != tr("Windowed");
-    m_emu_settings->SetFullScreen(isFullscreen);
-    m_emu_settings->SetPresentMode(
+    EmulatorSettings.SetFullScreen(isFullscreen);
+    EmulatorSettings.SetPresentMode(
         presentModeMap.value(ui->presentModeComboBox->currentText()).toStdString());
-    m_emu_settings->SetFullScreenMode(ui->fullscreenModeComboBox->currentText().toStdString());
+    EmulatorSettings.SetFullScreenMode(ui->fullscreenModeComboBox->currentText().toStdString());
 
-    m_emu_settings->SetWindowHeight(ui->heightSpinBox->value());
-    m_emu_settings->SetWindowWidth(ui->widthSpinBox->value());
+    EmulatorSettings.SetWindowHeight(ui->heightSpinBox->value());
+    EmulatorSettings.SetWindowWidth(ui->widthSpinBox->value());
 
-    m_emu_settings->SetFsrEnabled(ui->FSRCheckBox->isChecked());
-    m_emu_settings->SetRcasEnabled(ui->RCASCheckBox->isChecked());
-    m_emu_settings->SetRcasAttenuation(ui->RCASSlider->value());
+    EmulatorSettings.SetFsrEnabled(ui->FSRCheckBox->isChecked());
+    EmulatorSettings.SetRcasEnabled(ui->RCASCheckBox->isChecked());
+    EmulatorSettings.SetRcasAttenuation(ui->RCASSlider->value());
 
     // First options is auto selection -1, so gpuId on the GUI will always have to subtract 1
     // when setting and add 1 when getting to select the correct gpu in Qt
-    m_emu_settings->SetGpuId(ui->graphicsAdapterBox->currentIndex() - 1);
+    EmulatorSettings.SetGpuId(ui->graphicsAdapterBox->currentIndex() - 1);
 
     // ------------------ Input tab --------------------------------------------------------
-    m_emu_settings->SetCursorState(cursorStateMap.value(ui->hideCursorComboBox->currentText()));
-    m_emu_settings->SetCursorHideTimeout(ui->idleTimeoutSpinBox->value());
-    m_emu_settings->SetMotionControlsEnabled(ui->motionControlsCheckBox->isChecked());
-    m_emu_settings->SetBackgroundControllerInput(ui->backgroundControllerCheckBox->isChecked());
+    EmulatorSettings.SetCursorState(cursorStateMap.value(ui->hideCursorComboBox->currentText()));
+    EmulatorSettings.SetCursorHideTimeout(ui->idleTimeoutSpinBox->value());
+    EmulatorSettings.SetMotionControlsEnabled(ui->motionControlsCheckBox->isChecked());
+    EmulatorSettings.SetBackgroundControllerInput(ui->backgroundControllerCheckBox->isChecked());
 
     // ------------------ Log tab --------------------------------------------------------
-    m_emu_settings->SetLogFilter(ui->logFilterLineEdit->text().toStdString());
-    m_emu_settings->SetLogType(ui->logTypeComboBox->currentText().toStdString());
+    EmulatorSettings.SetLogFilter(ui->logFilterLineEdit->text().toStdString());
+    EmulatorSettings.SetLogType(ui->logTypeComboBox->currentText().toStdString());
 
     // ------------------ Debug tab --------------------------------------------------------
-    m_emu_settings->SetCopyGpuBuffers(ui->GPUBufferCheckBox->isChecked());
+    EmulatorSettings.SetCopyGpuBuffers(ui->GPUBufferCheckBox->isChecked());
 
     if (is_game_specific) {
-        m_emu_settings->SetReadbacksMode(ui->readbacksModeComboBox->currentIndex());
-        m_emu_settings->SetPSNSignedIn(ui->psnSignInCheckBox->isChecked());
-        m_emu_settings->SetConnectedToNetwork(ui->networkConnectedCheckBox->isChecked());
-        m_emu_settings->SetPipelineCacheEnabled(ui->pipelineCacheCheckBox->isChecked());
-        m_emu_settings->SetExtraDmemInMBytes(ui->dmemSpinBox->value());
-        m_emu_settings->SetVblankFrequency(ui->vblankSpinBox->value());
+        EmulatorSettings.SetReadbacksMode(ui->readbacksModeComboBox->currentIndex());
+        EmulatorSettings.SetPSNSignedIn(ui->psnSignInCheckBox->isChecked());
+        EmulatorSettings.SetConnectedToNetwork(ui->networkConnectedCheckBox->isChecked());
+        EmulatorSettings.SetPipelineCacheEnabled(ui->pipelineCacheCheckBox->isChecked());
+        EmulatorSettings.SetExtraDmemInMBytes(ui->dmemSpinBox->value());
+        EmulatorSettings.SetVblankFrequency(ui->vblankSpinBox->value());
     } else {
-        m_emu_settings->SetDiscordRPCEnabled(ui->discordRPCCheckbox->isChecked());
-        m_emu_settings->SetHomeDir(ui->HomePathLineEdit->text().toStdString());
+        EmulatorSettings.SetDiscordRPCEnabled(ui->discordRPCCheckbox->isChecked());
+        EmulatorSettings.SetHomeDir(ui->HomePathLineEdit->text().toStdString());
 
         QString code;
         QString currentLocale = ui->consoleLanguageComboBox->currentText();
@@ -552,7 +542,7 @@ void ShadSettings::SaveSettings() {
                 code = allLocales.at(iLocale).bcp47Name();
             }
         }
-        m_emu_settings->SetConsoleLanguage(language_ids[code]);
+        EmulatorSettings.SetConsoleLanguage(language_ids[code]);
 
         QFile file(keysJsonPath);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -586,12 +576,12 @@ void ShadSettings::SaveSettings() {
     }
 
     if (is_game_specific) {
-        if (!m_emu_settings->Save(Common::game_serial)) {
+        if (!EmulatorSettings.Save(Common::game_serial)) {
             QMessageBox::information(this, "Error", "Unable to save settings");
             return;
         }
     } else {
-        if (!m_emu_settings->Save()) {
+        if (!EmulatorSettings.Save()) {
             QMessageBox::information(this, "Error", "Unable to save settings");
             return;
         }
@@ -688,60 +678,44 @@ void ShadSettings::getPhysicalDevices() {
 
 ShadSettings::~ShadSettings() {
     // Clean up game-specific settings when dialog closes
-    if (m_game_specific_settings) {
-        // If we swapped settings, swap them back
-        if (is_game_specific) {
-            if (m_original_settings) {
-                // Restore original settings
-                m_emu_settings.swap(m_game_specific_settings);
-            }
-        }
-
-        // Clear the shared_ptr
-        m_game_specific_settings.reset();
-    }
-
-    // Also clear original settings
-    if (m_original_settings) {
-        m_original_settings.reset();
-    }
+    EmulatorSettings.Load();
 }
 
 bool ShadSettings::IsSettingOverrideable(const char* setting_key,
                                          const QString& setting_group) const {
     // Check if the setting is in the overrideable list for the given group
     if (setting_group == "General") {
-        for (const auto& item : m_emu_settings->GetGeneralOverrideableFields()) {
+        for (const auto& item : EmulatorSettings.GetGeneralOverrideableFields()) {
             if (std::string(item.key) == setting_key) {
                 return true;
             }
         }
     } else if (setting_group == "Debug") {
-        for (const auto& item : m_emu_settings->GetDebugOverrideableFields()) {
+        for (const auto& item : EmulatorSettings.GetDebugOverrideableFields()) {
             if (std::string(item.key) == setting_key) {
                 return true;
             }
         }
     } else if (setting_group == "Input") {
-        for (const auto& item : m_emu_settings->GetInputOverrideableFields()) {
+        for (const auto& item : EmulatorSettings.GetInputOverrideableFields()) {
             if (std::string(item.key) == setting_key) {
                 return true;
             }
         }
     } else if (setting_group == "Audio") {
-        for (const auto& item : m_emu_settings->GetAudioOverrideableFields()) {
+        for (const auto& item : EmulatorSettings.GetAudioOverrideableFields()) {
             if (std::string(item.key) == setting_key) {
                 return true;
             }
         }
     } else if (setting_group == "GPU") {
-        for (const auto& item : m_emu_settings->GetGPUOverrideableFields()) {
+        for (const auto& item : EmulatorSettings.GetGPUOverrideableFields()) {
             if (std::string(item.key) == setting_key) {
                 return true;
             }
         }
     } else if (setting_group == "Vulkan") {
-        for (const auto& item : m_emu_settings->GetVulkanOverrideableFields()) {
+        for (const auto& item : EmulatorSettings.GetVulkanOverrideableFields()) {
             if (std::string(item.key) == setting_key) {
                 return true;
             }

@@ -19,15 +19,15 @@
 #include "modules/PkgDeps/loader.h"
 #include "modules/PkgDeps/pkg.h"
 #include "settings/PSF/psf.h"
+#include "settings/emulator_settings.h"
 
-PkgExtractor::PkgExtractor(std::shared_ptr<EmulatorSettings> emu_settings, QWidget* parent)
-    : m_emu_settings(std::move(emu_settings)), QDialog(parent) {
+PkgExtractor::PkgExtractor(QWidget* parent) : QDialog(parent) {
     setupUI();
     resize(600, 60);
     this->setWindowTitle(tr("PKG Extractor"));
 
     std::filesystem::path dlcPath;
-    dlcPath = m_emu_settings->GetAddonInstallDir();
+    dlcPath = EmulatorSettings.GetAddonInstallDir();
 
     if (!std::filesystem::exists(Common::GetShadUserDir() / "addcont"))
         std::filesystem::create_directories(Common::GetShadUserDir() / "addcont");
@@ -458,8 +458,8 @@ void PkgExtractor::browseDlc() {
 
     if (!dlcFolder.isEmpty()) {
         dlcLineEdit->setText(dlcFolder);
-        m_emu_settings->SetAddonInstallDir(dlcFolder.toStdString());
-        m_emu_settings->Save();
+        EmulatorSettings.SetAddonInstallDir(dlcFolder.toStdString());
+        EmulatorSettings.Save();
     }
 }
 

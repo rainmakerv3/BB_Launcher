@@ -48,8 +48,12 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     logDisplay = new QAnsiTextEdit(this);
     ui->logLayout->addWidget(logDisplay);
 
-    EmulatorSettings::SetInstance(m_emu_settings);
     m_emu_settings->Load();
+    EmulatorSettingsImpl::SetInstance(m_emu_settings);
+
+    m_user_settings->Load();
+    UserSettingsImpl::SetInstance(m_user_settings);
+
     Config::LoadSettings();
 
     if (Common::shadPs4Executable == "" || !std::filesystem::exists(Common::shadPs4Executable)) {
@@ -122,7 +126,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             [this]() { m_ipc_client->toggleFullscreen(); });
 
     connect(ui->pkgButton, &QPushButton::pressed, this, [this]() {
-        PkgExtractor* Extractor = new PkgExtractor(m_emu_settings, this);
+        PkgExtractor* Extractor = new PkgExtractor(this);
         Extractor->exec();
     });
 
@@ -198,8 +202,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             return;
         }
 
-        ShadSettings* ShadSettingsWindow =
-            new ShadSettings(m_emu_settings, m_ipc_client, false, this);
+        ShadSettings* ShadSettingsWindow = new ShadSettings(m_ipc_client, false, this);
         ShadSettingsWindow->exec();
     });
 
@@ -215,8 +218,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             return;
         }
 
-        ShadSettings* ShadSettingsWindow =
-            new ShadSettings(m_emu_settings, m_ipc_client, true, this);
+        ShadSettings* ShadSettingsWindow = new ShadSettings(m_ipc_client, true, this);
         ShadSettingsWindow->exec();
     });
 
@@ -228,12 +230,12 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->KBMButton, &QPushButton::clicked, this, [this]() {
-        KBMSettings* KBMWindow = new KBMSettings(m_emu_settings, m_ipc_client, this);
+        KBMSettings* KBMWindow = new KBMSettings(m_ipc_client, this);
         KBMWindow->exec();
     });
 
     connect(ui->ControllerButton, &QPushButton::clicked, this, [this]() {
-        ControlSettings* RemapWindow = new ControlSettings(m_emu_settings, m_ipc_client, this);
+        ControlSettings* RemapWindow = new ControlSettings(m_ipc_client, this);
         RemapWindow->exec();
     });
 

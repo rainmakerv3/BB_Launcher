@@ -9,6 +9,7 @@
 #include "modules/QAnsiTextEdit.h"
 #include "modules/ipc/ipc_client.h"
 #include "settings/emulator_settings.h"
+#include "settings/user_settings.h"
 
 namespace Ui {
 class BBLauncher;
@@ -50,7 +51,8 @@ private:
     Ui::BBLauncher* ui;
     QAnsiTextEdit* logDisplay;
     std::shared_ptr<IpcClient> m_ipc_client = std::make_shared<IpcClient>();
-    std::shared_ptr<EmulatorSettings> m_emu_settings = std::make_shared<EmulatorSettings>();
+    std::shared_ptr<EmulatorSettingsImpl> m_emu_settings = std::make_shared<EmulatorSettingsImpl>();
+    std::shared_ptr<UserSettingsImpl> m_user_settings = std::make_shared<UserSettingsImpl>();
 
     std::filesystem::path shadPs4Directory;
     bool noGUIset;

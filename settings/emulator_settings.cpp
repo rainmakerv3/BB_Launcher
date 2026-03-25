@@ -1,69 +1,117 @@
-﻿// SPDX-FileCopyrightText: Copyright 2025-2026 shadPS4 Emulator Project
+// SPDX-FileCopyrightText: Copyright 2025-2026 shadPS4 Emulator Project
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+#include <algorithm>
 #include <fstream>
 #include <iomanip>
-#include <iostream>
+#include <map>
+#include <SDL3/SDL_messagebox.h>
+#include <toml.hpp>
 
-#include "config.h"
 #include "emulator_settings.h"
+#include "modules/Common.h"
+#include "settings/formatting.h"
+#include "settings/updater/BuildInfo.h"
 
 using json = nlohmann::json;
 
-std::shared_ptr<EmulatorSettings> EmulatorSettings::s_instance = nullptr;
-std::mutex EmulatorSettings::s_mutex;
+// ── Singleton storage ─────────────────────────────────────────────────
+std::shared_ptr<EmulatorSettingsImpl> EmulatorSettingsImpl::s_instance = nullptr;
+std::mutex EmulatorSettingsImpl::s_mutex;
 
+// ── nlohmann helpers for std::filesystem::path ───────────────────────
 namespace nlohmann {
 template <>
 struct adl_serializer<std::filesystem::path> {
     static void to_json(json& j, const std::filesystem::path& p) {
-        j = p.string();
+        const auto u8 = p.u8string();
+        j = std::string(reinterpret_cast<const char*>(u8.data()), u8.size());
     }
     static void from_json(const json& j, std::filesystem::path& p) {
-        p = j.get<std::string>();
+        const std::string s = j.get<std::string>();
+        p = std::filesystem::path(
+            std::u8string_view(reinterpret_cast<const char8_t*>(s.data()), s.size()));
     }
 };
 } // namespace nlohmann
 
-// --------------------
-// Print summary
-// --------------------
-void EmulatorSettings::PrintChangedSummary(const std::vector<std::string>& changed) {
+namespace toml {
+// why is it so hard to avoid exceptions with this library
+template <typename T>
+std::optional<T> get_optional(const toml::value& v, const std::string& key) {
+    if (!v.is_table())
+        return std::nullopt;
+    const auto& tbl = v.as_table();
+    auto it = tbl.find(key);
+    if (it == tbl.end())
+        return std::nullopt;
+
+    if constexpr (std::is_same_v<T, int>) {
+        if (it->second.is_integer()) {
+            return static_cast<int>(toml::get<int>(it->second));
+        }
+    } else if constexpr (std::is_same_v<T, unsigned int>) {
+        if (it->second.is_integer()) {
+            return static_cast<u32>(toml::get<unsigned int>(it->second));
+        }
+    } else if constexpr (std::is_same_v<T, double>) {
+        if (it->second.is_floating()) {
+            return toml::get<double>(it->second);
+        }
+    } else if constexpr (std::is_same_v<T, std::string>) {
+        if (it->second.is_string()) {
+            return toml::get<std::string>(it->second);
+        }
+    } else if constexpr (std::is_same_v<T, std::filesystem::path>) {
+        if (it->second.is_string()) {
+            return toml::get<std::string>(it->second);
+        }
+    } else if constexpr (std::is_same_v<T, bool>) {
+        if (it->second.is_boolean()) {
+            return toml::get<bool>(it->second);
+        }
+    } else {
+        static_assert([] { return false; }(), "Unsupported type in get_optional<T>");
+    }
+
+    return std::nullopt;
+}
+
+} // namespace toml
+
+// ── Helpers ───────────────────────────────────────────────────────────
+
+void EmulatorSettingsImpl::PrintChangedSummary(const std::vector<std::string>& changed) {
     if (changed.empty()) {
-        std::cout << "[Settings] No game-specific overrides applied\n";
+        // LOG_DEBUG(EmuSettings, "No game-specific overrides applied");
         return;
     }
-    std::cout << "[Settings] Game-specific overrides applied:\n";
-    for (const auto& k : changed)
-        std::cout << "    * " << k << "\n";
+    // LOG_DEBUG(EmuSettings, "Game-specific overrides applied:");
+    // for (const auto& k : changed)
+    // LOG_DEBUG(EmuSettings, "    * {}", k);
 }
 
-// --------------------
-// ctor/dtor + singleton
-// --------------------
-EmulatorSettings::EmulatorSettings() {
-    // Load();
-}
-EmulatorSettings::~EmulatorSettings() {
-    Save();
-}
+// ── Singleton ────────────────────────────────────────────────────────
+EmulatorSettingsImpl::EmulatorSettingsImpl() = default;
 
-std::shared_ptr<EmulatorSettings> EmulatorSettings::GetInstance() {
-    std::lock_guard<std::mutex> lock(s_mutex);
+EmulatorSettingsImpl::~EmulatorSettingsImpl() {}
+
+std::shared_ptr<EmulatorSettingsImpl> EmulatorSettingsImpl::GetInstance() {
+    std::lock_guard lock(s_mutex);
     if (!s_instance)
-        s_instance = std::make_shared<EmulatorSettings>();
+        s_instance = std::make_shared<EmulatorSettingsImpl>();
     return s_instance;
 }
 
-void EmulatorSettings::SetInstance(std::shared_ptr<EmulatorSettings> instance) {
-    std::lock_guard<std::mutex> lock(s_mutex);
-    s_instance = instance;
+void EmulatorSettingsImpl::SetInstance(std::shared_ptr<EmulatorSettingsImpl> instance) {
+    std::lock_guard lock(s_mutex);
+    s_instance = std::move(instance);
 }
 
 // --------------------
 // General helpers
 // --------------------
-bool EmulatorSettings::AddGameInstallDir(const std::filesystem::path& dir, bool enabled) {
+bool EmulatorSettingsImpl::AddGameInstallDir(const std::filesystem::path& dir, bool enabled) {
     for (const auto& d : m_general.install_dirs.value)
         if (d.path == dir)
             return false;
@@ -71,7 +119,7 @@ bool EmulatorSettings::AddGameInstallDir(const std::filesystem::path& dir, bool 
     return true;
 }
 
-std::vector<std::filesystem::path> EmulatorSettings::GetGameInstallDirs() const {
+std::vector<std::filesystem::path> EmulatorSettingsImpl::GetGameInstallDirs() const {
     std::vector<std::filesystem::path> out;
     for (const auto& d : m_general.install_dirs.value)
         if (d.enabled)
@@ -79,15 +127,15 @@ std::vector<std::filesystem::path> EmulatorSettings::GetGameInstallDirs() const 
     return out;
 }
 
-const std::vector<GameInstallDir>& EmulatorSettings::GetAllGameInstallDirs() const {
+const std::vector<GameInstallDir>& EmulatorSettingsImpl::GetAllGameInstallDirs() const {
     return m_general.install_dirs.value;
 }
 
-void EmulatorSettings::SetAllGameInstallDirs(const std::vector<GameInstallDir>& dirs) {
+void EmulatorSettingsImpl::SetAllGameInstallDirs(const std::vector<GameInstallDir>& dirs) {
     m_general.install_dirs.value = dirs;
 }
 
-void EmulatorSettings::RemoveGameInstallDir(const std::filesystem::path& dir) {
+void EmulatorSettingsImpl::RemoveGameInstallDir(const std::filesystem::path& dir) {
     auto iterator =
         std::find_if(m_general.install_dirs.value.begin(), m_general.install_dirs.value.end(),
                      [&dir](const GameInstallDir& install_dir) { return install_dir.path == dir; });
@@ -96,7 +144,8 @@ void EmulatorSettings::RemoveGameInstallDir(const std::filesystem::path& dir) {
     }
 }
 
-void EmulatorSettings::SetGameInstallDirEnabled(const std::filesystem::path& dir, bool enabled) {
+void EmulatorSettingsImpl::SetGameInstallDirEnabled(const std::filesystem::path& dir,
+                                                    bool enabled) {
     auto iterator =
         std::find_if(m_general.install_dirs.value.begin(), m_general.install_dirs.value.end(),
                      [&dir](const GameInstallDir& install_dir) { return install_dir.path == dir; });
@@ -105,14 +154,15 @@ void EmulatorSettings::SetGameInstallDirEnabled(const std::filesystem::path& dir
     }
 }
 
-void EmulatorSettings::SetGameInstallDirs(const std::vector<std::filesystem::path>& dirs_config) {
+void EmulatorSettingsImpl::SetGameInstallDirs(
+    const std::vector<std::filesystem::path>& dirs_config) {
     m_general.install_dirs.value.clear();
     for (const auto& dir : dirs_config) {
         m_general.install_dirs.value.push_back({dir, true});
     }
 }
 
-const std::vector<bool> EmulatorSettings::GetGameInstallDirsEnabled() {
+const std::vector<bool> EmulatorSettingsImpl::GetGameInstallDirsEnabled() {
     std::vector<bool> enabled_dirs;
     for (const auto& dir : m_general.install_dirs.value) {
         enabled_dirs.push_back(dir.enabled);
@@ -120,108 +170,125 @@ const std::vector<bool> EmulatorSettings::GetGameInstallDirsEnabled() {
     return enabled_dirs;
 }
 
-std::filesystem::path EmulatorSettings::GetHomeDir() {
+std::filesystem::path EmulatorSettingsImpl::GetHomeDir() {
     if (m_general.home_dir.value.empty()) {
         return Common::GetShadUserDir() / "home";
     }
+
     return m_general.home_dir.value;
 }
 
-void EmulatorSettings::SetHomeDir(const std::filesystem::path& dir) {
+void EmulatorSettingsImpl::SetHomeDir(const std::filesystem::path& dir) {
     m_general.home_dir.value = dir;
 }
 
-std::filesystem::path EmulatorSettings::GetSysModulesDir() {
+std::filesystem::path EmulatorSettingsImpl::GetSysModulesDir() {
     if (m_general.sys_modules_dir.value.empty()) {
         return Common::GetShadUserDir() / "sys_modules";
     }
     return m_general.sys_modules_dir.value;
 }
 
-void EmulatorSettings::SetSysModulesDir(const std::filesystem::path& dir) {
+void EmulatorSettingsImpl::SetSysModulesDir(const std::filesystem::path& dir) {
     m_general.sys_modules_dir.value = dir;
 }
 
-// --------------------
-// Save
-// --------------------
-bool EmulatorSettings::Save(const std::string& serial) const {
+std::filesystem::path EmulatorSettingsImpl::GetFontsDir() {
+    if (m_general.font_dir.value.empty()) {
+        return Common::GetShadUserDir() / "fonts";
+    }
+    return m_general.font_dir.value;
+}
+
+void EmulatorSettingsImpl::SetFontsDir(const std::filesystem::path& dir) {
+    m_general.font_dir.value = dir;
+}
+
+// ── Game-specific override management ────────────────────────────────
+void EmulatorSettingsImpl::ClearGameSpecificOverrides() {
+    ClearGroupOverrides(m_general);
+    ClearGroupOverrides(m_debug);
+    ClearGroupOverrides(m_input);
+    ClearGroupOverrides(m_audio);
+    ClearGroupOverrides(m_gpu);
+    ClearGroupOverrides(m_vulkan);
+    // LOG_DEBUG(EmuSettings, "All game-specific overrides cleared");
+}
+
+void EmulatorSettingsImpl::ResetGameSpecificValue(const std::string& key) {
+    // Walk every overrideable group until we find the matching key.
+    auto tryGroup = [&key](auto& group) {
+        for (auto& item : group.GetOverrideableFields()) {
+            if (key == item.key) {
+                item.reset_game_specific(&group);
+                return true;
+            }
+        }
+        return false;
+    };
+    if (tryGroup(m_general))
+        return;
+    if (tryGroup(m_debug))
+        return;
+    if (tryGroup(m_input))
+        return;
+    if (tryGroup(m_audio))
+        return;
+    if (tryGroup(m_gpu))
+        return;
+    if (tryGroup(m_vulkan))
+        return;
+    // LOG_WARNING(EmuSettings, "ResetGameSpecificValue: key '{}' not found", key);
+}
+
+bool EmulatorSettingsImpl::Save(const std::string& serial) {
     try {
         if (!serial.empty()) {
-            const std::filesystem::path cfgDir = Common::GetShadUserDir() / "custom_configs";
+            const auto cfgDir = Common::GetShadUserDir() / "custom_configs";
             std::filesystem::create_directories(cfgDir);
-            const std::filesystem::path path = cfgDir / (serial + ".json");
+            const auto path = cfgDir / (serial + ".json");
 
             json j = json::object();
 
-            // Only write overrideable fields for each group
             json generalObj = json::object();
-            for (auto& item : m_general.GetOverrideableFields()) {
-                json whole = m_general;
-                if (whole.contains(item.key))
-                    generalObj[item.key] = whole[item.key];
-            }
+            SaveGroupGameSpecific(m_general, generalObj);
             j["General"] = generalObj;
 
-            // Debug
             json debugObj = json::object();
-            for (auto& item : m_debug.GetOverrideableFields()) {
-                json whole = m_debug;
-                if (whole.contains(item.key))
-                    debugObj[item.key] = whole[item.key];
-            }
+            SaveGroupGameSpecific(m_debug, debugObj);
             j["Debug"] = debugObj;
 
-            // Input
             json inputObj = json::object();
-            for (auto& item : m_input.GetOverrideableFields()) {
-                json whole = m_input;
-                if (whole.contains(item.key))
-                    inputObj[item.key] = whole[item.key];
-            }
+            SaveGroupGameSpecific(m_input, inputObj);
             j["Input"] = inputObj;
 
-            // Audio
             json audioObj = json::object();
-            for (auto& item : m_audio.GetOverrideableFields()) {
-                json whole = m_audio;
-                if (whole.contains(item.key))
-                    audioObj[item.key] = whole[item.key];
-            }
+            SaveGroupGameSpecific(m_audio, audioObj);
             j["Audio"] = audioObj;
 
-            // GPU
             json gpuObj = json::object();
-            for (auto& item : m_gpu.GetOverrideableFields()) {
-                json whole = m_gpu;
-                if (whole.contains(item.key))
-                    gpuObj[item.key] = whole[item.key];
-            }
+            SaveGroupGameSpecific(m_gpu, gpuObj);
             j["GPU"] = gpuObj;
 
-            // Vulkan
             json vulkanObj = json::object();
-            for (auto& item : m_vulkan.GetOverrideableFields()) {
-                json whole = m_vulkan;
-                if (whole.contains(item.key))
-                    vulkanObj[item.key] = whole[item.key];
-            }
+            SaveGroupGameSpecific(m_vulkan, vulkanObj);
             j["Vulkan"] = vulkanObj;
 
             std::ofstream out(path);
-            if (!out.is_open()) {
-                std::cerr << "Failed to open file for writing: " << path << std::endl;
+            if (!out) {
+                // LOG_ERROR(EmuSettings, "Failed to open game config for writing: {}",
+                // path.string());
                 return false;
             }
-            out << std::setw(4) << j;
-            out.flush();
-            if (out.fail()) {
-                std::cerr << "Failed to write settings to: " << path << std::endl;
-                return false;
-            }
-            return true;
+            out << std::setw(2) << j;
+            return !out.fail();
+
         } else {
-            const std::filesystem::path path = Common::GetShadUserDir() / "config.json";
+            // ── Global config.json ─────────────────────────────────────
+            const auto path = Common::GetShadUserDir() / "config.json";
+
+            SetConfigVersion(Build::Rev);
+
             json j;
             j["General"] = m_general;
             j["Debug"] = m_debug;
@@ -229,185 +296,157 @@ bool EmulatorSettings::Save(const std::string& serial) const {
             j["Audio"] = m_audio;
             j["GPU"] = m_gpu;
             j["Vulkan"] = m_vulkan;
-            // j["Users"] = m_userManager.GetUsers();
+
+            // Read the existing file so we can preserve keys unknown to this build
+            json existing = json::object();
+            if (std::ifstream existingIn{path}; existingIn.good()) {
+                try {
+                    existingIn >> existing;
+                } catch (...) {
+                    existing = json::object();
+                }
+            }
+
+            // Merge: update each section's known keys, but leave unknown keys intact
+            for (auto& [section, val] : j.items()) {
+                if (existing.contains(section) && existing[section].is_object() && val.is_object())
+                    existing[section].update(val); // overwrites known keys, keeps unknown ones
+                else
+                    existing[section] = val;
+            }
 
             std::ofstream out(path);
-            if (!out.is_open()) {
-                std::cerr << "Failed to open file for writing: " << path << std::endl;
+            if (!out) {
+                // LOG_ERROR(EmuSettings, "Failed to open config for writing: {}", path.string());
                 return false;
             }
-            out << std::setw(4) << j;
-            out.flush();
-            if (out.fail()) {
-                std::cerr << "Failed to write settings to: " << path << std::endl;
-                return false;
-            }
-            return true;
+            out << std::setw(2) << existing;
+            return !out.fail();
         }
     } catch (const std::exception& e) {
-        std::cerr << "Error saving settings: " << e.what() << std::endl;
+        // LOG_ERROR(EmuSettings, "Error saving settings: {}", e.what());
         return false;
     }
 }
 
-// --------------------
-// Load
-// --------------------
-bool EmulatorSettings::Load(const std::string& serial) {
+// ── Load ──────────────────────────────────────────────────────────────
+
+bool EmulatorSettingsImpl::Load(const std::string& serial) {
     try {
-        // If serial is empty, load ONLY global settings
         if (serial.empty()) {
-            const std::filesystem::path userDir = Common::GetShadUserDir();
-            const std::filesystem::path configPath = userDir / "config.json";
+            // ── Global config ──────────────────────────────────────────
+            const auto userDir = Common::GetShadUserDir();
+            const auto configPath = userDir / "config.json";
+            // LOG_DEBUG(EmuSettings, "Loading global config from: {}", configPath.string());
 
-            std::cout << "[EmulatorSettings] Loading global settings from: " << configPath
-                      << std::endl;
-
-            // Load global config if exists
-            if (std::ifstream globalIn{configPath}; globalIn.good()) {
+            if (std::ifstream in{configPath}; in.good()) {
                 json gj;
-                globalIn >> gj;
+                in >> gj;
 
-                std::cout << "[EmulatorSettings] Global config JSON size: " << gj.size()
-                          << std::endl;
+                auto mergeGroup = [&gj](auto& group, const char* section) {
+                    if (!gj.contains(section))
+                        return;
+                    json current = group;
+                    current.update(gj.at(section));
+                    group = current.get<std::remove_reference_t<decltype(group)>>();
+                };
 
-                if (gj.contains("General")) {
-                    json current = m_general;
-                    current.update(gj.at("General"));
-                    m_general = current.get<GeneralSettings>();
-                    std::cout << "[EmulatorSettings] Loaded General settings" << std::endl;
-                }
-                if (gj.contains("Debug")) {
-                    json current = m_debug;
-                    current.update(gj.at("Debug"));
-                    m_debug = current.get<DebugSettings>();
-                    std::cout << "[EmulatorSettings] Loaded Debug settings" << std::endl;
-                }
-                if (gj.contains("Input")) {
-                    json current = m_input;
-                    current.update(gj.at("Input"));
-                    m_input = current.get<InputSettings>();
-                    std::cout << "[EmulatorSettings] Loaded Input settings" << std::endl;
-                }
-                if (gj.contains("Audio")) {
-                    json current = m_audio;
-                    current.update(gj.at("Audio"));
-                    m_audio = current.get<AudioSettings>();
-                    std::cout << "[EmulatorSettings] Loaded Audio settings" << std::endl;
-                }
-                if (gj.contains("GPU")) {
-                    json current = m_gpu;
-                    current.update(gj.at("GPU"));
-                    m_gpu = current.get<GPUSettings>();
-                    std::cout << "[EmulatorSettings] Loaded GPU settings" << std::endl;
-                }
-                if (gj.contains("Vulkan")) {
-                    json current = m_vulkan;
-                    current.update(gj.at("Vulkan"));
-                    m_vulkan = current.get<VulkanSettings>();
-                    std::cout << "[EmulatorSettings] Loaded Vulkan settings" << std::endl;
-                }
-                if (gj.contains("Users")) {
-                    // TODO
-                    // m_userManager.GetUsers() = gj.at("Users").get<Users>();
-                    std::cout << "[EmulatorSettings] Loaded Users" << std::endl;
-                }
+                mergeGroup(m_general, "General");
+                mergeGroup(m_debug, "Debug");
+                mergeGroup(m_input, "Input");
+                mergeGroup(m_audio, "Audio");
+                mergeGroup(m_gpu, "GPU");
+                mergeGroup(m_vulkan, "Vulkan");
+
+                // LOG_DEBUG(EmuSettings, "Global config loaded successfully");
             } else {
-                std::cout << "[EmulatorSettings] Global config not found, setting defaults"
-                          << std::endl;
-                SetDefaultValues();
-                // TODO
-                // ensure a default user exists
-                // if (m_userManager.GetUsers().user.empty())
-                //  m_userManager.GetUsers().user = m_userManager.CreateDefaultUser();
+                if (std::filesystem::exists(Common::GetShadUserDir() / "config.toml")) {
+                    SDL_MessageBoxButtonData btns[2]{
+                        {0, 0, "No"},
+                        {0, 1, "Yes"},
+                    };
+                    SDL_MessageBoxData msg_box{
+                        0,
+                        nullptr,
+                        "Config Migration",
+                        "The shadPS4 config backend has been updated, and you only have "
+                        "the old version of the config. Do you wish to update it "
+                        "automatically, or continue with the default config?",
+                        2,
+                        btns,
+                        nullptr,
+                    };
+                    int result = 1;
+                    SDL_ShowMessageBox(&msg_box, &result);
+                    if (result == 1) {
+                        if (TransferSettings()) {
+                            Save();
+                            return true;
+                        } else {
+                            SDL_ShowSimpleMessageBox(0, "Config Migration",
+                                                     "Error transferring settings, exiting.",
+                                                     nullptr);
+                            std::quick_exit(1);
+                        }
+                    }
+                }
+            }
+            if (GetConfigVersion() != Build::Rev) {
                 Save();
             }
-
             return true;
-        }
-        // If serial is provided, ONLY apply game-specific overrides
-        // WITHOUT reloading global settings!
-        else {
-            std::cout << "[EmulatorSettings] Applying game-specific overrides for: " << serial
-                      << std::endl;
-
-            const std::filesystem::path gamePath =
-                Common::GetShadUserDir() / "custom_configs" / (serial + ".json");
-
-            std::cout << "[EmulatorSettings] Game config path: " << gamePath << std::endl;
+        } else {
+            // ── Per-game override file ─────────────────────────────────
+            // Never reloads global settings. Only applies
+            // game_specific_value overrides on top of the already-loaded
+            // base configuration.
+            const auto gamePath = Common::GetShadUserDir() / "custom_configs" / (serial + ".json");
+            // LOG_DEBUG(EmuSettings, "Applying game config: {}", gamePath.string());
 
             if (!std::filesystem::exists(gamePath)) {
-                std::cout << "[EmulatorSettings] No game-specific config found" << std::endl;
+                // LOG_DEBUG(EmuSettings, "No game-specific config found for {}", serial);
                 return false;
             }
 
             std::ifstream in(gamePath);
-            if (!in.is_open()) {
-                std::cerr << "[EmulatorSettings] Failed to open game config file" << std::endl;
+            if (!in) {
+                // LOG_ERROR(EmuSettings, "Failed to open game config: {}", gamePath.string());
                 return false;
             }
 
             json gj;
             in >> gj;
 
-            std::cout << "[EmulatorSettings] Game config JSON: " << gj.dump(2) << std::endl;
-
             std::vector<std::string> changed;
 
-            if (gj.contains("General")) {
-                std::cout << "[EmulatorSettings] Applying General overrides" << std::endl;
-                ApplyGroupOverrides<GeneralSettings>(m_general, gj.at("General"), changed);
-            }
-            if (gj.contains("Debug")) {
-                std::cout << "[EmulatorSettings] Applying Debug overrides" << std::endl;
-                ApplyGroupOverrides<DebugSettings>(m_debug, gj.at("Debug"), changed);
-            }
-            if (gj.contains("Input")) {
-                std::cout << "[EmulatorSettings] Applying Input overrides" << std::endl;
-                ApplyGroupOverrides<InputSettings>(m_input, gj.at("Input"), changed);
-            }
-            if (gj.contains("Audio")) {
-                std::cout << "[EmulatorSettings] Applying Audio overrides" << std::endl;
-                ApplyGroupOverrides<AudioSettings>(m_audio, gj.at("Audio"), changed);
-            }
-            if (gj.contains("GPU")) {
-                std::cout << "[EmulatorSettings] Applying GPU overrides" << std::endl;
-                ApplyGroupOverrides<GPUSettings>(m_gpu, gj.at("GPU"), changed);
-
-                // Debug: Print specific GPU values
-                auto gpuJson = gj["GPU"];
-                if (gpuJson.contains("fsr_enabled")) {
-                    std::cout << "[EmulatorSettings] GPU/fsr_enabled JSON: "
-                              << gpuJson["fsr_enabled"].dump() << std::endl;
-                }
-                if (gpuJson.contains("rcas_enabled")) {
-                    std::cout << "[EmulatorSettings] GPU/rcas_enabled JSON: "
-                              << gpuJson["rcas_enabled"].dump() << std::endl;
-                }
-            }
-            if (gj.contains("Vulkan")) {
-                std::cout << "[EmulatorSettings] Applying Vulkan overrides" << std::endl;
-                ApplyGroupOverrides<VulkanSettings>(m_vulkan, gj.at("Vulkan"), changed);
-            }
+            // ApplyGroupOverrides now correctly stores values as
+            // game_specific_value (see make_override in the header).
+            // ConfigMode::Default will then resolve them at getter call
+            // time without ever touching the base values.
+            if (gj.contains("General"))
+                ApplyGroupOverrides(m_general, gj.at("General"), changed);
+            if (gj.contains("Debug"))
+                ApplyGroupOverrides(m_debug, gj.at("Debug"), changed);
+            if (gj.contains("Input"))
+                ApplyGroupOverrides(m_input, gj.at("Input"), changed);
+            if (gj.contains("Audio"))
+                ApplyGroupOverrides(m_audio, gj.at("Audio"), changed);
+            if (gj.contains("GPU"))
+                ApplyGroupOverrides(m_gpu, gj.at("GPU"), changed);
+            if (gj.contains("Vulkan"))
+                ApplyGroupOverrides(m_vulkan, gj.at("Vulkan"), changed);
 
             PrintChangedSummary(changed);
-
-            // Debug: Print current values after applying overrides
-            std::cout << "[EmulatorSettings] After applying overrides:" << std::endl;
-            std::cout << "  FSR Enabled: " << IsFsrEnabled() << std::endl;
-            std::cout << "  RCAS Enabled: " << IsRcasEnabled() << std::endl;
-            std::cout << "  Volume: " << GetVolumeSlider() << std::endl;
-            std::cout << "  Show Splash: " << IsShowSplash() << std::endl;
-
+            // EmulatorState::GetInstance()->SetGameSpecifigConfigUsed(true);
             return true;
         }
     } catch (const std::exception& e) {
-        std::cerr << "Error loading settings: " << e.what() << std::endl;
+        // LOG_ERROR(EmuSettings, "Error loading settings: {}", e.what());
         return false;
     }
 }
 
-void EmulatorSettings::SetDefaultValues() {
+void EmulatorSettingsImpl::SetDefaultValues() {
     m_general = GeneralSettings{};
     m_debug = DebugSettings{};
     m_input = InputSettings{};
@@ -416,21 +455,189 @@ void EmulatorSettings::SetDefaultValues() {
     m_vulkan = VulkanSettings{};
 }
 
-std::vector<std::string> EmulatorSettings::GetAllOverrideableKeys() const {
-    std::vector<std::string> keys;
-
-    auto addKeys = [&keys](const std::vector<OverrideItem>& items) {
-        for (const auto& item : items) {
-            keys.push_back(item.key);
-        }
+bool EmulatorSettingsImpl::TransferSettings() {
+    toml::value og_data;
+    json new_data = json::object();
+    try {
+        auto path = Common::GetShadUserDir() / "config.toml";
+        std::ifstream ifs;
+        ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+        ifs.open(path, std::ios_base::binary);
+        og_data = toml::parse(ifs, std::string{fmt::UTF(path.filename().u8string()).data});
+    } catch (std::exception& ex) {
+        fmt::print("Got exception trying to load config file. Exception: {}\n", ex.what());
+        return false;
+    }
+    auto setFromToml = [&]<typename T>(Setting<T>& n, toml::value const& t, std::string k) {
+        n = toml::get_optional<T>(t, k).value_or(n.default_value);
     };
+    if (og_data.contains("General")) {
+        const toml::value& general = og_data.at("General");
+        auto& s = m_general;
 
-    addKeys(m_general.GetOverrideableFields());
-    addKeys(m_debug.GetOverrideableFields());
-    addKeys(m_input.GetOverrideableFields());
-    addKeys(m_audio.GetOverrideableFields());
-    addKeys(m_gpu.GetOverrideableFields());
-    addKeys(m_vulkan.GetOverrideableFields());
+        setFromToml(s.volume_slider, general, "volumeSlider");
+        setFromToml(s.neo_mode, general, "isPS4Pro");
+        setFromToml(s.dev_kit_mode, general, "isDevKit");
+        setFromToml(s.psn_signed_in, general, "isPSNSignedIn");
+        setFromToml(s.trophy_popup_disabled, general, "isTrophyPopupDisabled");
+        setFromToml(s.trophy_notification_duration, general, "trophyNotificationDuration");
+        setFromToml(s.discord_rpc_enabled, general, "enableDiscordRPC");
+        setFromToml(s.log_filter, general, "logFilter");
+        setFromToml(s.log_type, general, "logType");
+        setFromToml(s.identical_log_grouped, general, "isIdenticalLogGrouped");
+        setFromToml(s.show_splash, general, "showSplash");
+        setFromToml(s.trophy_notification_side, general, "sideTrophy");
+        setFromToml(s.connected_to_network, general, "isConnectedToNetwork");
+        setFromToml(s.sys_modules_dir, general, "sysModulesPath");
+        setFromToml(s.font_dir, general, "fontsPath");
+        // setFromToml(, general, "userName");
+        // setFromToml(s.defaultControllerID, general, "defaultControllerID");
+    }
 
+    if (og_data.contains("Input")) {
+        const toml::value& input = og_data.at("Input");
+        auto& s = m_input;
+
+        setFromToml(s.cursor_state, input, "cursorState");
+        setFromToml(s.cursor_hide_timeout, input, "cursorHideTimeout");
+        setFromToml(s.use_special_pad, input, "useSpecialPad");
+        setFromToml(s.special_pad_class, input, "specialPadClass");
+        setFromToml(s.motion_controls_enabled, input, "isMotionControlsEnabled");
+        setFromToml(s.use_unified_input_config, input, "useUnifiedInputConfig");
+        setFromToml(s.background_controller_input, input, "backgroundControllerInput");
+        setFromToml(s.usb_device_backend, input, "usbDeviceBackend");
+    }
+
+    if (og_data.contains("Audio")) {
+        const toml::value& audio = og_data.at("Audio");
+        auto& s = m_audio;
+
+        setFromToml(s.sdl_mic_device, audio, "micDevice");
+        setFromToml(s.sdl_main_output_device, audio, "mainOutputDevice");
+        setFromToml(s.sdl_padSpk_output_device, audio, "padSpkOutputDevice");
+    }
+
+    if (og_data.contains("GPU")) {
+        const toml::value& gpu = og_data.at("GPU");
+        auto& s = m_gpu;
+
+        setFromToml(s.window_width, gpu, "screenWidth");
+        setFromToml(s.window_height, gpu, "screenHeight");
+        setFromToml(s.internal_screen_width, gpu, "internalScreenWidth");
+        setFromToml(s.internal_screen_height, gpu, "internalScreenHeight");
+        setFromToml(s.null_gpu, gpu, "nullGpu");
+        setFromToml(s.copy_gpu_buffers, gpu, "copyGPUBuffers");
+        setFromToml(s.readbacks_mode, gpu, "readbacksMode");
+        setFromToml(s.readback_linear_images_enabled, gpu, "readbackLinearImages");
+        setFromToml(s.direct_memory_access_enabled, gpu, "directMemoryAccess");
+        setFromToml(s.dump_shaders, gpu, "dumpShaders");
+        setFromToml(s.patch_shaders, gpu, "patchShaders");
+        setFromToml(s.vblank_frequency, gpu, "vblankFrequency");
+        setFromToml(s.full_screen, gpu, "Fullscreen");
+        setFromToml(s.full_screen_mode, gpu, "FullscreenMode");
+        setFromToml(s.present_mode, gpu, "presentMode");
+        setFromToml(s.hdr_allowed, gpu, "allowHDR");
+        setFromToml(s.fsr_enabled, gpu, "fsrEnabled");
+        setFromToml(s.rcas_enabled, gpu, "rcasEnabled");
+        setFromToml(s.rcas_attenuation, gpu, "rcasAttenuation");
+    }
+
+    if (og_data.contains("Vulkan")) {
+        const toml::value& vk = og_data.at("Vulkan");
+        auto& s = m_vulkan;
+
+        setFromToml(s.gpu_id, vk, "gpuId");
+        setFromToml(s.vkvalidation_enabled, vk, "validation");
+        setFromToml(s.vkvalidation_core_enabled, vk, "validation_core");
+        setFromToml(s.vkvalidation_sync_enabled, vk, "validation_sync");
+        setFromToml(s.vkvalidation_gpu_enabled, vk, "validation_gpu");
+        setFromToml(s.vkcrash_diagnostic_enabled, vk, "crashDiagnostic");
+        setFromToml(s.vkhost_markers, vk, "hostMarkers");
+        setFromToml(s.vkguest_markers, vk, "guestMarkers");
+        setFromToml(s.renderdoc_enabled, vk, "rdocEnable");
+        setFromToml(s.pipeline_cache_enabled, vk, "pipelineCacheEnable");
+        setFromToml(s.pipeline_cache_archived, vk, "pipelineCacheArchive");
+    }
+
+    if (og_data.contains("Debug")) {
+        const toml::value& debug = og_data.at("Debug");
+        auto& s = m_debug;
+
+        setFromToml(s.debug_dump, debug, "DebugDump");
+        setFromToml(s.separate_logging_enabled, debug, "isSeparateLogFilesEnabled");
+        setFromToml(s.shader_collect, debug, "CollectShader");
+        setFromToml(s.log_enabled, debug, "logEnabled");
+        setFromToml(m_general.show_fps_counter, debug, "showFpsCounter");
+    }
+
+    if (og_data.contains("Settings")) {
+        const toml::value& settings = og_data.at("Settings");
+        auto& s = m_general;
+        setFromToml(s.console_language, settings, "consoleLanguage");
+    }
+
+    if (og_data.contains("GUI")) {
+        const toml::value& gui = og_data.at("GUI");
+        auto& s = m_general;
+
+        // Transfer install directories
+        try {
+            const auto install_dir_array =
+                toml::find_or<std::vector<std::string>>(gui, "installDirs", {});
+            std::vector<bool> install_dirs_enabled;
+
+            try {
+                install_dirs_enabled = toml::find<std::vector<bool>>(gui, "installDirsEnabled");
+            } catch (...) {
+                // If it does not exist, assume that all are enabled.
+                install_dirs_enabled.resize(install_dir_array.size(), true);
+            }
+
+            if (install_dirs_enabled.size() < install_dir_array.size()) {
+                install_dirs_enabled.resize(install_dir_array.size(), true);
+            }
+
+            std::vector<GameInstallDir> settings_install_dirs;
+            for (size_t i = 0; i < install_dir_array.size(); i++) {
+                settings_install_dirs.push_back(
+                    {std::filesystem::path{install_dir_array[i]}, install_dirs_enabled[i]});
+            }
+            s.install_dirs.value = settings_install_dirs;
+        } catch (const std::exception& e) {
+            // LOG_WARNING(EmuSettings, "Failed to transfer install directories: {}", e.what());
+        }
+
+        // Transfer addon install directory
+        try {
+            std::string addon_install_dir_str;
+            if (gui.contains("addonInstallDir")) {
+                const auto& addon_value = gui.at("addonInstallDir");
+                if (addon_value.is_string()) {
+                    addon_install_dir_str = toml::get<std::string>(addon_value);
+                    if (!addon_install_dir_str.empty()) {
+                        s.addon_install_dir.value = std::filesystem::path{addon_install_dir_str};
+                    }
+                }
+            }
+        } catch (const std::exception& e) {
+            // LOG_WARNING(EmuSettings, "Failed to transfer addon install directory: {}", e.what());
+        }
+    }
+
+    return true;
+}
+
+std::vector<std::string> EmulatorSettingsImpl::GetAllOverrideableKeys() const {
+    std::vector<std::string> keys;
+    auto addGroup = [&keys](const auto& fields) {
+        for (const auto& item : fields)
+            keys.push_back(item.key);
+    };
+    addGroup(m_general.GetOverrideableFields());
+    addGroup(m_debug.GetOverrideableFields());
+    addGroup(m_input.GetOverrideableFields());
+    addGroup(m_audio.GetOverrideableFields());
+    addGroup(m_gpu.GetOverrideableFields());
+    addGroup(m_vulkan.GetOverrideableFields());
     return keys;
 }
