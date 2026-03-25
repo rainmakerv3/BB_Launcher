@@ -391,7 +391,7 @@ bool EmulatorSettingsImpl::Load(const std::string& serial) {
                     }
                 }
             }
-            if (GetConfigVersion() != Build::Rev) {
+            if (GetConfigVersion() != Build::Rev || !std::filesystem::exists(configPath)) {
                 Save();
             }
             return true;

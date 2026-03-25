@@ -48,13 +48,13 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     logDisplay = new QAnsiTextEdit(this);
     ui->logLayout->addWidget(logDisplay);
 
+    Config::LoadSettings();
+
     m_emu_settings->Load();
     EmulatorSettingsImpl::SetInstance(m_emu_settings);
 
-    m_user_settings->Load();
-    UserSettingsImpl::SetInstance(m_user_settings);
-
-    Config::LoadSettings();
+    // m_user_settings->Load();
+    // UserSettingsImpl::SetInstance(m_user_settings);
 
     if (Common::shadPs4Executable == "" || !std::filesystem::exists(Common::shadPs4Executable)) {
         QMessageBox::warning(this, "No shadPS4 build",
