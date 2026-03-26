@@ -25,6 +25,8 @@ void CreateSettingsFile();
 bool isReleaseOlder(int minorVersion, int majorVersion = 0);
 Build GetCurrentBuildInfo();
 int GetDmemValue();
+void CreateKeysJson();
+void SaveTrophyKey(std::string key);
 
 void SaveLauncherSettings();
 

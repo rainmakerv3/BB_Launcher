@@ -71,6 +71,8 @@ void LoadSettings() {
 
     ApiKey = toml::find_or<std::string>(data, "Launcher", "ApiKey", "");
     theme = toml::find_or<std::string>(data, "Launcher", "Theme", "Dark");
+    Config::SetTheme(theme);
+
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
     AutoUpdateEnabled = toml::find_or<bool>(data, "Launcher", "AutoUpdateEnabled", false);
     PortableFolderinLauncherFolder =
@@ -144,6 +146,14 @@ void LoadSettings() {
     std::filesystem::path keysJson = Common::GetShadUserDir() / "keys.json";
     Common::PathToQString(keysJsonPath, keysJson);
 
+    if (!std::filesystem::exists(keysJson)) {
+        CreateKeysJson();
+        if (Config::TrophyKey != "") {
+            SaveTrophyKey(Config::TrophyKey);
+            return;
+        }
+    }
+
     QFile file(keysJsonPath);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         // handle
@@ -163,8 +173,40 @@ void LoadSettings() {
         QJsonObject releaseObj = nameValue.toObject();
         Config::TrophyKey = releaseObj.value("ReleaseTrophyKey").toString().toStdString();
     }
+}
 
-    Config::SetTheme(theme);
+void SaveTrophyKey(std::string key) {
+    QString keysJsonPath;
+    std::filesystem::path keysJson = Common::GetShadUserDir() / "keys.json";
+    Common::PathToQString(keysJsonPath, keysJson);
+
+    QFile file(keysJsonPath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        // handle
+    }
+    QByteArray jsonData = file.readAll();
+    file.close();
+
+    QJsonDocument doc = QJsonDocument::fromJson(jsonData);
+    if (doc.isNull()) {
+        // handle
+    }
+
+    QJsonObject obj = doc.object();
+    QJsonValue trophyKeySetObj = obj.value("TrophyKeySet");
+    if (trophyKeySetObj.isObject()) {
+        QJsonObject releaseObj = trophyKeySetObj.toObject();
+        releaseObj["ReleaseTrophyKey"] = QString::fromStdString(key);
+        obj["TrophyKeySet"] = releaseObj;
+    }
+
+    doc.setObject(obj);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
+        // handle
+    }
+
+    file.write(doc.toJson(QJsonDocument::Indented));
+    file.close();
 }
 
 void CreateSettingsFile() {
@@ -477,6 +519,29 @@ int GetDmemValue() {
 
     EmulatorSettings.Load();
     return dmem;
+}
+
+void CreateKeysJson() {
+    QJsonObject releaseObject;
+    releaseObject["ReleaseTrophyKey"] = "";
+
+    QJsonObject rootObject;
+    rootObject["TrophyKeySet"] = releaseObject;
+
+    QJsonDocument doc(rootObject);
+    QByteArray jsonData = doc.toJson(QJsonDocument::Indented);
+
+    QString keysJsonPath;
+    std::filesystem::path keysJson = Common::GetShadUserDir() / "keys.json";
+    Common::PathToQString(keysJsonPath, keysJson);
+
+    QFile file(keysJsonPath);
+    if (!file.open(QIODevice::WriteOnly)) {
+        // handle
+    }
+
+    file.write(jsonData);
+    file.close();
 }
 
 } // namespace Config

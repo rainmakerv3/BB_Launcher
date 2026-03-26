@@ -28,7 +28,6 @@ private:
     void SetDefaults();
     void UpdateDialog();
     void getPhysicalDevices();
-    void CreateKeysJson();
 
     bool IsSettingOverrideable(const char* setting_key, const QString& setting_group) const;
     void MapUIControls();
@@ -40,7 +39,6 @@ private:
     // GameInfo m_current_game;   // Add current game info
     // std::string m_game_serial; // Game serial number
 
-    QString keysJsonPath;
     QString defaultTextEdit;
     int initialHeight;
 

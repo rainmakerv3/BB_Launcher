@@ -74,13 +74,6 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
         }
     }
 
-    std::filesystem::path keysJson = Common::GetShadUserDir() / "keys.json";
-    Common::PathToQString(keysJsonPath, keysJson);
-
-    if (!std::filesystem::exists(keysJson)) {
-        CreateKeysJson();
-    }
-
     ui->setupUi(this);
     getPhysicalDevices();
     ui->tabWidgetSettings->setUsesScrollButtons(false);
@@ -370,28 +363,7 @@ void ShadSettings::LoadValuesFromConfig() {
         QString::fromStdString(EmulatorSettings.GetFullScreenMode()));
     ui->backgroundControllerCheckBox->setChecked(EmulatorSettings.IsBackgroundControllerInput());
 
-    QFile file(keysJsonPath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        // handle
-    }
-
-    QByteArray jsonData = file.readAll();
-    file.close();
-
-    QJsonDocument doc = QJsonDocument::fromJson(jsonData);
-    if (doc.isNull()) {
-        // handle
-    }
-
-    QString key;
-    QJsonObject obj = doc.object();
-    QJsonValue nameValue = obj.value("TrophyKeySet");
-    if (nameValue.isObject()) {
-        QJsonObject releaseObj = nameValue.toObject();
-        key = releaseObj.value("ReleaseTrophyKey").toString();
-    }
-
-    ui->trophyKeyLineEdit->setText(key);
+    ui->trophyKeyLineEdit->setText(QString::fromStdString(Config::TrophyKey));
     ui->trophyKeyLineEdit->setEchoMode(QLineEdit::Password);
 }
 
@@ -564,35 +536,9 @@ void ShadSettings::SaveSettings() {
         }
         EmulatorSettings.SetConsoleLanguage(language_ids[code]);
 
-        QFile file(keysJsonPath);
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            // handle
-        }
-        QByteArray jsonData = file.readAll();
-        file.close();
-
-        QJsonDocument doc = QJsonDocument::fromJson(jsonData);
-        if (doc.isNull()) {
-            // handle
-        }
-
         QString key = ui->trophyKeyLineEdit->text();
         Config::TrophyKey = key.toStdString();
-        QJsonObject obj = doc.object();
-        QJsonValue trophyKeySetObj = obj.value("TrophyKeySet");
-        if (trophyKeySetObj.isObject()) {
-            QJsonObject releaseObj = trophyKeySetObj.toObject();
-            releaseObj["ReleaseTrophyKey"] = key;
-            obj["TrophyKeySet"] = releaseObj;
-        }
-
-        doc.setObject(obj);
-        if (!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
-            // handle
-        }
-
-        file.write(doc.toJson(QJsonDocument::Indented));
-        file.close();
+        Config::SaveTrophyKey(Config::TrophyKey);
     }
 
     if (is_game_specific) {
@@ -786,23 +732,4 @@ void ShadSettings::MapUIControls() {
     m_uiSettingMap[ui->vblankSpinBox] = {"vblank_frequency", "GPU"};
     m_uiSettingMap[ui->DMACheckBox] = {"direct_memory_access_enabled", "GPU"};
     m_uiSettingMap[ui->readbacksModeComboBox] = {"readbacks_mode", "GPU"};
-}
-
-void ShadSettings::CreateKeysJson() {
-    QJsonObject releaseObject;
-    releaseObject["ReleaseTrophyKey"] = "";
-
-    QJsonObject rootObject;
-    rootObject["TrophyKeySet"] = releaseObject;
-
-    QJsonDocument doc(rootObject);
-    QByteArray jsonData = doc.toJson(QJsonDocument::Indented);
-
-    QFile file(keysJsonPath);
-    if (!file.open(QIODevice::WriteOnly)) {
-        // handle
-    }
-
-    file.write(jsonData);
-    file.close();
 }
