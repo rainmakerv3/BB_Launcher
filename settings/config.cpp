@@ -344,7 +344,7 @@ r3 = q
 r3 = middlebutton
 
 options = escape
-touchpad = g
+touchpad_left = g
 
 key_toggle = i, lalt
 mouse_to_joystick = right
@@ -371,7 +371,7 @@ r2 = r2
 r3 = r3
 
 options = options
-touchpad = back
+touchpad_left = back
 
 pad_up = pad_up
 pad_down = pad_down
