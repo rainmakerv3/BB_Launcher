@@ -33,7 +33,6 @@ bool Config::ShowChangeLog = true;
 std::string Config::DefaultFolderString = "";
 
 std::string Config::TrophyKey = "";
-std::filesystem::path Config::externalSaveDir;
 
 bool Config::GameRunning = false;
 bool Config::GameSpecificConfigUsed = false;
@@ -131,11 +130,6 @@ void LoadSettings() {
                 toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
 
             TrophyKey = toml::find_or<std::string>(shadData, "Keys", "TrophyKey", "");
-
-            if (shadData.contains("GUI")) {
-                const toml::value& GUI = shadData.at("GUI");
-                externalSaveDir = toml::find_fs_path_or(GUI, "saveDataPath", {});
-            }
 
         } catch (std::exception& ex) {
             // handle

@@ -112,10 +112,10 @@ std::filesystem::path GetBBLFilesPath() {
 
 std::filesystem::path GetSaveDir() {
     std::filesystem::path path;
-    if (Config::externalSaveDir == "") {
-        path = Common::GetShadUserDir() / "savedata" / "1";
+    if (EmulatorSettings.GetHomeDir() == "") {
+        path = Common::GetShadUserDir() / "home" / "1000" / "savedata";
     } else {
-        path = Config::externalSaveDir / "1";
+        path = EmulatorSettings.GetHomeDir() / "1000" / "savedata";
     }
 
     if (!std::filesystem::exists(path))
@@ -137,7 +137,12 @@ std::filesystem::path GetDlcDir() {
 }
 
 std::filesystem::path GetTrophyDir() {
-    std::filesystem::path path = Common::GetShadUserDir() / "game_data";
+    std::filesystem::path path;
+    if (EmulatorSettings.GetHomeDir() == "") {
+        path = Common::GetShadUserDir() / "home" / "1000" / "trophy";
+    } else {
+        path = EmulatorSettings.GetHomeDir() / "1000" / "trophy";
+    }
 
     if (!std::filesystem::exists(path))
         std::filesystem::create_directories(path);

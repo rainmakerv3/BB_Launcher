@@ -55,7 +55,6 @@ extern bool GameRunning;
 extern bool GameSpecificConfigUsed;
 
 extern std::string TrophyKey;
-extern std::filesystem::path externalSaveDir;
 
 const std::filesystem::path SettingsFile = Common::GetBBLFilesPath() / "LauncherSettings.toml";
 
