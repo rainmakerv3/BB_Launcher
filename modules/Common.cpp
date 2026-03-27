@@ -84,6 +84,10 @@ std::filesystem::path GetShadUserDir() {
         user_dir = std::filesystem::path(appdata) / "shadPS4";
 #endif
     }
+
+    if (!std::filesystem::exists(user_dir))
+        std::filesystem::create_directories(user_dir);
+
     return user_dir;
 }
 
@@ -114,6 +118,9 @@ std::filesystem::path GetSaveDir() {
         path = Config::externalSaveDir / "1";
     }
 
+    if (!std::filesystem::exists(path))
+        std::filesystem::create_directories(path);
+
     return path;
 }
 
@@ -123,11 +130,18 @@ std::filesystem::path GetDlcDir() {
         path = Common::GetShadUserDir() / "addcont";
     }
 
+    if (!std::filesystem::exists(path))
+        std::filesystem::create_directories(path);
+
     return path;
 }
 
 std::filesystem::path GetTrophyDir() {
     std::filesystem::path path = Common::GetShadUserDir() / "game_data";
+
+    if (!std::filesystem::exists(path))
+        std::filesystem::create_directories(path);
+
     return path;
 }
 
