@@ -28,7 +28,7 @@ jobs:
       shorthash: ${{ steps.vars.outputs.shorthash }}
       fullhash: ${{ steps.vars.outputs.fullhash }}
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
     - name: Get date and git hash
       id: vars
       run: |
@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-24.04
     continue-on-error: true
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 0
     - name: Install
@@ -61,12 +61,12 @@ jobs:
     runs-on: windows-2025
     needs: get-info
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: recursive
 
     - name: Setup VS Environment
-      uses: ilammy/msvc-dev-cmd@v1.13.0
+      uses: rainmakerv3/msvc-dev-cmd@v1.13.0
       with:
         arch: amd64
 
@@ -80,7 +80,7 @@ jobs:
         move build/BB_Launcher.exe upload
         Compress-Archive -Path upload/* -DestinationPath BB_Launcher-win64-qt-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}.zip
     - name: Upload Windows Qt artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: BB_Launcher-win64-qt-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}
         path: upload/
@@ -89,12 +89,12 @@ jobs:
     runs-on: windows-2025
     needs: get-info
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: recursive
 
     - name: Setup VS Environment
-      uses: ilammy/msvc-dev-cmd@v1.13.0
+      uses: rainmakerv3/msvc-dev-cmd@v1.13.0
       with:
         arch: amd64
 
@@ -108,7 +108,7 @@ jobs:
         move build/BB_Launcher.exe upload
         Compress-Archive -Path upload/* -DestinationPath BB_Launcher-win64-qt-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}.zip
     - name: Upload Windows Qt artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v6
       with:
         name: BB_Launcher-win64-qt-noUAC-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}
         path: upload/
@@ -117,7 +117,7 @@ jobs:
     runs-on: macos-15
     needs: get-info
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: recursive
 
@@ -148,7 +148,7 @@ jobs:
         mv ${{github.workspace}}/build/BB_Launcher.app upload
         macdeployqt upload/BB_Launcher.app -qmldir=${{github.workspace}}/dist
         tar cf BB_Launcher-macos-qt.tar.gz -C upload .
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v6
       with:
         name: BB_Launcher-macos-qt-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}
         path: BB_Launcher-macos-qt.tar.gz
@@ -158,7 +158,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: get-info
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: recursive
     - name: Add LLVM repository
@@ -207,7 +207,7 @@ jobs:
     - name: Package and Upload Linux Qt artifact
       run: |
         tar cf BB_Launcher-qt.tar.gz -C ${{github.workspace}}/build BB_Launcher
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v6
       with:
         name: BB_Launcher-linux-qt-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}
         path: BB_Launcher-qt.AppImage
@@ -216,7 +216,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: get-info
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         submodules: recursive
     - name: Add LLVM repository
@@ -265,7 +265,7 @@ jobs:
     - name: Package and Upload Linux Qt artifact
       run: |
         tar cf BB_Launcher-qt.tar.gz -C ${{github.workspace}}/build BB_Launcher
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v6
       with:
         name: BB_Launcher-linux-qt-downloader-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}
         path: BB_Launcher-qt.AppImage
@@ -276,7 +276,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - name: Download all artifacts
-      uses: actions/download-artifact@v4
+      uses: actions/download-artifact@v8
       with:
         path: ./artifacts
   
