@@ -21,10 +21,10 @@ bool UserManager::AddUser(const User& user) {
 
     std::error_code ec;
     if (!std::filesystem::exists(user_dir)) {
-        std::filesystem::create_directory(user_dir, ec);
-        std::filesystem::create_directory(user_dir / "savedata", ec);
-        std::filesystem::create_directory(user_dir / "trophy", ec);
-        std::filesystem::create_directory(user_dir / "inputs", ec);
+        std::filesystem::create_directories(user_dir, ec);
+        std::filesystem::create_directories(user_dir / "savedata", ec);
+        std::filesystem::create_directories(user_dir / "trophy", ec);
+        std::filesystem::create_directories(user_dir / "inputs", ec);
     }
 
     Save();
@@ -117,10 +117,10 @@ Users UserManager::CreateDefaultUsers() {
         const auto user_dir = EmulatorSettings.GetHomeDir() / std::to_string(u.user_id);
 
         if (!std::filesystem::exists(user_dir)) {
-            std::filesystem::create_directory(user_dir);
-            std::filesystem::create_directory(user_dir / "savedata");
-            std::filesystem::create_directory(user_dir / "trophy");
-            std::filesystem::create_directory(user_dir / "inputs");
+            std::filesystem::create_directories(user_dir);
+            std::filesystem::create_directories(user_dir / "savedata");
+            std::filesystem::create_directories(user_dir / "trophy");
+            std::filesystem::create_directories(user_dir / "inputs");
         }
     }
 
