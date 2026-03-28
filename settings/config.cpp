@@ -118,7 +118,7 @@ void LoadSettings() {
             Common::installPath.parent_path() / (Common::game_serial + "-patch");
     }
 
-    // To do: delete when no longer needed
+    // My to do: delete when no longer needed
     std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
     if (std::filesystem::exists(shadConfigFile)) {
         toml::value shadData;

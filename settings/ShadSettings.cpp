@@ -126,7 +126,6 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
     }
 
     ui->networkGroupBox->setVisible(false);
-    ui->HomeFolderGroupBox->setVisible(false);
     ui->userGroupBox->setVisible(false);
 
     LoadValuesFromConfig();
@@ -192,22 +191,16 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_spec
     });
 
     connect(ui->HomePathButton, &QPushButton::clicked, this, [this]() {
-        QMessageBox::information(this, "Not implemented yet",
-                                 "Recent shadPS4 changes require a new implementation for this, "
-                                 "disabled in the meantime");
-        return;
-
-        /*
         QString initial_path;
-        Common::PathToQString(initial_path, Config::externalHomeDir);
+        Common::PathToQString(initial_path, EmulatorSettings.GetHomeDir());
+
         QString home_path_string =
             QFileDialog::getExistingDirectory(this, "Set home folder", initial_path);
         auto file_path = Common::PathFromQString(home_path_string);
+
         if (!file_path.empty()) {
-            Config::externalHomeDir = file_path;
             ui->HomePathLineEdit->setText(home_path_string);
         }
-        */
     });
 
     connect(ui->DlcPathButton, &QPushButton::clicked, this, [this]() {

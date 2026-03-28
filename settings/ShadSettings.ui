@@ -51,7 +51,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QScrollArea" name="generalTab">
       <property name="widgetResizable">
@@ -1030,7 +1030,7 @@
         </rect>
        </property>
        <property name="title">
-        <string>Home Folder</string>
+        <string>Home Folder (Save and Trophy folder location)</string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
