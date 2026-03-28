@@ -9,17 +9,81 @@
 #include "TrophyManager.h"
 #include "modules/ui_TrophyManager.h"
 #include "settings/config.h"
+#include "settings/emulator_settings.h"
 
 bool useEuropeanDateFormat = true;
 
-TrophyViewer::TrophyViewer(QString trophyPath, QString gameTrpPath)
-    : QMainWindow(), trophyFolder(trophyPath), ui(new Ui::TrophyViewer) {
+// PS4 system language IDs map directly to TROP00.XML .. TROP30.XML.
+// Index = OrbisSystemServiceParamId language value reported by the system.
+
+static constexpr std::array<std::string_view, 31> s_language_xml_names = {
+    "TROP_00.XML", // 00 Japanese
+    "TROP_01.XML", // 01 English (US)
+    "TROP_02.XML", // 02 French
+    "TROP_03.XML", // 03 Spanish (ES)
+    "TROP_04.XML", // 04 German
+    "TROP_05.XML", // 05 Italian
+    "TROP_06.XML", // 06 Dutch
+    "TROP_07.XML", // 07 Portuguese (PT)
+    "TROP_08.XML", // 08 Russian
+    "TROP_09.XML", // 09 Korean
+    "TROP_10.XML", // 10 Traditional Chinese
+    "TROP_11.XML", // 11 Simplified Chinese
+    "TROP_12.XML", // 12 Finnish
+    "TROP_13.XML", // 13 Swedish
+    "TROP_14.XML", // 14 Danish
+    "TROP_15.XML", // 15 Norwegian
+    "TROP_16.XML", // 16 Polish
+    "TROP_17.XML", // 17 Portuguese (BR)
+    "TROP_18.XML", // 18 English (GB)
+    "TROP_19.XML", // 19 Turkish
+    "TROP_20.XML", // 20 Spanish (LA)
+    "TROP_21.XML", // 21 Arabic
+    "TROP_22.XML", // 22 French (CA)
+    "TROP_23.XML", // 23 Czech
+    "TROP_24.XML", // 24 Hungarian
+    "TROP_25.XML", // 25 Greek
+    "TROP_26.XML", // 26 Romanian
+    "TROP_27.XML", // 27 Thai
+    "TROP_28.XML", // 28 Vietnamese
+    "TROP_29.XML", // 29 Indonesian
+    "TROP_30.XML", // 30 Unkrainian
+};
+
+static std::filesystem::path GetTrophyXmlPath(const std::filesystem::path& xml_dir,
+                                              int system_language) {
+    // Try the exact language file first.
+    if (system_language >= 0 && system_language < static_cast<int>(s_language_xml_names.size())) {
+        auto lang_path = xml_dir / s_language_xml_names[system_language];
+        if (std::filesystem::exists(lang_path)) {
+            return lang_path;
+        }
+    }
+    // Final fallback: master TROP.XML (always present).
+    return xml_dir / "TROP.XML";
+}
+
+TrophyViewer::TrophyViewer(QString gameTrpPath) : QMainWindow(), ui(new Ui::TrophyViewer) {
     ui->setupUi(this);
     this->setWindowTitle(tr("Trophy Viewer"));
     this->setAttribute(Qt::WA_DeleteOnClose);
     this->setWindowModality(Qt::ApplicationModal);
 
     gameTrpPath_ = gameTrpPath;
+    auto basepath = Common::PathFromQString(gameTrpPath_);
+    std::filesystem::path npbindPath = basepath / "sce_sys" / "npbind.dat";
+    NPBindFile npbind;
+    if (!npbind.Load(npbindPath.string())) {
+        // LOG_WARNING(Common_Filesystem, "Failed to load npbind.dat file");
+    } else {
+        std::vector<std::string> npCommIds = npbind.GetNpCommIds();
+        if (npCommIds.empty()) {
+            // LOG_WARNING(Common_Filesystem, "No NPComm IDs found in npbind.dat");
+        } else {
+            npCommId = npCommIds[0];
+        }
+    }
+
     headers << "Unlocked"
             << "Trophy"
             << "Name"
@@ -29,12 +93,12 @@ TrophyViewer::TrophyViewer(QString trophyPath, QString gameTrpPath)
             << "ID"
             << "Hidden";
 
-    if (!RefreshValues(trophyPath)) {
+    if (!RefreshValues()) {
         QWidget::close();
         return;
     }
 
-    PopulateTrophyWidget(trophyPath);
+    PopulateTrophyWidget();
 
     QDockWidget* trophyInfoDock = new QDockWidget("", this);
     QWidget* dockWidget = new QWidget(trophyInfoDock);
@@ -149,7 +213,7 @@ void TrophyViewer::updateTableFilters() {
     }
 }
 
-void TrophyViewer::PopulateTrophyWidget(QString title) {
+void TrophyViewer::PopulateTrophyWidget() {
     tableWidget = new QTableWidget(this);
     tableWidget->setShowGrid(false);
     tableWidget->setColumnCount(8);
@@ -271,8 +335,8 @@ void TrophyViewer::TabChanged() {
 void TrophyViewer::TrophyIDChanged() {
     QString indexstring = ui->TrophyIDBox->currentText();
     int index = indexstring.toInt();
-    const auto trophyDir =
-        Common::GetTrophyDir() / Common::game_serial / "TrophyFiles" / "trophy00" / "Icons";
+
+    auto trophyDir = Common::GetShadUserDir() / "trophy" / npCommId / "Icons";
     QString trophyDirQt;
     Common::PathToQString(trophyDirQt, trophyDir);
 
@@ -308,10 +372,8 @@ void TrophyViewer::UpdateStats() {
 
 void TrophyViewer::UnlockTrophy() {
     int ID = ui->TrophyIDBox->currentText().toInt();
-
-    // TODO:: VERIFY
-    const auto trophy_dir = Common::GetTrophyDir() / Common::game_serial / "TrophyFiles";
-    auto trophy_file = trophy_dir / "trophy00" / "Xml" / "TROP.XML";
+    std::string filename = npCommId + ".xml";
+    auto trophy_file = Common::GetTrophyDir() / filename;
 
     pugi::xml_document doc;
     pugi::xml_parse_result result = doc.load_file(trophy_file.native().c_str());
@@ -355,8 +417,8 @@ void TrophyViewer::UnlockTrophy() {
         }
     }
 
-    doc.save_file((trophy_dir / "trophy00" / "Xml" / "TROP.XML").native().c_str());
-    RefreshValues(trophyFolder);
+    doc.save_file(trophy_file.c_str());
+    RefreshValues();
 
     QImage unlocked_icon = QImage(":/unlocked.png");
     SetTableIcon(tableWidget, ID, 0, unlocked_icon);
@@ -369,9 +431,8 @@ void TrophyViewer::UnlockTrophy() {
 
 void TrophyViewer::LockTrophy() {
     int ID = ui->TrophyIDBox->currentText().toInt();
-
-    const auto trophy_dir = Common::GetTrophyDir() / Common::game_serial / "TrophyFiles";
-    auto trophy_file = trophy_dir / "trophy00" / "Xml" / "TROP.XML";
+    std::string filename = npCommId + ".xml";
+    auto trophy_file = Common::GetTrophyDir() / filename;
 
     pugi::xml_document doc;
     pugi::xml_parse_result result = doc.load_file(trophy_file.native().c_str());
@@ -414,8 +475,8 @@ void TrophyViewer::LockTrophy() {
         }
     }
 
-    doc.save_file((trophy_dir / "trophy00" / "Xml" / "TROP.XML").native().c_str());
-    RefreshValues(trophyFolder);
+    doc.save_file(trophy_file.c_str());
+    RefreshValues();
 
     QImage locked_icon = QImage(":/locked.png");
     SetTableIcon(tableWidget, ID, 0, locked_icon);
@@ -434,8 +495,8 @@ void TrophyViewer::LockAllTrophies() {
         return;
     }
 
-    const auto trophy_dir = Common::GetTrophyDir() / Common::game_serial / "TrophyFiles";
-    auto trophy_file = trophy_dir / "trophy00" / "Xml" / "TROP.XML";
+    std::string filename = npCommId + ".xml";
+    auto trophy_file = Common::GetTrophyDir() / filename;
 
     pugi::xml_document doc;
     pugi::xml_parse_result result =
@@ -466,8 +527,8 @@ void TrophyViewer::LockAllTrophies() {
         }
     }
 
-    doc.save_file((trophy_dir / "trophy00" / "Xml" / "TROP.XML").native().c_str());
-    RefreshValues(trophyFolder);
+    doc.save_file(trophy_file.c_str());
+    RefreshValues();
 
     QImage locked_icon = QImage(":/locked.png");
     for (int i = 0; i < 40; i++) {
@@ -480,7 +541,7 @@ void TrophyViewer::LockAllTrophies() {
     QMessageBox::information(this, "Trophies Reset", "All trophies locked");
 }
 
-bool TrophyViewer::RefreshValues(QString title) {
+bool TrophyViewer::RefreshValues() {
     trpId.clear();
     trpHidden.clear();
     trpUnlocked.clear();
@@ -491,14 +552,13 @@ bool TrophyViewer::RefreshValues(QString title) {
     trpTimeUnlocked.clear();
     icons.clear();
 
-    const auto trophyDir = Common::GetTrophyDir() / Common::game_serial / "TrophyFiles";
-    QString trophyDirQt;
-    Common::PathToQString(trophyDirQt, trophyDir);
+    const auto baseTrophyDir = Common::GetShadUserDir() / "trophy" / npCommId;
+    QString baseTrophyDirQt;
+    Common::PathToQString(baseTrophyDirQt, baseTrophyDir);
 
-    QDir dir(trophyDirQt);
-    if (!dir.exists() || dir.isEmpty()) {
+    if (!std::filesystem::exists(baseTrophyDir) || std::filesystem::is_empty(baseTrophyDir)) {
         std::filesystem::path path = Common::PathFromQString(gameTrpPath_);
-        if (!trp.Extract(path, title.toStdString())) {
+        if (!trp.Extract(path, 0, npCommId, baseTrophyDir)) {
             QMessageBox::warning(this, "Error",
                                  "Error extracting trophy files, a Trophy Key may be required "
                                  "(check shadPS4 settings)");
@@ -506,81 +566,109 @@ bool TrophyViewer::RefreshValues(QString title) {
         }
     }
 
-    QFileInfoList dirList = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
-    for (const QFileInfo& dirInfo : dirList) {
-        QString fileName = dirInfo.fileName();
-        QString trpDir = trophyDirQt + "/" + fileName;
+    std::string filename = npCommId + ".xml";
+    auto user_trophy_file = Common::GetTrophyDir() / filename;
+    if (!std::filesystem::exists(user_trophy_file)) {
+        std::error_code discard;
+        std::filesystem::copy_file(baseTrophyDir / "Xml" / "TROPCONF.XML", user_trophy_file,
+                                   discard);
+    }
 
-        QString iconsPath = trpDir + "/Icons";
-        QDir iconsDir(iconsPath);
-        QFileInfoList iconDirList = iconsDir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
+    QString iconsPath = baseTrophyDirQt + "/Icons";
+    QDir iconsDir(iconsPath);
+    QFileInfoList iconDirList = iconsDir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
 
-        for (const QFileInfo& iconInfo : iconDirList) {
-            // Skip files that doesn't start with "trop" or "TROP"
-            QString fileName = iconInfo.fileName();
-            if (!fileName.startsWith("trop", Qt::CaseInsensitive))
-                continue;
+    for (const QFileInfo& iconInfo : iconDirList) {
+        // Skip files that doesn't start with "trop" or "TROP"
+        QString fileName = iconInfo.fileName();
+        if (!fileName.startsWith("trop", Qt::CaseInsensitive))
+            continue;
 
-            QImage icon =
-                QImage(iconInfo.absoluteFilePath())
-                    .scaled(QSize(128, 128), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-            icons.push_back(icon);
-        }
+        QImage icon = QImage(iconInfo.absoluteFilePath())
+                          .scaled(QSize(128, 128), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        icons.push_back(icon);
+    }
 
-        QString xmlPath = trpDir + "/Xml/TROP.XML";
-        QFile file(xmlPath);
-        if (!file.open(QFile::ReadOnly | QFile::Text)) {
-            QMessageBox::warning(this, "Error", "Error opening Trophy XML file");
+    QString xmlPath;
+    Common::PathToQString(xmlPath, user_trophy_file);
+    if (!std::filesystem::exists(user_trophy_file)) {
+        std::filesystem::path path = Common::PathFromQString(gameTrpPath_);
+        if (!trp.Extract(path, 0, npCommId, baseTrophyDir)) {
+            QMessageBox::warning(this, "Error",
+                                 "Error extracting trophy files, a Trophy Key may be required "
+                                 "(check shadPS4 settings)");
             return false;
         }
+    }
 
-        QXmlStreamReader reader(&file);
-        while (!reader.atEnd() && !reader.hasError()) {
-            reader.readNext();
-            if (reader.isStartElement() && reader.name().toString() == "trophy") {
-                trpId.append(reader.attributes().value("id").toString());
-                trpHidden.append(reader.attributes().value("hidden").toString());
-                trpType.append(reader.attributes().value("ttype").toString());
-                trpPid.append(reader.attributes().value("pid").toString());
-                if (reader.attributes().hasAttribute("unlockstate")) {
-                    if (reader.attributes().value("unlockstate").toString() == "true") {
-                        trpUnlocked.append("unlocked");
-                    } else {
-                        trpUnlocked.append("locked");
-                    }
-                    if (reader.attributes().hasAttribute("timestamp")) {
-                        QString ts = reader.attributes().value("timestamp").toString();
-                        if (ts.length() > 10)
-                            trpTimeUnlocked.append("unknown");
-                        else {
-                            bool ok;
-                            qint64 timestampInt = ts.toLongLong(&ok);
-                            if (ok) {
-                                QDateTime dt = QDateTime::fromSecsSinceEpoch(timestampInt);
-                                QString format =
-                                    useEuropeanDateFormat ? "dd/MM/yyyy\n" : "MM/dd/yyy\n";
-                                QString format2 = "h:mm ap";
-                                trpTimeUnlocked.append(dt.toString(format) + dt.toString(format2));
-                            } else {
-                                trpTimeUnlocked.append("unknown");
-                            }
-                        }
-                    } else {
-                        trpTimeUnlocked.append("");
-                    }
+    QFile file(xmlPath);
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(this, "Error", "Error opening Trophy XML file");
+        return false;
+    }
+
+    QXmlStreamReader reader(&file);
+    while (!reader.atEnd() && !reader.hasError()) {
+        reader.readNext();
+        if (reader.isStartElement() && reader.name().toString() == "trophy") {
+            trpId.append(reader.attributes().value("id").toString());
+            trpHidden.append(reader.attributes().value("hidden").toString());
+            trpType.append(reader.attributes().value("ttype").toString());
+            trpPid.append(reader.attributes().value("pid").toString());
+            if (reader.attributes().hasAttribute("unlockstate")) {
+                if (reader.attributes().value("unlockstate").toString() == "true") {
+                    trpUnlocked.append("unlocked");
                 } else {
                     trpUnlocked.append("locked");
+                }
+                if (reader.attributes().hasAttribute("timestamp")) {
+                    QString ts = reader.attributes().value("timestamp").toString();
+                    if (ts.length() > 10)
+                        trpTimeUnlocked.append("unknown");
+                    else {
+                        bool ok;
+                        qint64 timestampInt = ts.toLongLong(&ok);
+                        if (ok) {
+                            QDateTime dt = QDateTime::fromSecsSinceEpoch(timestampInt);
+                            QString format = useEuropeanDateFormat ? "dd/MM/yyyy\n" : "MM/dd/yyy\n";
+                            QString format2 = "h:mm ap";
+                            trpTimeUnlocked.append(dt.toString(format) + dt.toString(format2));
+                        } else {
+                            trpTimeUnlocked.append("unknown");
+                        }
+                    }
+                } else {
                     trpTimeUnlocked.append("");
                 }
-            }
-            if (reader.name().toString() == "name" && !trpId.isEmpty()) {
-                trophyNames.append(reader.readElementText());
-            }
-            if (reader.name().toString() == "detail" && !trpId.isEmpty()) {
-                trophyDetails.append(reader.readElementText());
+            } else {
+                trpUnlocked.append("locked");
+                trpTimeUnlocked.append("");
             }
         }
     }
+
+    auto base_trophy_file = GetTrophyXmlPath(Common::GetShadUserDir() / "trophy" / npCommId / "Xml",
+                                             EmulatorSettings.GetConsoleLanguage());
+    QString baseXmlPath;
+    Common::PathToQString(baseXmlPath, base_trophy_file);
+
+    QFile baseFile(baseXmlPath);
+    if (!baseFile.open(QFile::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(this, "Error", "Error opening Trophy XML file");
+        return false;
+    }
+
+    QXmlStreamReader reader2(&baseFile);
+    while (!reader2.atEnd() && !reader2.hasError()) {
+        reader2.readNext();
+        if (reader2.name().toString() == "name" && !trpId.isEmpty()) {
+            trophyNames.append(reader2.readElementText());
+        }
+        if (reader2.name().toString() == "detail" && !trpId.isEmpty()) {
+            trophyDetails.append(reader2.readElementText());
+        }
+    }
+
     return true;
 }
 

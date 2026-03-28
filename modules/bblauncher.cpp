@@ -134,15 +134,14 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->TrophyButton, &QPushButton::pressed, this, [this]() {
-        QString trophyPath, gameTrpPath;
-        trophyPath = QString::fromStdString(Common::game_serial);
+        QString gameTrpPath;
         Common::PathToQString(gameTrpPath, Common::installPath);
 
         if (std::filesystem::exists(Common::installUpdatePath)) {
             Common::PathToQString(gameTrpPath, Common::installUpdatePath);
         }
 
-        TrophyViewer* TrophyWindow = new TrophyViewer(trophyPath, gameTrpPath);
+        TrophyViewer* TrophyWindow = new TrophyViewer(gameTrpPath);
         TrophyWindow->show();
         connect(this->parent(), &QWidget::destroyed, TrophyWindow,
                 [TrophyWindow]() { TrophyWindow->deleteLater(); });

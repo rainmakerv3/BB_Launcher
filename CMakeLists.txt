@@ -178,6 +178,8 @@ set(PROJECT_SOURCES
     modules/TrophyDeps/keys.h
     modules/TrophyDeps/nt_api.cpp
     modules/TrophyDeps/nt_api.h
+    modules/TrophyDeps/npbind.cpp
+    modules/TrophyDeps/npbind.h
     modules/TrophyDeps/trp.cpp
     modules/TrophyDeps/trp.h
     settings/PSF/psf.cpp

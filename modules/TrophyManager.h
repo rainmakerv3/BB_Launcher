@@ -16,6 +16,7 @@
 #include <QVBoxLayout>
 #include <QXmlStreamReader>
 
+#include "modules/TrophyDeps/npbind.h"
 #include "modules/TrophyDeps/trp.h"
 
 namespace Ui {
@@ -26,7 +27,7 @@ class TrophyViewer : public QMainWindow {
     Q_OBJECT
 
 public:
-    explicit TrophyViewer(QString trophyPath, QString gameTrpPath);
+    explicit TrophyViewer(QString gameTrpPath);
     ~TrophyViewer();
     void updateTrophyInfo();
     void updateTableFilters();
@@ -40,11 +41,11 @@ private slots:
 
 private:
     Ui::TrophyViewer* ui;
-    void PopulateTrophyWidget(QString title);
+    void PopulateTrophyWidget();
     void SetTableItem(QTableWidget* parent, int row, int column, QString str);
     void SetTableIcon(QTableWidget* parent, int row, int column, QImage icon);
     void UpdateStats();
-    bool RefreshValues(QString title);
+    bool RefreshValues();
 
     QLabel* trophyInfoLabel;
     QCheckBox* showEarnedCheck;
@@ -57,6 +58,7 @@ private:
     QStringList headers;
     QString gameTrpPath_;
     TRP trp;
+    std::string npCommId;
 
     QStringList trpId;
     QStringList trpHidden;
@@ -67,8 +69,6 @@ private:
     QStringList trophyDetails;
     QStringList trpTimeUnlocked;
     std::vector<QImage> icons;
-
-    QString trophyFolder;
 
     std::string GetTrpType(const QChar trp_) {
         switch (trp_.toLatin1()) {

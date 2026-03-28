@@ -8,6 +8,10 @@
 #include "io_file.h"
 #include "modules/Common.h"
 
+static constexpr u32 TRP_MAGIC = 0xDCA24D00;
+static constexpr u8 ENTRY_FLAG_PNG = 0;
+static constexpr u8 ENTRY_FLAG_ENCRYPTED_XML = 3;
+
 struct TrpHeader {
     u32_be magic; // (0xDCA24D00)
     u32_be version;
@@ -32,7 +36,8 @@ class TRP {
 public:
     TRP();
     ~TRP();
-    bool Extract(const std::filesystem::path& trophyPath, const std::string titleId);
+    bool Extract(const std::filesystem::path& trophyPath, int index, std::string npCommId,
+                 const std::filesystem::path& outputPath);
     void GetNPcommID(const std::filesystem::path& trophyPath, int index);
 
 private:
@@ -41,4 +46,11 @@ private:
     std::array<u8, 16> esfmIv{};
     std::filesystem::path trpFilesPath;
     static constexpr int iv_len = 16;
+
+    bool ProcessPngEntry(Common::FS::IOFile& file, const TrpEntry& entry,
+                         const std::filesystem::path& outputPath, std::string_view name);
+    bool ProcessEncryptedXmlEntry(Common::FS::IOFile& file, const TrpEntry& entry,
+                                  const std::filesystem::path& outputPath, std::string_view name,
+                                  const std::array<u8, 16>& user_key, const std::string& npCommId);
+    std::vector<u8> HexStringToBytes(const std::string& hexStr);
 };
