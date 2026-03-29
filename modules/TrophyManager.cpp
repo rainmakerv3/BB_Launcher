@@ -6,6 +6,7 @@
 #include <pugixml.hpp>
 
 #include "Common.h"
+#include "Log.h"
 #include "TrophyManager.h"
 #include "modules/ui_TrophyManager.h"
 #include "settings/config.h"
@@ -74,11 +75,13 @@ TrophyViewer::TrophyViewer(QString gameTrpPath) : QMainWindow(), ui(new Ui::Trop
     std::filesystem::path npbindPath = basepath / "sce_sys" / "npbind.dat";
     NPBindFile npbind;
     if (!npbind.Load(npbindPath.string())) {
-        // LOG_WARNING(Common_Filesystem, "Failed to load npbind.dat file");
+        std::string msg = "Failed to load npbind.dat file";
+        LogError(msg);
     } else {
         std::vector<std::string> npCommIds = npbind.GetNpCommIds();
         if (npCommIds.empty()) {
-            // LOG_WARNING(Common_Filesystem, "No NPComm IDs found in npbind.dat");
+            std::string msg = "No NPComm IDs found in npbind.dat";
+            LogWarning(msg);
         } else {
             npCommId = npCommIds[0];
         }

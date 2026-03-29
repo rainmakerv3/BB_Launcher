@@ -11,6 +11,7 @@
 #include <QProcess>
 #include <QScrollBar>
 
+#include "Log.h"
 #include "bblauncher.h"
 #include "modules/Common.h"
 #include "modules/ModDownloader.h"
@@ -43,6 +44,9 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     m_ipc_client->gameClosedFunc = [this]() { onGameClosed(); };
     m_ipc_client->restartEmulatorFunc = [this]() { RestartEmulator(); };
     m_ipc_client->startGameFunc = [this]() { RunGame(); };
+
+    if (std::filesystem::exists(Common::GetBBLFilesPath() / "log.txt"))
+        std::filesystem::remove(Common::GetBBLFilesPath() / "log.txt");
 
     ui->setupUi(this);
     logDisplay = new QAnsiTextEdit(this);
@@ -365,7 +369,9 @@ void BBLauncher::StartBackupSave() {
                 try {
                     std::filesystem::rename(sourceDir, destDir);
                 } catch (std::exception& ex) {
-                    // handle?;
+                    std::string msg = "Error moving saves: ";
+                    msg += ex.what();
+                    LogError(msg);
                 }
             }
         }
@@ -375,7 +381,9 @@ void BBLauncher::StartBackupSave() {
                                   std::filesystem::copy_options::overwrite_existing |
                                       std::filesystem::copy_options::recursive);
         } catch (std::exception& ex) {
-            // handle?;
+            std::string msg = "Error backing up saves: ";
+            msg += ex.what();
+            LogError(msg);
         }
     }
 }
@@ -567,8 +575,9 @@ std::vector<MemoryPatcher::PendingPatch> BBLauncher::readPatches(std::string gam
 
         QFile jsonFile(filesJsonPath);
         if (!jsonFile.open(QIODevice::ReadOnly)) {
-            // LOG_ERROR(Loader, "Unable to open files.json for reading in repository {}",
-            //         folder.toStdString());
+            std::string msg =
+                "Unable to open files.json for reading in repository " + folder.toStdString();
+            LogError(msg);
             continue;
         }
         const QByteArray jsonData = jsonFile.readAll();
@@ -590,15 +599,17 @@ std::vector<MemoryPatcher::PendingPatch> BBLauncher::readPatches(std::string gam
         }
 
         if (selectedFileName.isEmpty()) {
-            // LOG_ERROR(Loader, "No patch file found for the current serial in repository {}",
-            //       folder.toStdString());
+            std::string msg =
+                "No patch file found for the current serial in repository " + folder.toStdString();
+            LogError(msg);
             continue;
         }
 
         const QString filePath = patchDir + "/" + folder + "/" + selectedFileName;
         QFile file(filePath);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            // LOG_ERROR(Loader, "Unable to open the file for reading.");
+            std::string msg = "Unable to open the file for reading";
+            LogError(msg);
             continue;
         }
         const QByteArray xmlData = file.readAll();
@@ -689,10 +700,11 @@ std::vector<MemoryPatcher::PendingPatch> BBLauncher::readPatches(std::string gam
         }
 
         if (xmlReader.hasError()) {
-            // LOG_ERROR(Loader, "Failed to parse XML for {}", gameSerial);
+            std::string msg = "Failed to parse XML";
+            LogError(msg);
         } else {
-            // LOG_INFO(Loader, "Patches parsed successfully, repository: {}",
-            // folder.toStdString());
+            std::string msg = "Patches parsed successfully, repository: " + folder.toStdString();
+            LogInfo(msg);
         }
     }
     return pending;
