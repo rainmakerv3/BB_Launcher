@@ -664,11 +664,15 @@ bool TrophyViewer::RefreshValues() {
     QXmlStreamReader reader2(&baseFile);
     while (!reader2.atEnd() && !reader2.hasError()) {
         reader2.readNext();
-        if (reader2.name().toString() == "name" && !trpId.isEmpty()) {
-            trophyNames.append(reader2.readElementText());
-        }
-        if (reader2.name().toString() == "detail" && !trpId.isEmpty()) {
-            trophyDetails.append(reader2.readElementText());
+        if (reader2.isStartElement() && reader2.name().toString() == "trophy") {
+            while (reader2.readNextStartElement()) {
+                if (reader2.name().toString() == "name" && !trpId.isEmpty()) {
+                    trophyNames.append(reader2.readElementText());
+                }
+                if (reader2.name().toString() == "detail" && !trpId.isEmpty()) {
+                    trophyDetails.append(reader2.readElementText());
+                }
+            }
         }
     }
 
