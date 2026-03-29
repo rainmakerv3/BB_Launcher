@@ -6,6 +6,7 @@
 #include <QProcessEnvironment>
 
 #include "ipc_client.h"
+#include "modules/Log.h"
 #include "settings/config.h"
 
 using u32 = std::uint32_t;
@@ -143,19 +144,18 @@ void IpcClient::onStderr() {
 
         const QString s = QString::fromUtf8(line.mid(1)).trimmed();
         if (s == "#IPC_ENABLED") {
-            // LOG_INFO(IPC, "IPC detected");
+            LogInfo("IPC detected");
         } else if (s == "ENABLE_MEMORY_PATCH") {
             supportedCapabilities["memory_patch"] = true;
-            // LOG_INFO(IPC, "Feature detected: 'memory_patch'");
+            LogInfo("Feature detected: 'memory_patch'");
         } else if (s == "ENABLE_EMU_CONTROL") {
             supportedCapabilities["emu_control"] = true;
-            // LOG_INFO(IPC, "Feature detected: 'emu_control'");
+            LogInfo("Feature detected: 'emu_control");
         } else if (s == "#IPC_END") {
             for (const auto& [capability, supported] : supportedCapabilities) {
                 if (not supported) {
-                    // LOG_WARNING(IPC,
-                    //             "Feature: '{}' is not supported by the choosen emulator version",
-                    //             capability);
+                    LogWarning("Feature is not supported by the choosen emulator version: " +
+                               capability);
                 }
             }
             // LOG_INFO(IPC, "Start emu");
@@ -319,7 +319,7 @@ std::string MemoryPatcher::convertValueToHex(const std::string type, const std::
     } else if (type == "mask" || type == "mask_jump32") {
         result = valueStr;
     } else {
-        // LOG_INFO(Loader, "Error applying Patch, unknown type: {}", type);
+        LogInfo("Error applying Patch, unknown type: " + type);
     }
     return result;
 }

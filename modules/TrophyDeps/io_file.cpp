@@ -4,6 +4,8 @@
 #include <vector>
 
 #include "io_file.h"
+#include "modules/Common.h"
+#include "modules/Log.h"
 
 #ifdef _WIN32
 #include "nt_api.h"
@@ -188,8 +190,8 @@ int IOFile::Open(const fs::path& path, FileAccessMode mode, FileType type, FileS
 
     if (!IsOpen()) {
         const auto ec = std::error_code{result, std::generic_category()};
-        // LOG_ERROR(Common_Filesystem, "Failed to open the file at path={}, error_message={}",
-        //       PathToUTF8String(file_path), ec.message());
+        LogError("Failed to open file at path = " + file_path.string() +
+                 ", error message = " + ec.message());
     }
 
     return result;
@@ -206,8 +208,8 @@ void IOFile::Close() {
 
     if (!close_result) {
         const auto ec = std::error_code{errno, std::generic_category()};
-        // LOG_ERROR(Common_Filesystem, "Failed to close the file at path={}, ec_message={}",
-        //       PathToUTF8String(file_path), ec.message());
+        LogError("Failed to close file at path = " + file_path.string() +
+                 ", error message = " + ec.message());
     }
 
     file = nullptr;
@@ -239,8 +241,8 @@ void IOFile::Unlink() {
 #else
     if (unlink(file_path.c_str()) != 0) {
         const auto ec = std::error_code{errno, std::generic_category()};
-        // LOG_ERROR(Common_Filesystem, "Failed to unlink the file at path={}, ec_message={}",
-        //       PathToUTF8String(file_path), ec.message());
+        LogError("Failed to unlink file at path = " + file_path.string() +
+                 ", error message = " + ec.message());
     }
 #endif
 }
@@ -295,8 +297,8 @@ bool IOFile::Flush() const {
 
     if (!flush_result) {
         const auto ec = std::error_code{errno, std::generic_category()};
-        // LOG_ERROR(Common_Filesystem, "Failed to flush the file at path={}, ec_message={}",
-        //       PathToUTF8String(file_path), ec.message());
+        LogError("Failed to flush file at path = " + file_path.string() +
+                 ", error message = " + ec.message());
     }
 
     return flush_result;
@@ -317,8 +319,8 @@ bool IOFile::Commit() const {
 
     if (!commit_result) {
         const auto ec = std::error_code{errno, std::generic_category()};
-        // LOG_ERROR(Common_Filesystem, "Failed to commit the file at path={}, ec_message={}",
-        //       PathToUTF8String(file_path), ec.message());
+        LogError("Failed to commit file at path = " + file_path.string() +
+                 ", error message = " + ec.message());
     }
 
     return commit_result;
@@ -339,9 +341,8 @@ bool IOFile::SetSize(u64 size) const {
 
     if (!set_size_result) {
         const auto ec = std::error_code{errno, std::generic_category()};
-        // LOG_ERROR(Common_Filesystem, "Failed to resize the file at path={}, size={},
-        // ec_message={}",
-        //       PathToUTF8String(file_path), size, ec.message());
+        LogError("Failed to resize file at path = " + file_path.string() +
+                 ", error message = " + ec.message());
     }
 
     return set_size_result;
@@ -360,9 +361,8 @@ u64 IOFile::GetSize() const {
     const auto file_size = fs::file_size(file_path, ec);
 
     if (ec) {
-        // LOG_ERROR(Common_Filesystem, "Failed to retrieve the file size of path={},
-        // ec_message={}",
-        //       PathToUTF8String(file_path), ec.message());
+        LogError("Failed to get filesize at path = " + file_path.string() +
+                 ", error message = " + ec.message());
         return 0;
     }
 
@@ -377,13 +377,13 @@ bool IOFile::Seek(s64 offset, SeekOrigin origin) const {
     if (False(file_access_mode & (FileAccessMode::Write | FileAccessMode::Append))) {
         u64 size = GetSize();
         if (origin == SeekOrigin::CurrentPosition && Tell() + offset > size) {
-            // LOG_ERROR(Common_Filesystem, "Seeking past the end of the file");
+            LogError("Seeking past the end of the file");
             return false;
         } else if (origin == SeekOrigin::SetOrigin && (u64)offset > size) {
-            // LOG_ERROR(Common_Filesystem, "Seeking past the end of the file");
+            LogError("Seeking past the end of the file");
             return false;
         } else if (origin == SeekOrigin::End && offset > 0) {
-            // LOG_ERROR(Common_Filesystem, "Seeking past the end of the file");
+            LogError("Seeking past the end of the file");
             return false;
         }
     }
@@ -394,6 +394,8 @@ bool IOFile::Seek(s64 offset, SeekOrigin origin) const {
 
     if (!seek_result) {
         const auto ec = std::error_code{errno, std::generic_category()};
+        LogError("Failed to seek file at path = " + file_path.string() +
+                 ", error message = " + ec.message());
         // LOG_ERROR(Common_Filesystem,
         //       "Failed to seek the file at path={}, offset={}, origin={}, ec_message={}",
         //     PathToUTF8String(file_path), offset, static_cast<u32>(origin), ec.message());

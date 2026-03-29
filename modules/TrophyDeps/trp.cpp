@@ -2,6 +2,7 @@
 #include <filesystem>
 
 #include "aes.h"
+#include "modules/Log.h"
 #include "settings/config.h"
 #include "settings/formatting.h"
 #include "trp.h"
@@ -28,11 +29,11 @@ void TRP::GetNPcommID(const std::filesystem::path& trophyPath, int index) {
     std::filesystem::path trpPath = trophyPath / "sce_sys/npbind.dat";
     Common::FS::IOFile npbindFile(trpPath, Common::FS::FileAccessMode::Read);
     if (!npbindFile.IsOpen()) {
-        // LOG_CRITICAL(Common_Filesystem, "Failed to open npbind.dat file");
+        LogCritical("Failed to open npbind.dat file");
         return;
     }
     if (!npbindFile.Seek(0x84 + (index * 0x180))) {
-        // LOG_CRITICAL(Common_Filesystem, "Failed to seek to NPbind offset");
+        LogCritical("Failed to open npbind.dat file");
         return;
     }
     npbindFile.ReadRaw<u8>(np_comm_id.data(), 12);
@@ -61,13 +62,13 @@ bool TRP::Extract(const std::filesystem::path& trophyPath, int index, std::strin
     std::filesystem::path gameSysDir =
         trophyPath / "sce_sys/trophy/" / std::format("trophy{:02d}.trp", index);
     if (!std::filesystem::exists(gameSysDir)) {
-        // LOG_WARNING(Common_Filesystem, "Game trophy directory doesn't exist");
+        LogWarning("Game trophy directory doesn't exist");
         return false;
     }
 
     const auto& user_key_vec = HexStringToBytes(Config::TrophyKey);
     if (user_key_vec.size() != 16) {
-        // LOG_INFO(Common_Filesystem, "Trophy decryption key is not specified");
+        LogWarning("Trophy decryption key is not specified or invalid");
         return false;
     }
 
@@ -84,18 +85,18 @@ bool TRP::Extract(const std::filesystem::path& trophyPath, int index, std::strin
         }
         Common::FS::IOFile file(it, Common::FS::FileAccessMode::Read);
         if (!file.IsOpen()) {
-            // LOG_ERROR(Common_Filesystem, "Unable to open trophy file: {}", it.string());
+            LogError("Unable to open trophy file: " + it.string());
             return false;
         }
 
         TrpHeader header;
         if (!file.Read(header)) {
-            // LOG_ERROR(Common_Filesystem, "Failed to read TRP header from {}", it.string());
+            LogError("Failed to read TRP header from: " + it.string());
             return false;
         }
 
         if (header.magic != TRP_MAGIC) {
-            // LOG_ERROR(Common_Filesystem, "Wrong trophy magic number in {}", it.string());
+            LogError("Wrong trophy magic number in: " + it.string());
             return false;
         }
 
@@ -103,14 +104,14 @@ bool TRP::Extract(const std::filesystem::path& trophyPath, int index, std::strin
         // Create output directories
         if (!std::filesystem::create_directories(outputPath / "Icons") ||
             !std::filesystem::create_directories(outputPath / "Xml")) {
-            // LOG_ERROR(Common_Filesystem, "Failed to create output directories for {}", npCommId);
+            LogError("Failed to create output directories for: " + npCommId);
             return false;
         }
 
         // Process each entry in the TRP file
         for (int i = 0; i < header.entry_num; i++) {
             if (!file.Seek(seekPos)) {
-                // LOG_ERROR(Common_Filesystem, "Failed to seek to TRP entry offset");
+                LogError("Failed to seek to TRP entry offset");
                 success = false;
                 break;
             }
@@ -118,7 +119,7 @@ bool TRP::Extract(const std::filesystem::path& trophyPath, int index, std::strin
 
             TrpEntry entry;
             if (!file.Read(entry)) {
-                // LOG_ERROR(Common_Filesystem, "Failed to read TRP entry");
+                LogError("Failed to read TRP entry");
                 success = false;
                 break;
             }
@@ -139,9 +140,7 @@ bool TRP::Extract(const std::filesystem::path& trophyPath, int index, std::strin
                         // Continue with next entry
                     }
                 } else {
-                    // LOG_WARNING(Common_Filesystem,
-                    //             "Skipping encrypted XML entry - invalid NPCommID");
-                    //  Skip this entry but continue
+                    LogWarning("Skipping encrypted XML entry - invalid NPCommID");
                 }
             } else {
                 // LOG_DEBUG(Common_Filesystem, "Unknown entry flag: {} for {}",
@@ -151,17 +150,19 @@ bool TRP::Extract(const std::filesystem::path& trophyPath, int index, std::strin
         }
 
     } catch (const std::filesystem::filesystem_error& e) {
-        // LOG_CRITICAL(Common_Filesystem, "Filesystem error during trophy extraction: {}",
-        // e.what());
+        std::string msg = "Filesystem error during trophy extraction: ";
+        msg += e.what();
+        LogCritical(msg);
         return false;
     } catch (const std::exception& e) {
-        // LOG_CRITICAL(Common_Filesystem, "Error during trophy extraction: {}", e.what());
+        std::string msg = "Filesystem error during trophy extraction: ";
+        msg += e.what();
+        LogCritical(msg);
         return false;
     }
 
     if (success) {
-        // LOG_INFO(Common_Filesystem, "Successfully extracted {} trophy files for {}",
-        // trpFileIndex, npCommId);
+        LogInfo("Successfully extracted trophy files for " + npCommId);
     }
 
     return success;
@@ -170,19 +171,20 @@ bool TRP::Extract(const std::filesystem::path& trophyPath, int index, std::strin
 bool TRP::ProcessPngEntry(Common::FS::IOFile& file, const TrpEntry& entry,
                           const std::filesystem::path& outputPath, std::string_view name) {
     if (!file.Seek(entry.entry_pos)) {
-        // LOG_ERROR(Common_Filesystem, "Failed to seek to PNG entry offset");
+        LogError("Failed to seek to PNG entry offset");
         return false;
     }
 
     std::vector<u8> icon(entry.entry_len);
     if (!file.Read(icon)) {
-        // LOG_ERROR(Common_Filesystem, "Failed to read PNG data");
+        LogError("Failed to read PNG data");
         return false;
     }
 
     auto outputFile = outputPath / "Icons" / name;
     size_t written = Common::FS::IOFile::WriteBytes(outputFile, icon);
     if (written != icon.size()) {
+        LogError("PNG write failed: " + std::string(name));
         // LOG_ERROR(Common_Filesystem, "PNG write failed: wanted {} bytes, wrote {}", icon.size(),
         //         written);
         return false;
@@ -198,24 +200,24 @@ bool TRP::ProcessEncryptedXmlEntry(Common::FS::IOFile& file, const TrpEntry& ent
     constexpr size_t IV_LEN = 16;
 
     if (!file.Seek(entry.entry_pos)) {
-        // LOG_ERROR(Common_Filesystem, "Failed to seek to encrypted XML entry offset");
+        LogError("Failed to seek to encrypted XML entry offset");
         return false;
     }
 
     std::array<u8, IV_LEN> esfmIv;
     if (!file.Read(esfmIv)) {
-        // LOG_ERROR(Common_Filesystem, "Failed to read IV for encrypted XML");
+        LogError("Failed to read IV for encrypted XML");
         return false;
     }
 
     if (entry.entry_len <= IV_LEN) {
-        // LOG_ERROR(Common_Filesystem, "Encrypted XML entry too small");
+        LogError("Encrypted XML entry too small");
         return false;
     }
 
     // Skip to the encrypted data (after IV)
     if (!file.Seek(entry.entry_pos + IV_LEN)) {
-        // LOG_ERROR(Common_Filesystem, "Failed to seek to encrypted data");
+        LogError("Failed to seek to encrypted data");
         return false;
     }
 
@@ -223,7 +225,7 @@ bool TRP::ProcessEncryptedXmlEntry(Common::FS::IOFile& file, const TrpEntry& ent
     std::vector<u8> XML(entry.entry_len - IV_LEN);
 
     if (!file.Read(ESFM)) {
-        // LOG_ERROR(Common_Filesystem, "Failed to read encrypted XML data");
+        LogError("Failed to read encrypted XML data");
         return false;
     }
 
@@ -251,6 +253,7 @@ bool TRP::ProcessEncryptedXmlEntry(Common::FS::IOFile& file, const TrpEntry& ent
     auto outputFile = outputPath / "Xml" / xml_name;
     size_t written = Common::FS::IOFile::WriteBytes(outputFile, XML);
     if (written != XML.size()) {
+        LogError("XML write failed: " + xml_name);
         // LOG_ERROR(Common_Filesystem, "XML write failed: wanted {} bytes, wrote {}", XML.size(),
         //         written);
         return false;

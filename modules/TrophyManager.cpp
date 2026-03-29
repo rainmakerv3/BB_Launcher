@@ -564,7 +564,7 @@ bool TrophyViewer::RefreshValues() {
         if (!trp.Extract(path, 0, npCommId, baseTrophyDir)) {
             QMessageBox::warning(this, "Error",
                                  "Error extracting trophy files, a Trophy Key may be required "
-                                 "(check shadPS4 settings)");
+                                 "(check shadPS4 global settings)");
             return false;
         }
     }
@@ -599,7 +599,7 @@ bool TrophyViewer::RefreshValues() {
         if (!trp.Extract(path, 0, npCommId, baseTrophyDir)) {
             QMessageBox::warning(this, "Error",
                                  "Error extracting trophy files, a Trophy Key may be required "
-                                 "(check shadPS4 settings)");
+                                 "(check shadPS4 global settings)");
             return false;
         }
     }
