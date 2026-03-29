@@ -7,6 +7,7 @@
 #include <map>
 
 #include "modules/Common.h"
+#include "modules/Log.h"
 #include "settings/updater/BuildInfo.h"
 #include "user_settings.h"
 
@@ -44,14 +45,15 @@ bool UserSettingsImpl::Save() const {
 
         std::ofstream out(path);
         if (!out) {
-            // LOG_ERROR(EmuSettings, "Failed to open user settings for writing: {}",
-            // path.string());
+            LogError("Failed to open user settings for writing: " + path.string());
             return false;
         }
         out << std::setw(2) << j;
         return !out.fail();
     } catch (const std::exception& e) {
-        // LOG_ERROR(EmuSettings, "Error saving user settings: {}", e.what());
+        std::string msg = "Error saving user settings: ";
+        msg += e.what();
+        LogError(msg);
         return false;
     }
 }
@@ -71,7 +73,7 @@ bool UserSettingsImpl::Load() {
 
         std::ifstream in(path);
         if (!in) {
-            // LOG_ERROR(EmuSettings, "Failed to open user settings: {}", path.string());
+            LogError("Failed to open user settings: " + path.string());
             return false;
         }
 
@@ -101,7 +103,10 @@ bool UserSettingsImpl::Load() {
         // LOG_DEBUG(EmuSettings, "User settings loaded successfully");
         return true;
     } catch (const std::exception& e) {
-        // LOG_ERROR(EmuSettings, "Error loading user settings: {}", e.what());
+        std::string msg = "Error loading user settings: ";
+        msg += e.what();
+        LogError(msg);
+
         // Fall back to defaults
         if (m_userManager.GetUsers().user.empty()) {
             m_userManager.GetUsers() = m_userManager.CreateDefaultUsers();

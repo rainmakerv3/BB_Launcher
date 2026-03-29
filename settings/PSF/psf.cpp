@@ -4,6 +4,7 @@
 #include <cstring>
 #include <unordered_map>
 
+#include "modules/Log.h"
 #include "modules/TrophyDeps/io_file.h"
 #include "psf.h"
 
@@ -55,11 +56,11 @@ bool PSF::Open(const std::vector<u8>& psf_buffer) {
     std::memcpy(&header, psf_data, sizeof(header));
 
     if (header.magic != PSF_MAGIC) {
-        // LOG_ERROR(Core, "Invalid PSF magic number");
+        LogError("Invalid PSF magic number");
         return false;
     }
     if (header.version != PSF_VERSION_1_1 && header.version != PSF_VERSION_1_0) {
-        // LOG_ERROR(Core, "Unsupported PSF version: 0x{:08x}", header.version);
+        LogError("Unsupported PSF version: 0x " + std::to_string(header.version));
         return false;
     }
 
@@ -109,8 +110,7 @@ bool PSF::Encode(const std::filesystem::path& filepath) const {
     const auto psf_buffer = Encode();
     const size_t written = file.Write(psf_buffer);
     if (written != psf_buffer.size()) {
-        // LOG_ERROR(Core, "Failed to write PSF file. Written {} Expected {}", written,
-        //       psf_buffer.size());
+        LogError("Failed to write PSF file");
     }
     return written == psf_buffer.size();
 }
@@ -217,10 +217,11 @@ void PSF::AddBinary(std::string key, std::vector<u8> value, bool update) {
     auto [it, index] = FindEntry(key);
     bool exist = it != entry_list.end();
     if (exist && !update) {
-        // LOG_ERROR(Core, "PSF: Tried to add binary key that already exists: {}", key);
+        LogError("PSF: Tried to add binary key that already exists: " + key);
         return;
     }
     if (exist) {
+        LogCritical("PSF: Change format is not supported");
         // ASSERT_MSG(it->param_fmt == PSFEntryFmt::Binary, "PSF: Change format is not supported");
         it->max_len = get_max_size(key, value.size());
         map_binaries.at(index) = std::move(value);
@@ -243,10 +244,11 @@ void PSF::AddString(std::string key, std::string value, bool update) {
     auto [it, index] = FindEntry(key);
     bool exist = it != entry_list.end();
     if (exist && !update) {
-        // LOG_ERROR(Core, "PSF: Tried to add string key that already exists: {}", key);
+        LogError("PSF: Tried to add string key that already exists: " + key);
         return;
     }
     if (exist) {
+        LogCritical("PSF: Change format is not supported");
         // ASSERT_MSG(it->param_fmt == PSFEntryFmt::Text, "PSF: Change format is not supported");
         it->max_len = get_max_size(key, value.size() + 1);
         map_strings.at(index) = std::move(value);
@@ -263,10 +265,11 @@ void PSF::AddInteger(std::string key, s32 value, bool update) {
     auto [it, index] = FindEntry(key);
     bool exist = it != entry_list.end();
     if (exist && !update) {
-        // LOG_ERROR(Core, "PSF: Tried to add integer key that already exists: {}", key);
+        LogError("PSF: Tried to add integer key that already exists: " + key);
         return;
     }
     if (exist) {
+        LogCritical("PSF: Change format is not supported");
         // ASSERT_MSG(it->param_fmt == PSFEntryFmt::Integer, "PSF: Change format is not supported");
         it->max_len = sizeof(s32);
         map_integers.at(index) = value;

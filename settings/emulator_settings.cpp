@@ -10,6 +10,8 @@
 
 #include "emulator_settings.h"
 #include "modules/Common.h"
+#include "modules/Log.h"
+#include "settings/config.h"
 #include "settings/formatting.h"
 #include "settings/updater/BuildInfo.h"
 
@@ -238,7 +240,7 @@ void EmulatorSettingsImpl::ResetGameSpecificValue(const std::string& key) {
         return;
     if (tryGroup(m_vulkan))
         return;
-    // LOG_WARNING(EmuSettings, "ResetGameSpecificValue: key '{}' not found", key);
+    LogWarning("ResetGameSpecificValue: key not found - " + key);
 }
 
 bool EmulatorSettingsImpl::Save(const std::string& serial) {
@@ -276,8 +278,7 @@ bool EmulatorSettingsImpl::Save(const std::string& serial) {
 
             std::ofstream out(path);
             if (!out) {
-                // LOG_ERROR(EmuSettings, "Failed to open game config for writing: {}",
-                // path.string());
+                LogError("Failed to open game config for writing: " + path.string());
                 return false;
             }
             out << std::setw(2) << j;
@@ -317,14 +318,16 @@ bool EmulatorSettingsImpl::Save(const std::string& serial) {
 
             std::ofstream out(path);
             if (!out) {
-                // LOG_ERROR(EmuSettings, "Failed to open config for writing: {}", path.string());
+                LogError("Failed to open config for writing: " + path.string());
                 return false;
             }
             out << std::setw(2) << existing;
             return !out.fail();
         }
     } catch (const std::exception& e) {
-        // LOG_ERROR(EmuSettings, "Error saving settings: {}", e.what());
+        std::string msg = "Error saving settings: ";
+        msg += e.what();
+        LogError(msg);
         return false;
     }
 }
@@ -394,6 +397,7 @@ bool EmulatorSettingsImpl::Load(const std::string& serial) {
             if (GetConfigVersion() != Build::Rev || !std::filesystem::exists(configPath)) {
                 Save();
             }
+            Config::GameSpecificConfigUsed = false;
             return true;
         } else {
             // ── Per-game override file ─────────────────────────────────
@@ -410,7 +414,7 @@ bool EmulatorSettingsImpl::Load(const std::string& serial) {
 
             std::ifstream in(gamePath);
             if (!in) {
-                // LOG_ERROR(EmuSettings, "Failed to open game config: {}", gamePath.string());
+                LogError("Failed to open game config " + gamePath.string());
                 return false;
             }
 
@@ -437,11 +441,13 @@ bool EmulatorSettingsImpl::Load(const std::string& serial) {
                 ApplyGroupOverrides(m_vulkan, gj.at("Vulkan"), changed);
 
             PrintChangedSummary(changed);
-            // EmulatorState::GetInstance()->SetGameSpecifigConfigUsed(true);
+            Config::GameSpecificConfigUsed = true;
             return true;
         }
     } catch (const std::exception& e) {
-        // LOG_ERROR(EmuSettings, "Error loading settings: {}", e.what());
+        std::string msg = "Error loading settings: ";
+        msg += e.what();
+        LogError(msg);
         return false;
     }
 }
@@ -604,7 +610,9 @@ bool EmulatorSettingsImpl::TransferSettings() {
             }
             s.install_dirs.value = settings_install_dirs;
         } catch (const std::exception& e) {
-            // LOG_WARNING(EmuSettings, "Failed to transfer install directories: {}", e.what());
+            std::string msg = "Failed to transfer install directories: ";
+            msg += e.what();
+            LogError(msg);
         }
 
         // Transfer addon install directory
@@ -620,7 +628,9 @@ bool EmulatorSettingsImpl::TransferSettings() {
                 }
             }
         } catch (const std::exception& e) {
-            // LOG_WARNING(EmuSettings, "Failed to transfer addon install directory: {}", e.what());
+            std::string msg = "Failed to transfer addon install directory: ";
+            msg += e.what();
+            LogError(msg);
         }
     }
 
