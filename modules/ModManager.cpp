@@ -176,6 +176,22 @@ void ModManager::ActivateButton_isPressed() {
         }
     }
 
+    try {
+        if (std::filesystem::exists(ModActiveFolderPath))
+            std::filesystem::remove_all(ModActiveFolderPath);
+        if (!std::filesystem::exists(ModActivePath))
+            std::filesystem::create_directories(ModActivePath);
+
+        std::filesystem::rename(ModSourcePath, ModActiveFolderPath);
+        std::filesystem::remove_all(ModFolderPath);
+    } catch (std::exception& ex) {
+        QMessageBox::warning(
+            this, "Filesystem error",
+            "Error accessing folders, make sure they are not open or in use.\n\nError message: " +
+                QString::fromStdString(ex.what()));
+        return;
+    }
+
     std::ofstream ModInfoFileSave(Common::ModPath / "ModifiedFiles.txt", std::ios::binary);
     for (const auto& i : FileList)
         ModInfoFileSave << i << "\n";
@@ -187,11 +203,11 @@ void ModManager::ActivateButton_isPressed() {
     ui->FileTransferLabel->setText("Backing up original files, copying to BB folder");
 #endif
 
-    ui->progressBar->setMaximum(getFileCount(ModSourcePath));
+    ui->progressBar->setMaximum(getFileCount(ModActiveFolderPath));
 
     std::vector<std::string> UniqueList;
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(ModSourcePath)) {
-        auto relative_path = std::filesystem::relative(entry, ModSourcePath);
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(ModActiveFolderPath)) {
+        auto relative_path = std::filesystem::relative(entry, ModActiveFolderPath);
         try {
             if (!entry.is_directory()) {
                 if (!std::filesystem::exists(ModBackupFolderPath / relative_path.parent_path())) {
@@ -216,7 +232,7 @@ void ModManager::ActivateButton_isPressed() {
                 std::filesystem::create_symlink(ModActiveFolderPath / relative_path,
                                                 ModInstallPath / "dvdroot_ps4" / relative_path);
 #else
-                std::filesystem::copy_file(ModSourcePath / relative_path,
+                std::filesystem::copy_file(ModActiveFolderPath / relative_path,
                                            ModInstallPath / "dvdroot_ps4" / relative_path,
                                            std::filesystem::copy_options::overwrite_existing);
 #endif
@@ -244,14 +260,6 @@ void ModManager::ActivateButton_isPressed() {
     for (const std::string& f : UniqueList)
         UniqueIndexFile << f << "\n";
     UniqueIndexFile.close();
-
-    if (std::filesystem::exists(ModActiveFolderPath))
-        std::filesystem::remove_all(ModActiveFolderPath);
-    if (!std::filesystem::exists(ModActivePath))
-        std::filesystem::create_directories(ModActivePath);
-
-    std::filesystem::rename(ModSourcePath, ModActiveFolderPath);
-    std::filesystem::remove_all(ModFolderPath);
 
     ui->FileTransferLabel->setText("Modified File List is being written");
     ui->progressBar->setValue(0);
@@ -568,6 +576,10 @@ void ModManager::DeactivateButton_isPressed() {
         }
     }
 
+    ui->progressBar->setMaximum(100);
+    ui->progressBar->setValue(0);
+    ui->FileTransferLabel->setText("No Current File Transfers");
+
     std::filesystem::path dir_path;
     std::vector<std::filesystem::path> directories;
     for (auto& p : std::filesystem::recursive_directory_iterator(ModInstallPath / "dvdroot_ps4")) {
@@ -577,28 +589,39 @@ void ModManager::DeactivateButton_isPressed() {
         }
     }
 
-    for (std::vector<std::filesystem::path>::reverse_iterator rit = directories.rbegin();
-         rit != directories.rend(); ++rit) {
-        if (std::filesystem::is_empty(*rit)) {
-            std::filesystem::remove(*rit);
+    try {
+        for (std::vector<std::filesystem::path>::reverse_iterator rit = directories.rbegin();
+             rit != directories.rend(); ++rit) {
+            if (std::filesystem::is_empty(*rit)) {
+                std::filesystem::remove(*rit);
+            }
         }
+
+        if (std::filesystem::exists(ModBackupFolderPath))
+            std::filesystem::remove_all(ModBackupFolderPath);
+        if (std::filesystem::exists(ModUniqueFolderPath))
+            std::filesystem::remove_all(ModUniqueFolderPath);
+    } catch (std::exception& ex) {
+        QMessageBox::warning(this, "Filesystem error",
+                             "Error message: " + QString::fromStdString(ex.what()));
+        haserror = true;
+        return;
     }
 
-    if (std::filesystem::exists(ModBackupFolderPath))
-        std::filesystem::remove_all(ModBackupFolderPath);
-    if (std::filesystem::exists(ModUniqueFolderPath))
-        std::filesystem::remove_all(ModUniqueFolderPath);
+    try {
+        if (std::filesystem::exists(ModActiveFolderPath)) {
+            if (std::filesystem::exists(ModFolderPath))
+                std::filesystem::remove_all(ModFolderPath);
+            std::filesystem::rename(ModActiveFolderPath, ModFolderPath);
+        }
+    } catch (std::exception& ex) {
+        QMessageBox::warning(this, "Filesystem error",
+                             "Mod deactivated successfully but mod folder could not be moved back "
+                             "to the mods folder\n\nError message: " +
+                                 QString::fromStdString(ex.what()));
+    }
 
     ActiveModRemove(ModName);
-    ui->progressBar->setMaximum(100);
-    ui->progressBar->setValue(0);
-    ui->FileTransferLabel->setText("No Current File Transfers");
-
-    if (std::filesystem::exists(ModActiveFolderPath)) {
-        if (std::filesystem::exists(ModFolderPath))
-            std::filesystem::remove_all(ModFolderPath);
-        std::filesystem::rename(ModActiveFolderPath, ModFolderPath);
-    }
     RefreshLists();
 
     if (haserror) {
