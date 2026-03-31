@@ -29,12 +29,12 @@
 
 namespace Common {
 
+const char VERSION[] = "Release14.06";
+
 std::string game_serial;
 std::filesystem::path installPath;
 std::filesystem::path installUpdatePath;
 std::filesystem::path shadPs4Executable;
-
-const char VERSION[] = "Release14.05";
 
 std::filesystem::path GetCurrentPath(bool getLinuxFileName) {
     std::filesystem::path currentPath;
