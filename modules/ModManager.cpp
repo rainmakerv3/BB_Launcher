@@ -48,6 +48,7 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
 
     RefreshLists();
 
+    connect(ui->ResetButton, &QPushButton::pressed, this, &ModManager::ResetInstallation);
     connect(ui->ActivateButton, &QPushButton::pressed, this, &ModManager::ActivateButton_isPressed);
     connect(ui->DeactivateButton, &QPushButton::pressed, this,
             &ModManager::DeactivateButton_isPressed);
@@ -801,6 +802,46 @@ void ModManager::ActiveModRemove(std::string ModName) {
     for (const auto& i : FileList)
         ModInfoFileSave << i << "\n";
     ModInfoFileSave.close();
+}
+
+void ModManager::ResetInstallation() {
+    if (QMessageBox::No == QMessageBox::question(this, "Reset Installation",
+                                                 "This will deactivate all mods (original files "
+                                                 "remain untouched).\n\nProceed with reset?",
+                                                 QMessageBox::Yes | QMessageBox::No)) {
+        return;
+    }
+
+    try {
+        std::filesystem::remove_all(ModInstallPath);
+        std::filesystem::create_directories(ModInstallPath / "dvdroot_ps4");
+
+        std::filesystem::remove(Common::ModPath / "ModifiedFiles.txt");
+        std::filesystem::remove(Common::ModPath / "ConflictMods.txt");
+        std::filesystem::remove(Common::ModPath / "ActiveMods.txt");
+
+        if (std::filesystem::exists(ModActivePath)) {
+            for (const auto& entry : std::filesystem::directory_iterator(ModActivePath)) {
+                if (entry.is_directory()) {
+#ifdef _WIN32
+                    const std::wstring ModString = entry.path().filename().wstring();
+#else
+                    const std::string ModString = entry.path().filename().string();
+#endif
+                    std::filesystem::rename(entry.path(), Common::ModPath / ModString);
+                }
+            }
+        }
+    } catch (std::exception& ex) {
+        QMessageBox::warning(this, "Filesystem error",
+                             "Error resetting installation. Make sure all game and mod "
+                             "folders/files are not open or in use\n\nError message: " +
+                                 QString::fromStdString(ex.what()));
+    }
+
+    RefreshLists();
+    QMessageBox::information(this, "Reset Complete", "Reset Successfully completed",
+                             QMessageBox::Ok);
 }
 
 ModManager::~ModManager() {

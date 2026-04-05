@@ -32,6 +32,7 @@ private:
     void ActiveModRemove(std::string ModName);
     void ConflictAdd(std::string ModName);
     void ConflictRemove(std::string ModName);
+    void ResetInstallation();
 
     std::filesystem::path ModInstallPath;
     std::filesystem::path ModBackupPath;
