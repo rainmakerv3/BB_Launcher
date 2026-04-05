@@ -701,14 +701,12 @@ void ModManager::ConflictRemove(std::string ModName) {
 }
 
 void ModManager::ActiveModRemove(std::string ModName) {
-    std::vector<std::string> FileList;
     std::vector<std::string> ActiveModList;
     std::string line;
     int lineCount = 0;
 
     std::ifstream ActiveFile(Common::ModPath / "ActiveMods.txt", std::ios::binary);
     while (std::getline(ActiveFile, line)) {
-        lineCount++;
         ActiveModList.push_back(line);
     }
     ActiveFile.close();
@@ -722,82 +720,18 @@ void ModManager::ActiveModRemove(std::string ModName) {
         ActiveFileSave << l << "\n";
     ActiveFileSave.close();
 
-    std::filesystem::remove(Common::ModPath / "ModifiedFiles.txt");
-    if (std::filesystem::exists(ModBackupPath)) {
-        for (auto& FolderEntry : std::filesystem::directory_iterator(ModBackupPath)) {
-            if (FolderEntry.is_directory()) {
-                const std::string Foldername = Common::PathToU8(FolderEntry.path().filename());
-
-#ifdef _WIN32
-                const std::wstring FolderString = FolderEntry.path().filename();
-#else
-                const std::string FolderString = FolderEntry.path().filename();
-#endif
-                const std::filesystem::path BackupModPath = ModBackupPath / FolderString;
-                if (Foldername != "Mods-UNIQUEFILES") {
-                    ui->FileTransferLabel->setText("Generating Modified File list for " +
-                                                   QString::fromStdString(Foldername));
-                    ui->progressBar->setMaximum(getFileCount(BackupModPath));
-                    for (const auto& entry :
-                         std::filesystem::recursive_directory_iterator(BackupModPath)) {
-                        if (!entry.is_directory()) {
-                            auto relative_path = std::filesystem::relative(entry, BackupModPath);
-                            const auto u8_string =
-                                Common::PathToU8(relative_path) + ", " + Foldername;
-                            std::string relative_path_string{u8_string.begin(), u8_string.end()};
-                            FileList.push_back(relative_path_string);
-                        }
-                        ui->progressBar->setValue(ui->progressBar->value() + 1);
-                        emit progressChanged(ui->progressBar->value() + 1);
-                    }
-                }
-            }
+    std::vector<std::string> FileList;
+    std::ifstream ModInfoFile(Common::ModPath / "ModifiedFiles.txt", std::ios::binary);
+    while (std::getline(ModInfoFile, line)) {
+        size_t commaPos = line.find(',');
+        std::string lineModName = line.substr(commaPos + 2);
+        if (lineModName == ModName) {
+            continue;
         }
+
+        FileList.push_back(line);
     }
 
-    ui->progressBar->setValue(0);
-    if (std::filesystem::exists(ModUniquePath)) {
-        for (auto& FolderEntry : std::filesystem::directory_iterator(ModUniquePath)) {
-            if (FolderEntry.is_directory()) {
-
-                const std::string Foldername = Common::PathToU8(FolderEntry.path().filename());
-#ifdef _WIN32
-                const std::wstring FolderString = FolderEntry.path().filename().wstring();
-                const std::wstring FolderEntryString = FolderEntry.path().wstring();
-                const std::wstring FileName = FolderString + L".txt";
-#else
-                const std::string FolderString = FolderEntry.path().filename().string();
-                const std::string FolderEntryString = FolderEntry.path().string();
-                const std::string FileName = FolderString + ".txt";
-#endif
-
-                ui->FileTransferLabel->setText("Generating Unique File list for " +
-                                               QString::fromStdString(Foldername));
-                const std::filesystem::path FolderPath = FolderString;
-                std::filesystem::path IndexPath = FolderPath / FolderEntryString / FileName;
-                std::ifstream UniqueIndexFile(IndexPath, std::ios::binary);
-
-                if (std::filesystem::exists(IndexPath)) {
-                    std::vector<std::string> UniqueList;
-                    int UniqueLineCount = 0;
-                    while (std::getline(UniqueIndexFile, line)) {
-                        UniqueLineCount++;
-                        UniqueList.push_back(line);
-                    }
-                    UniqueIndexFile.close();
-
-                    ui->progressBar->setMaximum(UniqueLineCount);
-                    for (const std::string& line : UniqueList) {
-                        FileList.push_back(line);
-                        ui->progressBar->setValue(ui->progressBar->value() + 1);
-                        emit progressChanged(ui->progressBar->value() + 1);
-                    }
-                }
-            }
-        }
-    }
-
-    ui->progressBar->setValue(0);
     std::ofstream ModInfoFileSave(Common::ModPath / "ModifiedFiles.txt", std::ios::binary);
     for (const auto& i : FileList)
         ModInfoFileSave << i << "\n";
