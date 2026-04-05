@@ -56,11 +56,12 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
 
     ModInstallPath = Common::installPath;
     ModInstallPath += "-mods";
+
+    ModBackupPath = ModInstallPath.parent_path() / (Common::game_serial + "-modsBACKUP");
+    ModUniquePath = ModBackupPath / "Mods-UNIQUEFILES";
+
     if (!std::filesystem::exists(ModInstallPath / "dvdroot_ps4"))
         std::filesystem::create_directories(ModInstallPath / "dvdroot_ps4");
-
-    ModBackupPath = ModInstallPath / "Mods-BACKUP";
-    ModUniquePath = ModBackupPath / "Mods-UNIQUEFILES";
 
     if (!std::filesystem::exists(Common::ModPath)) {
         std::filesystem::create_directories(Common::ModPath);
@@ -334,6 +335,13 @@ void ModManager::DeactivateButton_isPressed() {
             std::filesystem::rename(ModActiveFolderPath, ModFolderPath);
         }
         RefreshLists();
+        QMessageBox::information(this, "Error Deactivating Mod",
+                                 "An error occurred deactivating mod " +
+                                     QString::fromStdString(ModName) +
+                                     ". Bloodborne might not function correctly due to the error, "
+                                     "resetting installation is recommended.",
+                                 QMessageBox::Ok);
+
         return;
     }
 
