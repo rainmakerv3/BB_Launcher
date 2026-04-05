@@ -288,8 +288,8 @@ void ModManager::ActivateButton_isPressed() {
         QMessageBox::information(this, "Error Activating Mod",
                                  "An error occurred activating mod " +
                                      QString::fromStdString(ModName) +
-                                     ". It may not function correctly. Reinstallation of "
-                                     "Bloodborne may be required in some cases.",
+                                     ". Bloodbone may no longer function correctly. Resetting "
+                                     "installation is recommendeded",
                                  QMessageBox::Ok);
     } else {
         QMessageBox::information(this, "Mod Activated",
@@ -603,7 +603,8 @@ void ModManager::DeactivateButton_isPressed() {
         QMessageBox::information(this, "Error Deactivating Mod",
                                  "An error occurred deactivating mod " +
                                      QString::fromStdString(ModName) +
-                                     ". It is recommended to reset install and reactivate mods.",
+                                     ". Bloodborne might not function correctly due to the error, "
+                                     "resetting installation is recommended.",
                                  QMessageBox::Ok);
     } else {
         QMessageBox::information(this, "Mod Deactivated",
