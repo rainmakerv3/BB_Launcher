@@ -53,17 +53,12 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
             &ModManager::DeactivateButton_isPressed);
     connect(this, &ModManager::progressChanged, ui->progressBar, &QProgressBar::setValue);
 
-    if (std::filesystem::exists(Common::installPath.parent_path() /
-                                (Common::game_serial + "-UPDATE"))) {
-        ModInstallPath = Common::installPath.parent_path() / (Common::game_serial + "-UPDATE");
-    } else if (std::filesystem::exists(Common::installPath.parent_path() /
-                                       (Common::game_serial + "-patch"))) {
-        ModInstallPath = Common::installPath.parent_path() / (Common::game_serial + "-patch");
-    } else {
-        ModInstallPath = Common::installPath;
-    }
+    ModInstallPath = Common::installPath;
+    ModInstallPath += "-mods";
+    if (!std::filesystem::exists(ModInstallPath / "dvdroot_ps4"))
+        std::filesystem::create_directories(ModInstallPath / "dvdroot_ps4");
 
-    ModBackupPath = Common::installPath / "Mods-BACKUP";
+    ModBackupPath = ModInstallPath / "Mods-BACKUP";
     ModUniquePath = ModBackupPath / "Mods-UNIQUEFILES";
 
     if (!std::filesystem::exists(Common::ModPath)) {
@@ -317,21 +312,8 @@ void ModManager::DeactivateButton_isPressed() {
     const std::string ModString = ModName;
 #endif
 
-    std::filesystem::path ModBackupFolderPath;
-    if (std::filesystem::exists(Common::GetBBLFilesPath() / "Mods-BACKUP" / ModString)) {
-        ModBackupFolderPath = Common::GetBBLFilesPath() / "Mods-BACKUP" / ModString;
-    } else {
-        ModBackupFolderPath = ModBackupPath / ModString;
-    }
-
-    std::filesystem::path ModUniqueFolderPath;
-    if (std::filesystem::exists(Common::GetBBLFilesPath() / "Mods-BACKUP" / ModString)) {
-        ModUniqueFolderPath =
-            Common::GetBBLFilesPath() / "Mods-BACKUP" / "Mods-UNIQUEFILES" / ModString;
-    } else {
-        ModUniqueFolderPath = ModUniquePath / ModString;
-    }
-
+    const std::filesystem::path ModBackupFolderPath = ModBackupPath / ModString;
+    const std::filesystem::path ModUniqueFolderPath = ModUniquePath / ModString;
     const std::filesystem::path ModFolderPath = Common::ModPath / ModString;
     const std::filesystem::path ModActiveFolderPath = ModActivePath / ModString;
 
@@ -409,15 +391,7 @@ void ModManager::DeactivateButton_isPressed() {
     std::string FileString = ModString + ".txt";
 #endif
 
-    std::filesystem::path IndexPath;
-    if (std::filesystem::exists(Common::GetBBLFilesPath() / "Mods-BACKUP" / "Mods-UNIQUEFILES" /
-                                ModString / FileString)) {
-        IndexPath =
-            Common::GetBBLFilesPath() / "Mods-BACKUP" / "Mods-UNIQUEFILES" / ModString / FileString;
-    } else {
-        IndexPath = ModUniquePath / ModString / FileString;
-    }
-
+    const std::filesystem::path IndexPath = ModUniquePath / ModString / FileString;
     std::ifstream UniqueIndexFile(IndexPath, std::ios::binary);
     std::vector<std::string> UniqueList;
     int UniqueLineCount = 0;
@@ -428,7 +402,7 @@ void ModManager::DeactivateButton_isPressed() {
             UniqueList.push_back(line);
         }
 
-        for (std::string fileline : UniqueList) {
+        for (const std::string& fileline : UniqueList) {
             conflictfilecount = 0;
             for (int i = 0; i < FileList.size(); i++) {
 
@@ -628,9 +602,7 @@ void ModManager::DeactivateButton_isPressed() {
         QMessageBox::information(this, "Error Deactivating Mod",
                                  "An error occurred deactivating mod " +
                                      QString::fromStdString(ModName) +
-                                     ". It is recommended to check the CUSA*****/Mods-BACKUP (or "
-                                     "BBLauncher/Mods-BACKUP for Mods activate in older versions)"
-                                     " folder for any remaining files and manual copy them back.",
+                                     ". It is recommended to reset install and reactivate mods.",
                                  QMessageBox::Ok);
     } else {
         QMessageBox::information(this, "Mod Deactivated",
@@ -750,36 +722,34 @@ void ModManager::ActiveModRemove(std::string ModName) {
     ActiveFileSave.close();
 
     std::filesystem::remove(Common::ModPath / "ModifiedFiles.txt");
-
     if (std::filesystem::exists(ModBackupPath)) {
         for (auto& FolderEntry : std::filesystem::directory_iterator(ModBackupPath)) {
             if (FolderEntry.is_directory()) {
                 const std::string Foldername = Common::PathToU8(FolderEntry.path().filename());
 
 #ifdef _WIN32
-            const std::wstring FolderString = FolderEntry.path().filename();
+                const std::wstring FolderString = FolderEntry.path().filename();
 #else
-            const std::string FolderString = FolderEntry.path().filename();
+                const std::string FolderString = FolderEntry.path().filename();
 #endif
-
-            const std::filesystem::path BackupModPath = ModBackupPath / FolderString;
-
-            if (Foldername != "Mods-UNIQUEFILES") {
-                ui->FileTransferLabel->setText("Generating Modified File list for " +
-                                               QString::fromStdString(Foldername));
-                ui->progressBar->setMaximum(getFileCount(BackupModPath));
-                for (const auto& entry :
-                     std::filesystem::recursive_directory_iterator(BackupModPath)) {
-                    if (!entry.is_directory()) {
-                        auto relative_path = std::filesystem::relative(entry, BackupModPath);
-                        const auto u8_string = Common::PathToU8(relative_path) + ", " + Foldername;
-                        std::string relative_path_string{u8_string.begin(), u8_string.end()};
-                        FileList.push_back(relative_path_string);
+                const std::filesystem::path BackupModPath = ModBackupPath / FolderString;
+                if (Foldername != "Mods-UNIQUEFILES") {
+                    ui->FileTransferLabel->setText("Generating Modified File list for " +
+                                                   QString::fromStdString(Foldername));
+                    ui->progressBar->setMaximum(getFileCount(BackupModPath));
+                    for (const auto& entry :
+                         std::filesystem::recursive_directory_iterator(BackupModPath)) {
+                        if (!entry.is_directory()) {
+                            auto relative_path = std::filesystem::relative(entry, BackupModPath);
+                            const auto u8_string =
+                                Common::PathToU8(relative_path) + ", " + Foldername;
+                            std::string relative_path_string{u8_string.begin(), u8_string.end()};
+                            FileList.push_back(relative_path_string);
+                        }
+                        ui->progressBar->setValue(ui->progressBar->value() + 1);
+                        emit progressChanged(ui->progressBar->value() + 1);
                     }
-                    ui->progressBar->setValue(ui->progressBar->value() + 1);
-                    emit progressChanged(ui->progressBar->value() + 1);
                 }
-            }
             }
         }
     }
@@ -816,116 +786,10 @@ void ModManager::ActiveModRemove(std::string ModName) {
                     UniqueIndexFile.close();
 
                     ui->progressBar->setMaximum(UniqueLineCount);
-                    for (std::string line : UniqueList) {
+                    for (const std::string& line : UniqueList) {
                         FileList.push_back(line);
                         ui->progressBar->setValue(ui->progressBar->value() + 1);
                         emit progressChanged(ui->progressBar->value() + 1);
-                    }
-                } else {
-                    ui->progressBar->setMaximum(getFileCount(FolderEntry));
-                    for (const auto& entry :
-                         std::filesystem::recursive_directory_iterator(FolderEntry)) {
-                        if (!entry.is_directory()) {
-                            auto relative_path = std::filesystem::relative(entry, FolderEntry);
-                            const std::string relative_pathstring = Common::PathToU8(relative_path);
-                            const std::string pathstring = relative_pathstring + ", " + Foldername;
-                            FileList.push_back(pathstring);
-                            ui->progressBar->setValue(ui->progressBar->value() + 1);
-                            emit progressChanged(ui->progressBar->value() + 1);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    // check old locations
-    if (std::filesystem::exists(Common::GetBBLFilesPath() / "Mods-BACKUP")) {
-        for (auto& FolderEntry :
-             std::filesystem::directory_iterator(Common::GetBBLFilesPath() / "Mods-BACKUP")) {
-            if (FolderEntry.is_directory()) {
-                const std::string Foldername = Common::PathToU8(FolderEntry.path().filename());
-
-#ifdef _WIN32
-                const std::wstring FolderString = FolderEntry.path().filename();
-#else
-                const std::string FolderString = FolderEntry.path().filename();
-#endif
-
-                const std::filesystem::path BackupModPath =
-                    Common::GetBBLFilesPath() / "Mods-BACKUP" / FolderString;
-
-                if (Foldername != "Mods-UNIQUEFILES") {
-                    ui->FileTransferLabel->setText("Generating Modified File list for " +
-                                                   QString::fromStdString(Foldername));
-                    ui->progressBar->setMaximum(getFileCount(BackupModPath));
-                    for (const auto& entry :
-                         std::filesystem::recursive_directory_iterator(BackupModPath)) {
-                        if (!entry.is_directory()) {
-                            auto relative_path = std::filesystem::relative(entry, BackupModPath);
-                            const auto u8_string =
-                                Common::PathToU8(relative_path) + ", " + Foldername;
-                            std::string relative_path_string{u8_string.begin(), u8_string.end()};
-                            FileList.push_back(relative_path_string);
-                        }
-                        ui->progressBar->setValue(ui->progressBar->value() + 1);
-                        emit progressChanged(ui->progressBar->value() + 1);
-                    }
-                }
-            }
-        }
-    }
-
-    ui->progressBar->setValue(0);
-    if (std::filesystem::exists(Common::GetBBLFilesPath() / "Mods-BACKUP" / "Mods-UNIQUEFILES")) {
-        for (auto& FolderEntry : std::filesystem::directory_iterator(
-                 Common::GetBBLFilesPath() / "Mods-BACKUP" / "Mods-UNIQUEFILES")) {
-            if (FolderEntry.is_directory()) {
-
-                const std::string Foldername = Common::PathToU8(FolderEntry.path().filename());
-#ifdef _WIN32
-                const std::wstring FolderString = FolderEntry.path().filename().wstring();
-                const std::wstring FolderEntryString = FolderEntry.path().wstring();
-                const std::wstring FileName = FolderString + L".txt";
-#else
-                const std::string FolderString = FolderEntry.path().filename().string();
-                const std::string FolderEntryString = FolderEntry.path().string();
-                const std::string FileName = FolderString + ".txt";
-#endif
-
-                ui->FileTransferLabel->setText("Generating Unique File list for " +
-                                               QString::fromStdString(Foldername));
-                const std::filesystem::path FolderPath = FolderString;
-                std::filesystem::path IndexPath = FolderPath / FolderEntryString / FileName;
-                std::ifstream UniqueIndexFile(IndexPath, std::ios::binary);
-
-                if (std::filesystem::exists(IndexPath)) {
-                    std::vector<std::string> UniqueList;
-                    int UniqueLineCount = 0;
-                    while (std::getline(UniqueIndexFile, line)) {
-                        UniqueLineCount++;
-                        UniqueList.push_back(line);
-                    }
-                    UniqueIndexFile.close();
-
-                    ui->progressBar->setMaximum(UniqueLineCount);
-                    for (std::string line : UniqueList) {
-                        FileList.push_back(line);
-                        ui->progressBar->setValue(ui->progressBar->value() + 1);
-                        emit progressChanged(ui->progressBar->value() + 1);
-                    }
-                } else {
-                    ui->progressBar->setMaximum(getFileCount(FolderEntry));
-                    for (const auto& entry :
-                         std::filesystem::recursive_directory_iterator(FolderEntry)) {
-                        if (!entry.is_directory()) {
-                            auto relative_path = std::filesystem::relative(entry, FolderEntry);
-                            const std::string relative_pathstring = Common::PathToU8(relative_path);
-                            const std::string pathstring = relative_pathstring + ", " + Foldername;
-                            FileList.push_back(pathstring);
-                            ui->progressBar->setValue(ui->progressBar->value() + 1);
-                            emit progressChanged(ui->progressBar->value() + 1);
-                        }
                     }
                 }
             }
