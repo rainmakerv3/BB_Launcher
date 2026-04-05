@@ -233,7 +233,6 @@ void ModManager::ActivateButton_isPressed() {
                                            ModInstallPath / "dvdroot_ps4" / relative_path,
                                            std::filesystem::copy_options::overwrite_existing);
 #endif
-                ui->progressBar->setValue(ui->progressBar->value() + 1);
                 emit progressChanged(ui->progressBar->value() + 1);
             }
         } catch (std::exception& ex) {
@@ -267,7 +266,6 @@ void ModManager::ActivateButton_isPressed() {
     while (std::getline(ActiveFile, line)) {
         lineCount++;
         ActiveModList.push_back(line);
-        ui->progressBar->setValue(ui->progressBar->value() + 1);
         emit progressChanged(ui->progressBar->value() + 1);
     }
     ActiveFile.close();
@@ -504,7 +502,6 @@ void ModManager::DeactivateButton_isPressed() {
                         haserror = true;
                         break;
                     }
-                    ui->progressBar->setValue(ui->progressBar->value() + 1);
                     emit progressChanged(ui->progressBar->value() + 1);
                 }
             }
@@ -554,7 +551,6 @@ void ModManager::DeactivateButton_isPressed() {
                 haserror = true;
                 break;
             }
-            ui->progressBar->setValue(ui->progressBar->value() + 1);
             emit progressChanged(ui->progressBar->value() + 1);
         }
     }
