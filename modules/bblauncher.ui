@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1044</width>
-    <height>678</height>
+    <height>729</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -494,6 +494,31 @@
       </layout>
      </item>
     </layout>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>656</y>
+      <width>981</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(170, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>IMPORTANT: Versions 15.00 and above of BBLauncher are compatible only with shadPS4 builds dated April 6, 2026 or later. If you updated BBLauncher from a version lower than 15.00, make sure that any mods activated in the lower version were already deactivated in the lower version before using this one. If you lost your save file after updating to a new shadPS4 build, click the help button for more info.</string>
+    </property>
+    <property name="wordWrap">
+     <bool>true</bool>
+    </property>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

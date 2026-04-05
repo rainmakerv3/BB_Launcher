@@ -225,18 +225,6 @@ void CheckUpdate::CheckForUpdates(const bool showMessage) {
             close();
             return;
         } else {
-            if (QMessageBox::No ==
-                QMessageBox::question(
-                    this, "IMPORTANT",
-                    "WARNING: BEFORE UPDATING TO THE NEXT VERSION OF BBLAUNCHER, "
-                    "PLEASE DO THE FF:\n\n1) Deactivate all mods (activate them again after the "
-                    "update)\n2) Make sure you are on the latest shadPS4 nightly (Apr 4, 2026 or "
-                    "later)\n\nMODS WILL BREAK IN THE NEXT VERSION IF THESE ARE NOT DONE. If "
-                    "you have not done this, please do not proceed "
-                    "with the update\n\nProceed with update?",
-                    QMessageBox::Yes | QMessageBox::No)) {
-                reject();
-            }
             setupUI(downloadUrl, latestDate, latestRev, currentDate, currentRev);
         }
         reply->deleteLater();

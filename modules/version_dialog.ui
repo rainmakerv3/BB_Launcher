@@ -323,7 +323,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Note: This version of BBLauncher is compatible only with shadPS4 releases after April 5, 2026. As such, prior versions have been removed from the version list.</string>
+    <string>Note: This version of BBLauncher is compatible only with shadPS4 releases after April 6, 2026. As such, prior versions have been removed from the version list.</string>
    </property>
    <property name="openExternalLinks">
     <bool>true</bool>
