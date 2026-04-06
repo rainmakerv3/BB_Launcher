@@ -29,14 +29,13 @@ private:
 
     void RefreshLists();
     int getFileCount(std::filesystem::path ModFolder);
-    void ActiveModRemove(std::string ModName);
     void ConflictAdd(std::string ModName);
     void ConflictRemove(std::string ModName);
     void ResetInstallation();
+    std::vector<std::string> GetModifiedFileList(std::string ExcludeMod);
 
     std::filesystem::path ModInstallPath;
     std::filesystem::path ModBackupPath;
-    std::filesystem::path ModUniquePath;
     const std::filesystem::path ModActivePath =
         Common::GetBBLFilesPath() / "Mods-Active (DO NOT DELETE)";
 
