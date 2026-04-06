@@ -49,14 +49,12 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
     RefreshLists();
 
     connect(ui->ResetButton, &QPushButton::pressed, this, &ModManager::ResetInstallation);
-    connect(ui->ActivateButton, &QPushButton::pressed, this, &ModManager::ActivateButton_isPressed);
-    connect(ui->DeactivateButton, &QPushButton::pressed, this,
-            &ModManager::DeactivateButton_isPressed);
+    connect(ui->ActivateButton, &QPushButton::pressed, this, &ModManager::ActivateMod);
+    connect(ui->DeactivateButton, &QPushButton::pressed, this, &ModManager::DeactivateMod);
     connect(this, &ModManager::progressChanged, ui->progressBar, &QProgressBar::setValue);
 
     ModInstallPath = Common::installPath;
     ModInstallPath += "-mods";
-
     ModBackupPath = ModInstallPath.parent_path() / (Common::game_serial + "-modsBACKUP");
 
     if (!std::filesystem::exists(ModInstallPath / "dvdroot_ps4"))
@@ -71,7 +69,7 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
     }
 }
 
-void ModManager::ActivateButton_isPressed() {
+void ModManager::ActivateMod() {
     if (ui->InactiveModList->selectedItems().size() == 0) {
         QMessageBox::warning(
             this, "No mod selected",
@@ -121,8 +119,6 @@ void ModManager::ActivateButton_isPressed() {
         return;
     }
 
-    // Generate List of Modded Files
-
     std::vector<std::string> FileList = GetModifiedFileList(ModName);
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModSourcePath)) {
         if (!entry.is_directory()) {
@@ -170,9 +166,9 @@ void ModManager::ActivateButton_isPressed() {
     }
 
 #if defined FORCE_UAC or !defined _WIN32
-    ui->FileTransferLabel->setText("Backing up original files, symlinking to BB folder");
+    ui->FileTransferLabel->setText("Backing up original files, symlinking to shadPS4 mods folder");
 #else
-    ui->FileTransferLabel->setText("Backing up original files, copying to BB folder");
+    ui->FileTransferLabel->setText("Backing up original files, copying to shadPS4 mods folder");
 #endif
 
     ui->progressBar->setMaximum(getFileCount(ModActiveFolderPath));
@@ -235,7 +231,7 @@ void ModManager::ActivateButton_isPressed() {
     }
 }
 
-void ModManager::DeactivateButton_isPressed() {
+void ModManager::DeactivateMod() {
     if (ui->ActiveModList->selectedItems().size() == 0) {
         QMessageBox::warning(
             this, "No mod selected",
@@ -324,7 +320,7 @@ void ModManager::DeactivateButton_isPressed() {
 
     bool haserror = false;
     ui->progressBar->setValue(0);
-    ui->FileTransferLabel->setText("Removing Mod Files from Install Folder");
+    ui->FileTransferLabel->setText("Removing from shadPS4 mods Folder");
     ui->progressBar->setMaximum(getFileCount(ModActiveFolderPath));
 
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModActiveFolderPath)) {
@@ -341,7 +337,7 @@ void ModManager::DeactivateButton_isPressed() {
                     std::filesystem::remove(ModInstallPath / "dvdroot_ps4" / relative_path);
 
             } catch (std::exception& ex) {
-                QMessageBox::critical(this, "Filesystem error removing mod file", ex.what());
+                QMessageBox::critical(this, "Filesystem error removing mod files", ex.what());
                 haserror = true;
                 break;
             }
@@ -349,7 +345,7 @@ void ModManager::DeactivateButton_isPressed() {
         }
     }
 
-    ui->FileTransferLabel->setText("Moving backup to Install Folder");
+    ui->FileTransferLabel->setText("Reverting backup");
     ui->progressBar->setValue(0);
     ui->progressBar->setMaximum(getFileCount(ModBackupFolderPath));
 
@@ -397,6 +393,7 @@ void ModManager::DeactivateButton_isPressed() {
     ui->progressBar->setMaximum(100);
     ui->FileTransferLabel->setText("No Current File Transfers");
 
+    // Remove Empty Folders
     std::filesystem::path dir_path;
     std::vector<std::filesystem::path> directories;
     for (auto& p : std::filesystem::recursive_directory_iterator(ModInstallPath / "dvdroot_ps4")) {
@@ -432,7 +429,7 @@ void ModManager::DeactivateButton_isPressed() {
     } catch (std::exception& ex) {
         QMessageBox::warning(this, "Filesystem error",
                              "Mod deactivated successfully but mod folder could not be moved back "
-                             "to the mods folder\n\nError message: " +
+                             "to the BBLauncher mods folder\n\nError message: " +
                                  QString::fromStdString(ex.what()));
     }
 

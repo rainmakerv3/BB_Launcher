@@ -21,8 +21,8 @@ signals:
     void progressChanged(int value);
 
 private slots:
-    void ActivateButton_isPressed();
-    void DeactivateButton_isPressed();
+    void ActivateMod();
+    void DeactivateMod();
 
 private:
     Ui::ModManager* ui;

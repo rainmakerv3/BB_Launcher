@@ -425,25 +425,19 @@ void BBLauncher::UpdateSettingsList() {
 }
 
 void BBLauncher::UpdateModList() {
-    std::vector<std::string> ActiveModList;
-    std::string line;
-    int lineCount = 0;
-    std::ifstream ActiveFile(Common::ModPath / "ActiveMods.txt", std::ios::binary);
-
+    QStringList ActiveModStringList;
     ui->ModList->clear();
 
-    while (std::getline(ActiveFile, line)) {
-        lineCount++;
-        ActiveModList.push_back(line);
+    const std::filesystem::path ModActivePath =
+        Common::GetBBLFilesPath() / "Mods-Active (DO NOT DELETE)";
+    for (const auto& FolderEntry : std::filesystem::directory_iterator(ModActivePath)) {
+        if (FolderEntry.is_directory()) {
+            std::string FolderName = Common::PathToU8(FolderEntry.path().filename());
+            ActiveModStringList.append(QString::fromStdString(FolderName));
+        }
     }
-    ActiveFile.close();
 
-    QStringList ActiveModStringList;
-
-    if (ActiveModList.size() != 0) {
-        for_each(ActiveModList.begin(), ActiveModList.end(),
-                 [&](std::string s) { ActiveModStringList.append(QString::fromStdString(s)); });
-    } else {
+    if (ActiveModStringList.empty()) {
         const QString NoModMsg = "No mods active.\n\nDownload mods using the Mod Downloader or "
                                  "manually place mods in the Mods Folder (click Mods Button) to "
                                  "make them available in the Mod Manager";
