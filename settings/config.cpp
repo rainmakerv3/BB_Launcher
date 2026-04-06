@@ -208,10 +208,6 @@ void CreateSettingsFile() {
         std::filesystem::create_directories(Common::GetBBLFilesPath() / "Mods");
     }
 
-    if (!std::filesystem::exists(Common::GetBBLFilesPath() / "Mods-BACKUP")) {
-        std::filesystem::create_directories(Common::GetBBLFilesPath() / "Mods-BACKUP");
-    }
-
     toml::value data;
 
     data["Launcher"]["installPath"] = "";

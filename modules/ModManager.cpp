@@ -145,7 +145,10 @@ void ModManager::ActivateButton_isPressed() {
             for (int i = 0; i < FileList.size(); i++) {
                 if (hasconflict)
                     break;
-                if (FileList[i].contains(relative_path_string)) {
+
+                std::size_t filelist_comma_pos = FileList[i].find(',');
+                std::string filelist_relative_string = FileList[i].substr(0, filelist_comma_pos);
+                if (filelist_relative_string == relative_path_string) {
                     hasconflict = true;
                     if (QMessageBox::Yes ==
                         QMessageBox::question(
@@ -312,9 +315,9 @@ void ModManager::DeactivateButton_isPressed() {
     const std::string ModString = ModName;
 #endif
 
+    const std::filesystem::path ModFolderPath = Common::ModPath / ModString;
     const std::filesystem::path ModBackupFolderPath = ModBackupPath / ModString;
     const std::filesystem::path ModUniqueFolderPath = ModUniquePath / ModString;
-    const std::filesystem::path ModFolderPath = Common::ModPath / ModString;
     const std::filesystem::path ModActiveFolderPath = ModActivePath / ModString;
 
     std::vector<std::string> ConflictMods;
@@ -353,13 +356,35 @@ void ModManager::DeactivateButton_isPressed() {
 
     bool hasconflict = false;
     int conflictfilecount;
+
+    // First check if any files in the backup folder have conflicts
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModBackupFolderPath)) {
         if (!entry.is_directory()) {
             auto relative_path = std::filesystem::relative(entry, ModBackupFolderPath);
+
+            // Relative path seemingly not working on symlinks
+            if (std::filesystem::is_symlink(entry.symlink_status())) {
+#ifdef _WIN32
+                std::wstring pathString = entry.path().wstring();
+                std::wstring baseString = ModBackupFolderPath.wstring();
+#else
+                std::string pathString = entry.path().string();
+                std::string baseString = ModBackupFolderPath.string();
+#endif
+                size_t pos = std::string::npos;
+                while ((pos = pathString.find(baseString)) != std::string::npos) {
+                    pathString.erase(pos, baseString.length());
+                }
+                pathString.erase(0, 1);
+                relative_path = pathString;
+            }
+
             std::string relative_path_string = Common::PathToU8(relative_path);
             conflictfilecount = 0;
             for (int i = 0; i < FileList.size(); i++) {
-                if (FileList[i].contains(relative_path_string))
+                std::size_t filelist_comma_pos = FileList[i].find(',');
+                std::string filelist_relative_string = FileList[i].substr(0, filelist_comma_pos);
+                if (filelist_relative_string == relative_path_string)
                     conflictfilecount = conflictfilecount + 1;
                 if (conflictfilecount > 1) {
                     hasconflict = true;
@@ -368,27 +393,6 @@ void ModManager::DeactivateButton_isPressed() {
             }
             if (hasconflict)
                 break;
-        }
-    }
-
-    if (std::filesystem::exists(ModUniqueFolderPath)) {
-        for (const auto& entry :
-             std::filesystem::recursive_directory_iterator(ModUniqueFolderPath)) {
-            if (!entry.is_directory()) {
-                auto relative_path = std::filesystem::relative(entry, ModUniqueFolderPath);
-                std::string relative_path_string = Common::PathToU8(relative_path);
-                conflictfilecount = 0;
-                for (int i = 0; i < FileList.size(); i++) {
-                    if (FileList[i].contains(relative_path_string))
-                        conflictfilecount = conflictfilecount + 1;
-                    if (conflictfilecount > 1) {
-                        hasconflict = true;
-                        break;
-                    }
-                }
-                if (hasconflict)
-                    break;
-            }
         }
     }
 
@@ -403,26 +407,26 @@ void ModManager::DeactivateButton_isPressed() {
     std::vector<std::string> UniqueList;
     int UniqueLineCount = 0;
 
+    // Then check if any file in the unique index has conflicts
     if (std::filesystem::exists(IndexPath)) {
+
         while (std::getline(UniqueIndexFile, line)) {
             UniqueLineCount++;
             UniqueList.push_back(line);
         }
+        UniqueIndexFile.close();
 
         for (const std::string& fileline : UniqueList) {
             conflictfilecount = 0;
+            std::size_t comma_pos = fileline.find(',');
+            std::string relative_string = fileline.substr(0, comma_pos);
             for (int i = 0; i < FileList.size(); i++) {
+                std::size_t filelist_comma_pos = FileList[i].find(',');
+                std::string filelist_relative_string = FileList[i].substr(0, filelist_comma_pos);
 
-                std::size_t comma_pos = fileline.find(',');
-                std::string relative_string;
-                if (comma_pos != std::string::npos) {
-                    relative_string = fileline.substr(0, comma_pos);
-                } else {
-                    relative_string = fileline;
-                }
-
-                if (FileList[i].contains(relative_string))
+                if (filelist_relative_string == relative_string) {
                     conflictfilecount = conflictfilecount + 1;
+                }
 
                 if (conflictfilecount > 1) {
                     hasconflict = true;
@@ -433,7 +437,6 @@ void ModManager::DeactivateButton_isPressed() {
                 break;
         }
     }
-    UniqueIndexFile.close();
 
     std::ifstream ConflictFile(Common::ModPath / "ConflictMods.txt", std::ios::binary);
     while (std::getline(ConflictFile, line)) {
@@ -448,6 +451,8 @@ void ModManager::DeactivateButton_isPressed() {
                                  "The last installed conflicting mod must be uninstalled before "
                                  "any others.\n\nLast conflicting mod is " +
                                      QString::fromStdString(ConflictMods.back()));
+            ui->progressBar->setValue(0);
+            ui->FileTransferLabel->setText("No Current File Transfers");
             return;
         }
     } else if (ConflictMods.size() != 0 && ConflictMods.back() == ModName) {
@@ -463,9 +468,7 @@ void ModManager::DeactivateButton_isPressed() {
             for (std::string fileline : UniqueList) {
 
                 std::size_t comma_pos = fileline.find(',');
-                if (comma_pos != std::string::npos) {
-                    fileline = fileline.substr(0, comma_pos);
-                }
+                fileline = fileline.substr(0, comma_pos);
 
 #ifdef _WIN32
                 auto basePath = ModInstallPath / "dvdroot_ps4";
@@ -482,27 +485,6 @@ void ModManager::DeactivateButton_isPressed() {
                     QMessageBox::warning(this, "Filesystem error deleting mod files", ex.what());
                     haserror = true;
                     break;
-                }
-            }
-        } else {
-            ui->progressBar->setMaximum(getFileCount(ModUniqueFolderPath));
-            for (const auto& entry :
-                 std::filesystem::recursive_directory_iterator(ModUniqueFolderPath)) {
-                auto relative_path = std::filesystem::relative(entry, ModUniqueFolderPath);
-
-                if (!entry.is_directory()) {
-                    try {
-                        if (std::filesystem::exists(ModInstallPath / "dvdroot_ps4" /
-                                                    relative_path)) {
-                            std::filesystem::remove(ModInstallPath / "dvdroot_ps4" / relative_path);
-                        }
-                    } catch (std::exception& ex) {
-                        QMessageBox::warning(this, "Filesystem error deleting mod files",
-                                             ex.what());
-                        haserror = true;
-                        break;
-                    }
-                    emit progressChanged(ui->progressBar->value() + 1);
                 }
             }
         }
@@ -755,6 +737,9 @@ void ModManager::ResetInstallation() {
         std::filesystem::remove_all(ModInstallPath);
         std::filesystem::create_directories(ModInstallPath / "dvdroot_ps4");
 
+        std::filesystem::remove_all(ModBackupPath);
+        std::filesystem::create_directories(ModUniquePath);
+
         std::filesystem::remove(Common::ModPath / "ModifiedFiles.txt");
         std::filesystem::remove(Common::ModPath / "ConflictMods.txt");
         std::filesystem::remove(Common::ModPath / "ActiveMods.txt");
@@ -772,10 +757,12 @@ void ModManager::ResetInstallation() {
             }
         }
     } catch (std::exception& ex) {
+        RefreshLists();
         QMessageBox::warning(this, "Filesystem error",
                              "Error resetting installation. Make sure all game and mod "
                              "folders/files are not open or in use\n\nError message: " +
                                  QString::fromStdString(ex.what()));
+        return;
     }
 
     RefreshLists();
