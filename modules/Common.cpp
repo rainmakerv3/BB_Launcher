@@ -8,6 +8,7 @@
 #include "scope_exit.h"
 #include "settings/config.h"
 #include "settings/emulator_settings.h"
+#include "settings/user_settings.h"
 
 #ifdef Q_OS_MAC
 #include <CoreFoundation/CFBundle.h>
@@ -112,10 +113,12 @@ std::filesystem::path GetBBLFilesPath() {
 
 std::filesystem::path GetSaveDir() {
     std::filesystem::path path;
+    std::string userId = std::to_string(UserSettings.GetUserManager().GetDefaultUser().user_id);
+
     if (EmulatorSettings.GetHomeDir() == "") {
-        path = Common::GetShadUserDir() / "home" / "1000" / "savedata";
+        path = Common::GetShadUserDir() / "home" / userId / "savedata";
     } else {
-        path = EmulatorSettings.GetHomeDir() / "1000" / "savedata";
+        path = EmulatorSettings.GetHomeDir() / userId / "savedata";
     }
 
     if (!std::filesystem::exists(path))
@@ -138,10 +141,12 @@ std::filesystem::path GetDlcDir() {
 
 std::filesystem::path GetTrophyDir() {
     std::filesystem::path path;
+    std::string userId = std::to_string(UserSettings.GetUserManager().GetDefaultUser().user_id);
+
     if (EmulatorSettings.GetHomeDir() == "") {
-        path = Common::GetShadUserDir() / "home" / "1000" / "trophy";
+        path = Common::GetShadUserDir() / "home" / userId / "trophy";
     } else {
-        path = EmulatorSettings.GetHomeDir() / "1000" / "trophy";
+        path = EmulatorSettings.GetHomeDir() / userId / "trophy";
     }
 
     if (!std::filesystem::exists(path))
