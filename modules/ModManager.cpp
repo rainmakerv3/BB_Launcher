@@ -77,8 +77,6 @@ void ModManager::ActivateMod() {
         return;
     }
 
-    bool haserror = false;
-    bool hasconflict = false;
     const std::string ModName = ui->InactiveModList->currentItem()->text().toStdString();
 
 #ifdef _WIN32
@@ -119,6 +117,7 @@ void ModManager::ActivateMod() {
         return;
     }
 
+    bool hasconflict = false;
     std::vector<std::string> FileList = GetModifiedFileList(ModName);
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModSourcePath)) {
         if (!entry.is_directory()) {
@@ -173,6 +172,7 @@ void ModManager::ActivateMod() {
 
     ui->progressBar->setMaximum(getFileCount(ModActiveFolderPath));
 
+    bool haserror = false;
     for (const auto& entry : std::filesystem::recursive_directory_iterator(ModActiveFolderPath)) {
         auto relative_path = std::filesystem::relative(entry, ModActiveFolderPath);
         try {
@@ -250,10 +250,6 @@ void ModManager::DeactivateMod() {
     const std::filesystem::path ModBackupFolderPath = ModBackupPath / ModString;
     const std::filesystem::path ModActiveFolderPath = ModActivePath / ModString;
 
-    std::vector<std::string> ConflictMods;
-    std::string line;
-    int lineCount = 0;
-
     if (!std::filesystem::exists(ModBackupFolderPath)) {
         QMessageBox::warning(this,
                              "Unable to find Mod Backup " +
@@ -297,10 +293,11 @@ void ModManager::DeactivateMod() {
         }
     }
 
+    std::vector<std::string> ConflictMods;
+    std::string line;
     if (hasconflict) {
         std::ifstream ConflictFile(Common::ModPath / "ConflictMods.txt", std::ios::binary);
         while (std::getline(ConflictFile, line)) {
-            lineCount++;
             ConflictMods.push_back(line);
         }
         ConflictFile.close();
@@ -484,12 +481,10 @@ int ModManager::getFileCount(std::filesystem::path Path) {
 
 void ModManager::ConflictAdd(std::string ModName) {
     std::string line;
-    int lineCount = 0;
     std::vector<std::string> ConflictMods;
 
     std::ifstream ConflictFile(Common::ModPath / "ConflictMods.txt", std::ios::binary);
     while (std::getline(ConflictFile, line)) {
-        lineCount++;
         ConflictMods.push_back(line);
     }
     ConflictFile.close();
@@ -504,12 +499,10 @@ void ModManager::ConflictAdd(std::string ModName) {
 
 void ModManager::ConflictRemove(std::string ModName) {
     std::string line;
-    int lineCount = 0;
     std::vector<std::string> ConflictMods;
 
     std::ifstream ConflictFile(Common::ModPath / "ConflictMods.txt", std::ios::binary);
     while (std::getline(ConflictFile, line)) {
-        lineCount++;
         ConflictMods.push_back(line);
     }
     ConflictFile.close();
@@ -568,7 +561,6 @@ void ModManager::ResetInstallation() {
 
 std::vector<std::string> ModManager::GetModifiedFileList(std::string ExcludeMod) {
     std::vector<std::string> vec;
-
     for (const auto& FolderEntry : std::filesystem::directory_iterator(ModActivePath)) {
         if (FolderEntry.is_directory()) {
             std::string FolderName = Common::PathToU8(FolderEntry.path().filename());
