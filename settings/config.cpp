@@ -208,6 +208,11 @@ void CreateSettingsFile() {
         std::filesystem::create_directories(Common::GetBBLFilesPath() / "Mods");
     }
 
+    if (!std::filesystem::exists(Common::GetBBLFilesPath() / "Mods-Active (DO NOT DELETE)")) {
+        std::filesystem::create_directories(Common::GetBBLFilesPath() /
+                                            "Mods-Active (DO NOT DELETE)");
+    }
+
     toml::value data;
 
     data["Launcher"]["installPath"] = "";

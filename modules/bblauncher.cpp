@@ -219,6 +219,26 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             return;
         }
 
+        std::string filename = Common::game_serial + ".json";
+        std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
+
+        if (!std::filesystem::exists(gsConfig)) {
+            if (QMessageBox::Yes ==
+                QMessageBox::question(this, "No game-specific config file found",
+                                      QString::fromStdString(gsConfig.string()) +
+                                          " not found. Do you want to create it?",
+                                      QMessageBox::Yes | QMessageBox::No)) {
+                const std::filesystem::path cfgDir = Common::GetShadUserDir() / "custom_configs";
+                std::filesystem::create_directories(cfgDir);
+                const std::filesystem::path path = cfgDir / (Common::game_serial + ".json");
+
+                EmulatorSettings.Load(Common::game_serial);
+                EmulatorSettings.Save(Common::game_serial);
+            } else {
+                return;
+            }
+        }
+
         ShadSettings* ShadSettingsWindow = new ShadSettings(m_ipc_client, true, this);
         ShadSettingsWindow->exec();
     });
@@ -430,6 +450,12 @@ void BBLauncher::UpdateModList() {
 
     const std::filesystem::path ModActivePath =
         Common::GetBBLFilesPath() / "Mods-Active (DO NOT DELETE)";
+
+    if (!std::filesystem::exists(Common::GetBBLFilesPath() / "Mods-Active (DO NOT DELETE)")) {
+        std::filesystem::create_directories(Common::GetBBLFilesPath() /
+                                            "Mods-Active (DO NOT DELETE)");
+    }
+
     for (const auto& FolderEntry : std::filesystem::directory_iterator(ModActivePath)) {
         if (FolderEntry.is_directory()) {
             std::string FolderName = Common::PathToU8(FolderEntry.path().filename());
