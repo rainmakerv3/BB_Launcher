@@ -103,10 +103,14 @@ void SaveManager::PopulateGameSaveSlots() {
     ui->SaveSlotComboBox->clear();
     ui->SaveSlotComboBox->addItems(SaveSlotList);
 
-    saveslot = "userdata0000";
-    ui->SaveSlotComboBox->setCurrentText(QString::fromStdString(saveslot));
-    Savefile = ExactSaveDir / saveslot;
-    UpdateGameSaveValues();
+    if (ui->SaveSlotComboBox->count() != 0) {
+        saveslot = "userdata0000";
+        ui->SaveSlotComboBox->setCurrentText(QString::fromStdString(saveslot));
+        Savefile = ExactSaveDir / saveslot;
+        UpdateGameSaveValues();
+    } else {
+        ui->SaveSlotComboBox->addItem("Unable to read save slot");
+    }
 }
 
 void SaveManager::UpdateGameSaveValues() {
