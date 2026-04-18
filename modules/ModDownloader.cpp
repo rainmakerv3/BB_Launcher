@@ -162,6 +162,12 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         ui->zipLabel->setStyleSheet("color: green;");
     }
 
+    connect(ui->visitButton, &QPushButton::pressed, this, [this]() {
+        int modIndex = modIDmap[ui->modComboBox->currentIndex()];
+        QString url = "https://www.nexusmods.com/bloodborne/mods/" + QString::number(modIndex);
+        QDesktopServices::openUrl(url);
+    });
+
     connect(ui->zipButton, &QPushButton::pressed, this, &ModDownloader::SetSevenzipPath);
 
     connect(ui->modComboBox, &QComboBox::currentIndexChanged, this, [this]() {

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1146</width>
+    <width>1240</width>
     <height>705</height>
    </rect>
   </property>
@@ -41,6 +41,13 @@
     </item>
     <item>
      <widget class="QComboBox" name="modComboBox"/>
+    </item>
+    <item>
+     <widget class="QPushButton" name="visitButton">
+      <property name="text">
+       <string>Visit Mod Homepage</string>
+      </property>
+     </widget>
     </item>
     <item>
      <widget class="QGroupBox" name="groupBox_3">
@@ -236,7 +243,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <rect>
      <x>789</x>
      <y>10</y>
-     <width>341</width>
+     <width>431</width>
      <height>651</height>
     </rect>
    </property>
@@ -287,7 +294,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>1030</x>
+     <x>1120</x>
      <y>660</y>
      <width>101</width>
      <height>51</height>
