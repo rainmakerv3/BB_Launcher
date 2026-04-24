@@ -750,9 +750,10 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
             };
 
             const std::vector<std::string> BBFolders = {
-                "dvdroot_ps4", "action", "chr",    "event", "facegen", "map",   "menu",
-                "movie",       "msg",    "mtd",    "obj",   "other",   "param", "paramdef",
-                "parts",       "remo",   "script", "sfx",   "shader",  "sound", "font"};
+                "dvdroot_ps4", "action", "adhoc",  "chr",    "event",   "facegen", "map",
+                "menu",        "movie",  "msg",    "mtd",    "obj",     "other",   "param",
+                "paramdef",    "parts",  "remo",   "script", "sfx",     "shader",  "sound",
+                "font"};
 
             //  source folder for mods with options
             for (const auto& entry : std::filesystem::recursive_directory_iterator(sourcePath)) {
