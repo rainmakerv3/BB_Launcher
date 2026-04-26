@@ -40,7 +40,8 @@ private:
         Common::GetBBLFilesPath() / "Mods-Active (DO NOT DELETE)";
 
     const std::vector<std::string> BBFolders = {
-        "dvdroot_ps4", "action", "chr",    "event", "facegen", "map",   "menu",
-        "movie",       "msg",    "mtd",    "obj",   "other",   "param", "paramdef",
-        "parts",       "remo",   "script", "sfx",   "shader",  "sound", "font"};
+        "dvdroot_ps4", "action", "adhoc",  "chr",    "event",   "facegen", "map",
+        "menu",        "movie",  "msg",    "mtd",    "obj",     "other",   "param",
+        "paramdef",    "parts",  "remo",   "script", "sfx",     "shader",  "sound",
+        "font"};
 };
