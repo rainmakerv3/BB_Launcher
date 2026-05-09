@@ -4,6 +4,7 @@
 #include <fstream>
 #include <QKeyEvent>
 #include <QMessageBox>
+#include <QPainter>
 #include <QtConcurrent/QtConcurrentRun>
 #include <SDL3/SDL.h>
 
@@ -13,11 +14,32 @@
 #include "settings/emulator_settings.h"
 #include "ui_hotkeys.h"
 
+void Hotkeys::SetTextColoredPixmap(QLabel* label, const QPixmap& source) {
+    QColor textColor = this->palette().color(QPalette::WindowText);
+    QPixmap result = source;
+    QPainter painter(&result);
+
+    painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
+    painter.fillRect(result.rect(), textColor);
+    painter.end();
+
+    label->setPixmap(result);
+}
+
 Hotkeys::Hotkeys(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
     : QDialog(parent), m_ipc_client(ipc_client), ui(new Ui::Hotkeys) {
 
     ui->setupUi(this);
     this->setFixedSize(this->width(), this->height());
+
+    QPixmap controllerPixmap(":/dist/controller_icon.png");
+    QPixmap scaledController =
+        controllerPixmap.scaled(70, 70, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    SetTextColoredPixmap(ui->controllerLabel, scaledController);
+
+    QPixmap KBPixmap(":/dist/keyboard.png");
+    QPixmap scaledKB = KBPixmap.scaled(70, 70, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    SetTextColoredPixmap(ui->keyboardLabel, scaledKB);
 
     SDL_InitSubSystem(SDL_INIT_GAMEPAD);
     SDL_InitSubSystem(SDL_INIT_EVENTS);
@@ -26,14 +48,23 @@ Hotkeys::Hotkeys(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
     CheckGamePad();
     installEventFilter(this);
 
-    PadButtonsList = {ui->fpsButtonPad,    ui->quitButtonPad,   ui->fullscreenButtonPad,
-                      ui->pauseButtonPad,  ui->reloadButtonPad, ui->volUpButtonPad,
-                      ui->volDownButtonPad};
+    PadButtonsList = {ui->fpsButtonPad,     ui->quitButtonPad,       ui->fullscreenButtonPad,
+                      ui->pauseButtonPad,   ui->reloadButtonPad,     ui->volUpButtonPad,
+                      ui->volDownButtonPad, ui->screenshotButtonPad, ui->screenshotOverlayButtonPad,
+                      ui->settingsButtonPad};
 
-    KBButtonsList = {ui->fpsButtonKB,         ui->quitButtonKB,    ui->fullscreenButtonKB,
-                     ui->pauseButtonKB,       ui->reloadButtonKB,  ui->renderdocButton,
-                     ui->mouseJoystickButton, ui->mouseGyroButton, ui->volUpButtonKB,
-                     ui->volDownButtonKB};
+    KBButtonsList = {ui->fpsButtonKB,
+                     ui->quitButtonKB,
+                     ui->fullscreenButtonKB,
+                     ui->pauseButtonKB,
+                     ui->reloadButtonKB,
+                     ui->mouseJoystickButton,
+                     ui->mouseGyroButton,
+                     ui->volUpButtonKB,
+                     ui->volDownButtonKB,
+                     ui->screenshotButtonKB,
+                     ui->screenshotOverlayButtonKB,
+                     ui->settingsButtonKB};
 
     connect(ui->buttonBox, &QDialogButtonBox::clicked, this, [this](QAbstractButton* button) {
         if (button == ui->buttonBox->button(QDialogButtonBox::Save)) {
@@ -102,6 +133,9 @@ void Hotkeys::SetDefault() {
     ui->volUpButtonPad->setText("unmapped");
     ui->volDownButtonPad->setText("unmapped");
     ui->reloadButtonPad->setText("unmapped");
+    ui->screenshotButtonPad->setText("unmapped");
+    ui->screenshotOverlayButtonPad->setText("unmapped");
+    ui->settingsButtonPad->setText("unmapped");
 
     ui->fpsButtonKB->setText("f10");
     ui->quitButtonKB->setText("lctrl, lshift, end");
@@ -110,8 +144,10 @@ void Hotkeys::SetDefault() {
     ui->volUpButtonKB->setText("kpplus");
     ui->volDownButtonKB->setText("kpminus");
     ui->reloadButtonKB->setText("f8");
+    ui->screenshotButtonKB->setText("f12");
+    ui->screenshotOverlayButtonKB->setText("lalt, f12");
+    ui->settingsButtonKB->setText("f3");
 
-    ui->renderdocButton->setText("f12");
     ui->mouseJoystickButton->setText("f7");
     ui->mouseGyroButton->setText("f6");
 }
@@ -156,7 +192,16 @@ void Hotkeys::SaveHotkeys(bool CloseOnSave) {
     add_mapping(ui->volDownButtonKB->text(), "hotkey_volume_down ");
     lines.push_back("");
 
-    add_mapping(ui->renderdocButton->text(), "hotkey_renderdoc_capture");
+    add_mapping(ui->screenshotButtonPad->text(), "hotkey_capture_frame");
+    add_mapping(ui->screenshotButtonKB->text(), "hotkey_capture_frame");
+    add_mapping(ui->screenshotOverlayButtonPad->text(), "hotkey_screenshot_with_overlays");
+    add_mapping(ui->screenshotOverlayButtonKB->text(), "hotkey_screenshot_with_overlays");
+    lines.push_back("");
+
+    add_mapping(ui->settingsButtonPad->text(), "hotkey_emulator_settings");
+    add_mapping(ui->settingsButtonKB->text(), "hotkey_emulator_settings");
+    lines.push_back("");
+
     add_mapping(ui->mouseJoystickButton->text(), "hotkey_toggle_mouse_to_joystick");
     add_mapping(ui->mouseGyroButton->text(), "hotkey_toggle_mouse_to_gyro");
 
@@ -290,8 +335,6 @@ void Hotkeys::LoadHotkeys() {
             controllerInputDetected
                 ? ui->reloadButtonPad->setText(QString::fromStdString(input_string))
                 : ui->reloadButtonKB->setText(QString::fromStdString(input_string));
-        } else if (output_string.contains("hotkey_renderdoc_capture")) {
-            ui->renderdocButton->setText(QString::fromStdString(input_string));
         } else if (output_string.contains("hotkey_toggle_mouse_to_joystick")) {
             ui->mouseJoystickButton->setText(QString::fromStdString(input_string));
         } else if (output_string.contains("hotkey_toggle_mouse_to_gyro")) {
@@ -304,6 +347,18 @@ void Hotkeys::LoadHotkeys() {
             controllerInputDetected
                 ? ui->volDownButtonPad->setText(QString::fromStdString(input_string))
                 : ui->volDownButtonKB->setText(QString::fromStdString(input_string));
+        } else if (output_string.contains("hotkey_capture_frame")) {
+            controllerInputDetected
+                ? ui->screenshotButtonPad->setText(QString::fromStdString(input_string))
+                : ui->screenshotButtonKB->setText(QString::fromStdString(input_string));
+        } else if (output_string.contains("hotkey_screenshot_with_overlays")) {
+            controllerInputDetected
+                ? ui->screenshotOverlayButtonPad->setText(QString::fromStdString(input_string))
+                : ui->screenshotOverlayButtonKB->setText(QString::fromStdString(input_string));
+        } else if (output_string.contains("hotkey_emulator_settings")) {
+            controllerInputDetected
+                ? ui->settingsButtonPad->setText(QString::fromStdString(input_string))
+                : ui->settingsButtonKB->setText(QString::fromStdString(input_string));
         }
     }
 
@@ -877,7 +932,7 @@ void Hotkeys::pollSDLEvents() {
                         pressedButtons.insert(1, "l2");
                         L2Pressed = true;
                     } else if (event.gaxis.value < 5000) {
-                        if (L2Pressed && !R2Pressed)
+                        if (L2Pressed)
                             CheckMapping(MappingButton);
                     }
                     break;
@@ -886,7 +941,7 @@ void Hotkeys::pollSDLEvents() {
                         pressedButtons.insert(2, "r2");
                         R2Pressed = true;
                     } else if (event.gaxis.value < 5000) {
-                        if (R2Pressed && !L2Pressed)
+                        if (R2Pressed)
                             CheckMapping(MappingButton);
                     }
                     break;

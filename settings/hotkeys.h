@@ -4,6 +4,7 @@
 #include <filesystem>
 #include <QDialog>
 #include <QFuture>
+#include <QLabel>
 #include <QTimer>
 #include <SDL3/SDL_gamepad.h>
 
@@ -47,6 +48,7 @@ private:
     void SetMapping(QString input);
     void Cleanup();
     void createHotkeyFile(std::filesystem::path hotkey_file);
+    void SetTextColoredPixmap(QLabel* label, const QPixmap& source);
 
     bool EnablePadMapping = false;
     bool EnableKBMapping = false;
