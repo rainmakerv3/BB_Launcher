@@ -55,7 +55,7 @@ private:
     int MappingTimer;
     QTimer* timer;
     QRightClickButton* MappingButton;
-    QList<QRightClickButton*> ButtonsList;
+    QList<QPair<QRightClickButton*, std::string>> ButtonsList;
     QMap<int, QString> pressedKeys;
 
     const std::vector<std::string> ControllerInputs = {
