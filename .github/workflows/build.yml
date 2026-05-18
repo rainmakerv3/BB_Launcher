@@ -58,7 +58,7 @@ jobs:
       run: ./.ci/clang-format.sh
 
   build-windows:
-    runs-on: windows-2025
+    runs-on: windows-2022
     needs: get-info
     steps:
     - uses: actions/checkout@v6
@@ -86,7 +86,7 @@ jobs:
         path: upload/
 
   build-windows-noUAC:
-    runs-on: windows-2025
+    runs-on: windows-2022
     needs: get-info
     steps:
     - uses: actions/checkout@v6
