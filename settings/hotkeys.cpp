@@ -32,12 +32,12 @@ Hotkeys::Hotkeys(std::shared_ptr<IpcClient> ipc_client, QWidget* parent)
     ui->setupUi(this);
     this->setFixedSize(this->width(), this->height());
 
-    QPixmap controllerPixmap(":/dist/controller_icon.png");
+    QPixmap controllerPixmap(":/controller_icon.png");
     QPixmap scaledController =
         controllerPixmap.scaled(70, 70, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     SetTextColoredPixmap(ui->controllerLabel, scaledController);
 
-    QPixmap KBPixmap(":/dist/keyboard.png");
+    QPixmap KBPixmap(":/keyboard.png");
     QPixmap scaledKB = KBPixmap.scaled(70, 70, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     SetTextColoredPixmap(ui->keyboardLabel, scaledKB);
 
