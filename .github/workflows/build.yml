@@ -69,6 +69,7 @@ jobs:
       uses: rainmakerv3/msvc-dev-cmd@v1.13.0
       with:
         arch: amd64
+        vsversion: 2022
 
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DFORCE_UAC=ON -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qtstatic -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja -DUSE_WEBENGINE=OFF
@@ -97,6 +98,7 @@ jobs:
       uses: rainmakerv3/msvc-dev-cmd@v1.13.0
       with:
         arch: amd64
+        vsversion: 2022
 
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DFORCE_UAC=OFF -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qtstatic -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja -DUSE_WEBENGINE=OFF
