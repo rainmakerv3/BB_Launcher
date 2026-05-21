@@ -75,12 +75,9 @@ void LoadSettings() {
 
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
     AutoUpdateEnabled = toml::find_or<bool>(data, "Launcher", "AutoUpdateEnabled", false);
-    int userFolderLoc = toml::find_or<int>(data, "Launcher", "UserFolderLocation",
-                                           static_cast<int>(FolderLocation::BuildFolder));
-    if (userFolderLoc >= static_cast<int>(FolderLocation::BuildFolder) &&
-        userFolderLoc <= static_cast<int>(FolderLocation::CustomFolder)) {
-        UserFolderLocation = static_cast<FolderLocation>(userFolderLoc);
-    }
+    UserFolderLocation = static_cast<FolderLocation>(
+        toml::find_or<int>(data, "Launcher", "UserFolderLocation",
+                           static_cast<int>(FolderLocation::BuildFolder)));
 
     BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", false);
     BackupInterval = toml::find_or<int>(data, "Backups", "BackupInterval", 10);
