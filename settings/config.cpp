@@ -17,8 +17,7 @@ std::string Config::ApiKey = "";
 std::string Config::theme = "Dark";
 bool Config::SoundFixEnabled = true;
 bool Config::AutoUpdateEnabled = false;
-bool Config::PortableFolderinLauncherFolder = false;
-bool Config::UseCustomUserFolder = false;
+Config::FolderLocation Config::UserFolderLocation = Config::FolderLocation::BuildFolder;
 std::filesystem::path Config::CustomUserFolder;
 
 bool Config::BackupSaveEnabled = false;
@@ -76,10 +75,22 @@ void LoadSettings() {
 
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
     AutoUpdateEnabled = toml::find_or<bool>(data, "Launcher", "AutoUpdateEnabled", false);
-    PortableFolderinLauncherFolder =
-        toml::find_or<bool>(data, "Launcher", "PortableFolderinLauncherFolder", false);
-    UseCustomUserFolder =
-        toml::find_or<bool>(data, "Launcher", "UseCustomUserFolder", false);
+    int userFolderLoc = toml::find_or<int>(data, "Launcher", "UserFolderLocation", -1);
+    if (userFolderLoc >= 0) {
+        UserFolderLocation = static_cast<FolderLocation>(userFolderLoc);
+    } else {
+        bool portableInLauncher =
+            toml::find_or<bool>(data, "Launcher", "PortableFolderinLauncherFolder", false);
+        bool useCustom =
+            toml::find_or<bool>(data, "Launcher", "UseCustomUserFolder", false);
+        if (useCustom) {
+            UserFolderLocation = FolderLocation::CustomFolder;
+        } else if (portableInLauncher) {
+            UserFolderLocation = FolderLocation::LauncherFolder;
+        } else {
+            UserFolderLocation = FolderLocation::BuildFolder;
+        }
+    }
 
     BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", false);
     BackupInterval = toml::find_or<int>(data, "Backups", "BackupInterval", 10);
@@ -264,10 +275,15 @@ void SaveLauncherSettings() {
     data["Launcher"]["installPath"] = std::string{fmt::UTF(Common::installPath.u8string()).data};
     data["Launcher"]["shadPath-New"] =
         std::string{fmt::UTF(Common::shadPs4Executable.u8string()).data};
-    data["Launcher"]["PortableFolderinLauncherFolder"] = PortableFolderinLauncherFolder;
-    data["Launcher"]["UseCustomUserFolder"] = UseCustomUserFolder;
+    data["Launcher"]["UserFolderLocation"] = static_cast<int>(UserFolderLocation);
     data["Launcher"]["CustomUserFolder"] =
         std::string{fmt::UTF(CustomUserFolder.u8string()).data};
+    if (data["Launcher"].contains("PortableFolderinLauncherFolder")) {
+        data["Launcher"].as_table().erase("PortableFolderinLauncherFolder");
+    }
+    if (data["Launcher"].contains("UseCustomUserFolder")) {
+        data["Launcher"].as_table().erase("UseCustomUserFolder");
+    }
 
     data["Backups"]["BackupSaveEnabled"] = BackupSaveEnabled;
     data["Backups"]["BackupInterval"] = BackupInterval;

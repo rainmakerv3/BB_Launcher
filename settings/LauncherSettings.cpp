@@ -62,11 +62,11 @@ LauncherSettings::LauncherSettings(QWidget* parent)
     Common::PathToQString(customPath, CustomUserFolder);
     ui->CustomFolderLineEdit->setText(customPath);
 
-    if (UseCustomUserFolder) {
+    if (UserFolderLocation == FolderLocation::CustomFolder) {
         ui->CustomFolderRadioButton->setChecked(true);
         ui->CustomFolderLineEdit->setEnabled(true);
         ui->BrowseCustomFolderButton->setEnabled(true);
-    } else if (PortableFolderinLauncherFolder) {
+    } else if (UserFolderLocation == FolderLocation::LauncherFolder) {
         ui->PortableLauncherRadioButton->setChecked(true);
     } else {
         ui->PortableBuildRadioButton->setChecked(true);
@@ -162,8 +162,13 @@ void LauncherSettings::SaveSettings() {
         theme = "Light";
     }
 
-    PortableFolderinLauncherFolder = ui->PortableLauncherRadioButton->isChecked();
-    UseCustomUserFolder = ui->CustomFolderRadioButton->isChecked();
+    if (ui->CustomFolderRadioButton->isChecked()) {
+        UserFolderLocation = FolderLocation::CustomFolder;
+    } else if (ui->PortableLauncherRadioButton->isChecked()) {
+        UserFolderLocation = FolderLocation::LauncherFolder;
+    } else {
+        UserFolderLocation = FolderLocation::BuildFolder;
+    }
     CustomUserFolder =
         Common::PathFromQString(ui->CustomFolderLineEdit->text());
     SoundFixEnabled = ui->SoundFixCheckBox->isChecked();

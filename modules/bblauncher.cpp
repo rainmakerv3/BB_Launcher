@@ -422,12 +422,13 @@ void BBLauncher::UpdateSettingsList() {
         "Auto-update shadPS4 version list: " + QVariant(AutoUpdateVersionsEnabled).toString();
 
     QString Location;
-    if (UseCustomUserFolder) {
+    if (UserFolderLocation == FolderLocation::CustomFolder) {
         QString customPath;
         Common::PathToQString(customPath, CustomUserFolder);
         Location = "Custom: " + customPath;
     } else {
-        Location = PortableFolderinLauncherFolder ? "Launcher Folder" : "Build Folder";
+        Location = UserFolderLocation == FolderLocation::LauncherFolder ? "Launcher Folder"
+                                                                        : "Build Folder";
     }
     QString PortableFolderSetting = "Portable Folder Location: " + Location;
 
