@@ -64,7 +64,7 @@ std::filesystem::path GetCurrentPath(bool getLinuxFileName) {
 
 std::filesystem::path GetShadUserDir() {
     if (Config::UserFolderLocation == Config::FolderLocation::CustomFolder &&
-        !Config::CustomUserFolder.empty()) {
+        std::filesystem::exists(Config::CustomUserFolder)) {
         auto user_dir = Config::CustomUserFolder;
         if (!std::filesystem::exists(user_dir))
             std::filesystem::create_directories(user_dir);

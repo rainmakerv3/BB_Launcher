@@ -35,7 +35,7 @@ void IpcClient::startEmulator(const QFileInfo& exe, const QStringList& args,
 
     std::filesystem::path userPath;
     if (Config::UserFolderLocation == Config::FolderLocation::CustomFolder &&
-        !Config::CustomUserFolder.empty()) {
+        std::filesystem::exists(Config::CustomUserFolder)) {
         userPath = Config::CustomUserFolder.parent_path();
     } else {
         userPath = Config::UserFolderLocation == Config::FolderLocation::LauncherFolder
