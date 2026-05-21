@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QPushButton>
@@ -32,13 +33,40 @@ LauncherSettings::LauncherSettings(QWidget* parent)
     ui->BackupIntervalComboBox->addItems(BackupFreqList);
     ui->BackupNumberComboBox->addItems(BackupNumList);
 
+    std::string fallbackPath;
+#ifdef __APPLE__
+    fallbackPath = "~/Library/Application Support/shadPS4";
+#elif defined(__linux__)
+    const char* xdg = getenv("XDG_DATA_HOME");
+    fallbackPath = (xdg && strlen(xdg) > 0)
+                       ? std::string(xdg) + "/shadPS4"
+                       : "~/.local/share/shadPS4";
+#elif _WIN32
+    TCHAR appdata[MAX_PATH] = {0};
+    SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, appdata);
+    QString fallbackQStr;
+    Common::PathToQString(fallbackQStr, std::filesystem::path(appdata) / "shadPS4");
+    fallbackPath = fallbackQStr.toStdString();
+#endif
+    QString desc = ui->LauncherSetDescText->toHtml();
+    desc.replace("%FALLBACK%", QString::fromStdString(fallbackPath));
+    ui->LauncherSetDescText->setHtml(desc);
+
     if (theme == "Dark") {
         ui->DarkThemeRadioButton->setChecked(true);
     } else {
         ui->LightThemeRadioButton->setChecked(true);
     }
 
-    if (PortableFolderinLauncherFolder) {
+    QString customPath;
+    Common::PathToQString(customPath, CustomUserFolder);
+    ui->CustomFolderLineEdit->setText(customPath);
+
+    if (UseCustomUserFolder) {
+        ui->CustomFolderRadioButton->setChecked(true);
+        ui->CustomFolderLineEdit->setEnabled(true);
+        ui->BrowseCustomFolderButton->setEnabled(true);
+    } else if (PortableFolderinLauncherFolder) {
         ui->PortableLauncherRadioButton->setChecked(true);
     } else {
         ui->PortableBuildRadioButton->setChecked(true);
@@ -70,6 +98,28 @@ LauncherSettings::LauncherSettings(QWidget* parent)
             &LauncherSettings::OnBackupStateChanged);
 
     connect(ui->shortcutButton, &QPushButton::clicked, this, &LauncherSettings::CreateShortcut);
+
+    connect(ui->BrowseCustomFolderButton, &QPushButton::clicked, this,
+            &LauncherSettings::BrowseCustomFolder);
+
+    connect(ui->CustomFolderRadioButton, &QRadioButton::toggled, this, [this](bool checked) {
+        ui->CustomFolderLineEdit->setEnabled(checked);
+        ui->BrowseCustomFolderButton->setEnabled(checked);
+    });
+
+    connect(ui->PortableBuildRadioButton, &QRadioButton::toggled, this, [this](bool checked) {
+        if (checked) {
+            ui->CustomFolderLineEdit->setEnabled(false);
+            ui->BrowseCustomFolderButton->setEnabled(false);
+        }
+    });
+
+    connect(ui->PortableLauncherRadioButton, &QRadioButton::toggled, this, [this](bool checked) {
+        if (checked) {
+            ui->CustomFolderLineEdit->setEnabled(false);
+            ui->BrowseCustomFolderButton->setEnabled(false);
+        }
+    });
 }
 
 void LauncherSettings::SetLauncherDefaults() {
@@ -78,6 +128,10 @@ void LauncherSettings::SetLauncherDefaults() {
     ui->SoundFixCheckBox->setChecked(true);
     ui->BackupIntervalComboBox->setCurrentText("10");
     ui->BackupNumberComboBox->setCurrentText("2");
+    ui->PortableBuildRadioButton->setChecked(true);
+    ui->CustomFolderLineEdit->clear();
+    ui->CustomFolderLineEdit->setEnabled(false);
+    ui->BrowseCustomFolderButton->setEnabled(false);
 }
 
 void LauncherSettings::SaveSettings() {
@@ -109,6 +163,9 @@ void LauncherSettings::SaveSettings() {
     }
 
     PortableFolderinLauncherFolder = ui->PortableLauncherRadioButton->isChecked();
+    UseCustomUserFolder = ui->CustomFolderRadioButton->isChecked();
+    CustomUserFolder =
+        Common::PathFromQString(ui->CustomFolderLineEdit->text());
     SoundFixEnabled = ui->SoundFixCheckBox->isChecked();
     AutoUpdateEnabled = ui->UpdateCheckBox->isChecked();
 
@@ -302,6 +359,24 @@ bool LauncherSettings::createShortcutLinux(const QString& linkPath, const std::s
     return true;
 }
 #endif
+
+void LauncherSettings::BrowseCustomFolder() {
+    QString dir = QFileDialog::getExistingDirectory(
+        this, tr("Select shadPS4 User Folder"),
+        ui->CustomFolderLineEdit->text().isEmpty() ? QString()
+                                                   : ui->CustomFolderLineEdit->text());
+    if (!dir.isEmpty()) {
+        std::filesystem::path selectedPath = Common::PathFromQString(dir);
+        if (!std::filesystem::exists(selectedPath / "config.json")) {
+            QMessageBox::warning(
+                this, tr("Invalid User Folder"),
+                tr("The selected folder does not contain a config.json file.\n"
+                   "Make sure this is the shadPS4 user folder with config.json, "
+                   "cache/, patches/, etc."));
+        }
+        ui->CustomFolderLineEdit->setText(dir);
+    }
+}
 
 LauncherSettings::~LauncherSettings() {
     delete ui;

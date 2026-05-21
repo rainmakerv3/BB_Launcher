@@ -34,6 +34,8 @@ std::string GetLastModifiedString(const std::filesystem::path& path);
 
 extern std::string theme;
 extern bool PortableFolderinLauncherFolder;
+extern bool UseCustomUserFolder;
+extern std::filesystem::path CustomUserFolder;
 extern bool SoundFixEnabled;
 extern bool BackupSaveEnabled;
 extern int BackupInterval;

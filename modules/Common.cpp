@@ -63,6 +63,13 @@ std::filesystem::path GetCurrentPath(bool getLinuxFileName) {
 }
 
 std::filesystem::path GetShadUserDir() {
+    if (Config::UseCustomUserFolder && !Config::CustomUserFolder.empty()) {
+        auto user_dir = Config::CustomUserFolder;
+        if (!std::filesystem::exists(user_dir))
+            std::filesystem::create_directories(user_dir);
+        return user_dir;
+    }
+
     std::filesystem::path userPath = Config::PortableFolderinLauncherFolder
                                          ? Common::GetCurrentPath()
                                          : Common::shadPs4Executable.parent_path();

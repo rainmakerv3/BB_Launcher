@@ -33,9 +33,14 @@ void IpcClient::startEmulator(const QFileInfo& exe, const QStringList& args,
     env.insert("SHADPS4_ENABLE_IPC", "true");
     process->setProcessEnvironment(env);
 
-    std::filesystem::path userPath = Config::PortableFolderinLauncherFolder
-                                         ? Common::GetCurrentPath()
-                                         : Common::shadPs4Executable.parent_path();
+    std::filesystem::path userPath;
+    if (Config::UseCustomUserFolder && !Config::CustomUserFolder.empty()) {
+        userPath = Config::CustomUserFolder.parent_path();
+    } else {
+        userPath = Config::PortableFolderinLauncherFolder
+                       ? Common::GetCurrentPath()
+                       : Common::shadPs4Executable.parent_path();
+    }
 
     QString userDir;
     Common::PathToQString(userDir, userPath);
