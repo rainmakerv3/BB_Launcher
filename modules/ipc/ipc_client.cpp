@@ -38,7 +38,8 @@ void IpcClient::startEmulator(const QFileInfo& exe, const QStringList& args,
         if (std::filesystem::exists(Config::CustomUserFolder)) {
             userPath = Config::CustomUserFolder.parent_path();
         } else {
-            LogWarning("Custom user folder does not exist, falling back to default location");
+            emit LogEntrySent(
+                "Custom user folder does not exist, falling back to default location");
             userPath = Common::shadPs4Executable.parent_path();
         }
     } else {
