@@ -75,21 +75,11 @@ void LoadSettings() {
 
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
     AutoUpdateEnabled = toml::find_or<bool>(data, "Launcher", "AutoUpdateEnabled", false);
-    int userFolderLoc = toml::find_or<int>(data, "Launcher", "UserFolderLocation", -1);
-    if (userFolderLoc >= 0) {
+    int userFolderLoc = toml::find_or<int>(data, "Launcher", "UserFolderLocation",
+                                           static_cast<int>(FolderLocation::BuildFolder));
+    if (userFolderLoc >= static_cast<int>(FolderLocation::BuildFolder) &&
+        userFolderLoc <= static_cast<int>(FolderLocation::CustomFolder)) {
         UserFolderLocation = static_cast<FolderLocation>(userFolderLoc);
-    } else {
-        bool portableInLauncher =
-            toml::find_or<bool>(data, "Launcher", "PortableFolderinLauncherFolder", false);
-        bool useCustom =
-            toml::find_or<bool>(data, "Launcher", "UseCustomUserFolder", false);
-        if (useCustom) {
-            UserFolderLocation = FolderLocation::CustomFolder;
-        } else if (portableInLauncher) {
-            UserFolderLocation = FolderLocation::LauncherFolder;
-        } else {
-            UserFolderLocation = FolderLocation::BuildFolder;
-        }
     }
 
     BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", false);
@@ -278,12 +268,6 @@ void SaveLauncherSettings() {
     data["Launcher"]["UserFolderLocation"] = static_cast<int>(UserFolderLocation);
     data["Launcher"]["CustomUserFolder"] =
         std::string{fmt::UTF(CustomUserFolder.u8string()).data};
-    if (data["Launcher"].contains("PortableFolderinLauncherFolder")) {
-        data["Launcher"].as_table().erase("PortableFolderinLauncherFolder");
-    }
-    if (data["Launcher"].contains("UseCustomUserFolder")) {
-        data["Launcher"].as_table().erase("UseCustomUserFolder");
-    }
 
     data["Backups"]["BackupSaveEnabled"] = BackupSaveEnabled;
     data["Backups"]["BackupInterval"] = BackupInterval;
