@@ -17,7 +17,8 @@ std::string Config::ApiKey = "";
 std::string Config::theme = "Dark";
 bool Config::SoundFixEnabled = true;
 bool Config::AutoUpdateEnabled = false;
-bool Config::PortableFolderinLauncherFolder = false;
+Config::FolderLocation Config::UserFolderLocation = Config::FolderLocation::BuildFolder;
+std::filesystem::path Config::CustomUserFolder;
 
 bool Config::BackupSaveEnabled = false;
 int Config::BackupInterval = 10;
@@ -74,8 +75,9 @@ void LoadSettings() {
 
     SoundFixEnabled = toml::find_or<bool>(data, "Launcher", "SoundFixEnabled", true);
     AutoUpdateEnabled = toml::find_or<bool>(data, "Launcher", "AutoUpdateEnabled", false);
-    PortableFolderinLauncherFolder =
-        toml::find_or<bool>(data, "Launcher", "PortableFolderinLauncherFolder", false);
+    UserFolderLocation = static_cast<FolderLocation>(
+        toml::find_or<int>(data, "Launcher", "UserFolderLocation",
+                           static_cast<int>(FolderLocation::BuildFolder)));
 
     BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", false);
     BackupInterval = toml::find_or<int>(data, "Backups", "BackupInterval", 10);
@@ -97,6 +99,7 @@ void LoadSettings() {
         SevenZipPath = toml::find_fs_path_or(launcher, "SevenZipPath", {});
         Common::installPath = toml::find_fs_path_or(launcher, "installPath", {});
         Common::shadPs4Executable = toml::find_fs_path_or(launcher, "shadPath-New", {});
+        CustomUserFolder = toml::find_fs_path_or(launcher, "CustomUserFolder", {});
     }
 
     if (std::filesystem::exists(Common::installPath)) {
@@ -259,7 +262,9 @@ void SaveLauncherSettings() {
     data["Launcher"]["installPath"] = std::string{fmt::UTF(Common::installPath.u8string()).data};
     data["Launcher"]["shadPath-New"] =
         std::string{fmt::UTF(Common::shadPs4Executable.u8string()).data};
-    data["Launcher"]["PortableFolderinLauncherFolder"] = PortableFolderinLauncherFolder;
+    data["Launcher"]["UserFolderLocation"] = static_cast<int>(UserFolderLocation);
+    data["Launcher"]["CustomUserFolder"] =
+        std::string{fmt::UTF(CustomUserFolder.u8string()).data};
 
     data["Backups"]["BackupSaveEnabled"] = BackupSaveEnabled;
     data["Backups"]["BackupInterval"] = BackupInterval;

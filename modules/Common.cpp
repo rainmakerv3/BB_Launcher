@@ -5,6 +5,7 @@
 #include <QProcessEnvironment>
 
 #include "Common.h"
+#include "Log.h"
 #include "scope_exit.h"
 #include "settings/config.h"
 #include "settings/emulator_settings.h"
@@ -63,9 +64,20 @@ std::filesystem::path GetCurrentPath(bool getLinuxFileName) {
 }
 
 std::filesystem::path GetShadUserDir() {
-    std::filesystem::path userPath = Config::PortableFolderinLauncherFolder
-                                         ? Common::GetCurrentPath()
-                                         : Common::shadPs4Executable.parent_path();
+    if (Config::UserFolderLocation == Config::FolderLocation::CustomFolder) {
+        if (std::filesystem::exists(Config::CustomUserFolder)) {
+            auto user_dir = Config::CustomUserFolder;
+            if (!std::filesystem::exists(user_dir))
+                std::filesystem::create_directories(user_dir);
+            return user_dir;
+        }
+        LogWarning("Custom user folder does not exist, falling back to default location");
+    }
+
+    std::filesystem::path userPath =
+        Config::UserFolderLocation == Config::FolderLocation::LauncherFolder
+            ? Common::GetCurrentPath()
+            : Common::shadPs4Executable.parent_path();
     auto user_dir = userPath / "user";
 
     if (!std::filesystem::exists(user_dir)) {

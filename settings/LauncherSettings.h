@@ -19,6 +19,7 @@ public slots:
 private slots:
     void SetLauncherDefaults();
     void SaveSettings();
+    void BrowseCustomFolder();
 
 private:
     Ui::LauncherSettings* ui;

@@ -9,6 +9,12 @@
 
 namespace Config {
 
+enum class FolderLocation {
+    BuildFolder,
+    LauncherFolder,
+    CustomFolder,
+};
+
 struct Build {
     std::string path;
     std::string type;
@@ -33,7 +39,8 @@ void SaveLauncherSettings();
 std::string GetLastModifiedString(const std::filesystem::path& path);
 
 extern std::string theme;
-extern bool PortableFolderinLauncherFolder;
+extern FolderLocation UserFolderLocation;
+extern std::filesystem::path CustomUserFolder;
 extern bool SoundFixEnabled;
 extern bool BackupSaveEnabled;
 extern int BackupInterval;
