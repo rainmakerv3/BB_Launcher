@@ -373,11 +373,10 @@ void LauncherSettings::BrowseCustomFolder() {
     if (!dir.isEmpty()) {
         std::filesystem::path selectedPath = Common::PathFromQString(dir);
         if (!std::filesystem::exists(selectedPath / "config.json")) {
-            QMessageBox::warning(
-                this, tr("Invalid User Folder"),
-                tr("The selected folder does not contain a config.json file.\n"
-                   "Make sure this is the shadPS4 user folder with config.json, "
-                   "cache/, patches/, etc."));
+            QMessageBox::warning(this, tr("No config file found"),
+                                 tr("The selected folder does not contain a config.json file.\n"
+                                    "It is recommended to launch the game once to generate the "
+                                    "config files and other folders required by BBLauncher."));
         }
         ui->CustomFolderLineEdit->setText(dir);
     }
