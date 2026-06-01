@@ -13,6 +13,7 @@
 
 #include "ShadSettings.h"
 #include "config.h"
+#include "key_manager.h"
 #include "modules/Common.h"
 #include "settings/ui_ShadSettings.h"
 #include "user_manager_dialog.h"
@@ -339,7 +340,9 @@ void ShadSettings::LoadValuesFromConfig() {
         QString::fromStdString(EmulatorSettings.GetFullScreenMode()));
     ui->backgroundControllerCheckBox->setChecked(EmulatorSettings.IsBackgroundControllerInput());
 
-    ui->trophyKeyLineEdit->setText(QString::fromStdString(Config::TrophyKey));
+    auto keys = KeyManager::GetInstance()->GetAllKeys();
+    ui->trophyKeyLineEdit->setText(
+        QString::fromStdString(KeyManager::BytesToHexString(keys.TrophyKeySet.ReleaseTrophyKey)));
     ui->trophyKeyLineEdit->setEchoMode(QLineEdit::Password);
 }
 
@@ -513,8 +516,7 @@ void ShadSettings::SaveSettings() {
         EmulatorSettings.SetConsoleLanguage(language_ids[code]);
 
         QString key = ui->trophyKeyLineEdit->text();
-        Config::TrophyKey = key.toStdString();
-        Config::SaveTrophyKey(Config::TrophyKey);
+        Config::SaveTrophyKey(key.toStdString());
     }
 
     if (is_game_specific) {

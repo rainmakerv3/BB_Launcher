@@ -31,7 +31,6 @@ void CreateSettingsFile();
 bool isReleaseOlder(int minorVersion, int majorVersion = 0);
 Build GetCurrentBuildInfo();
 int GetDmemValue();
-void CreateKeysJson();
 void SaveTrophyKey(std::string key);
 
 void SaveLauncherSettings();
@@ -60,8 +59,6 @@ extern bool ShowChangeLog;
 
 extern bool GameRunning;
 extern bool GameSpecificConfigUsed;
-
-extern std::string TrophyKey;
 
 const std::filesystem::path SettingsFile = Common::GetBBLFilesPath() / "LauncherSettings.toml";
 

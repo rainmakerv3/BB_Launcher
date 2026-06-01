@@ -11,6 +11,7 @@
 #include "config.h"
 #include "emulator_settings.h"
 #include "formatting.h"
+#include "key_manager.h"
 
 std::filesystem::path Config::SevenZipPath;
 std::string Config::ApiKey = "";
@@ -32,8 +33,6 @@ bool Config::AutoUpdateVersionsEnabled = true;
 bool Config::AutoUpdateShadEnabled = false;
 bool Config::ShowChangeLog = true;
 std::string Config::DefaultFolderString = "";
-
-std::string Config::TrophyKey = "";
 
 bool Config::GameRunning = false;
 bool Config::GameSpecificConfigUsed = false;
@@ -121,89 +120,37 @@ void LoadSettings() {
             Common::installPath.parent_path() / (Common::game_serial + "-patch");
     }
 
-    // My to do: delete when no longer needed
-    std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
-    if (std::filesystem::exists(shadConfigFile)) {
-        toml::value shadData;
-        try {
-            std::ifstream ifs;
-            ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
-            ifs.open(shadConfigFile, std::ios_base::binary);
-            shadData =
-                toml::parse(ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
+    if (KeyManager::GetInstance()->GetAllKeys().TrophyKeySet.ReleaseTrophyKey.empty()) {
+        std::string TrophyKey = "";
+        std::filesystem::path shadConfigFile = Common::GetShadUserDir() / "config.toml";
+        if (std::filesystem::exists(shadConfigFile)) {
+            toml::value shadData;
+            try {
+                std::ifstream ifs;
+                ifs.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+                ifs.open(shadConfigFile, std::ios_base::binary);
+                shadData = toml::parse(
+                    ifs, std::string{fmt::UTF(shadConfigFile.filename().u8string()).data});
 
-            TrophyKey = toml::find_or<std::string>(shadData, "Keys", "TrophyKey", "");
+                TrophyKey = toml::find_or<std::string>(shadData, "Keys", "TrophyKey", "");
 
-        } catch (std::exception& ex) {
-            // handle
+            } catch (std::exception& ex) {
+                // handle
+            }
         }
-    }
-
-    QString keysJsonPath;
-    std::filesystem::path keysJson = Common::GetShadUserDir() / "keys.json";
-    Common::PathToQString(keysJsonPath, keysJson);
-
-    if (!std::filesystem::exists(keysJson)) {
-        CreateKeysJson();
-        if (Config::TrophyKey != "") {
-            SaveTrophyKey(Config::TrophyKey);
+        if (TrophyKey != "") {
+            SaveTrophyKey(TrophyKey);
             return;
         }
-    }
-
-    QFile file(keysJsonPath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        // handle
-    }
-
-    QByteArray jsonData = file.readAll();
-    file.close();
-
-    QJsonDocument doc = QJsonDocument::fromJson(jsonData);
-    if (doc.isNull()) {
-        // handle
-    }
-
-    QJsonObject obj = doc.object();
-    QJsonValue nameValue = obj.value("TrophyKeySet");
-    if (nameValue.isObject()) {
-        QJsonObject releaseObj = nameValue.toObject();
-        Config::TrophyKey = releaseObj.value("ReleaseTrophyKey").toString().toStdString();
     }
 }
 
 void SaveTrophyKey(std::string key) {
-    QString keysJsonPath;
-    std::filesystem::path keysJson = Common::GetShadUserDir() / "keys.json";
-    Common::PathToQString(keysJsonPath, keysJson);
-
-    QFile file(keysJsonPath);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        // handle
-    }
-    QByteArray jsonData = file.readAll();
-    file.close();
-
-    QJsonDocument doc = QJsonDocument::fromJson(jsonData);
-    if (doc.isNull()) {
-        // handle
-    }
-
-    QJsonObject obj = doc.object();
-    QJsonValue trophyKeySetObj = obj.value("TrophyKeySet");
-    if (trophyKeySetObj.isObject()) {
-        QJsonObject releaseObj = trophyKeySetObj.toObject();
-        releaseObj["ReleaseTrophyKey"] = QString::fromStdString(key);
-        obj["TrophyKeySet"] = releaseObj;
-    }
-
-    doc.setObject(obj);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
-        // handle
-    }
-
-    file.write(doc.toJson(QJsonDocument::Indented));
-    file.close();
+    auto keyManager = KeyManager::GetInstance();
+    auto keys = keyManager->GetAllKeys();
+    keys.TrophyKeySet.ReleaseTrophyKey = KeyManager::HexStringToBytes(key);
+    keyManager->SetAllKeys(keys);
+    keyManager->SaveToFile();
 }
 
 void CreateSettingsFile() {
@@ -519,29 +466,6 @@ int GetDmemValue() {
 
     EmulatorSettings.Load();
     return dmem;
-}
-
-void CreateKeysJson() {
-    QJsonObject releaseObject;
-    releaseObject["ReleaseTrophyKey"] = "";
-
-    QJsonObject rootObject;
-    rootObject["TrophyKeySet"] = releaseObject;
-
-    QJsonDocument doc(rootObject);
-    QByteArray jsonData = doc.toJson(QJsonDocument::Indented);
-
-    QString keysJsonPath;
-    std::filesystem::path keysJson = Common::GetShadUserDir() / "keys.json";
-    Common::PathToQString(keysJsonPath, keysJson);
-
-    QFile file(keysJsonPath);
-    if (!file.open(QIODevice::WriteOnly)) {
-        // handle
-    }
-
-    file.write(jsonData);
-    file.close();
 }
 
 } // namespace Config

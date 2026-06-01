@@ -3,8 +3,8 @@
 
 #include "aes.h"
 #include "modules/Log.h"
-#include "settings/config.h"
 #include "settings/formatting.h"
+#include "settings/key_manager.h"
 #include "trp.h"
 
 static void DecryptEFSM(std::span<const u8, 16> trophyKey, std::span<const u8, 16> NPcommID,
@@ -66,7 +66,8 @@ bool TRP::Extract(const std::filesystem::path& trophyPath, int index, std::strin
         return false;
     }
 
-    const auto& user_key_vec = HexStringToBytes(Config::TrophyKey);
+    const auto& user_key_vec =
+        KeyManager::GetInstance()->GetAllKeys().TrophyKeySet.ReleaseTrophyKey;
     if (user_key_vec.size() != 16) {
         LogWarning("Trophy decryption key is not specified or invalid");
         return false;
