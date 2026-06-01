@@ -9,6 +9,7 @@
 #include "modules/QAnsiTextEdit.h"
 #include "modules/ipc/ipc_client.h"
 #include "settings/emulator_settings.h"
+#include "settings/key_manager.h"
 #include "settings/user_settings.h"
 
 namespace Ui {
@@ -50,6 +51,8 @@ private:
 
     Ui::BBLauncher* ui;
     QAnsiTextEdit* logDisplay;
+
+    std::shared_ptr<KeyManager> m_key_manager = std::make_shared<KeyManager>();
     std::shared_ptr<IpcClient> m_ipc_client = std::make_shared<IpcClient>();
     std::shared_ptr<EmulatorSettingsImpl> m_emu_settings = std::make_shared<EmulatorSettingsImpl>();
     std::shared_ptr<UserSettingsImpl> m_user_settings = std::make_shared<UserSettingsImpl>();

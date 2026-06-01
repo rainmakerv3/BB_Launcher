@@ -57,6 +57,8 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     UserSettings.Load();
     m_emu_settings->Load();
     EmulatorSettingsImpl::SetInstance(m_emu_settings);
+    KeyManager::SetInstance(m_key_manager);
+    m_key_manager->LoadFromFile();
 
     if (Common::shadPs4Executable == "" || !std::filesystem::exists(Common::shadPs4Executable)) {
         QMessageBox::warning(this, "No shadPS4 build",
