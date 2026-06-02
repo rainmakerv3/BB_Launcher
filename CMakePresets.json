@@ -8,12 +8,16 @@
   "include": ["CMake${hostSystemName}Presets.json"],
   "configurePresets": [
     {
-      "name": "x64-Clang-Debug",
-      "displayName": "Clang x64 Debug",
-      "inherits": ["x64-Clang-Base"],
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      }
+        "name": "x64-Clang-Debug",
+        "displayName": "Clang x64 Debug",
+        "inherits": [ "x64-Clang-Base" ],
+        "cacheVariables": {
+            "CMAKE_BUILD_TYPE": "Debug"
+        },
+        "environment": {
+            "CFLAGS": "/fsanitize=address",
+            "CXXFLAGS": "/fsanitize=address"
+        }
     },
     {
       "name": "x64-Clang-Release",

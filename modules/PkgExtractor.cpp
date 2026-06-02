@@ -182,7 +182,7 @@ void PkgExtractor::ExtractPkg() {
 
         QString addonDirPath;
         QString gameDirPath;
-        PathToQString(gameDirPath, game_folder_path);
+        Common::PathToQString(gameDirPath, game_folder_path);
         QDir game_dir(gameDirPath);
 
         std::string entitlement_label = SplitString(content_id, '-')[2];
@@ -350,7 +350,7 @@ void PkgExtractor::ExtractPkg() {
                     QString path;
 
                     // We want to show the parent path instead of the full path
-                    PathToQString(path, game_folder_path.parent_path());
+                    Common::PathToQString(path, game_folder_path.parent_path());
                     QIcon windowIcon(
                         Common::PathToU8(game_folder_path / "sce_sys/icon0.png").c_str());
 
