@@ -109,6 +109,7 @@ static void CheckAndMigrateSaves(TransferOption option) {
                 return;
             default:
                 // UNREACHABLE();
+                break;
             }
         }
     } catch (std::exception const& e) {
@@ -190,6 +191,7 @@ static void CheckAndMigrateTrophies(TransferOption option) {
                 return;
             default:
                 // UNREACHABLE();
+                break;
             }
         }
     }
