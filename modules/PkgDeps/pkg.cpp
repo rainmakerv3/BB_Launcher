@@ -239,7 +239,7 @@ bool PKG::Extract(const std::filesystem::path& filepath, const std::filesystem::
         if (entry.id == 0x400 || entry.id == 0x401 || entry.id == 0x402 ||
             entry.id == 0x403) { // somehow 0x401 is not decrypting
 
-            decNp.resize(entry.size);
+            decNp.resize(entry.size + 10);
             if (!file.Seek(entry.offset)) {
                 failreason = "Failed to seek to PKG entry offset";
                 return false;
