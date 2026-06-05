@@ -75,7 +75,6 @@ if (NOT TARGET ZLIB::ZLIB)
     set(ZLIB_ENABLE_TESTS OFF)
     set(WITH_GTEST OFF)
     set(WITH_NEW_STRATEGIES ON)
-    set(WITH_NATIVE_INSTRUCTIONS ON)
     set(ZLIB_COMPAT ON CACHE BOOL "" FORCE)
     include(FetchContent)
     FetchContent_Declare(
