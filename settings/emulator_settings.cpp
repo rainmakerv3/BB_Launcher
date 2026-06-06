@@ -206,6 +206,17 @@ void EmulatorSettingsImpl::SetFontsDir(const std::filesystem::path& dir) {
     m_general.font_dir.value = dir;
 }
 
+std::filesystem::path EmulatorSettingsImpl::GetAddonInstallDir() {
+    if (m_general.addon_install_dir.value.empty()) {
+        return Common::GetShadUserDir() / "addcont";
+    }
+    return m_general.addon_install_dir.value;
+}
+
+void EmulatorSettingsImpl::SetAddonInstallDir(const std::filesystem::path& dir) {
+    m_general.addon_install_dir.value = dir;
+}
+
 // ── Game-specific override management ────────────────────────────────
 void EmulatorSettingsImpl::ClearGameSpecificOverrides() {
     ClearGroupOverrides(m_general);
@@ -626,6 +637,10 @@ bool EmulatorSettingsImpl::TransferSettings() {
                         s.addon_install_dir.value = std::filesystem::path{addon_install_dir_str};
                     }
                 }
+            }
+
+            if (s.addon_install_dir.value.empty()) {
+                s.addon_install_dir.value = Common::GetShadUserDir() / "addcont";
             }
         } catch (const std::exception& e) {
             std::string msg = "Failed to transfer addon install directory: ";

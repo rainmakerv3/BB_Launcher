@@ -329,11 +329,11 @@ void ShadSettings::LoadValuesFromConfig() {
 
     QString home_path_string;
     Common::PathToQString(home_path_string, EmulatorSettings.GetHomeDir());
-    ui->HomePathLineEdit->setText(home_path_string);
+    ui->HomePathLineEdit->setText(home_path_string.replace("\\", "/"));
 
     QString dlc_path_string;
     Common::PathToQString(dlc_path_string, EmulatorSettings.GetAddonInstallDir());
-    ui->DLCPathLineEdit->setText(dlc_path_string);
+    ui->DLCPathLineEdit->setText(dlc_path_string.replace("\\", "/"));
 
     ui->motionControlsCheckBox->setChecked(EmulatorSettings.IsMotionControlsEnabled());
     ui->fullscreenModeComboBox->setCurrentText(
@@ -495,6 +495,7 @@ void ShadSettings::SaveSettings() {
     } else {
         EmulatorSettings.SetDiscordRPCEnabled(ui->discordRPCCheckbox->isChecked());
         EmulatorSettings.SetHomeDir(ui->HomePathLineEdit->text().toStdString());
+        EmulatorSettings.SetAddonInstallDir(ui->DLCPathLineEdit->text().toStdString());
 
         QString code;
         QString currentLocale = ui->consoleLanguageComboBox->currentText();
