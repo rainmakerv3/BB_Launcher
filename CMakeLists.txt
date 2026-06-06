@@ -132,21 +132,6 @@ set(CMAKE_AUTORCC ON)
 
 qt_add_resources(RESOURCE_FILES dist/BBLauncher.qrc)
 
-
-if(WIN32)
-    set(CRYPTO_SOURCES
-        modules/PkgDeps/bcrypto.cpp
-        modules/PkgDeps/bcrypto.h
-        modules/PkgDeps/picosha2.h
-    )
-else()
-    set(CRYPTO_SOURCES
-        modules/PkgDeps/crypto.cpp
-        modules/PkgDeps/crypto.h
-    )
-endif()
-
-
 set(PROJECT_SOURCES
     main.cpp
     modules/bblauncher.cpp
@@ -180,6 +165,8 @@ set(PROJECT_SOURCES
     modules/version_dialog.ui
     modules/ipc/ipc_client.cpp
     modules/ipc/ipc_client.h
+    modules/PkgDeps/crypto.cpp
+    modules/PkgDeps/crypto.h
     modules/PkgDeps/loader.cpp
     modules/PkgDeps/loader.h
     modules/PkgDeps/pfs.h
@@ -223,8 +210,6 @@ set(PROJECT_SOURCES
     settings/kbm_gui.ui
     settings/kbm_help_dialog.cpp
     settings/kbm_help_dialog.h
-    settings/key_manager.cpp
-    settings/key_manager.h
     settings/LauncherSettings.h
     settings/LauncherSettings.cpp
     settings/LauncherSettings.ui
@@ -250,7 +235,6 @@ set(PROJECT_SOURCES
 
 qt_add_executable(BB_Launcher
     ${PROJECT_SOURCES}
-    ${CRYPTO_SOURCES}
 )
 
 if (WIN32)
@@ -263,11 +247,7 @@ endif()
 target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network Qt6::Quick Qt6::QuickWidgets Qt6::WebView Qt6::WebSockets Qt6::Concurrent)
-target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 pugixml::pugixml SDL3::SDL3 Vulkan::Headers qmicroz volk_headers nlohmann_json::nlohmann_json ZLIB::ZLIB)
-
-if (NOT WIN32)
-    target_link_libraries(BB_Launcher PRIVATE cryptopp::cryptopp)
-endif()
+target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 pugixml::pugixml SDL3::SDL3 Vulkan::Headers qmicroz volk_headers nlohmann_json::nlohmann_json cryptopp::cryptopp ZLIB::ZLIB)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux" AND USE_WEBENGINE)
     target_link_libraries(BB_Launcher PRIVATE Qt6::WebEngineCore Qt6::WebEngineWidgets Qt6::WebChannel)

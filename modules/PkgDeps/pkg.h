@@ -9,15 +9,12 @@
 #include <unordered_map>
 #include <vector>
 
-#ifdef WIN32
-#include "bcrypto.h"
-#else
 #include "crypto.h"
-#endif
-
 #include "modules/Common.h"
 #include "pfs.h"
 #include "types.h"
+
+// #include "trp.h"
 
 using namespace Common;
 
@@ -156,7 +153,7 @@ public:
 
 private:
     Crypto crypto;
-
+    // TRP trp;
     u64 pkgSize = 0;
     char pkgTitleID[9];
     PKGHeader pkgheader;

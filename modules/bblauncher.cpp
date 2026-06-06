@@ -52,8 +52,6 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     logDisplay = new QAnsiTextEdit(this);
     ui->logLayout->addWidget(logDisplay);
 
-    KeyManager::SetInstance(m_key_manager);
-    m_key_manager->LoadFromFile();
     Config::LoadSettings();
 
     UserSettings.Load();
