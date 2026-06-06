@@ -71,6 +71,9 @@ jobs:
         arch: amd64
         vsversion: 2022
 
+    - name: Print CPU Info
+      run: bash -c "cat /proc/cpuinfo"
+
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DFORCE_UAC=ON -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qtstatic -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja -DUSE_WEBENGINE=OFF
     - name: Build
@@ -99,6 +102,9 @@ jobs:
       with:
         arch: amd64
         vsversion: 2022
+
+    - name: Print CPU Info
+      run: bash -c "cat /proc/cpuinfo"
 
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DFORCE_UAC=OFF -DCMAKE_PREFIX_PATH=${{ github.workspace }}/qtstatic -DCMAKE_C_COMPILER=clang-cl -DCMAKE_CXX_COMPILER=clang-cl -G Ninja -DUSE_WEBENGINE=OFF
@@ -137,6 +143,9 @@ jobs:
         arch: clang_64
         archives: qtbase qttools qtdeclarative
         modules: qtmultimedia qtimageformats qtwebview qtwebsockets
+
+    - name: Print CPU Info
+      run: sysctl hw machdep.cpu
 
     - name: Configure CMake
       run: cmake --fresh -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_OSX_ARCHITECTURES=x86_64 -DUSE_WEBENGINE=OFF
@@ -180,6 +189,9 @@ jobs:
         tools: 'tools_generic tools_opensslv3_src'
         setup-python: false
         cache: true
+
+    - name: Print CPU Info
+      run: cat /proc/cpuinfo
 
     - name: Configure CMake
       run: cmake --fresh -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=clang-19 -DCMAKE_CXX_COMPILER=clang++-19 -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=mold" -DUSE_WEBENGINE=OFF
@@ -238,6 +250,9 @@ jobs:
         tools: 'tools_generic tools_opensslv3_src'
         setup-python: false
         cache: true
+
+    - name: Print CPU Info
+      run: cat /proc/cpuinfo
 
     - name: Configure CMake
       run: cmake --fresh -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=clang-19 -DCMAKE_CXX_COMPILER=clang++-19 -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=mold" -DUSE_WEBENGINE=ON
