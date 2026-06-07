@@ -23,6 +23,14 @@ struct UTF {
 
 } // namespace fmt
 
+template <typename T>
+[[nodiscard]] constexpr T AlignUp(T value, std::size_t size) {
+    static_assert(std::is_unsigned_v<T>, "T must be an unsigned value.");
+    auto mod{static_cast<T>(value % size)};
+    value -= mod;
+    return static_cast<T>(mod == T{0} ? value : value + size);
+}
+
 std::vector<char> decompressZlib(const std::vector<char>& compressedData) {
     std::vector<unsigned char> buffer;
     CryptoPP::ArraySource(reinterpret_cast<const CryptoPP::byte*>(compressedData.data()),
@@ -229,7 +237,7 @@ bool PKG::Extract(const std::filesystem::path& filepath, const std::filesystem::
         if (entry.id == 0x400 || entry.id == 0x401 || entry.id == 0x402 ||
             entry.id == 0x403) { // somehow 0x401 is not decrypting
 
-            decNp.resize(entry.size + 10);
+            decNp.resize(AlignUp(static_cast<u32>(entry.size), 16));
             if (!file.Seek(entry.offset)) {
                 failreason = "Failed to seek to PKG entry offset";
                 return false;
