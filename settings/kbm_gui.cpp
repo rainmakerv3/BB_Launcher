@@ -244,6 +244,15 @@ void KBMSettings::SaveKBMConfig(bool CloseOnSave) {
             lines.push_back(output_string + " = " + input_string);
             inputs.push_back(input_string);
         }
+
+        if (entry.first->objectName() == "SquareButton3" ||
+            entry.first->objectName() == "R3Button3" ||
+            entry.first->objectName() == "TouchpadRightButton3" ||
+            entry.first->objectName() == "DpadRightButton3" ||
+            entry.first->objectName() == "LStickRightButton3" ||
+            entry.first->objectName() == "RStickRightButton3") {
+            lines.push_back("");
+        }
     }
 
     lines.push_back("");
