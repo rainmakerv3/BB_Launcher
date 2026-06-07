@@ -369,6 +369,10 @@ void KBMSettings::SaveKBMConfig(bool CloseOnSave) {
 }
 
 void KBMSettings::SetDefault() {
+    for (auto& entry : ButtonsList) {
+        entry.first->setText("unmapped");
+    }
+
     ui->CrossButton->setText("e");
     ui->CircleButton->setText("space");
     ui->TriangleButton->setText("f");
@@ -384,12 +388,20 @@ void KBMSettings::SetDefault() {
     ui->TouchpadLeftButton->setText("g");
     ui->TouchpadCenterButton->setText("unmapped");
     ui->TouchpadRightButton->setText("h");
-    ui->OptionsButton->setText("enter");
+    ui->OptionsButton->setText("escape");
 
     ui->DpadUpButton->setText("w, lalt");
+    ui->DpadUpButton2->setText("mousewheelup");
+    ui->DpadUpButton3->setText("up");
     ui->DpadDownButton->setText("s, lalt");
+    ui->DpadDownButton2->setText("mousewheeldown");
+    ui->DpadDownButton3->setText("down");
     ui->DpadLeftButton->setText("a, lalt");
+    ui->DpadLeftButton2->setText("mousewheelleft");
+    ui->DpadLeftButton3->setText("left");
     ui->DpadRightButton->setText("d, lalt");
+    ui->DpadRightButton2->setText("mousewheelright");
+    ui->DpadRightButton3->setText("right");
 
     ui->LStickUpButton->setText("w");
     ui->LStickDownButton->setText("s");
