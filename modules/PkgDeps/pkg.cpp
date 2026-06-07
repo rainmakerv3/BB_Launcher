@@ -1,8 +1,9 @@
 // SPDX-FileCopyrightText: Copyright 2024 shadPS4 Emulator Project
 // SPDX-License-Identifier: GPL-2.0-or-later
 
+#include <cryptopp/filters.h>
+#include <cryptopp/zlib.h>
 #include <fmt/format.h>
-#include <zlib.h>
 
 #include "modules/TrophyDeps/io_file.h"
 #include "pkg.h"
@@ -22,26 +23,15 @@ struct UTF {
 
 } // namespace fmt
 
-static void DecompressPFSC(std::span<char> compressed_data, std::span<char> decompressed_data) {
-    z_stream decompressStream;
-    decompressStream.zalloc = Z_NULL;
-    decompressStream.zfree = Z_NULL;
-    decompressStream.opaque = Z_NULL;
+std::vector<char> decompressZlib(const std::vector<char>& compressedData) {
+    std::vector<unsigned char> buffer;
+    CryptoPP::ArraySource(reinterpret_cast<const CryptoPP::byte*>(compressedData.data()),
+                          compressedData.size(),
+                          true, // pump all data
+                          new CryptoPP::ZlibDecompressor(new CryptoPP::VectorSink(buffer)));
 
-    if (inflateInit(&decompressStream) != Z_OK) {
-        // std::cerr << "Error initializing zlib for deflation." << std::endl;
-    }
-
-    decompressStream.avail_in = compressed_data.size();
-    decompressStream.next_in = reinterpret_cast<unsigned char*>(compressed_data.data());
-    decompressStream.avail_out = decompressed_data.size();
-    decompressStream.next_out = reinterpret_cast<unsigned char*>(decompressed_data.data());
-
-    if (inflate(&decompressStream, Z_FINISH)) {
-    }
-    if (inflateEnd(&decompressStream) != Z_OK) {
-        // std::cerr << "Error ending zlib inflate" << std::endl;
-    }
+    std::vector<char> decompressedVector(buffer.begin(), buffer.end());
+    return decompressedVector;
 }
 
 u32 GetPFSCOffset(std::span<const u8> pfs_image) {
@@ -323,7 +313,7 @@ bool PKG::Extract(const std::filesystem::path& filepath, const std::filesystem::
         if (sectorSize == 0x10000) // Uncompressed data
             std::memcpy(decompressedData.data(), compressedData.data(), 0x10000);
         else if (sectorSize < 0x10000) // Compressed data
-            DecompressPFSC(compressedData, decompressedData);
+            decompressedData = decompressZlib(compressedData);
 
         if (i == 0) {
             std::memcpy(&ndinode, decompressedData.data() + 0x30, 4); // number of folders and files
@@ -471,7 +461,7 @@ void PKG::ExtractFiles(const int index) {
             if (sectorSize == 0x10000) // Uncompressed data
                 std::memcpy(decompressedData.data(), compressedData.data(), 0x10000);
             else if (sectorSize < 0x10000) // Compressed data
-                DecompressPFSC(compressedData, decompressedData);
+                decompressedData = decompressZlib(compressedData);
 
             size_decompressed += 0x10000;
 

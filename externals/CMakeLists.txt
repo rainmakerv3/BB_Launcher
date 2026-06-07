@@ -68,25 +68,6 @@ if (NOT TARGET cryptopp::cryptopp)
     set_target_properties(cryptopp PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_BINARY_DIR}/cryptopp")
 endif()
 
-# zlib
-if (NOT TARGET ZLIB::ZLIB)
-    set(ZLIB_ENABLE_TESTS OFF)
-    set(WITH_GTEST OFF)
-    set(WITH_NEW_STRATEGIES ON)
-    set(ZLIB_COMPAT ON CACHE BOOL "" FORCE)
-    include(FetchContent)
-    FetchContent_Declare(
-        ZLIB
-        SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/zlib-ng"
-        OVERRIDE_FIND_PACKAGE
-    )
-    FetchContent_MakeAvailable(ZLIB)
-    add_library(ZLIB::ZLIB ALIAS zlib)
-    # libpng expects this variable to exist after its find_package(ZLIB)
-    set(ZLIB_INCLUDE_DIRS "${FETCHCONTENT_BASE_DIR}/zlib-build")
-endif()
-
-
 if (APPLE)
      # date
     if (NOT TARGET date::date-tz)
