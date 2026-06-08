@@ -223,10 +223,22 @@ void CreateSettingsFile() {
     data["Launcher"]["Theme"] = "Dark";
     data["Launcher"]["SoundFixEnabled"] = true;
     data["Launcher"]["AutoUpdateEnabled"] = false;
+    data["Launcher"]["UserFolderLocation"] = 0;
+    data["Launcher"]["CustomUserFolder"] = "";
+    data["Launcher"]["ApiKey"] = "";
+    data["Launcher"]["SevenZipPath"] = "";
 
     data["Backups"]["BackupSaveEnabled"] = false;
     data["Backups"]["BackupInterval"] = 10;
     data["Backups"]["BackupNumber"] = 2;
+
+    data["Trophy"]["ShowEarned"] = true;
+    data["Trophy"]["ShowUnearned"] = true;
+    data["Trophy"]["ShowHidden"] = false;
+
+    data["shadUpdater"]["DefaultFolder"] = "";
+    data["shadUpdater"]["AutoUpdateVersionsEnabled"] = true;
+    data["shadUpdater"]["AutoUpdateShadEnabled"] = false;
 
     std::ofstream file(SettingsFile, std::ios::binary);
     file << data;
@@ -270,9 +282,9 @@ void SaveLauncherSettings() {
     data["Backups"]["BackupInterval"] = BackupInterval;
     data["Backups"]["BackupNumber"] = BackupNumber;
 
-    data["Trophy"]["ShowEarned"] = Config::ShowEarnedTrophy;
-    data["Trophy"]["ShowUnearned"] = Config::ShowNotEarnedTrophy;
-    data["Trophy"]["ShowHidden"] = Config::ShowHiddenTrophy;
+    data["Trophy"]["ShowEarned"] = ShowEarnedTrophy;
+    data["Trophy"]["ShowUnearned"] = ShowNotEarnedTrophy;
+    data["Trophy"]["ShowHidden"] = ShowHiddenTrophy;
 
     data["shadUpdater"]["DefaultFolder"] = DefaultFolderString;
     data["shadUpdater"]["AutoUpdateVersionsEnabled"] = AutoUpdateVersionsEnabled;
