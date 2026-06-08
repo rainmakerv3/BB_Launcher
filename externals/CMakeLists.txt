@@ -68,6 +68,10 @@ if (NOT TARGET cryptopp::cryptopp)
     set_target_properties(cryptopp PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_BINARY_DIR}/cryptopp")
 endif()
 
+# unarr
+set(USE_SYSTEM_LZMA OFF)
+add_subdirectory(unarr)
+
 if (APPLE)
      # date
     if (NOT TARGET date::date-tz)

@@ -47,7 +47,6 @@ extern int BackupInterval;
 extern int BackupNumber;
 extern bool AutoUpdateEnabled;
 extern std::string ApiKey;
-extern std::filesystem::path SevenZipPath;
 
 extern bool ShowEarnedTrophy;
 extern bool ShowNotEarnedTrophy;

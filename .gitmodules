@@ -41,3 +41,6 @@
 [submodule "externals/cryptopp-cmake"]
 	path = externals/cryptopp-cmake
 	url = https://github.com/rainmakerv3/ext-cryptopp-cmake
+[submodule "externals/unarr"]
+	path = externals/unarr
+	url = https://github.com/selmf/unarr
