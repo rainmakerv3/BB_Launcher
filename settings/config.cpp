@@ -12,13 +12,19 @@
 #include "emulator_settings.h"
 #include "formatting.h"
 
+#if __APPLE__
+#include <date/date.h>
+#include <date/tz.h>
+#include <date/tz_private.h>
+#endif
+
 std::filesystem::path Config::SevenZipPath;
 std::string Config::ApiKey = "";
 std::string Config::theme = "Dark";
 bool Config::SoundFixEnabled = true;
 bool Config::AutoUpdateEnabled = false;
 Config::FolderLocation Config::UserFolderLocation = Config::FolderLocation::BuildFolder;
-std::filesystem::path Config::CustomUserFolder;
+std::filesystem::path Config::CustomUserFolder = "";
 
 bool Config::BackupSaveEnabled = false;
 int Config::BackupInterval = 10;
@@ -39,12 +45,6 @@ bool Config::GameRunning = false;
 bool Config::GameSpecificConfigUsed = false;
 
 static std::string SelectedGamepad = "";
-
-#if __APPLE__
-#include <date/date.h>
-#include <date/tz.h>
-#include <date/tz_private.h>
-#endif
 
 namespace Config {
 
