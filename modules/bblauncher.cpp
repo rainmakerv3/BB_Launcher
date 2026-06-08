@@ -478,6 +478,7 @@ void BBLauncher::UpdateModList() {
         ActiveModStringList.append(NoModMsg);
     }
 
+    ActiveModStringList.sort(Qt::CaseInsensitive);
     ui->ModList->addItems(ActiveModStringList);
 }
 

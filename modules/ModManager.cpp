@@ -458,6 +458,7 @@ void ModManager::RefreshLists() {
             ActiveModStringList.append(QString::fromStdString(FolderName));
         }
     }
+    ActiveModStringList.sort(Qt::CaseInsensitive);
     ui->ActiveModList->addItems(ActiveModStringList);
 
     for (auto& FolderEntry : std::filesystem::directory_iterator(Common::ModPath)) {
@@ -466,6 +467,7 @@ void ModManager::RefreshLists() {
             InactiveModStringList.append(QString::fromStdString(FolderName));
         }
     }
+    InactiveModStringList.sort(Qt::CaseInsensitive);
     ui->InactiveModList->addItems(InactiveModStringList);
 }
 
