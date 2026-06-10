@@ -7,8 +7,6 @@ project(BB_Launcher LANGUAGES CXX C)
 
 if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Release")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-elseif (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 endif()
 
 if(APPLE)
@@ -236,17 +234,22 @@ qt_add_executable(BB_Launcher
     ${PROJECT_SOURCES}
 )
 
+if (MSVC AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+     # Remove /WX for libarchive cause I can't be bothered
+    target_compile_options(archive_static PRIVATE /WX-)
+endif()
+
+target_compile_definitions(BB_Launcher PRIVATE LIBARCHIVE_STATIC)
+
 if (WIN32)
     target_sources(BB_Launcher PRIVATE dist/bblauncher.rc)
-    target_include_directories(BB_Launcher PRIVATE
-        qtstatic/include/QtWebView/6.10.0/QtWebView/private
-    )
 endif()
 
 target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network Qt6::Quick Qt6::QuickWidgets Qt6::WebView Qt6::WebSockets Qt6::Concurrent)
-target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 pugixml::pugixml SDL3::SDL3 Vulkan::Headers qmicroz volk_headers nlohmann_json::nlohmann_json cryptopp::cryptopp unarr)
+target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 nlohmann_json::nlohmann_json pugixml::pugixml SDL3::SDL3 Vulkan::Headers volk_headers)
+target_link_libraries(BB_Launcher PRIVATE qmicroz cryptopp::cryptopp liblzma archive_static)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux" AND USE_WEBENGINE)
     target_link_libraries(BB_Launcher PRIVATE Qt6::WebEngineCore Qt6::WebEngineWidgets Qt6::WebChannel)
@@ -254,10 +257,6 @@ endif()
 
 if (APPLE)
     target_link_libraries(BB_Launcher PRIVATE date::date-tz)
-endif()
-
-if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_link_libraries(BB_Launcher PRIVATE bcrypt)
 endif()
 
 set_target_properties(BB_Launcher PROPERTIES
@@ -281,7 +280,5 @@ install(TARGETS BB_Launcher BUNDLE DESTINATION .)
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     install(FILES "dist/BBLauncher.desktop" DESTINATION "share/applications")
     install(FILES "dist/BBIcon.png" DESTINATION "share/icons/hicolor/512x512/apps")
-    # Force LTO flags into the linker stage (unarr library needs this for linux-mold linker)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto")
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -flto")
 endif()
+

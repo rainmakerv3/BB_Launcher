@@ -1,7 +1,6 @@
 // SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <fstream>
 #include <QDir>
 #include <QFile>
 #include <QFileDialog>
@@ -16,9 +15,10 @@
 #include <QUuid>
 #include <QWebSocket>
 #include <QtConcurrent/QtConcurrentRun>
+#include <archive.h>
+#include <archive_entry.h>
 #include <nlohmann/json.hpp>
 #include <qmicroz.h>
-#include <unarr.h>
 
 #include "Log.h"
 #include "ModDownloader.h"
@@ -177,9 +177,10 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         DownloadFile selectedfile = DownloadFileVec[ui->fileListWidget->currentRow()];
         QString modName = ui->fileListWidget->currentItem()->text();
 
-        if (selectedfile.filename.right(3) != "zip" && selectedfile.filename.right(2) != "7z") {
+        if (selectedfile.filename.right(3) != "zip" && selectedfile.filename.right(2) != "7z" &&
+            selectedfile.filename.right(3) != "rar") {
             QMessageBox::warning(this, "Unsupported archive",
-                                 "Mod downloader can only process zip or 7z files");
+                                 "Mod downloader can only process zip, 7z, or rar files");
             return;
         }
 
@@ -715,7 +716,7 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
 
             bool isZip = zipPath.right(3) == "zip";
             isZip ? ExtractZip(zipPath, extractPath)
-                  : Extract7z(zipPath.toStdString(), extractPath.toStdString());
+                  : Extract7zOrRar(zipPath.toStdString(), extractPath.toStdString());
 
             std::filesystem::path sourcePath = Common::PathFromQString(extractPath);
             std::filesystem::path optionsSourcePath;
@@ -986,23 +987,9 @@ QString ModDownloader::BbcodeToHtml(QString BbcodeString) {
     return BbcodeString;
 }
 
-void ModDownloader::Extract7z(const std::string& archivePath, const std::string& outputDir) {
-    ar_archive* readArch = ar_open_7z_archive(ar_open_file(archivePath.c_str()));
-    if (!readArch) {
-        QMessageBox::warning(this, "Error",
-                             "Cannot open archive: " + QString::fromStdString(archivePath));
-        return;
-    }
-
-    int fileCount = 0;
-    while (ar_parse_entry(readArch)) {
-        fileCount++;
-    }
-
-    ar_close_archive(readArch);
-
+void ModDownloader::Extract7zOrRar(const std::string& archivePath, const std::string& outputDir) {
     QDialog* progressDialog = new QDialog(this);
-    progressDialog->setWindowTitle(tr("Extracting zip archive"));
+    progressDialog->setWindowTitle(tr("Extracting compressed archive"));
     progressDialog->setFixedSize(400, 80);
     progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowCloseButtonHint);
 
@@ -1016,72 +1003,107 @@ void ModDownloader::Extract7z(const std::string& archivePath, const std::string&
     progressDialog->setLayout(layout);
     progressDialog->show();
 
+    struct archive* a;
+    struct archive* ext;
+    struct archive_entry* entry;
+    int flags =
+        ARCHIVE_EXTRACT_TIME | ARCHIVE_EXTRACT_PERM | ARCHIVE_EXTRACT_ACL | ARCHIVE_EXTRACT_FFLAGS;
+    int r;
+    int fileCount = 0;
+
+    if (!std::filesystem::exists(outputDir))
+        std::filesystem::create_directories(outputDir);
+
+    a = archive_read_new();
+    archive_read_support_filter_all(a);
+    archive_read_support_format_all(a);
+
+    r = archive_read_open_filename(a, archivePath.c_str(), 102400);
+    if (r != ARCHIVE_OK) {
+        QMessageBox::warning(this, "Error opening archive",
+                             QString::fromStdString(archive_error_string(a)));
+        return;
+    }
+
+    // Iterate through each entry in the archive
+    while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
+        fileCount++;
+    }
+
+    archive_read_free(a);
+
+    a = archive_read_new();
+    archive_read_support_filter_all(a);
+    archive_read_support_format_all(a);
+
+    ext = archive_write_disk_new();
+    archive_write_disk_set_options(ext, flags);
+    archive_write_disk_set_standard_lookup(ext);
+
+    if ((r = archive_read_open_filename(a, archivePath.c_str(), 10240))) {
+        QMessageBox::warning(this, "Error opening archive",
+                             QString::fromStdString(archive_error_string(a)));
+        archive_read_free(a);
+        archive_write_free(ext);
+        return;
+    }
+
     connect(this, &ModDownloader::FileExtracted, progressBar,
             [this, fileCount, progressBar, label](int extracted) {
                 progressBar->setValue(static_cast<int>((extracted * 100.f) / fileCount));
                 label->setText(QString("%1 / %2 files extracted").arg(extracted).arg(fileCount));
             });
 
-    QFuture<void> future = QtConcurrent::run([this, archivePath, outputDir, progressBar, label]() {
-        ar_archive* arch = ar_open_7z_archive(ar_open_file(archivePath.c_str()));
-        if (!arch) {
-            QMessageBox::warning(this, "Error",
-                                 "Cannot open archive: " + QString::fromStdString(archivePath));
+    QFuture<void> future = QtConcurrent::run([this, a, &entry, outputDir, &r, ext]() {
+        try {
+            int i = 0;
+            while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
+                std::filesystem::path relative_path(archive_entry_pathname(entry));
+                std::filesystem::path full_dest_path =
+                    std::filesystem::path(outputDir) / relative_path;
+                archive_entry_set_pathname(entry, full_dest_path.string().c_str());
+
+                r = archive_write_header(ext, entry);
+                if (r < ARCHIVE_OK) {
+                    throw(std::runtime_error("Header error: " +
+                                             std::string(archive_error_string(ext))));
+                } else if (archive_entry_size(entry) > 0) {
+                    const void* buff;
+                    size_t size;
+                    int64_t offset;
+
+                    while (true) {
+                        r = archive_read_data_block(a, &buff, &size, &offset);
+                        if (r == ARCHIVE_EOF)
+                            break;
+                        if (r < ARCHIVE_OK) {
+                            throw(std::runtime_error("Data read error: " +
+                                                     std::string(archive_error_string(a))));
+                        }
+                        r = archive_write_data_block(ext, buff, size, offset);
+                        if (r < ARCHIVE_OK) {
+                            throw(std::runtime_error("Data read error: " +
+                                                     std::string(archive_error_string(ext))));
+                        }
+                    }
+                }
+                archive_write_finish_entry(ext);
+                i++;
+                emit FileExtracted(i);
+            }
+        } catch (std::exception& ex) {
+            QMessageBox::warning(
+                this, "Extraction error",
+                "Error extracting archive. Mod may not work correctly if activated. "
+                "You can try redownloading it later.\n\n" +
+                    QString(ex.what()));
             return;
         }
 
-        int count = 0;
-        try {
-            while (ar_parse_entry(arch)) {
-                const char* rawName = ar_entry_get_name(arch);
-                if (!rawName)
-                    continue;
-
-                std::string fileName(rawName);
-                std::string fullOutputPath = outputDir + "/" + fileName;
-
-                // unarr tracks directories usually by empty sizes or trailing slashes
-                bool isDirectory = (ar_entry_get_size(arch) == 0 &&
-                                    (fileName.back() == '/' || fileName.back() == '\\'));
-
-                if (isDirectory) {
-                    std::filesystem::create_directories(fullOutputPath);
-                } else {
-                    size_t lastSlash = fullOutputPath.find_last_of("/\\");
-                    if (lastSlash != std::string::npos) {
-                        std::filesystem::create_directories(fullOutputPath.substr(0, lastSlash));
-                    }
-
-                    std::ofstream outFile(fullOutputPath, std::ios::binary);
-                    if (!outFile) {
-                        throw(std::runtime_error("Failed to create file: " + fullOutputPath));
-                        continue;
-                    }
-
-                    size_t entrySize = ar_entry_get_size(arch);
-                    std::vector<unsigned char> buffer(entrySize);
-                    if (entrySize > 0) {
-                        if (ar_entry_uncompress(arch, buffer.data(), entrySize)) {
-                            outFile.write(reinterpret_cast<const char*>(buffer.data()), entrySize);
-                        } else {
-                            throw(std::runtime_error("Decompression failed for: " + fileName));
-                        }
-                    }
-
-                    outFile.close();
-                }
-
-                count++;
-                emit FileExtracted(count);
-            }
-
-            ar_close_archive(arch);
-        } catch (std::exception& ex) {
-            QMessageBox::warning(this, "Extraction error",
-                                 "Error extracting 7zip. Mod may not work correctly if activated. "
-                                 "You can try redownloading it later.\n\n" +
-                                     QString(ex.what()));
-        }
+        archive_read_close(a);
+        archive_read_free(a);
+        archive_write_close(ext);
+        archive_write_free(ext);
     });
 
     QFutureWatcher<void> watcher;

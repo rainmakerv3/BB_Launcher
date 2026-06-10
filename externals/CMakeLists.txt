@@ -68,9 +68,25 @@ if (NOT TARGET cryptopp::cryptopp)
     set_target_properties(cryptopp PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_BINARY_DIR}/cryptopp")
 endif()
 
-# unarr
-set(USE_SYSTEM_LZMA OFF)
-add_subdirectory(unarr)
+# liblzma
+set(ENABLE_NLS OFF CACHE BOOL "Disable NLS" FORCE)
+add_subdirectory(xz)
+
+# libarchive
+set(ENABLE_NETTLE OFF CACHE BOOL "Disable nettle" FORCE)
+set(ENABLE_OPENSSL OFF CACHE BOOL "Disable openssl" FORCE)
+set(ENABLE_TEST OFF CACHE BOOL "Disable libarchive tests" FORCE)
+set(ENABLE_ACL OFF CACHE BOOL "Disable ACL" FORCE)
+set(LIBLZMA_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/xz/src/liblzma/api")
+set(LIBLZMA_LIBRARY liblzma)
+set(LIBLZMA_FOUND TRUE CACHE BOOL "Force LibLZMA found fallback" FORCE)
+set(LIBLZMA_HAS_AUTO_DECODER TRUE CACHE BOOL "Bypass check" FORCE)
+set(LIBLZMA_HAS_EASY_ENCODER TRUE CACHE BOOL "Bypass check" FORCE)
+set(LIBLZMA_HAS_LZMA_PRESET TRUE CACHE BOOL "Bypass check" FORCE)
+if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(HAVE_WCSCPY 1 CACHE INTERNAL "Define to 1 if you have the wcscpy function" FORCE)
+endif()
+add_subdirectory(libarchive)
 
 if (APPLE)
      # date

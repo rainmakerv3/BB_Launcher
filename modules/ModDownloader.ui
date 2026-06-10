@@ -240,7 +240,7 @@ li.checked::marker { content: &quot;\2612&quot;; }
               <enum>QFrame::Shadow::Raised</enum>
              </property>
              <property name="text">
-              <string>Mod:</string>
+              <string>Name:</string>
              </property>
             </widget>
            </item>
