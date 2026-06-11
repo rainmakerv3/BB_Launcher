@@ -987,7 +987,8 @@ QString ModDownloader::BbcodeToHtml(QString BbcodeString) {
 void ModDownloader::Extract7z(const std::string& archivePath, const std::string& outputDir) {
     ar_archive* readArch = ar_open_7z_archive(ar_open_file(archivePath.c_str()));
     if (!readArch) {
-        // std::cerr << "Failed to open archive: " << archivePath << std::endl;
+        QMessageBox::warning(this, "Error",
+                             "Cannot open archive: " + QString::fromStdString(archivePath));
         return;
     }
 
@@ -1022,7 +1023,8 @@ void ModDownloader::Extract7z(const std::string& archivePath, const std::string&
     QFuture<void> future = QtConcurrent::run([this, archivePath, outputDir, progressBar, label]() {
         ar_archive* arch = ar_open_7z_archive(ar_open_file(archivePath.c_str()));
         if (!arch) {
-            // std::cerr << "Failed to open archive: " << archivePath << std::endl;
+            QMessageBox::warning(this, "Error",
+                                 "Cannot open archive: " + QString::fromStdString(archivePath));
             return;
         }
 
@@ -1092,17 +1094,18 @@ void ModDownloader::Extract7z(const std::string& archivePath, const std::string&
 }
 
 void ModDownloader::ExtractZip(QString inpath, QString outpath) {
-    QMicroz qmz(inpath);
-    qmz.setOutputFolder(outpath);
-    if (!qmz)
+    QMicroz qmz(inpath.toUtf8().constData());
+    if (!qmz) {
+        QMessageBox::warning(this, "Error", "Cannot open archive: " + inpath);
         return;
+    }
 
     QDialog* progressDialog = new QDialog(this);
     progressDialog->setWindowTitle(tr("Extracting zip archive"));
     progressDialog->setFixedSize(400, 80);
     progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowCloseButtonHint);
 
-    QLabel* label = new QLabel("Initializing", progressDialog);
+    QLabel* label = new QLabel("Preparing data buffer...", progressDialog);
     QVBoxLayout* layout = new QVBoxLayout(progressDialog);
     QProgressBar* progressBar = new QProgressBar(progressDialog);
     progressBar->setRange(0, 100);
@@ -1112,27 +1115,51 @@ void ModDownloader::ExtractZip(QString inpath, QString outpath) {
     progressDialog->setLayout(layout);
     progressDialog->show();
 
+    BufList filesInMemory = qmz.extractToBuf();
+    size_t totalFiles = filesInMemory.size();
+
     connect(this, &ModDownloader::FileExtracted, progressBar,
-            [this, &qmz, progressBar, label](int extracted) {
-                progressBar->setValue(static_cast<int>((extracted * 100.f) / qmz.count()));
-                label->setText(QString("%1 / %2 files extracted").arg(extracted).arg(qmz.count()));
+            [this, &totalFiles, progressBar, label](int extracted) {
+                progressBar->setValue(static_cast<int>((extracted * 100.f) / totalFiles));
+                label->setText(QString("%1 / %2 files extracted").arg(extracted).arg(totalFiles));
             });
 
-    QFuture<void> future = QtConcurrent::run([this, &qmz, progressBar, label]() {
-        for (int i = 0; i < qmz.count(); ++i) {
+    QFuture<void> future =
+        QtConcurrent::run([this, &filesInMemory, outpath]() {
             try {
-                qmz.extractIndex(i);
+                QDir().mkpath(outpath);
+                QMapIterator<QString, QByteArray> i(filesInMemory);
+                int filesProcessed = 0;
+
+                while (i.hasNext()) {
+                    i.next();
+                    QString filename = i.key();      // The internal archive file path
+                    QByteArray fileData = i.value(); // The uncompressed file payload
+
+                    QString targetFilePath = QDir(outpath).filePath(filename);
+                    QFileInfo fileInfo(targetFilePath);
+                    QDir().mkpath(fileInfo.absolutePath());
+                    QFile outFile(targetFilePath);
+
+                    if (outFile.open(QIODevice::WriteOnly)) {
+                        outFile.write(fileData);
+                        outFile.close();
+                    } else {
+                        throw(std::runtime_error("Failed to write file: " +
+                                                 targetFilePath.toStdString()));
+                    }
+
+                    filesProcessed++;
+                    emit FileExtracted(filesProcessed);
+                }
             } catch (std::exception& ex) {
                 QMessageBox::warning(
                     this, "Extraction error",
                     "Error extracting 7zip. Mod may not work correctly if activated. "
                     "You can try redownloading it later.\n\n" +
                         QString(ex.what()));
-                break;
             }
-            emit FileExtracted(i + 1);
-        }
-    });
+        });
 
     QFutureWatcher<void> watcher;
     watcher.setFuture(future);
