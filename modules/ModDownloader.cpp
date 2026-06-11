@@ -846,8 +846,9 @@ void ModDownloader::DownloadFileRegular(int fileId, int ModId, QString modName,
     downloadDialog = new QDialog();
     downloadDialog->setModal(true);
     downloadDialog->setWindowTitle("Download Selected Mod");
-    QMessageBox::information(this, "Instructions",
-                             "Click the Slow Download button to proceed with the download.");
+    QMessageBox::information(
+        this, "Instructions",
+        "Click the Slow Download / Standard Download button to proceed with the download.");
 
     QWebEngineView* webView = new QWebEngineView(profile, downloadDialog);
     QString fileUrl = "https://www.nexusmods.com/bloodborne/mods/" + QString::number(ModId) +
@@ -888,8 +889,9 @@ void ModDownloader::DownloadFileRegular(int fileId, int ModId, QString modName,
     downloadDialog = new QDialog();
     downloadDialog->setModal(true);
     downloadDialog->setWindowTitle("Download Selected Mod");
-    QMessageBox::information(this, "Instructions",
-                             "Click the Slow Download button to proceed with the download.");
+    QMessageBox::information(
+        this, "Instructions",
+        "Click the Slow Download / Standard Download button to proceed with the download.");
 
     QQuickView* webView = new QQuickView();
     webView->setSource(QUrl("qrc:/web.qml"));
@@ -1115,17 +1117,18 @@ void ModDownloader::ExtractZip(QString inpath, QString outpath) {
     progressDialog->setLayout(layout);
     progressDialog->show();
 
-    BufList filesInMemory = qmz.extractToBuf();
-    size_t totalFiles = filesInMemory.size();
-
-    connect(this, &ModDownloader::FileExtracted, progressBar,
-            [this, &totalFiles, progressBar, label](int extracted) {
-                progressBar->setValue(static_cast<int>((extracted * 100.f) / totalFiles));
-                label->setText(QString("%1 / %2 files extracted").arg(extracted).arg(totalFiles));
-            });
-
     QFuture<void> future =
-        QtConcurrent::run([this, &filesInMemory, outpath]() {
+        QtConcurrent::run([this, &qmz, progressBar, label, outpath]() {
+            BufList filesInMemory = qmz.extractToBuf();
+            size_t totalFiles = filesInMemory.size();
+
+            connect(this, &ModDownloader::FileExtracted, progressBar,
+                    [this, &totalFiles, progressBar, label](int extracted) {
+                        progressBar->setValue(static_cast<int>((extracted * 100.f) / totalFiles));
+                        label->setText(
+                            QString("%1 / %2 files extracted").arg(extracted).arg(totalFiles));
+                    });
+
             try {
                 QDir().mkpath(outpath);
                 QMapIterator<QString, QByteArray> i(filesInMemory);
