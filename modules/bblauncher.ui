@@ -381,6 +381,13 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QPushButton" name="TrophyButton">
+           <property name="text">
+            <string>Trophy Viewer and Unlocker</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
@@ -411,9 +418,9 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QPushButton" name="TrophyButton">
+          <widget class="QPushButton" name="chaliceButton">
            <property name="text">
-            <string>Trophy Viewer and Unlocker</string>
+            <string>Add Chalice Dungeons to Save File</string>
            </property>
           </widget>
          </item>

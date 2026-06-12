@@ -13,6 +13,7 @@
 
 #include "Log.h"
 #include "bblauncher.h"
+#include "modules/ChaliceEditor.h"
 #include "modules/Common.h"
 #include "modules/ModDownloader.h"
 #include "modules/ModManager.h"
@@ -167,6 +168,24 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
 
         SaveManager* SaveManagerWindow = new SaveManager(this);
         SaveManagerWindow->exec();
+    });
+
+    connect(ui->chaliceButton, &QPushButton::pressed, this, [this]() {
+        if (!CheckBBInstall())
+            return;
+
+        std::string savePath = PSFdata::getSavePath(Common::installPath);
+        std::filesystem::path saveFile =
+            Common::GetSaveDir() / savePath / "SPRJ0005" / "userdata0010";
+
+        if (!std::filesystem::exists(saveFile)) {
+            QMessageBox::warning(this, "No saves detected",
+                                 "Launch Bloodborne to generate saves before using Save Manager");
+            return;
+        }
+
+        ChaliceEditor* EditorWindow = new ChaliceEditor(this);
+        EditorWindow->exec();
     });
 
     connect(ui->PatchesButton, &QPushButton::pressed, this, [this]() {

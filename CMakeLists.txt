@@ -160,6 +160,10 @@ set(PROJECT_SOURCES
     modules/version_dialog.cpp
     modules/version_dialog.h
     modules/version_dialog.ui
+    modules/ChaliceEditor.cpp
+    modules/ChaliceEditor.h
+    modules/ChaliceEditor.ui
+    modules/ChaliceInfo.h
     modules/ipc/ipc_client.cpp
     modules/ipc/ipc_client.h
     modules/PkgDeps/crypto.cpp
