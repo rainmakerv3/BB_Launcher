@@ -109,6 +109,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         {20, 168}, // 2B mod
         {21, 253}, // Debug Menu Restoration (needs debug menu patch enabled)
         {22, 224}, // Start with any Weapon
+        {23, 276}, // Isz Chalice Glitch Fix plus Chalice Unobtainables
     };
 
     ui->modComboBox->addItem("Vertex Explosion Fix");
@@ -134,6 +135,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     ui->modComboBox->addItem("2B mod");
     ui->modComboBox->addItem("Debug Menu Restoration (needs debug menu patch enabled)");
     ui->modComboBox->addItem("Start with any Weapon");
+    ui->modComboBox->addItem("Isz Chalice Glitch Fix plus Chalice Unobtainables");
 
     if (apiKey.isEmpty()) {
         ui->validApiLabel->setStyleSheet("color: red;");
@@ -723,6 +725,7 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
             const QStringList modsWithOptions = {
                 "Jump on L3",
                 "Performance Drawparams",
+                "Isz Fix 4 variations",
             };
 
             const std::vector<std::string> BBFolders = {
