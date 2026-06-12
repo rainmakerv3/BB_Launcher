@@ -218,13 +218,11 @@ jobs:
         ./linuxdeploy-x86_64.AppImage --appdir AppDir --output appimage
         mv BB_Launcher-x86_64.AppImage BB_Launcher-qt.AppImage
 
-    - name: Package and Upload Linux Qt artifact
-      run: |
-        tar cf BB_Launcher-qt.tar.gz -C ${{github.workspace}}/build BB_Launcher
-    - uses: actions/upload-artifact@v6
+    - name: Upload Linux Qt artifact
+      uses: actions/upload-artifact@v7
       with:
-        name: BB_Launcher-linux-qt-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}
         path: BB_Launcher-qt.AppImage
+        archive: false
 
   build-linux-downloader:
     runs-on: ubuntu-24.04
@@ -277,15 +275,13 @@ jobs:
         bash ./linuxdeploy-plugin-checkrt-x86_64.sh --appdir AppDir
         ./linuxdeploy-x86_64.AppImage --appdir AppDir -d "$GITHUB_WORKSPACE"/dist/BBLauncher.desktop  -e "$GITHUB_WORKSPACE"/build/BB_Launcher -i "$GITHUB_WORKSPACE"/dist/BBIcon.png --plugin qt
         ./linuxdeploy-x86_64.AppImage --appdir AppDir --output appimage
-        mv BB_Launcher-x86_64.AppImage BB_Launcher-qt.AppImage
+        mv BB_Launcher-x86_64.AppImage BB_Launcher-qt-Downloader.AppImage
 
-    - name: Package and Upload Linux Qt artifact
-      run: |
-        tar cf BB_Launcher-qt.tar.gz -C ${{github.workspace}}/build BB_Launcher
-    - uses: actions/upload-artifact@v6
+    - name: Upload Linux Downloader artifact
+      uses: actions/upload-artifact@v7
       with:
-        name: BB_Launcher-linux-qt-downloader-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}
-        path: BB_Launcher-qt.AppImage
+        path: BB_Launcher-qt-Downloader.AppImage
+        archive: false
 
   pre-release:
     if: github.repository == 'rainmakerv3/BB_Launcher' && github.event_name == 'push'
@@ -296,18 +292,24 @@ jobs:
       uses: actions/download-artifact@v8
       with:
         path: ./artifacts
-  
+
     - name: Compress individual directories (without parent directory)
       run: |
         cd ./artifacts
         for dir in */; do
-          if [ -d "$dir" ]; then
-            dir_name=${dir%/}
-            echo "Creating zip for $dir_name"
-            (cd "$dir_name" && zip -r "../${dir_name}.zip" .)
-          fi
+            if [ -d "$dir" ]; then
+                dir_name=${dir%/}
+        
+                # Check if any .AppImage file exists inside the directory
+                if ls "$dir_name"/*.AppImage >/dev/null 2>&1; then
+                    echo "Skipping $dir_name (contains an AppImage)"
+                else
+                    echo "Creating zip for $dir_name"
+                    (cd "$dir_name" && zip -r "../${dir_name}.zip" .)
+                fi
+            fi
         done
-  
+
     - name: Get latest release information
       id: get_latest_release
       env:
@@ -327,60 +329,8 @@ jobs:
         tag: "Pre-release-BBLauncher-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}"
         draft: false
         prerelease: true
-        body: "- Mac builds now out of BETA since there have been no reported issues\n- Prerelease builds are meant for testing, releases are better for general use\n- Full Changelog: https://github.com/rainmakerv3/BB_Launcher/commits/master/"
-        artifacts: ./artifacts/*.zip
-
-    - name: Publish to Release Repository
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        ARTIFACTS_DIR=./artifacts
-        REPO_WINDOWS="BBLauncher/BBLauncher-binaries-Windows"
-        REPO_LINUX="BBLauncher/BBLauncher-binaries-Linux"
-
-        for file in "$ARTIFACTS_DIR"/*.zip; do
-          filename=$(basename "$file")
-          REPO=""
-
-          # Determine repository based on file name
-          if [[ "$filename" == *"win64"* ]]; then
-            REPO=$REPO_WINDOWS
-          elif [[ "$filename" == *"linux"* ]] || [[ "$filename" == *"ubuntu64"* ]]; then
-            REPO=$REPO_LINUX
-          elif [[ "$filename" == *"macos"* ]]; then
-            REPO=$REPO_MAC
-          fi
-
-          # If REPO is empty, skip file
-          if [[ -z "$REPO" ]]; then
-            echo "No matching repository for $filename"
-            continue
-          fi
-
-          # Check if release already exists and get ID
-          release_id=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-            "https://api.github.com/repos/$REPO/releases/tags/Pre-release-BBLauncher-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}" | jq -r '.id')
-
-          if [[ "$release_id" == "null" ]]; then
-            echo "Creating release in $REPO for $filename"
-            release_id=$(curl -s -X POST -H "Authorization: token $GITHUB_TOKEN" \
-              -H "Accept: application/vnd.github.v3+json" \
-              -d '{
-                "tag_name": "Pre-release-BBLauncher-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}",
-                "name": "Pre-release-BBLauncher-${{ needs.get-info.outputs.date }}-${{ needs.get-info.outputs.shorthash }}",
-                "draft": false,
-                "prerelease": true,
-                "body": "Commit: [${{ needs.get-info.outputs.fullhash }}](https://github.com/raimakerv3/BB_Launcher/commit/${{ needs.get-info.outputs.fullhash }})"
-              }' "https://api.github.com/repos/$REPO/releases" | jq -r '.id')
-          else
-            echo "Release already exists in $REPO with ID $release_id"
-          fi
-
-          # Artifact upload
-          echo "Uploading $filename to release $release_id in $REPO"
-          upload_url="https://uploads.github.com/repos/$REPO/releases/$release_id/assets?name=$filename"
-          curl -X POST -H "Authorization: token $GITHUB_TOKEN" -H "Content-Type: application/octet-stream" --data-binary @"$file" "$upload_url"
-        done
+        body: "- Prerelease builds are meant for testing, releases are better for general use\n- Full Changelog: https://github.com/rainmakerv3/BB_Launcher/commits/master/"
+        artifacts: "./artifacts/*.zip,./artifacts/BB_Launcher-qt-Downloader.AppImage/*.AppImage,./artifacts/BB_Launcher-qt.AppImage/*.AppImage,"
         
     - name: Get current pre-release information
       env:
