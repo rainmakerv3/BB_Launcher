@@ -24,6 +24,9 @@ private slots:
     void RestoreBackupPressed();
     void RestoreBackupFolderPressed();
     void PopulateGameSaveSlots();
+    void SaveStats();
+    void EnableStatsEditing();
+    void DisableStatsEditing();
 
 private:
     void UpdateGameSaveValues();
@@ -34,6 +37,7 @@ private:
     std::filesystem::path Savefile;
     std::string saveslot = "";
     std::string backupsaveslot = "";
+    int currentOffset = 0;
 
     Ui::SaveManager* ui;
     const std::filesystem::path BackupsDir = Common::GetBBLFilesPath() / "SaveBackups";

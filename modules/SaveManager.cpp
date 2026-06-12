@@ -13,6 +13,13 @@ SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveMana
     ui->setupUi(this);
     this->setFixedSize(this->width(), this->height());
 
+    QList<QAbstractButton*> buttons = ui->buttonBox->buttons();
+    for (QAbstractButton* btn : buttons) {
+        if (QPushButton* pushBtn = qobject_cast<QPushButton*>(btn)) {
+            pushBtn->setAutoDefault(false);
+        }
+    }
+
     // Releases older than 0.9.0 will need to use the game serial as save folder
     std::string savePath = PSFdata::getSavePath(Common::installPath);
     ExactSaveDir = Common::GetSaveDir() / savePath / "SPRJ0005";
@@ -32,8 +39,9 @@ SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveMana
 
     PopulateGameSaveSlots();
 
-    ui->LinkLabel->setText("<a href=\"https://www.nexusmods.com/bloodborne/mods/108/\">BBLauncher "
-                           "cannot edit saves, check out a great save editor here c/o Nox!</a>");
+    ui->LinkLabel->setText(
+        "<a href=\"https://www.nexusmods.com/bloodborne/mods/108/\">BBLauncher "
+        "cannot edit anything other than stats, check out a great save editor here c/o Nox!</a>");
     ui->LinkLabel->setTextFormat(Qt::RichText);
     ui->LinkLabel->setTextInteractionFlags(Qt::TextBrowserInteraction);
     ui->LinkLabel->setOpenExternalLinks(true);
@@ -76,8 +84,51 @@ SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveMana
         QDesktopServices::openUrl(QUrl::fromLocalFile(QBackupsPath));
     });
 
+    connect(ui->enableStatsEditCheckBox, &QCheckBox::checkStateChanged, this, [this](bool checked) {
+        if (checked) {
+            EnableStatsEditing();
+        } else {
+            DisableStatsEditing();
+        }
+    });
+
+    connect(ui->saveStatsButton, &QPushButton::clicked, this, &SaveManager::SaveStats);
+
+    connect(ui->StrValSpinBox, &QSpinBox::editingFinished, ui->StrValSpinBox,
+            &QSpinBox::clearFocus);
+    connect(ui->SklValSpinBox, &QSpinBox::editingFinished, ui->SklValSpinBox,
+            &QSpinBox::clearFocus);
+    connect(ui->VitValSpinBox, &QSpinBox::editingFinished, ui->VitValSpinBox,
+            &QSpinBox::clearFocus);
+    connect(ui->EndValSpinBox, &QSpinBox::editingFinished, ui->EndValSpinBox,
+            &QSpinBox::clearFocus);
+    connect(ui->BTValSpinBox, &QSpinBox::editingFinished, ui->BTValSpinBox, &QSpinBox::clearFocus);
+    connect(ui->ArcValSpinBox, &QSpinBox::editingFinished, ui->ArcValSpinBox,
+            &QSpinBox::clearFocus);
+
     ui->SelectSaveComboBox->setCurrentIndex(0);
     OnSelectBackupSaveChanged();
+    DisableStatsEditing();
+}
+
+void SaveManager::EnableStatsEditing() {
+    ui->StrValSpinBox->setEnabled(true);
+    ui->SklValSpinBox->setEnabled(true);
+    ui->VitValSpinBox->setEnabled(true);
+    ui->EndValSpinBox->setEnabled(true);
+    ui->BTValSpinBox->setEnabled(true);
+    ui->ArcValSpinBox->setEnabled(true);
+    ui->saveStatsButton->setEnabled(true);
+}
+
+void SaveManager::DisableStatsEditing() {
+    ui->StrValSpinBox->setEnabled(false);
+    ui->SklValSpinBox->setEnabled(false);
+    ui->VitValSpinBox->setEnabled(false);
+    ui->EndValSpinBox->setEnabled(false);
+    ui->BTValSpinBox->setEnabled(false);
+    ui->ArcValSpinBox->setEnabled(false);
+    ui->saveStatsButton->setEnabled(false);
 }
 
 void SaveManager::PopulateGameSaveSlots() {
@@ -157,37 +208,37 @@ void SaveManager::UpdateGameSaveValues() {
     file.seekg(offset - 548);
     uint str;
     file.read(reinterpret_cast<char*>(&str), 4);
-    ui->StrValLabel->setText(QString::number(str));
+    ui->StrValSpinBox->setValue(str);
 
     // Skl
     file.seekg(offset - 540);
     uint skl;
     file.read(reinterpret_cast<char*>(&skl), 4);
-    ui->SklValLabel->setText(QString::number(skl));
+    ui->SklValSpinBox->setValue(skl);
 
     // Vit
     file.seekg(offset - 572);
     uint vit;
     file.read(reinterpret_cast<char*>(&vit), 4);
-    ui->VitValLabel->setText(QString::number(vit));
+    ui->VitValSpinBox->setValue(vit);
 
     // End
     file.seekg(offset - 564);
     uint end;
     file.read(reinterpret_cast<char*>(&end), 4);
-    ui->EndValLabel->setText(QString::number(end));
+    ui->EndValSpinBox->setValue(end);
 
     // Bloodtinge
     file.seekg(offset - 532);
     uint btg;
     file.read(reinterpret_cast<char*>(&btg), 4);
-    ui->BTValLabel->setText(QString::number(btg));
+    ui->BTValSpinBox->setValue(btg);
 
     // Arcane
     file.seekg(offset - 524);
     uint arc;
     file.read(reinterpret_cast<char*>(&arc), 4);
-    ui->ArcValLabel->setText(QString::number(arc));
+    ui->ArcValSpinBox->setValue(arc);
 
     // Level
     file.seekg(offset - 492);
@@ -200,7 +251,9 @@ void SaveManager::UpdateGameSaveValues() {
     uint NGnum;
     file.read(reinterpret_cast<char*>(&NGnum), 4);
     ui->NGValueLabel->setText(QString::number(NGnum));
+
     file.close();
+    currentOffset = offset;
 }
 
 void SaveManager::UpdateBackupSaveValues() {
@@ -303,12 +356,12 @@ void SaveManager::OnGameSaveSlotChanged() {
     if (saveslot == "") {
         ui->NameLineEdit->setText("-");
         ui->TimeLineEdit->setText("-");
-        ui->StrValLabel->setText("-");
-        ui->SklValLabel->setText("-");
-        ui->VitValLabel->setText("-");
-        ui->EndValLabel->setText("-");
-        ui->BTValLabel->setText("-");
-        ui->ArcValLabel->setText("-");
+        ui->StrValSpinBox->setValue(0);
+        ui->SklValSpinBox->setValue(0);
+        ui->VitValSpinBox->setValue(0);
+        ui->EndValSpinBox->setValue(0);
+        ui->BTValSpinBox->setValue(0);
+        ui->ArcValSpinBox->setValue(0);
         ui->LevelValueLabel->setText("-----");
         ui->NGValueLabel->setText("-----");
     } else {
@@ -480,6 +533,66 @@ void SaveManager::RestoreBackupFolderPressed() {
     }
 
     PopulateGameSaveSlots();
+}
+
+void SaveManager::SaveStats() {
+    if (QMessageBox::No ==
+        QMessageBox::question(
+            this, "Confirm Save",
+            "Currently selected file will be overwritten, it is highly recommended "
+            "to create a backup save beforehand.\n\nProceed with saving stats?",
+            QMessageBox::Yes | QMessageBox::No)) {
+        return;
+    }
+
+    if (saveslot == "") {
+        QMessageBox::information(this, "Cannot Save", "No valid save slot detected");
+    }
+
+    if (ui->StrValSpinBox->value() == 0 || ui->SklValSpinBox->value() == 0 ||
+        ui->EndValSpinBox->value() == 0 || ui->VitValSpinBox->value() == 0 ||
+        ui->BTValSpinBox->value() == 0 || ui->ArcValSpinBox->value() == 0) {
+        QMessageBox::information(this, "Cannot Save", "Cannot save value of 0 for any stat");
+    }
+
+    int strVal = ui->StrValSpinBox->value();
+    int sklVal = ui->SklValSpinBox->value();
+    int vitVal = ui->VitValSpinBox->value();
+    int endVal = ui->EndValSpinBox->value();
+    int btVal = ui->BTValSpinBox->value();
+    int arcVal = ui->ArcValSpinBox->value();
+
+    Savefile = ExactSaveDir / saveslot;
+    std::fstream file(Savefile, std::ios::in | std::ios::out | std::ios::binary);
+
+    // STR
+    file.seekp(currentOffset - 548, std::ios::beg);
+    file.write(reinterpret_cast<const char*>(&strVal), sizeof(strVal));
+
+    // SKL
+    file.seekp(currentOffset - 540, std::ios::beg);
+    file.write(reinterpret_cast<const char*>(&sklVal), sizeof(sklVal));
+
+    // VIT
+    file.seekp(currentOffset - 572, std::ios::beg);
+    file.write(reinterpret_cast<const char*>(&vitVal), sizeof(vitVal));
+
+    // END
+    file.seekp(currentOffset - 564, std::ios::beg);
+    file.write(reinterpret_cast<const char*>(&endVal), sizeof(endVal));
+
+    // BT
+    file.seekp(currentOffset - 532, std::ios::beg);
+    file.write(reinterpret_cast<const char*>(&btVal), sizeof(btVal));
+
+    // STR
+    file.seekp(currentOffset - 524, std::ios::beg);
+    file.write(reinterpret_cast<const char*>(&arcVal), sizeof(arcVal));
+
+    file.close();
+    QMessageBox::information(this, "Stats Saved",
+                             "New stat values saved in current save slot: " +
+                                 QString::fromStdString(saveslot));
 }
 
 SaveManager::~SaveManager() {

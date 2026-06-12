@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1001</width>
-    <height>488</height>
+    <width>996</width>
+    <height>478</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,7 +19,7 @@
      <x>10</x>
      <y>60</y>
      <width>161</width>
-     <height>140</height>
+     <height>181</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="ControlsLayout">
@@ -50,6 +50,9 @@
       <property name="text">
        <string>Create Manual Backup</string>
       </property>
+      <property name="autoDefault">
+       <bool>false</bool>
+      </property>
      </widget>
     </item>
     <item>
@@ -69,6 +72,13 @@
       </property>
      </widget>
     </item>
+    <item>
+     <widget class="QCheckBox" name="enableStatsEditCheckBox">
+      <property name="text">
+       <string>Enable Stats Editing</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QWidget" name="verticalLayoutWidget_2">
@@ -76,8 +86,8 @@
     <rect>
      <x>180</x>
      <y>60</y>
-     <width>281</width>
-     <height>265</height>
+     <width>271</width>
+     <height>297</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="SaveInfoLayout">
@@ -231,20 +241,35 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="StrValLabel">
+          <widget class="QSpinBox" name="StrValSpinBox">
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
+             <pointsize>10</pointsize>
             </font>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::Shape::NoFrame</enum>
-           </property>
-           <property name="text">
-            <string>-</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+           </property>
+           <property name="keyboardTracking">
+            <bool>false</bool>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="stepType">
+            <enum>QAbstractSpinBox::StepType::DefaultStepType</enum>
+           </property>
+           <property name="value">
+            <number>0</number>
            </property>
           </widget>
          </item>
@@ -265,20 +290,35 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="SklValLabel">
+          <widget class="QSpinBox" name="SklValSpinBox">
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
+             <pointsize>10</pointsize>
             </font>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::Shape::NoFrame</enum>
-           </property>
-           <property name="text">
-            <string>-</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+           </property>
+           <property name="keyboardTracking">
+            <bool>false</bool>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="stepType">
+            <enum>QAbstractSpinBox::StepType::DefaultStepType</enum>
+           </property>
+           <property name="value">
+            <number>0</number>
            </property>
           </widget>
          </item>
@@ -303,20 +343,35 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="EndValLabel">
+          <widget class="QSpinBox" name="EndValSpinBox">
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
+             <pointsize>10</pointsize>
             </font>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::Shape::NoFrame</enum>
-           </property>
-           <property name="text">
-            <string>-</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+           </property>
+           <property name="keyboardTracking">
+            <bool>false</bool>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="stepType">
+            <enum>QAbstractSpinBox::StepType::DefaultStepType</enum>
+           </property>
+           <property name="value">
+            <number>0</number>
            </property>
           </widget>
          </item>
@@ -337,20 +392,35 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="VitValLabel">
+          <widget class="QSpinBox" name="VitValSpinBox">
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
+             <pointsize>10</pointsize>
             </font>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::Shape::NoFrame</enum>
-           </property>
-           <property name="text">
-            <string>-</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+           </property>
+           <property name="keyboardTracking">
+            <bool>false</bool>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="stepType">
+            <enum>QAbstractSpinBox::StepType::DefaultStepType</enum>
+           </property>
+           <property name="value">
+            <number>0</number>
            </property>
           </widget>
          </item>
@@ -375,20 +445,35 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="BTValLabel">
+          <widget class="QSpinBox" name="BTValSpinBox">
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
+             <pointsize>10</pointsize>
             </font>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::Shape::NoFrame</enum>
-           </property>
-           <property name="text">
-            <string>-</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+           </property>
+           <property name="keyboardTracking">
+            <bool>false</bool>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="stepType">
+            <enum>QAbstractSpinBox::StepType::DefaultStepType</enum>
+           </property>
+           <property name="value">
+            <number>0</number>
            </property>
           </widget>
          </item>
@@ -409,20 +494,35 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="ArcValLabel">
+          <widget class="QSpinBox" name="ArcValSpinBox">
+           <property name="maximumSize">
+            <size>
+             <width>40</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="font">
             <font>
-             <pointsize>12</pointsize>
+             <pointsize>10</pointsize>
             </font>
-           </property>
-           <property name="frameShape">
-            <enum>QFrame::Shape::NoFrame</enum>
-           </property>
-           <property name="text">
-            <string>-</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignmentFlag::AlignCenter</set>
+           </property>
+           <property name="buttonSymbols">
+            <enum>QAbstractSpinBox::ButtonSymbols::NoButtons</enum>
+           </property>
+           <property name="keyboardTracking">
+            <bool>false</bool>
+           </property>
+           <property name="minimum">
+            <number>0</number>
+           </property>
+           <property name="stepType">
+            <enum>QAbstractSpinBox::StepType::DefaultStepType</enum>
+           </property>
+           <property name="value">
+            <number>0</number>
            </property>
           </widget>
          </item>
@@ -431,6 +531,16 @@
       </item>
      </layout>
     </item>
+    <item>
+     <widget class="QPushButton" name="saveStatsButton">
+      <property name="text">
+       <string>Save Stats</string>
+      </property>
+      <property name="autoDefault">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QLabel" name="LinkLabel">
@@ -438,7 +548,7 @@
     <rect>
      <x>20</x>
      <y>450</y>
-     <width>481</width>
+     <width>531</width>
      <height>20</height>
     </rect>
    </property>
@@ -505,6 +615,9 @@
       <property name="text">
        <string>Restore Backup Folder</string>
       </property>
+      <property name="autoDefault">
+       <bool>false</bool>
+      </property>
      </widget>
     </item>
     <item>
@@ -512,12 +625,18 @@
       <property name="text">
        <string>Delete Manual Backup</string>
       </property>
+      <property name="autoDefault">
+       <bool>false</bool>
+      </property>
      </widget>
     </item>
     <item>
      <widget class="QPushButton" name="RestoreButton">
       <property name="text">
        <string>Restore Backup Slot</string>
+      </property>
+      <property name="autoDefault">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -553,7 +672,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>395</y>
+     <y>400</y>
      <width>941</width>
      <height>41</height>
     </rect>
@@ -574,7 +693,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>340</y>
+     <y>345</y>
      <width>951</width>
      <height>51</height>
     </rect>
@@ -595,7 +714,7 @@
    <property name="geometry">
     <rect>
      <x>618</x>
-     <y>437</y>
+     <y>434</y>
      <width>362</width>
      <height>41</height>
     </rect>
@@ -606,12 +725,18 @@
       <property name="text">
        <string>Open Backups Folder</string>
       </property>
+      <property name="autoDefault">
+       <bool>false</bool>
+      </property>
      </widget>
     </item>
     <item>
      <widget class="QPushButton" name="saveFolderButton">
       <property name="text">
        <string>Open Save Folder</string>
+      </property>
+      <property name="autoDefault">
+       <bool>false</bool>
       </property>
      </widget>
     </item>
@@ -636,7 +761,7 @@
      <x>710</x>
      <y>60</y>
      <width>271</width>
-     <height>265</height>
+     <height>261</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="BackupSaveInfoLayout">
@@ -1048,7 +1173,7 @@
      <x>486</x>
      <y>10</y>
      <width>20</width>
-     <height>311</height>
+     <height>341</height>
     </rect>
    </property>
    <property name="frameShadow">
