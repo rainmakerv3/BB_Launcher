@@ -66,6 +66,10 @@ if (NOT TARGET cryptopp::cryptopp)
     file(COPY cryptopp DESTINATION cryptopp FILES_MATCHING PATTERN "*.h")
     # remove externals/cryptopp from include directories because it contains a conflicting zlib.h file
     set_target_properties(cryptopp PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_BINARY_DIR}/cryptopp")
+    if (MSVC AND CMAKE_BUILD_TYPE STREQUAL "Release")
+        # silences -Wno-unused-command-line-argument
+        target_compile_options(cryptopp PRIVATE /W0)
+    endif()
 endif()
 
 # liblzma

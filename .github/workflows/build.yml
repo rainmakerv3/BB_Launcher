@@ -178,7 +178,7 @@ jobs:
         sudo add-apt-repository 'deb http://apt.llvm.org/noble/ llvm-toolchain-noble-19 main'
 
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt install -y libx11-dev libxext-dev libwayland-dev libdecor-0-dev libxkbcommon-dev libglfw3-dev libgles2-mesa-dev libfuse2 clang-19 mold build-essential libasound2-dev libpulse-dev libopenal-dev libudev-dev
+      run: sudo apt-get update && sudo apt install -y libx11-dev libxext-dev libwayland-dev libdecor-0-dev libxkbcommon-dev libglfw3-dev libgles2-mesa-dev libfuse2 mold build-essential libasound2-dev libpulse-dev libopenal-dev libudev-dev
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
@@ -194,7 +194,7 @@ jobs:
       run: cat /proc/cpuinfo
 
     - name: Configure CMake
-      run: cmake --fresh -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=clang-19 -DCMAKE_CXX_COMPILER=clang++-19 -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=mold" -DUSE_WEBENGINE=OFF
+      run: cmake --fresh -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=gcc-14 -DCMAKE_CXX_COMPILER=g++-14 -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=mold" -DUSE_WEBENGINE=OFF
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
@@ -237,7 +237,7 @@ jobs:
         sudo add-apt-repository 'deb http://apt.llvm.org/noble/ llvm-toolchain-noble-19 main'
 
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt install -y libx11-dev libxext-dev libwayland-dev libdecor-0-dev libxkbcommon-dev libglfw3-dev libgles2-mesa-dev libfuse2 clang-19 mold build-essential libasound2-dev libpulse-dev libopenal-dev libudev-dev
+      run: sudo apt-get update && sudo apt install -y libx11-dev libxext-dev libwayland-dev libdecor-0-dev libxkbcommon-dev libglfw3-dev libgles2-mesa-dev libfuse2 mold build-essential libasound2-dev libpulse-dev libopenal-dev libudev-dev
 
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
@@ -253,7 +253,7 @@ jobs:
       run: cat /proc/cpuinfo
 
     - name: Configure CMake
-      run: cmake --fresh -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=clang-19 -DCMAKE_CXX_COMPILER=clang++-19 -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=mold" -DUSE_WEBENGINE=ON
+      run: cmake --fresh -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_C_COMPILER=gcc-14 -DCMAKE_CXX_COMPILER=g++-14 -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=mold" -DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=mold" -DUSE_WEBENGINE=ON
 
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
@@ -293,16 +293,24 @@ jobs:
       with:
         path: ./artifacts
 
+    - name: Make AppImages executable
+      run: |
+          for file in ./artifacts/**/*.AppImage; do
+              if [ -f "$file" ]; then
+                  chmod +x "$file"
+              fi
+          done
+
     - name: Compress individual directories (without parent directory)
       run: |
         cd ./artifacts
         for dir in */; do
             if [ -d "$dir" ]; then
                 dir_name=${dir%/}
-        
-                # Check if any .AppImage file exists inside the directory
+                # Check if any .AppImage file exists
                 if ls "$dir_name"/*.AppImage >/dev/null 2>&1; then
-                    echo "Skipping $dir_name (contains an AppImage)"
+                    echo "Applying permissions to AppImages in $dir_name"
+                    chmod +x "$dir_name"/*.AppImage
                 else
                     echo "Creating zip for $dir_name"
                     (cd "$dir_name" && zip -r "../${dir_name}.zip" .)
@@ -330,7 +338,7 @@ jobs:
         draft: false
         prerelease: true
         body: "- Prerelease builds are meant for testing, releases are better for general use\n- Full Changelog: https://github.com/rainmakerv3/BB_Launcher/commits/master/"
-        artifacts: "./artifacts/*.zip,./artifacts/BB_Launcher-qt-Downloader.AppImage/*.AppImage,./artifacts/BB_Launcher-qt.AppImage/*.AppImage,"
+        artifacts: "./artifacts/*.zip,./artifacts/*/*.AppImage"
         
     - name: Get current pre-release information
       env:
