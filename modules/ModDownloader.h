@@ -52,7 +52,7 @@ private:
     };
 
     std::vector<DownloadFile> DownloadFileVec;
-    QMap<int, int> modIDmap;
+    std::vector<std::pair<QString, int>> modIDmap;
 
     QDialog* authorizationDialog;
     QDialog* downloadDialog;

@@ -86,56 +86,36 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         GetApiKey();
 
     modIDmap = {
-        {0, 109},  // Vertex Explosion Fix
-        {1, 70},   // 60 fps Cutscene Fix
-        {2, 41},   // Sfx Fix Mods
-        {3, 30},   // Xbox Controller Icons
-        {4, 182},  // 4k Upscaled UI (for Xbox/Switch layout)
-        {5, 47},   // 4k Upscaled UI (for original PlayStation layout)
-        {6, 441},  // Bigger Subtitles
-        {7, 160},  // Bloodborne Visual Upgrade Mod
-        {8, 162},  // Disable FXAA
-        {9, 181},  // Better 60FPS Cloth Physics (modifies parts)
-        {10, 114}, // Disable cloth physics mods
-        {11, 102}, // Performance Drawparams
-        {12, 206}, // Estus Vial and Bullet
-        {13, 223}, // Stake of Marika
-        {14, 257}, // Estus of Marika
-        {15, 19},  // Bloodborne Enhanced
-        {16, 107}, // More Options at Lamps
-        {17, 6},   // Great One Beast Restored
-        {18, 156}, // Jump on L3
-        {19, 28},  // Boczekek's FPS boost
-        {20, 168}, // 2B mod
-        {21, 253}, // Debug Menu Restoration (needs debug menu patch enabled)
-        {22, 224}, // Start with any Weapon
-        {23, 276}, // Isz Chalice Glitch Fix plus Chalice Unobtainables
+        {"Vertex Explosion Fix", 109},
+        {"60 fps Cutscene Fix", 70},
+        {"Sfx Fix Mods", 41},
+        {"Isz Chalice Glitch Fix plus Chalice Unobtainables", 276},
+        {"Xbox Controller Icons", 30},
+        {"4K Upscaled UI (for Xbox/Switch layout)", 182},
+        {"4K Upscaled UI (for original PlayStation layout)", 47},
+        {"Ultrawide UI Fixes", 202},
+        {"Bigger Subtitles", 441},
+        {"Bloodborne Visual Upgrade Mod", 160},
+        {"Disable FXAA", 162},
+        {"Better 60FPS Cloth Physics (modifies parts)", 181},
+        {"Disable cloth physics mods", 114},
+        {"Performance Drawparams", 102},
+        {"Estus Vial and Bullet", 206},
+        {"Stake of Marika", 223},
+        {"Estus of Marika", 257},
+        {"Bloodborne Enhanced", 19},
+        {"More Options at Lamps", 107},
+        {"Start with any Weapon", 224},
+        {"Great One Beast Restored", 6},
+        {"Jump on L3", 156},
+        {"Boczekek's FPS boost", 28},
+        {"2B mod", 168},
+        {"Debug Menu Restoration (needs debug menu patch enabled)", 253},
     };
 
-    ui->modComboBox->addItem("Vertex Explosion Fix");
-    ui->modComboBox->addItem("60 fps Cutscene Fix");
-    ui->modComboBox->addItem("Sfx Fix Mods");
-    ui->modComboBox->addItem("Xbox Controller Icons");
-    ui->modComboBox->addItem("4K Upscaled UI (for Xbox/Switch layout)");
-    ui->modComboBox->addItem("4K Upscaled UI (for original PlayStation layout)");
-    ui->modComboBox->addItem("Bigger Subtitles");
-    ui->modComboBox->addItem("Bloodborne Visual Upgrade Mod");
-    ui->modComboBox->addItem("Disable FXAA");
-    ui->modComboBox->addItem("Better 60FPS Cloth Physics (modifies parts)");
-    ui->modComboBox->addItem("Disable cloth physics mods");
-    ui->modComboBox->addItem("Performance Drawparams");
-    ui->modComboBox->addItem("Estus Vial and Bullet");
-    ui->modComboBox->addItem("Stake of Marika");
-    ui->modComboBox->addItem("Estus of Marika");
-    ui->modComboBox->addItem("Bloodborne Enhanced");
-    ui->modComboBox->addItem("More Options at Lamps");
-    ui->modComboBox->addItem("Great One Beast Restored");
-    ui->modComboBox->addItem("Jump on L3");
-    ui->modComboBox->addItem("Boczekek's FPS boost");
-    ui->modComboBox->addItem("2B mod");
-    ui->modComboBox->addItem("Debug Menu Restoration (needs debug menu patch enabled)");
-    ui->modComboBox->addItem("Start with any Weapon");
-    ui->modComboBox->addItem("Isz Chalice Glitch Fix plus Chalice Unobtainables");
+    for (const auto& a : modIDmap) {
+        ui->modComboBox->addItem(a.first);
+    }
 
     if (apiKey.isEmpty()) {
         ui->validApiLabel->setStyleSheet("color: red;");
@@ -146,21 +126,21 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
     }
 
     connect(ui->visitButton, &QPushButton::pressed, this, [this]() {
-        int modIndex = modIDmap[ui->modComboBox->currentIndex()];
+        int modIndex = modIDmap[ui->modComboBox->currentIndex()].second;
         QString url = "https://www.nexusmods.com/bloodborne/mods/" + QString::number(modIndex);
         QDesktopServices::openUrl(url);
     });
 
     connect(ui->modComboBox, &QComboBox::currentIndexChanged, this, [this]() {
         int index = ui->modComboBox->currentIndex();
-        LoadModInfo(modIDmap[index]);
+        LoadModInfo(modIDmap[index].second);
     });
 
     connect(ui->setApiButton, &QPushButton::pressed, this, [this]() {
         GetApiKey();
 
         if (ValidateApi())
-            LoadModInfo(modIDmap[ui->modComboBox->currentIndex()]);
+            LoadModInfo(modIDmap[ui->modComboBox->currentIndex()].second);
     });
 
     connect(ui->downloadButton, &QPushButton::pressed, this, [this]() {
@@ -196,7 +176,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
         }
 
         if (isApiKeyPremium) {
-            DownloadFilePremium(selectedfile.fileId, modIDmap[modIndex], modName);
+            DownloadFilePremium(selectedfile.fileId, modIDmap[modIndex].second, modName);
         } else {
 #if defined Q_OS_LINUX and !defined USE_WEBENGINE
             QMessageBox::information(
@@ -205,7 +185,7 @@ ModDownloader::ModDownloader(QWidget* parent) : QDialog(parent), ui(new Ui::ModD
                 "build from Nexus Mods or Github for non-premium mod downloads on Linux.");
             return;
 #endif
-            DownloadFileRegular(selectedfile.fileId, modIDmap[modIndex], modName,
+            DownloadFileRegular(selectedfile.fileId, modIDmap[modIndex].second, modName,
                                 selectedfile.filename);
         }
     });
