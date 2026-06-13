@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Chalice Dunegon Editor</string>
+   <string>Add Chalice Dungeons</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_14">
    <item>
@@ -26,7 +26,7 @@
       <enum>QFrame::Shape::Box</enum>
      </property>
      <property name="text">
-      <string>Chalice Dungeon Editor</string>
+      <string>Add Chalice Dungeons to Save File</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignmentFlag::AlignCenter</set>
