@@ -6,9 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>996</width>
-    <height>478</height>
+    <width>993</width>
+    <height>496</height>
    </rect>
+  </property>
+  <property name="focusPolicy">
+   <enum>Qt::FocusPolicy::ClickFocus</enum>
   </property>
   <property name="windowTitle">
    <string>Save Viewer and Backup Manager</string>
@@ -18,7 +21,7 @@
     <rect>
      <x>10</x>
      <y>60</y>
-     <width>161</width>
+     <width>171</width>
      <height>181</height>
     </rect>
    </property>
@@ -84,10 +87,10 @@
   <widget class="QWidget" name="verticalLayoutWidget_2">
    <property name="geometry">
     <rect>
-     <x>180</x>
+     <x>190</x>
      <y>60</y>
      <width>271</width>
-     <height>297</height>
+     <height>281</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="SaveInfoLayout">
@@ -547,7 +550,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>450</y>
+     <y>460</y>
      <width>531</width>
      <height>20</height>
     </rect>
@@ -672,7 +675,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>400</y>
+     <y>410</y>
      <width>941</width>
      <height>41</height>
     </rect>
@@ -693,7 +696,7 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>345</y>
+     <y>355</y>
      <width>951</width>
      <height>51</height>
     </rect>
@@ -714,7 +717,7 @@
    <property name="geometry">
     <rect>
      <x>618</x>
-     <y>434</y>
+     <y>449</y>
      <width>362</width>
      <height>41</height>
     </rect>
@@ -1171,9 +1174,9 @@
    <property name="geometry">
     <rect>
      <x>486</x>
-     <y>10</y>
+     <y>8</y>
      <width>20</width>
-     <height>341</height>
+     <height>351</height>
     </rect>
    </property>
    <property name="frameShadow">
@@ -1191,22 +1194,6 @@
  <connections>
   <connection>
    <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>SaveManager</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
    <signal>rejected()</signal>
    <receiver>SaveManager</receiver>
    <slot>reject()</slot>
@@ -1217,6 +1204,22 @@
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>SaveManager</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
      <y>274</y>
     </hint>
    </hints>
