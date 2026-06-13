@@ -14,8 +14,7 @@ class ShadSettings;
 class ShadSettings : public QDialog {
     Q_OBJECT
 public:
-    explicit ShadSettings(std::shared_ptr<IpcClient> ipc_client, bool game_specific,
-                          QWidget* parent = nullptr);
+    explicit ShadSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* parent = nullptr);
     ~ShadSettings();
 
     bool eventFilter(QObject* obj, QEvent* event) override;
@@ -35,7 +34,7 @@ private:
     std::unique_ptr<Ui::ShadSettings> ui;
     std::shared_ptr<IpcClient> m_ipc_client;
 
-    bool is_game_specific;
+    EmulatorSettingsImpl gs_settings;
     // GameInfo m_current_game;   // Add current game info
     // std::string m_game_serial; // Game serial number
 

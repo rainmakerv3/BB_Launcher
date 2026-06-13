@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1005</width>
-    <height>726</height>
+    <height>696</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -51,7 +51,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QScrollArea" name="generalTab">
       <property name="widgetResizable">
@@ -66,10 +66,10 @@
          <x>0</x>
          <y>0</y>
          <width>981</width>
-         <height>562</height>
+         <height>532</height>
         </rect>
        </property>
-       <layout class="QVBoxLayout" name="generalTabVLayout" stretch="0,0">
+       <layout class="QVBoxLayout" name="generalTabVLayout" stretch="0">
         <item>
          <layout class="QHBoxLayout" name="mainHLayout">
           <item>
@@ -708,25 +708,6 @@
            </layout>
           </item>
          </layout>
-        </item>
-        <item>
-         <widget class="QLabel" name="label_4">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>12</pointsize>
-            <bold>true</bold>
-           </font>
-          </property>
-          <property name="text">
-           <string>NOTE: Game-Specific config will override global config if it exists</string>
-          </property>
-         </widget>
         </item>
        </layout>
       </widget>
