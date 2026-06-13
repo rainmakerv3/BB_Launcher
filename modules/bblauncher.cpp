@@ -222,22 +222,6 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             return;
         }
 
-        ShadSettings* ShadSettingsWindow = new ShadSettings(m_ipc_client, false, this);
-        ShadSettingsWindow->exec();
-    });
-
-    connect(ui->shadSettingsGSButton, &QPushButton::pressed, this, [this]() {
-        if (!CheckBBInstall())
-            return;
-
-        if (!std::filesystem::exists(Common::GetShadUserDir() / "config.json")) {
-            QMessageBox::warning(
-                this, "No config files found",
-                QString::fromStdString((Common::GetShadUserDir() / "config.json").string() +
-                                       " not found. Run shadPS4 once to generate it."));
-            return;
-        }
-
         std::string filename = Common::game_serial + ".json";
         std::filesystem::path gsConfig = Common::GetShadUserDir() / "custom_configs" / filename;
 
@@ -253,12 +237,13 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
 
                 EmulatorSettings.Load(Common::game_serial);
                 EmulatorSettings.Save(Common::game_serial);
+                EmulatorSettings.Load();
             } else {
                 return;
             }
         }
 
-        ShadSettings* ShadSettingsWindow = new ShadSettings(m_ipc_client, true, this);
+        ShadSettings* ShadSettingsWindow = new ShadSettings(m_ipc_client, this);
         ShadSettingsWindow->exec();
     });
 

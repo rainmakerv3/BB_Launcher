@@ -381,13 +381,6 @@
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QPushButton" name="TrophyButton">
-           <property name="text">
-            <string>Trophy Viewer and Unlocker</string>
-           </property>
-          </widget>
-         </item>
         </layout>
        </item>
        <item>
@@ -402,14 +395,14 @@
          <item>
           <widget class="QPushButton" name="shadSettingsButton">
            <property name="text">
-            <string>shadPS4 Settings (global)</string>
+            <string>shadPS4 Settings</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="shadSettingsGSButton">
+          <widget class="QPushButton" name="PatchesButton">
            <property name="text">
-            <string>shadPS4 Settings (game-specific)</string>
+            <string>Bloodborne Cheats/Patches</string>
            </property>
           </widget>
          </item>
@@ -432,9 +425,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="PatchesButton">
+          <widget class="QPushButton" name="TrophyButton">
            <property name="text">
-            <string>Bloodborne Cheats/Patches</string>
+            <string>Trophy Viewer and Unlocker</string>
            </property>
           </widget>
          </item>
