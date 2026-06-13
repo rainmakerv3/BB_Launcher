@@ -151,7 +151,7 @@ void CheckUpdate::CheckForUpdates(const bool showMessage) {
 #ifdef Q_OS_WIN
         platformString = "win64";
 #elif defined(Q_OS_LINUX)
-        platformString = "linux";
+        platformString = "BB_Launcher-qt.AppImage";
 #elif defined(Q_OS_MAC)
         platformString = "macos";
 #endif
@@ -190,7 +190,7 @@ void CheckUpdate::CheckForUpdates(const bool showMessage) {
                     break;
                 }
             } else if (CurrentBranch == "downloader") {
-                if (assetObj["name"].toString().contains("downloader")) {
+                if (assetObj["name"].toString().contains("Downloader")) {
                     downloadUrl = assetObj["browser_download_url"].toString();
                     found = true;
                     break;
@@ -328,7 +328,13 @@ void CheckUpdate::DownloadUpdate(const QString& url) {
             dir.mkpath(".");
         }
 
+#if defined(USE_WEBENGINE) && defined(Q_OS_LINUX)
+        QString downloadPath = tempDownloadPath + "/BB_Launcher-qt-Downloader.AppImage";
+#elif !defined(USE_WEBENGINE) && defined(Q_OS_LINUX)
+        QString downloadPath = tempDownloadPath + "/BB_Launcher-qt.AppImage";
+#else
         QString downloadPath = tempDownloadPath + "/temp_download_update.zip";
+#endif
         QFile file(downloadPath);
         if (file.open(QIODevice::WriteOnly)) {
             file.write(reply->readAll());
@@ -356,6 +362,14 @@ void CheckUpdate::Install() {
 
     QString tempDirPath = userPath + "/temp_download_update";
     QString startingUpdate = tr("Starting Update...");
+
+#if defined(USE_WEBENGINE) && defined(Q_OS_LINUX)
+    QString fileName = "BB_Launcher-qt-Downloader.AppImage";
+    QString filePath = tempDirPath + "/BB_Launcher-qt-Downloader.AppImage";
+#elif !defined(USE_WEBENGINE) && defined(Q_OS_LINUX)
+    QString fileName = "BB_Launcher-qt.AppImage";
+    QString filePath = tempDirPath + "/BB_Launcher-qt.AppImage";
+#endif
 
     QString binaryStartingUpdate;
     for (QChar c : startingUpdate) {
@@ -402,67 +416,25 @@ void CheckUpdate::Install() {
 #elif defined(Q_OS_LINUX)
     // Linux Shell Script
     scriptFileName = tempDirPath + "/update.sh";
-    scriptContent = QStringLiteral(
-        "#!/bin/bash\n"
-        "check_unzip() {\n"
-        "    if ! command -v unzip &> /dev/null && ! command -v 7z &> /dev/null; then\n"
-        "        echo \"Neither 'unzip' nor '7z' is installed.\"\n"
-        "        read -p \"Would you like to install 'unzip'? (y/n): \" response\n"
-        "        if [[ \"$response\" == \"y\" || \"$response\" == \"Y\" ]]; then\n"
-        "            if [[ -f /etc/os-release ]]; then\n"
-        "                . /etc/os-release\n"
-        "                case \"$ID\" in\n"
-        "                    ubuntu|debian)\n"
-        "                        sudo apt-get install unzip -y\n"
-        "                        ;;\n"
-        "                    fedora|redhat)\n"
-        "                        sudo dnf install unzip -y\n"
-        "                        ;;\n"
-        "                    *)\n"
-        "                        echo \"Unsupported distribution for automatic installation.\"\n"
-        "                        exit 1\n"
-        "                        ;;\n"
-        "                esac\n"
-        "            else\n"
-        "                echo \"Could not identify the distribution.\"\n"
-        "                exit 1\n"
-        "            fi\n"
-        "        else\n"
-        "            echo \"At least one of 'unzip' or '7z' is required to continue. The process "
-        "will be terminated.\"\n"
-        "            exit 1\n"
-        "        fi\n"
-        "    fi\n"
-        "}\n"
-        "extract_file() {\n"
-        "    if command -v unzip &> /dev/null; then\n"
-        "        unzip -o \"%2/temp_download_update.zip\" -d \"%2/\"\n"
-        "    elif command -v 7z &> /dev/null; then\n"
-        "        7z x \"%2/temp_download_update.zip\" -o\"%2/\" -y\n"
-        "    else\n"
-        "        echo \"No suitable extraction tool found.\"\n"
-        "        exit 1\n"
-        "    fi\n"
-        "}\n"
-        "main() {\n"
-        "    check_unzip\n"
-        "    echo \"%1\"\n"
-        "    sleep 2\n"
-        "    extract_file\n"
-        "    sleep 2\n"
-        "    if pgrep -f \"BB_Launcher-qt.AppImage\" > /dev/null; then\n"
-        "        pkill -f \"BB_Launcher-qt.AppImage\"\n"
-        "        sleep 2\n"
-        "    fi\n"
-        "    cp -r \"%2/\"* \"%3/\"\n"
-        "    sleep 2\n"
-        "    rm \"%3/update.sh\"\n"
-        "    rm \"%3/temp_download_update.zip\"\n"
-        "    chmod +x \"%3/BB_Launcher-qt.AppImage\"\n"
-        "    rm -r \"%2\"\n"
-        "    cd \"%3\" && ./BB_Launcher-qt.AppImage\n"
-        "}\n"
-        "main\n");
+    scriptContent = QString(R"(#!/bin/bash
+main() {
+    # Copy the file to the destination folder
+    cp -f "%1" "%2/"
+    
+    sleep 2
+    
+    # Delete the original folder safely
+    rm -rf "%4"
+    
+    # Make the copied file executable
+    chmod +x "%2/%3"
+    
+    # Navigate to the folder and run the file
+    cd "%2" && "./%3"
+}
+main
+)")
+                        .arg(filePath, rootPath, fileName, tempDirPath);
     arguments << scriptFileName;
     processCommand = "bash";
 
@@ -511,8 +483,9 @@ void CheckUpdate::Install() {
         scriptFile.write("\xEF\xBB\xBF");
 #ifdef Q_OS_WIN
         out << scriptContent.arg(binaryStartingUpdate).arg(tempDirPath).arg(rootPath);
-#endif
-#if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
+#elif defined(Q_OS_LINUX)
+        out << scriptContent;
+#elif defined(Q_OS_MAC)
         out << scriptContent.arg(startingUpdate).arg(tempDirPath).arg(rootPath);
 #endif
         scriptFile.close();
