@@ -268,7 +268,8 @@ void ChaliceEditor::SaveDungeon() {
     if (QMessageBox::No ==
         QMessageBox::question(this, "Warning",
                               "This will modify your selected save slot/altar, making a backup "
-                              "beforehand is highly recommended.\n\nProceed with save?",
+                              "beforehand is highly recommended, particularly before trying "
+                              "experimental dungeons.\n\nProceed with save?",
                               QMessageBox::Yes | QMessageBox::No)) {
         return;
     }
