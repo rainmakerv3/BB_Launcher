@@ -235,9 +235,9 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
                 std::filesystem::create_directories(cfgDir);
                 const std::filesystem::path path = cfgDir / (Common::game_serial + ".json");
 
-                EmulatorSettings.Load(Common::game_serial);
-                EmulatorSettings.Save(Common::game_serial);
-                EmulatorSettings.Load();
+                EmulatorSettingsImpl settings;
+                settings.Load(Common::game_serial);
+                settings.Save(Common::game_serial);
             } else {
                 return;
             }

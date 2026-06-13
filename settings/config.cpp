@@ -518,14 +518,13 @@ bool isReleaseOlder(int minorVersion, int MajorVersion) {
 int GetDmemValue() {
     int dmem;
 
-    if (!EmulatorSettings.Load(Common::game_serial)) {
-        EmulatorSettings.Load();
+    EmulatorSettingsImpl settings;
+    if (!settings.Load(Common::game_serial)) {
         return 0;
     } else {
-        dmem = EmulatorSettings.GetExtraDmemInMBytes();
+        dmem = settings.GetExtraDmemInMBytes();
     }
 
-    EmulatorSettings.Load();
     return dmem;
 }
 
