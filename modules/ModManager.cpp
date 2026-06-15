@@ -10,11 +10,55 @@
 #include "modules/ui_ModManager.h"
 #include "settings/config.h"
 
+#ifdef Q_OS_WIN
+#include <Windows.h>
+#endif
+
+#ifdef Q_OS_WIN
+static bool IsNotNtfsDrive(const std::filesystem::path& folderPath) {
+    std::filesystem::path absPath = std::filesystem::absolute(folderPath);
+    std::wstring rootDrive = absPath.root_name().wstring() + L"\\";
+    WCHAR fileSystemName[MAX_PATH + 1] = {0};
+    BOOL success = GetVolumeInformationW(rootDrive.c_str(), NULL, 0, NULL, NULL, NULL,
+                                         fileSystemName, MAX_PATH + 1);
+
+    if (success) {
+        std::wstring fsName(fileSystemName);
+        if (fsName != L"NTFS") {
+            return true;
+        }
+        return false;
+    }
+
+    // Default to false if unable to determine
+    return false;
+}
+#endif
+
 ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager) {
     ui->setupUi(this);
     ui->progressBar->setMinimum(0);
     ui->progressBar->setValue(0);
     this->setFixedSize(this->width(), this->height());
+
+#if defined(Q_OS_WIN) && defined(FORCE_UAC)
+    if (IsNotNtfsDrive(Common::ModPath)) {
+        QMessageBox::information(this, "Drive Incompatibility Notice",
+                                 "Mod Path is likely on an external drive or non-NTFS formatted "
+                                 "drive. Activating mods may not work correctly due to incorrect "
+                                 "symlink functions. You can try the BBLauncher noUAC version if "
+                                 "you want to use the Mod Manager on non-NTFS drives");
+    }
+
+    if (IsNotNtfsDrive(Common::installPath)) {
+        QMessageBox::information(
+            this, "Drive Incompatibility Notice",
+            "Bloodborne install folder is likely on an external drive or non-NTFS formatted "
+            "drive. Activating mods may not work correctly due to incorrect "
+            "symlink functions. You can try the BBLauncher noUAC version if "
+            "you want to use the Mod Manager on non-NTFS drives");
+    }
+#endif
 
     if (Config::theme == "Dark") {
         ui->ActiveModList->setStyleSheet(
