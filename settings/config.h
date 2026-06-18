@@ -56,6 +56,7 @@ extern std::string DefaultFolderString;
 extern bool AutoUpdateVersionsEnabled;
 extern bool AutoUpdateShadEnabled;
 extern bool ShowChangeLog;
+extern bool ClearCacheAfterUpdate;
 
 extern bool GameRunning;
 extern bool GameSpecificConfigUsed;

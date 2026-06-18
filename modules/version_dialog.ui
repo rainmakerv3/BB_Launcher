@@ -293,6 +293,13 @@
             </widget>
            </item>
            <item>
+            <widget class="QCheckBox" name="autoClearCacheCheckBox">
+             <property name="text">
+              <string>Clear shader cache on pre-release update</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="updateButton">
              <property name="text">
               <string>Check for Pre-release Updates</string>

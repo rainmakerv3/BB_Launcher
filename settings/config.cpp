@@ -25,7 +25,7 @@ bool Config::AutoUpdateEnabled = false;
 Config::FolderLocation Config::UserFolderLocation = Config::FolderLocation::BuildFolder;
 std::filesystem::path Config::CustomUserFolder = "";
 
-bool Config::BackupSaveEnabled = false;
+bool Config::BackupSaveEnabled = true;
 int Config::BackupInterval = 10;
 int Config::BackupNumber = 2;
 
@@ -33,6 +33,7 @@ bool Config::ShowEarnedTrophy = true;
 bool Config::ShowNotEarnedTrophy = true;
 bool Config::ShowHiddenTrophy = false;
 
+bool Config::ClearCacheAfterUpdate = false;
 bool Config::AutoUpdateVersionsEnabled = true;
 bool Config::AutoUpdateShadEnabled = false;
 bool Config::ShowChangeLog = true;
@@ -78,7 +79,7 @@ void LoadSettings() {
         toml::find_or<int>(data, "Launcher", "UserFolderLocation",
                            static_cast<int>(FolderLocation::BuildFolder)));
 
-    BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", false);
+    BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", true);
     BackupInterval = toml::find_or<int>(data, "Backups", "BackupInterval", 10);
     BackupNumber = toml::find_or<int>(data, "Backups", "BackupNumber", 2);
 
@@ -91,6 +92,8 @@ void LoadSettings() {
         toml::find_or<bool>(data, "shadUpdater", "AutoUpdateVersionsEnabled", true);
     AutoUpdateShadEnabled =
         toml::find_or<bool>(data, "shadUpdater", "AutoUpdateShadEnabled", false);
+    ClearCacheAfterUpdate =
+        toml::find_or<bool>(data, "shadUpdater", "ClearCacheAfterUpdate", false);
 
     if (data.contains("Launcher")) {
         const toml::value& launcher = data.at("Launcher");
@@ -225,7 +228,7 @@ void CreateSettingsFile() {
     data["Launcher"]["CustomUserFolder"] = "";
     data["Launcher"]["ApiKey"] = "";
 
-    data["Backups"]["BackupSaveEnabled"] = false;
+    data["Backups"]["BackupSaveEnabled"] = true;
     data["Backups"]["BackupInterval"] = 10;
     data["Backups"]["BackupNumber"] = 2;
 
@@ -236,6 +239,7 @@ void CreateSettingsFile() {
     data["shadUpdater"]["DefaultFolder"] = "";
     data["shadUpdater"]["AutoUpdateVersionsEnabled"] = true;
     data["shadUpdater"]["AutoUpdateShadEnabled"] = false;
+    data["shadUpdater"]["ClearCacheAfterUpdate"] = false;
 
     std::ofstream file(SettingsFile, std::ios::binary);
     file << data;
@@ -285,6 +289,7 @@ void SaveLauncherSettings() {
     data["shadUpdater"]["DefaultFolder"] = DefaultFolderString;
     data["shadUpdater"]["AutoUpdateVersionsEnabled"] = AutoUpdateVersionsEnabled;
     data["shadUpdater"]["AutoUpdateShadEnabled"] = AutoUpdateShadEnabled;
+    data["shadUpdater"]["ClearCacheAfterUpdate"] = ClearCacheAfterUpdate;
 
     std::ofstream file(SettingsFile, std::ios::binary);
     file << data;

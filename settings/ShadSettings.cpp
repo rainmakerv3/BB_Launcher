@@ -192,10 +192,15 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* paren
                                      QString("No current shader cache for %1")
                                          .arg(QString::fromStdString(Common::game_serial)));
         } else {
-            std::filesystem::remove_all(cachePath);
-            QMessageBox::information(this, "Removal Completed",
-                                     QString("Shader cache for %1 successfully removed.")
-                                         .arg(QString::fromStdString(Common::game_serial)));
+            try {
+                std::filesystem::remove_all(cachePath);
+                QMessageBox::information(this, "Removal Completed",
+                                         QString("Shader cache for %1 successfully removed.")
+                                             .arg(QString::fromStdString(Common::game_serial)));
+            } catch (std::exception& e) {
+                QMessageBox::information(this, "Removal Completed",
+                                         "Shader cache removal failed: " + QString(e.what()));
+            }
         }
     });
 

@@ -35,6 +35,7 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
     ui->checkOnStartupCheckBox->setChecked(Config::AutoUpdateShadEnabled);
     ui->showChangelogCheckBox->setChecked(Config::ShowChangeLog);
     ui->versionListUpdateCheckBox->setChecked(Config::AutoUpdateVersionsEnabled);
+    ui->autoClearCacheCheckBox->setChecked(Config::ClearCacheAfterUpdate);
 
     /*
     ui->LinkLabel->setText(
@@ -58,6 +59,11 @@ VersionDialog::VersionDialog(QWidget* parent) : QDialog(parent), ui(new Ui::Vers
 
     connect(ui->showChangelogCheckBox, &QCheckBox::toggled, this, [this](bool checked) {
         Config::ShowChangeLog = checked;
+        Config::SaveLauncherSettings();
+    });
+
+    connect(ui->autoClearCacheCheckBox, &QCheckBox::toggled, this, [this](bool checked) {
+        Config::ClearCacheAfterUpdate = checked;
         Config::SaveLauncherSettings();
     });
 
@@ -1026,7 +1032,6 @@ void VersionDialog::requestChangelog(const QString& localHash, const QString& la
 }
 
 void VersionDialog::installPreReleaseByTag(const QString& tagName) {
-
     QString apiUrl =
         QString("https://api.github.com/repos/shadps4-emu/shadPS4/releases/tags/%1").arg(tagName);
 
@@ -1170,6 +1175,23 @@ void VersionDialog::showDownloadDialog(const QString& tagName, const QString& do
         reply->deleteLater();
         dlg->close();
         dlg->deleteLater();
+
+        if (Config::ClearCacheAfterUpdate) {
+            std::filesystem::path cachePath =
+                Common::GetShadUserDir() / "cache" / Common::game_serial;
+            if (std::filesystem::exists(cachePath)) {
+                try {
+                    std::filesystem::remove_all(cachePath);
+                    QMessageBox::information(
+                        this, "Shader Cache Removal Completed",
+                        QString("Automatic shader cache deletion after update succesful."));
+                } catch (std::exception& e) {
+                    QMessageBox::information(
+                        this, "Shader Cache Removal Failed",
+                        "Automatic shader cache removal after update failed: " + QString(e.what()));
+                }
+            }
+        }
     });
 }
 
