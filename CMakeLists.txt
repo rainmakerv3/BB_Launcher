@@ -144,6 +144,9 @@ set(PROJECT_SOURCES
     modules/ModManager.h
     modules/ModManager.cpp
     modules/ModManager.ui
+    modules/ModMerger.cpp
+    modules/ModMerger.h
+    modules/ModMerger.ui
     modules/PkgExtractor.h
     modules/PkgExtractor.cpp
     modules/QAnsiTextEdit.cpp

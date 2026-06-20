@@ -5,8 +5,8 @@
 #include <QMessageBox>
 #include <QProgressBar>
 
-#include "ModDownloader.h"
 #include "ModManager.h"
+#include "ModMerger.h"
 #include "modules/ui_ModManager.h"
 #include "settings/config.h"
 
@@ -96,6 +96,17 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
     connect(ui->ActivateButton, &QPushButton::pressed, this, &ModManager::ActivateMod);
     connect(ui->DeactivateButton, &QPushButton::pressed, this, &ModManager::DeactivateMod);
     connect(this, &ModManager::progressChanged, ui->progressBar, &QProgressBar::setValue);
+
+    connect(ui->mergeButton, &QPushButton::pressed, this, [this]() {
+        ModMerger* MergeWindow = new ModMerger(this);
+        MergeWindow->exec();
+        RefreshLists();
+    });
+
+    // promptplus messes with this on Linux
+#ifndef Q_OS_WIN
+    ui->mergeButton->setVisible(false);
+#endif
 
     ModInstallPath = Common::installPath;
     ModInstallPath += "-mods";

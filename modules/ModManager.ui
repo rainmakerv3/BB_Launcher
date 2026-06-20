@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>700</width>
-    <height>667</height>
+    <height>711</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -167,40 +167,11 @@
     </item>
    </layout>
   </widget>
-  <widget class="QGroupBox" name="groupBox_3">
-   <property name="geometry">
-    <rect>
-     <x>100</x>
-     <y>540</y>
-     <width>491</width>
-     <height>81</height>
-    </rect>
-   </property>
-   <property name="title">
-    <string/>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <item>
-     <widget class="QLabel" name="FileTransferLabel">
-      <property name="text">
-       <string>No Current File Transfers</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QProgressBar" name="progressBar">
-      <property name="value">
-       <number>24</number>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>609</x>
-     <y>634</y>
+     <x>610</x>
+     <y>670</y>
      <width>81</width>
      <height>31</height>
     </rect>
@@ -251,30 +222,11 @@
     <set>QDialogButtonBox::StandardButton::Close</set>
    </property>
   </widget>
-  <widget class="QPushButton" name="ResetButton">
-   <property name="geometry">
-    <rect>
-     <x>99</x>
-     <y>500</y>
-     <width>491</width>
-     <height>31</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <pointsize>10</pointsize>
-     <bold>true</bold>
-    </font>
-   </property>
-   <property name="text">
-    <string>Reset Installation (Deactivate All Mods)</string>
-   </property>
-  </widget>
   <widget class="QLabel" name="ModHelpLabel">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>630</y>
+     <y>670</y>
      <width>571</width>
      <height>39</height>
     </rect>
@@ -291,6 +243,67 @@
    <property name="openExternalLinks">
     <bool>false</bool>
    </property>
+  </widget>
+  <widget class="QWidget" name="verticalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>50</x>
+     <y>510</y>
+     <width>591</width>
+     <height>137</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_4">
+    <item>
+     <widget class="QPushButton" name="ResetButton">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Reset Installation (Deactivate All Mods)</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="mergeButton">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>BETA: Mod Merge Tool</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox_3">
+      <property name="title">
+       <string/>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
+       <item>
+        <widget class="QLabel" name="FileTransferLabel">
+         <property name="text">
+          <string>No Current File Transfers</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QProgressBar" name="progressBar">
+         <property name="value">
+          <number>24</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources/>

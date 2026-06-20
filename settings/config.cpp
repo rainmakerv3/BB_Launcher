@@ -18,6 +18,7 @@
 #include <date/tz_private.h>
 #endif
 
+std::filesystem::path Config::WitchyPath = "";
 std::string Config::ApiKey = "";
 std::string Config::theme = "Dark";
 bool Config::SoundFixEnabled = true;
@@ -101,6 +102,7 @@ void LoadSettings() {
         Common::installPath = toml::find_fs_path_or(launcher, "installPath", {});
         Common::shadPs4Executable = toml::find_fs_path_or(launcher, "shadPath-New", {});
         CustomUserFolder = toml::find_fs_path_or(launcher, "CustomUserFolder", {});
+        WitchyPath = toml::find_fs_path_or(launcher, "WitchyPath", {});
     }
 
     if (std::filesystem::exists(Common::installPath)) {
@@ -227,6 +229,7 @@ void CreateSettingsFile() {
     data["Launcher"]["UserFolderLocation"] = 0;
     data["Launcher"]["CustomUserFolder"] = "";
     data["Launcher"]["ApiKey"] = "";
+    data["Launcher"]["WitchyPath"] = "";
 
     data["Backups"]["BackupSaveEnabled"] = true;
     data["Backups"]["BackupInterval"] = 10;
@@ -267,6 +270,7 @@ void SaveLauncherSettings() {
         }
     }
 
+    data["Launcher"]["WitchyPath"] = std::string{fmt::UTF(WitchyPath.u8string()).data};
     data["Launcher"]["ApiKey"] = ApiKey;
     data["Launcher"]["Theme"] = theme;
     data["Launcher"]["SoundFixEnabled"] = SoundFixEnabled;
