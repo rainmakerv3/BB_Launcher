@@ -662,16 +662,16 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
                                        bytesTotal, 2, QLocale::DataSizeTraditionalFormat)));
             });
 
-    QString zipPath;
-    Common::PathToQString(zipPath, Common::GetBBLFilesPath() / "Temp");
-    zipPath = zipPath + "/" + downloadReply->request().url().fileName();
+    QString archivePath;
+    Common::PathToQString(archivePath, Common::GetBBLFilesPath() / "Temp");
+    archivePath = archivePath + "/" + downloadReply->request().url().fileName();
 
     QString extractPath;
     Common::PathToQString(extractPath, Common::GetBBLFilesPath() / "Temp" / "Download");
     std::filesystem::remove_all(Common::GetBBLFilesPath() / "Temp");
     std::filesystem::create_directories(Common::GetBBLFilesPath() / "Temp" / "Download");
 
-    QFile* file = new QFile(zipPath);
+    QFile* file = new QFile(archivePath);
     if (!file->open(QIODevice::WriteOnly)) {
         QMessageBox::warning(this, tr("Error"), tr("Could not save file."));
         file->deleteLater();
@@ -679,7 +679,7 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
         return;
     }
 
-    connect(progressDialog, &QDialog::rejected, this, [this, zipPath, file, downloadReply]() {
+    connect(progressDialog, &QDialog::rejected, this, [this, archivePath, file, downloadReply]() {
         downloadReply->abort();
         ui->downloadButton->setEnabled(true);
     });
@@ -696,9 +696,7 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
             progressDialog->close();
             progressDialog->deleteLater();
 
-            bool isZip = zipPath.right(3) == "zip";
-            isZip ? ExtractZip(zipPath, extractPath)
-                  : Extract7zOrRar(zipPath.toStdString(), extractPath.toStdString());
+            ExtractArchive(archivePath.toStdString(), extractPath.toStdString());
 
             std::filesystem::path sourcePath = Common::PathFromQString(extractPath);
             std::filesystem::path optionsSourcePath;
@@ -764,7 +762,7 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
                         folderPath = optionsSourcePath / option;
                     } else {
                         QDir(extractPath).removeRecursively();
-                        QFile::remove(zipPath);
+                        QFile::remove(archivePath);
                         return;
                     }
                 }
@@ -807,7 +805,7 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
                     .arg(modName));
 
             QDir(extractPath).removeRecursively();
-            QFile::remove(zipPath);
+            QFile::remove(archivePath);
             ui->downloadButton->setEnabled(true);
         } else {
             QMessageBox::warning(
@@ -818,7 +816,7 @@ void ModDownloader::StartDownload(QString url, QString m_modName, bool isPremium
             file->close();
             progressDialog->close();
             progressDialog->deleteLater();
-            QFile::remove(zipPath);
+            QFile::remove(archivePath);
             ui->downloadButton->setEnabled(true);
         }
     });
@@ -970,7 +968,7 @@ QString ModDownloader::BbcodeToHtml(QString BbcodeString) {
     return BbcodeString;
 }
 
-void ModDownloader::Extract7zOrRar(const std::string& archivePath, const std::string& outputDir) {
+void ModDownloader::ExtractArchive(const std::string& archivePath, const std::string& outputDir) {
     QDialog* progressDialog = new QDialog(this);
     progressDialog->setWindowTitle(tr("Extracting compressed archive"));
     progressDialog->setFixedSize(400, 80);
@@ -1080,7 +1078,6 @@ void ModDownloader::Extract7zOrRar(const std::string& archivePath, const std::st
                 "Error extracting archive. Mod may not work correctly if activated. "
                 "You can try redownloading it later.\n\n" +
                     QString(ex.what()));
-            return;
         }
 
         archive_read_close(a);
@@ -1088,86 +1085,6 @@ void ModDownloader::Extract7zOrRar(const std::string& archivePath, const std::st
         archive_write_close(ext);
         archive_write_free(ext);
     });
-
-    QFutureWatcher<void> watcher;
-    watcher.setFuture(future);
-
-    QEventLoop extractloop;
-    connect(&watcher, &QFutureWatcher<void>::finished, &extractloop, &QEventLoop::quit);
-    extractloop.exec();
-
-    progressDialog->close();
-    progressDialog->deleteLater();
-}
-
-void ModDownloader::ExtractZip(QString inpath, QString outpath) {
-    QMicroz qmz(inpath.toUtf8().constData());
-    if (!qmz) {
-        QMessageBox::warning(this, "Error", "Cannot open archive: " + inpath);
-        return;
-    }
-
-    QDialog* progressDialog = new QDialog(this);
-    progressDialog->setWindowTitle(tr("Extracting zip archive"));
-    progressDialog->setFixedSize(400, 80);
-    progressDialog->setWindowFlags(progressDialog->windowFlags() & ~Qt::WindowCloseButtonHint);
-
-    QLabel* label = new QLabel("Preparing data buffer...", progressDialog);
-    QVBoxLayout* layout = new QVBoxLayout(progressDialog);
-    QProgressBar* progressBar = new QProgressBar(progressDialog);
-    progressBar->setRange(0, 100);
-
-    layout->addWidget(progressBar);
-    layout->addWidget(label);
-    progressDialog->setLayout(layout);
-    progressDialog->show();
-
-    QFuture<void> future =
-        QtConcurrent::run([this, &qmz, progressBar, label, outpath]() {
-            BufList filesInMemory = qmz.extractToBuf();
-            size_t totalFiles = filesInMemory.size();
-
-            connect(this, &ModDownloader::FileExtracted, progressBar,
-                    [this, &totalFiles, progressBar, label](int extracted) {
-                        progressBar->setValue(static_cast<int>((extracted * 100.f) / totalFiles));
-                        label->setText(
-                            QString("%1 / %2 files extracted").arg(extracted).arg(totalFiles));
-                    });
-
-            try {
-                QDir().mkpath(outpath);
-                QMapIterator<QString, QByteArray> i(filesInMemory);
-                int filesProcessed = 0;
-
-                while (i.hasNext()) {
-                    i.next();
-                    QString filename = i.key();      // The internal archive file path
-                    QByteArray fileData = i.value(); // The uncompressed file payload
-
-                    QString targetFilePath = QDir(outpath).filePath(filename);
-                    QFileInfo fileInfo(targetFilePath);
-                    QDir().mkpath(fileInfo.absolutePath());
-                    QFile outFile(targetFilePath);
-
-                    if (outFile.open(QIODevice::WriteOnly)) {
-                        outFile.write(fileData);
-                        outFile.close();
-                    } else {
-                        throw(std::runtime_error("Failed to write file: " +
-                                                 targetFilePath.toStdString()));
-                    }
-
-                    filesProcessed++;
-                    emit FileExtracted(filesProcessed);
-                }
-            } catch (std::exception& ex) {
-                QMessageBox::warning(
-                    this, "Extraction error",
-                    "Error extracting 7zip. Mod may not work correctly if activated. "
-                    "You can try redownloading it later.\n\n" +
-                        QString(ex.what()));
-            }
-        });
 
     QFutureWatcher<void> watcher;
     watcher.setFuture(future);

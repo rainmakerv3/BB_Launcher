@@ -41,6 +41,11 @@ endif()
 # microz
 add_subdirectory(microz)
 
+# zlib from qmicroz
+add_library(miniz_zlib STATIC microz/miniz/miniz.c)
+target_compile_definitions(miniz_zlib PUBLIC MINIZ_NO_ZLIB_NAMESPACES)
+add_library(ZLIB::ZLIB ALIAS miniz_zlib)
+
 #nlohmann json 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory(json)
@@ -87,6 +92,19 @@ set(LIBLZMA_FOUND TRUE CACHE BOOL "Force LibLZMA found fallback" FORCE)
 set(LIBLZMA_HAS_AUTO_DECODER TRUE CACHE BOOL "Bypass check" FORCE)
 set(LIBLZMA_HAS_EASY_ENCODER TRUE CACHE BOOL "Bypass check" FORCE)
 set(LIBLZMA_HAS_LZMA_PRESET TRUE CACHE BOOL "Bypass check" FORCE)
+set(ZLIB_FOUND TRUE CACHE BOOL "Mocked ZLIB found via miniz" FORCE)
+set(ZLIB_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/microz/miniz" CACHE STRING "Mocked path" FORCE)
+set(ZLIB_LIBRARIES miniz_zlib CACHE STRING "Mocked target" FORCE)
+set(HAVE_ZLIB_H 1 CACHE INTERNAL "Deception for libarchive" FORCE)
+set(HAVE_ZLIB 1 CACHE INTERNAL "Deception for libarchive" FORCE)
+set(HAVE_INFLATE 1 CACHE INTERNAL "Deception for libarchive" FORCE)
+set(HAVE_DEFLATE 1 CACHE INTERNAL "Deception for libarchive" FORCE)
+set(HAVE_CRC32 1 CACHE INTERNAL "Deception for libarchive" FORCE)
+set(ENABLE_ZLIB ON CACHE BOOL "Enable zlib support" FORCE)
+include_directories(
+    "${CMAKE_CURRENT_SOURCE_DIR}/microz/miniz"
+    "${CMAKE_CURRENT_SOURCE_DIR}/zlib-dummy"
+)
 if (WIN32 AND CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(HAVE_WCSCPY 1 CACHE INTERNAL "Define to 1 if you have the wcscpy function" FORCE)
 endif()
