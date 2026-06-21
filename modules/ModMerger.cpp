@@ -128,13 +128,26 @@ void ModMerger::ExamineConflictedFiles() {
         ui->waitLabel->setVisible(false);
         if (aborted)
             ui->mergeStatusText->append(
-                FormatTextForBrowser("Mod merge attempt aborted by user", Format::BoldRed));
+                FormatTextForBrowser("Mod merge attempt aborted", Format::BoldRed));
     };
 
     for (const auto& file : conflictedFiles) {
         fs::path basefile = baseTempPath / file;
         fs::path mod1file = mod1TempPath / file;
         fs::path mod2file = mod2TempPath / file;
+
+        if (basefile.string().ends_with("common.tpf.dcx")) {
+            if (fs::file_size(mod1file) > 4 * fs::file_size(basefile) ||
+                fs::file_size(mod2file) > 4 * fs::file_size(basefile)) {
+                ui->mergeStatusText->append(
+                    QString("Skipping file: %1 due to some issues WitchyBND has reading certain "
+                            "upscaled textures. If using a controller button replacer, consider "
+                            "using the non-upscaled ones instead. Aborting...")
+                        .arg(Common::PathToU8(basefile.filename())));
+                CleanUp();
+                return;
+            }
+        }
 
         if (UnextractrableFileProcessed(basefile, mod1file, mod2file)) {
             continue;
@@ -173,20 +186,11 @@ void ModMerger::ExamineConflictedFiles() {
 
                 auto MergeModified = [this, baseFileEntry](fs::path modFilePath,
                                                            std::string modName) {
-                    // TODO FIXME
-                    // workaround for too large texture repacking issues
-                    if (fs::file_size(modFilePath) > 4 * fs::file_size(baseFileEntry.path())) {
-                        QString msg = QString("Modified file: %1 from mod: %2 too large to be "
-                                              "merged. Skipping...")
-                                          .arg(Common::PathToU8(modFilePath.filename()), modName);
-                        ui->mergeStatusText->append(FormatTextForBrowser(msg, Format::Yellow));
-                    } else {
-                        fs::copy_file(modFilePath, baseFileEntry.path(),
-                                      fs::copy_options::overwrite_existing);
-                        ui->mergeStatusText->append(
-                            QString("Modified file: %1 from mod: %2 merged")
-                                .arg(Common::PathToU8(modFilePath.filename()), modName));
-                    }
+                    fs::copy_file(modFilePath, baseFileEntry.path(),
+                                  fs::copy_options::overwrite_existing);
+                    ui->mergeStatusText->append(
+                        QString("Modified file: %1 from mod: %2 merged")
+                            .arg(Common::PathToU8(modFilePath.filename()), modName));
                 };
 
                 if (file1modified && file2modified) {
