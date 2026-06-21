@@ -5,6 +5,8 @@
 
 #include <filesystem>
 #include <QMainWindow>
+#include <QPushButton>
+#include <QVBoxLayout>
 
 #include "modules/QAnsiTextEdit.h"
 #include "modules/ipc/ipc_client.h"
@@ -34,10 +36,13 @@ private slots:
     void OpenFolders();
 
 private:
+    QVBoxLayout* createIconTextButtonLayout(const QString& resourcePath, const QString& buttonText,
+                                            QPushButton* button);
     static void StartBackupSave();
     bool CheckBBInstall();
-    void UpdateSettingsList();
+    void UpdatePatchesList();
     void UpdateModList();
+    void LogSettings();
     void GetShadExecutable();
     QIcon RecolorIcon(const QIcon& icon, bool isWhite);
     void UpdateIcons();
@@ -58,6 +63,18 @@ private:
     bool noGUIset;
     bool noinstancerunning;
     bool is_paused;
+
+    QPushButton* controllerButton = new QPushButton(this);
+    QPushButton* kbmButton = new QPushButton(this);
+    QPushButton* modsFolderButton = new QPushButton(this);
+    QPushButton* openFolderButton = new QPushButton(this);
+    QPushButton* hotkeysButton = new QPushButton(this);
+    QPushButton* helpButton = new QPushButton(this);
+
+    QPushButton* launchButton = new QPushButton(this);
+    QPushButton* stopButton = new QPushButton(this);
+    QPushButton* restartButton = new QPushButton(this);
+    QPushButton* fullscreenButton = new QPushButton(this);
 
     const std::vector<std::string> BBSerialList = {"CUSA03173", "CUSA00900", "CUSA00208",
                                                    "CUSA00207", "CUSA01363", "CUSA03023",

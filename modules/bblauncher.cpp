@@ -38,6 +38,30 @@
 
 static bool save_backups = false;
 
+QVBoxLayout* BBLauncher::createIconTextButtonLayout(const QString& resourcePath,
+                                                    const QString& buttonText,
+                                                    QPushButton* button) {
+    QVBoxLayout* layout = new QVBoxLayout();
+    layout->setAlignment(Qt::AlignCenter);
+    layout->setSpacing(0);
+    layout->setContentsMargins(0, 0, 0, 0);
+
+    button->setIcon(QIcon(resourcePath));
+    button->setIconSize(QSize(48, 48));
+    button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+
+    QLabel* label = new QLabel(buttonText);
+    QFont font = label->font();
+    font.setBold(true);
+    label->setFont(font);
+    label->setAlignment(Qt::AlignCenter);
+
+    layout->addWidget(button, 0);
+    layout->addWidget(label, 0, Qt::AlignCenter);
+
+    return layout;
+}
+
 BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     : QMainWindow(parent), noGUIset(noGUI), noinstancerunning(noInstanceRunning),
       ui(new Ui::BBLauncher) {
@@ -50,6 +74,35 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         std::filesystem::remove(Common::GetBBLFilesPath() / "log.txt");
 
     ui->setupUi(this);
+
+    launchButton->setStyleSheet("QPushButton {background-color: #1b4d3e; border: 2px solid "
+                                "#0f2d24; border-radius: 4px; color: white; padding: 6px 16px;}");
+
+    stopButton->setStyleSheet("QPushButton {background-color: #8B0000; border: 2px solid #5A0000; "
+                              "border-radius: 4px; color: white; padding: 6px 16px;}");
+
+    ui->IconButtonsLayout->addLayout(
+        createIconTextButtonLayout(":gold.png", "Controller", controllerButton));
+    ui->IconButtonsLayout->addLayout(
+        createIconTextButtonLayout(":gold.png", "KB & Mouse", kbmButton));
+    ui->IconButtonsLayout->addLayout(
+        createIconTextButtonLayout(":gold.png", "Mods Folder", modsFolderButton));
+    ui->IconButtonsLayout->addLayout(
+        createIconTextButtonLayout(":gold.png", "Open Folders", openFolderButton));
+    ui->IconButtonsLayout->addLayout(
+        createIconTextButtonLayout(":gold.png", "Open Help", helpButton));
+    ui->IconButtonsLayout->addLayout(
+        createIconTextButtonLayout(":gold.png", "Hotkeys", hotkeysButton));
+
+    ui->controlsLayout1->addLayout(
+        createIconTextButtonLayout(":play_icon.png", "Launch", launchButton));
+    ui->controlsLayout1->addLayout(createIconTextButtonLayout(":stop_icon", "Stop", stopButton));
+
+    ui->controlsLayout2->addLayout(
+        createIconTextButtonLayout(":restart_game_icon.png", "Restart", restartButton));
+    ui->controlsLayout2->addLayout(
+        createIconTextButtonLayout(":fullscreen_icon.png", "Fullscreen", fullscreenButton));
+
     logDisplay = new QAnsiTextEdit(this);
     ui->logLayout->addWidget(logDisplay);
 
@@ -68,6 +121,8 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             Common::shadPs4Executable = "";
             Config::SaveLauncherSettings();
         }
+
+        ui->ShadSelectButton->setFocus();
     }
 
     if (Common::installPath == "") {
@@ -92,13 +147,15 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
 
     QPalette palette = logDisplay->palette();
     palette.setColor(QPalette::Base, Qt::black);
+    ui->logLayout->addWidget(logDisplay);
     logDisplay->setPalette(palette);
     logDisplay->setReadOnly(true);
+    logDisplay->appendHtml("<span style=\"color: gray; font-weight: bold;\">Log Display</span>");
+    LogSettings();
 
-    std::string versionstring(Common::VERSION);
-    setWindowTitle(("BBLauncher " + QString::fromStdString(versionstring).right(5)));
+    setWindowTitle("BBLauncher " + QString(Common::VERSION).right(5));
 
-    UpdateSettingsList();
+    UpdatePatchesList();
     UpdateModList();
     UpdateIcons();
 
@@ -109,10 +166,11 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
 
     if (isHybrid) {
         logDisplay->appendHtml(
-            "<b>REMINDER: CPU E-cores detected, you may be using an Intel 12th Gen - 14th Gen CPU. "
-            "To avoid crashes playing Bloodborne on Intel 12-14th Gen CPUs, you can use either the "
-            "Intel 12th Gen+ SFX workaround patch (recommended) or install the Sfx Fix "
-            "Mod</b>\n\n");
+            "<span style=\"color: gray; font-weight: bold;\">REMINDER: CPU E-cores detected, you "
+            "may be using an Intel 12th Gen - 14th Gen CPU. To avoid crashes playing Bloodborne on "
+            "Intel 12-14th Gen CPUs, you can use either the Intel 12th Gen+ SFX workaround patch "
+            "(recommended) or install the Sfx Fix Mod</span>");
+        logDisplay->appendHtml("");
     }
 #endif
 
@@ -120,12 +178,11 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     connect(ui->BBSelectButton, &QPushButton::pressed, this, &BBLauncher::BBSelectButton_isPressed);
     connect(ui->ShadSelectButton, &QPushButton::pressed, this,
             &BBLauncher::ShadSelectButton_isPressed);
-    connect(ui->LaunchButton, &QPushButton::pressed, this,
+    connect(launchButton, &QPushButton::pressed, this,
             [this]() { BBLauncher::StartGameWithArgs({}); });
-    connect(ui->StopButton, &QPushButton::clicked, this,
-            [this]() { m_ipc_client->stopEmulator(); });
-    connect(ui->RestartButton, &QPushButton::clicked, this, &BBLauncher::RestartEmulator);
-    connect(ui->FullscreenButton, &QPushButton::clicked, this,
+    connect(stopButton, &QPushButton::clicked, this, [this]() { m_ipc_client->stopEmulator(); });
+    connect(restartButton, &QPushButton::clicked, this, &BBLauncher::RestartEmulator);
+    connect(fullscreenButton, &QPushButton::clicked, this,
             [this]() { m_ipc_client->toggleFullscreen(); });
 
     connect(ui->pkgButton, &QPushButton::pressed, this, [this]() {
@@ -192,9 +249,10 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         if (!CheckBBInstall())
             return;
         CheatsPatches* cheatsPatches = new CheatsPatches(m_ipc_client, Config::GameRunning, this);
-        cheatsPatches->show();
+        cheatsPatches->exec();
         connect(this, &QWidget::destroyed, cheatsPatches,
                 [cheatsPatches]() { cheatsPatches->deleteLater(); });
+        UpdatePatchesList();
     });
 
     connect(ui->ModManagerButton, &QPushButton::pressed, this, [this]() {
@@ -250,21 +308,21 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     connect(ui->LauncherSettingsButton, &QPushButton::pressed, this, [this]() {
         LauncherSettings* LauncherSettingsWindow = new LauncherSettings(this);
         LauncherSettingsWindow->exec();
-        UpdateSettingsList();
         UpdateIcons();
+        LogSettings();
     });
 
-    connect(ui->KBMButton, &QPushButton::clicked, this, [this]() {
+    connect(kbmButton, &QPushButton::clicked, this, [this]() {
         KBMSettings* KBMWindow = new KBMSettings(m_ipc_client, this);
         KBMWindow->exec();
     });
 
-    connect(ui->ControllerButton, &QPushButton::clicked, this, [this]() {
+    connect(controllerButton, &QPushButton::clicked, this, [this]() {
         ControlSettings* RemapWindow = new ControlSettings(m_ipc_client, this);
         RemapWindow->exec();
     });
 
-    connect(ui->ModFolderButton, &QPushButton::clicked, this, [this]() {
+    connect(modsFolderButton, &QPushButton::clicked, this, [this]() {
         if (!std::filesystem::exists(Common::ModPath)) {
             std::filesystem::create_directories(Common::ModPath);
         }
@@ -275,15 +333,15 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         QDesktopServices::openUrl(QUrl::fromLocalFile(ModFolder));
     });
 
-    connect(ui->OpenFoldersButton, &QPushButton::pressed, this, &BBLauncher::OpenFolders);
+    connect(openFolderButton, &QPushButton::pressed, this, &BBLauncher::OpenFolders);
 
-    connect(ui->HelpButton, &QPushButton::clicked, this, [this]() {
+    connect(helpButton, &QPushButton::clicked, this, [this]() {
         QString link =
             "https://docs.google.com/document/d/1UKYSAMz3y9PH3AOCow5KyIIlRHZ0wbjcAxHvjZwtjk0";
         QDesktopServices::openUrl(link);
     });
 
-    connect(ui->HotkeyButton, &QPushButton::clicked, this, [this]() {
+    connect(hotkeysButton, &QPushButton::clicked, this, [this]() {
         Hotkeys* HKWindow = new Hotkeys(m_ipc_client, this);
         HKWindow->exec();
     });
@@ -412,18 +470,88 @@ void BBLauncher::StartBackupSave() {
     }
 }
 
-void BBLauncher::UpdateSettingsList() {
-    using namespace Config;
-    QString SoundhackSetting = "60 FPS sound fix: " + QVariant(SoundFixEnabled).toString();
-    QString BackupEnableSetting =
-        "Back up saves enabled: " + QVariant(BackupSaveEnabled).toString();
+void BBLauncher::UpdatePatchesList() {
+    ui->PatchesList->clear();
 
-    QString AutoUpdateBblauncherSetting =
-        "Auto-update BBLauncher: " + QVariant(AutoUpdateEnabled).toString();
-    QString AutoUpdateShadSetting =
-        "Auto-update shadPS4 pre-release: " + QVariant(AutoUpdateShadEnabled).toString();
-    QString AutoUpdateVersionsSetting =
-        "Auto-update shadPS4 version list: " + QVariant(AutoUpdateVersionsEnabled).toString();
+    QString patchesDir;
+    Common::PathToQString(patchesDir, Common::GetShadUserDir() / "patches");
+    QDir dir(patchesDir);
+
+    QStringList patchFiles;
+    QStringList folders = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+
+    foreach (const QString& folder, folders) {
+        QString folderPath = dir.filePath(folder);
+        QDir subDir(folderPath);
+
+        QString filesJsonPath = subDir.filePath("files.json");
+        QFile file(filesJsonPath);
+
+        if (file.open(QIODevice::ReadOnly)) {
+            QByteArray fileData = file.readAll();
+            file.close();
+
+            QJsonDocument jsonDoc(QJsonDocument::fromJson(fileData));
+            QJsonObject jsonObj = jsonDoc.object();
+
+            for (auto it = jsonObj.constBegin(); it != jsonObj.constEnd(); ++it) {
+                QString fileName = it.key();
+                QJsonArray serials = it.value().toArray();
+
+                if (serials.contains(QJsonValue(QString::fromStdString(Common::game_serial)))) {
+                    patchFiles.append(patchesDir + "/" + folder + "/" + fileName);
+                }
+            }
+        }
+    }
+
+    foreach (const QString& patchFile, patchFiles) {
+        QFile xmlFile(patchFile);
+
+        if (!xmlFile.open(QIODevice::ReadOnly)) {
+            QMessageBox::warning(
+                this, tr("ERROR"),
+                QString(tr("Failed to open file:") + "\n%1").arg(xmlFile.fileName()));
+            continue;
+        }
+
+        QXmlStreamReader xmlReader(&xmlFile);
+        while (!xmlReader.atEnd() && !xmlReader.hasError()) {
+            xmlReader.readNext();
+            QString patchName = "";
+            bool isEnabled = false;
+
+            if (xmlReader.tokenType() == QXmlStreamReader::StartElement) {
+                if (xmlReader.name() == QStringLiteral("Metadata")) {
+                    QXmlStreamAttributes attributes = xmlReader.attributes();
+                    patchName = attributes.value("Name").toString();
+                    isEnabled = attributes.value("isEnabled").toString() == QStringLiteral("true");
+                }
+            }
+
+            if (isEnabled) {
+                ui->PatchesList->addItem("- " + patchName);
+            }
+        }
+
+        xmlFile.close();
+    }
+}
+
+void BBLauncher::LogSettings() {
+    using namespace Config;
+    auto status = [](bool state) -> QString {
+        return state ? "<span style=\"color:green;\">Enabled</span>"
+                     : "<span style=\"color:red;\">Disabled</span>";
+    };
+
+    logDisplay->appendGrayText("");
+    logDisplay->appendGrayText("60 FPS sound fix: " + status(SoundFixEnabled));
+    logDisplay->appendGrayText("Automatic save backup: " + status(BackupSaveEnabled));
+    logDisplay->appendGrayText("shadPS4 pre-release auto-update: " + status(AutoUpdateShadEnabled));
+    logDisplay->appendGrayText("shadPS4 version list auto-update: " +
+                               status(AutoUpdateVersionsEnabled));
+    logDisplay->appendGrayText("BBLauncher auto-update: " + status(AutoUpdateEnabled));
 
     QString Location;
     if (UserFolderLocation == FolderLocation::CustomFolder) {
@@ -434,26 +562,13 @@ void BBLauncher::UpdateSettingsList() {
         Location = UserFolderLocation == FolderLocation::LauncherFolder ? "Launcher Folder"
                                                                         : "Build Folder";
     }
-    QString PortableFolderSetting = "Portable Folder Location: " + Location;
 
-    QString BackupIntSetting;
-    QString BackupNumSetting;
-
-    if (BackupSaveEnabled) {
-        BackupIntSetting = "Backup interval: " + QString::number(BackupInterval);
-        BackupNumSetting = "Backup copies: " + QString::number(BackupNumber);
+    if (Common::GetShadUserDir().filename().string() != "user") {
+        logDisplay->appendGrayText("Portable Folder Location: No portable folder");
     } else {
-        BackupIntSetting = "Backup interval: disabled";
-        BackupNumSetting = "Backup copies: disabled";
+        logDisplay->appendGrayText("Portable Folder Location: " + Location);
     }
-
-    QStringList SettingStrings = {SoundhackSetting,      PortableFolderSetting,
-                                  BackupEnableSetting,   BackupIntSetting,
-                                  BackupNumSetting,      AutoUpdateBblauncherSetting,
-                                  AutoUpdateShadSetting, AutoUpdateVersionsSetting};
-
-    ui->SettingList->clear();
-    ui->SettingList->addItems(SettingStrings);
+    logDisplay->appendHtml("");
 }
 
 void BBLauncher::UpdateModList() {
@@ -471,7 +586,7 @@ void BBLauncher::UpdateModList() {
     for (const auto& FolderEntry : std::filesystem::directory_iterator(ModActivePath)) {
         if (FolderEntry.is_directory()) {
             std::string FolderName = Common::PathToU8(FolderEntry.path().filename());
-            ActiveModStringList.append(QString::fromStdString(FolderName));
+            ActiveModStringList.append("- " + QString::fromStdString(FolderName));
         }
     }
 
@@ -504,40 +619,50 @@ bool BBLauncher::CheckBBInstall() {
 }
 
 void BBLauncher::UpdateIcons() {
-    ui->ControllerButton->setIcon(QIcon(":controller_icon.png"));
-    ui->ControllerButton->setIconSize(QSize(48, 48));
-    ui->KBMButton->setIcon(QIcon(":keyboard.png"));
-    ui->KBMButton->setIconSize(QSize(48, 48));
-    ui->ModFolderButton->setIcon(QIcon(":mod_folder.png"));
-    ui->ModFolderButton->setIconSize(QSize(48, 48));
-    ui->OpenFoldersButton->setIcon(QIcon(":open.png"));
-    ui->OpenFoldersButton->setIconSize(QSize(48, 48));
-    ui->HelpButton->setIcon(QIcon(":help.png"));
-    ui->HelpButton->setIconSize(QSize(48, 48));
-    ui->HotkeyButton->setIcon(QIcon(":hotkey.png"));
-    ui->HotkeyButton->setIconSize(QSize(48, 48));
+    QList<QLabel*> allLabels = ui->IconButtonsLayout->findChildren<QLabel*>();
+    allLabels.append(ui->controlsLayout1->findChildren<QLabel*>());
+    allLabels.append(ui->controlsLayout2->findChildren<QLabel*>());
 
-    ui->LaunchButton->setIcon(QIcon(":play_icon.png"));
-    ui->LaunchButton->setIconSize(QSize(36, 36));
-    ui->StopButton->setIcon(QIcon(":stop_icon.png"));
-    ui->StopButton->setIconSize(QSize(36, 36));
-    ui->FullscreenButton->setIcon(QIcon(":fullscreen_icon.png"));
-    ui->FullscreenButton->setIconSize(QSize(36, 36));
-    ui->RestartButton->setIcon(QIcon(":restart_game_icon.png"));
-    ui->RestartButton->setIconSize(QSize(36, 36));
+    // 2. Loop through each label and apply the text color stylesheet
+    for (QLabel* label : allLabels) {
+        QPalette pal = label->palette();
+        label->setStyleSheet(QString("color: %1;").arg(pal.color(QPalette::WindowText).name()));
+    }
+
+    controllerButton->setIcon(QIcon(":controller_icon.png"));
+    controllerButton->setIconSize(QSize(48, 48));
+    kbmButton->setIcon(QIcon(":keyboard.png"));
+    kbmButton->setIconSize(QSize(48, 48));
+    modsFolderButton->setIcon(QIcon(":mod_folder.png"));
+    modsFolderButton->setIconSize(QSize(48, 48));
+    openFolderButton->setIcon(QIcon(":open.png"));
+    openFolderButton->setIconSize(QSize(48, 48));
+    helpButton->setIcon(QIcon(":help.png"));
+    helpButton->setIconSize(QSize(48, 48));
+    hotkeysButton->setIcon(QIcon(":hotkey.png"));
+    hotkeysButton->setIconSize(QSize(48, 48));
+
+    launchButton->setIcon(QIcon(":play_icon.png"));
+    launchButton->setIconSize(QSize(36, 36));
+    stopButton->setIcon(QIcon(":stop_icon.png"));
+    stopButton->setIconSize(QSize(36, 36));
+    fullscreenButton->setIcon(QIcon(":fullscreen_icon.png"));
+    fullscreenButton->setIconSize(QSize(36, 36));
+    restartButton->setIcon(QIcon(":restart_game_icon.png"));
+    restartButton->setIconSize(QSize(36, 36));
 
     if (Config::theme == "Dark") {
-        ui->ControllerButton->setIcon(RecolorIcon(ui->ControllerButton->icon(), false));
-        ui->KBMButton->setIcon(RecolorIcon(ui->KBMButton->icon(), false));
-        ui->ModFolderButton->setIcon(RecolorIcon(ui->ModFolderButton->icon(), false));
-        ui->OpenFoldersButton->setIcon(RecolorIcon(ui->OpenFoldersButton->icon(), false));
-        ui->HelpButton->setIcon(RecolorIcon(ui->HelpButton->icon(), false));
-        ui->HotkeyButton->setIcon(RecolorIcon(ui->HotkeyButton->icon(), false));
+        controllerButton->setIcon(RecolorIcon(controllerButton->icon(), false));
+        kbmButton->setIcon(RecolorIcon(kbmButton->icon(), false));
+        modsFolderButton->setIcon(RecolorIcon(modsFolderButton->icon(), false));
+        openFolderButton->setIcon(RecolorIcon(openFolderButton->icon(), false));
+        helpButton->setIcon(RecolorIcon(helpButton->icon(), false));
+        hotkeysButton->setIcon(RecolorIcon(hotkeysButton->icon(), false));
 
-        ui->LaunchButton->setIcon(RecolorIcon(ui->LaunchButton->icon(), false));
-        ui->StopButton->setIcon(RecolorIcon(ui->StopButton->icon(), false));
-        ui->RestartButton->setIcon(RecolorIcon(ui->RestartButton->icon(), false));
-        ui->FullscreenButton->setIcon(RecolorIcon(ui->FullscreenButton->icon(), false));
+        launchButton->setIcon(RecolorIcon(launchButton->icon(), false));
+        stopButton->setIcon(RecolorIcon(stopButton->icon(), false));
+        restartButton->setIcon(RecolorIcon(restartButton->icon(), false));
+        fullscreenButton->setIcon(RecolorIcon(fullscreenButton->icon(), false));
     }
 }
 

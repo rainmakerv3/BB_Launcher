@@ -392,3 +392,8 @@ void QAnsiTextEdit::insertAnsiText (const QString& text) {
     setCurrentCharFormat(saveFormat);
 }
 
+void QAnsiTextEdit::appendGrayText (const QString& text) {
+    QString msg = "<span style='color: gray;'>" + text + "</span>";
+    appendHtml(msg);
+}
+

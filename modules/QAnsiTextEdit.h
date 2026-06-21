@@ -51,6 +51,7 @@ class QAnsiTextEdit : public QPlainTextEdit {
         void            setAnsiText             (const QString& text);
         void            appendAnsiText          (const QString& text);
         void            insertAnsiText          (const QString& text);
+        void            appendGrayText          (const QString& text);
 
     private:
         QAnsiTextEditEscapeCodeHandler      _escapeCodeHandler;

@@ -6,155 +6,148 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>591</width>
+    <width>689</width>
     <height>690</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Launcher Settings</string>
   </property>
-  <widget class="QWidget" name="horizontalLayoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>10</y>
-     <width>565</width>
-     <height>670</height>
-    </rect>
-   </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout_10"/>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QGroupBox" name="groupBox">
-        <property name="title">
-         <string>BBLauncher Settings</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_6">
-         <item>
-          <widget class="QGroupBox" name="groupBox_5">
-           <property name="title">
-            <string>Updates</string>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_11">
-            <item>
-             <widget class="QCheckBox" name="UpdateCheckBox">
-              <property name="text">
-               <string>Check BBLauncher updates at startup</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="UpdateButton">
-              <property name="text">
-               <string>Check BBLauncher updates</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="shortcutButton">
-           <property name="text">
-            <string>Create Direct Shortcut</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="ThemeGroupBox">
-        <property name="title">
-         <string>Themes</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <item>
-          <widget class="QRadioButton" name="DarkThemeRadioButton">
-           <property name="text">
-            <string>Dark Theme</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="LightThemeRadioButton">
-           <property name="text">
-            <string>Light Theme</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="groupBox_4">
-        <property name="title">
-         <string>Hacks</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_4">
-         <item>
-          <widget class="QCheckBox" name="SoundFixCheckBox">
-           <property name="text">
-            <string>60 FPS Sound Fix</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="BackupSaveGroupBox">
-        <property name="title">
-         <string>Backup Saves</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2">
-         <item>
-          <widget class="QCheckBox" name="BackupSaveCheckBox">
-           <property name="text">
-            <string>Generate backup saves</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="BackupIntervalLabel">
-           <property name="text">
-            <string>Interval (minutes)</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="BackupIntervalComboBox"/>
-         </item>
-         <item>
-          <widget class="QLabel" name="BackupNumberLabel">
-           <property name="text">
-            <string>Number of backups</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="BackupNumberComboBox"/>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QGroupBox" name="ThemeGroupBox_2">
-        <property name="title">
-         <string>Set Portable (&quot;user&quot;) Folder Location</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_8">
-         <item>
-          <widget class="QRadioButton" name="PortableBuildRadioButton">
-           <property name="text">
-            <string>In selected build folder (default)</string>
-           </property>
-          </widget>
-         </item>
+  <layout class="QVBoxLayout" name="verticalLayout_9">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_10"/>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>BBLauncher Settings</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_6">
+          <item>
+           <widget class="QGroupBox" name="groupBox_5">
+            <property name="title">
+             <string>Updates</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_11">
+             <item>
+              <widget class="QCheckBox" name="UpdateCheckBox">
+               <property name="text">
+                <string>Check BBLauncher updates at startup</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="UpdateButton">
+               <property name="text">
+                <string>Check BBLauncher updates</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="shortcutButton">
+            <property name="text">
+             <string>Create Direct Shortcut</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="ThemeGroupBox">
+         <property name="title">
+          <string>Themes</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QRadioButton" name="DarkThemeRadioButton">
+            <property name="text">
+             <string>Dark Theme</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="LightThemeRadioButton">
+            <property name="text">
+             <string>Light Theme</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_4">
+         <property name="title">
+          <string>Hacks</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QCheckBox" name="SoundFixCheckBox">
+            <property name="text">
+             <string>60 FPS Sound Fix</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="BackupSaveGroupBox">
+         <property name="title">
+          <string>Backup Saves</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QCheckBox" name="BackupSaveCheckBox">
+            <property name="text">
+             <string>Generate backup saves</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="BackupIntervalLabel">
+            <property name="text">
+             <string>Interval (minutes)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="BackupIntervalComboBox"/>
+          </item>
+          <item>
+           <widget class="QLabel" name="BackupNumberLabel">
+            <property name="text">
+             <string>Number of backups</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="BackupNumberComboBox"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="ThemeGroupBox_2">
+         <property name="title">
+          <string>Set Portable (&quot;user&quot;) Folder Location</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_8">
+          <item>
+           <widget class="QRadioButton" name="PortableBuildRadioButton">
+            <property name="text">
+             <string>In selected build folder (default)</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QRadioButton" name="PortableLauncherRadioButton">
             <property name="text">
@@ -194,28 +187,28 @@
            </layout>
           </item>
          </layout>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QVBoxLayout" name="verticalLayout_7">
-      <item>
-       <widget class="QGroupBox" name="LauncherSetDescGroupBox">
-        <property name="title">
-         <string>Setting Description</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_5">
-         <item>
-          <widget class="QTextBrowser" name="LauncherSetDescText">
-           <property name="autoFormatting">
-            <set>QTextEdit::AutoFormattingFlag::AutoNone</set>
-           </property>
-           <property name="lineWrapColumnOrWidth">
-            <number>0</number>
-           </property>
-           <property name="html">
-            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
+        <widget class="QGroupBox" name="LauncherSetDescGroupBox">
+         <property name="title">
+          <string>Setting Description</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <item>
+           <widget class="QTextBrowser" name="LauncherSetDescText">
+            <property name="autoFormatting">
+             <set>QTextEdit::AutoFormattingFlag::AutoNone</set>
+            </property>
+            <property name="lineWrapColumnOrWidth">
+             <number>0</number>
+            </property>
+            <property name="html">
+             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;meta charset=&quot;utf-8&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 hr { height: 1px; border-width: 0; }
@@ -236,35 +229,36 @@ li.checked::marker { content: &quot;\2612&quot;; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Build folder&lt;/span&gt; (default): the &amp;quot;user&amp;quot; folder is expected inside the same folder as the shadPS4 executable. If not found, falls back to %FALLBACK%.&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Launcher folder&lt;/span&gt;: the &amp;quot;user&amp;quot; folder is created/read inside the BBLauncher folder. If not found, falls back to %FALLBACK%.&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Custom folder&lt;/span&gt;: choose any folder on disk. The folder is used directly as the user folder (must contain config.json, cache/, patches/, etc.). No fallback to roaming.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="acceptRichText">
-            <bool>false</bool>
-           </property>
-           <property name="textInteractionFlags">
-            <set>Qt::TextInteractionFlag::NoTextInteraction</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QDialogButtonBox" name="buttonBox">
-           <property name="orientation">
-            <enum>Qt::Orientation::Horizontal</enum>
-           </property>
-           <property name="standardButtons">
-            <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Close|QDialogButtonBox::StandardButton::Save</set>
-           </property>
-           <property name="centerButtons">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
-  </widget>
+            </property>
+            <property name="acceptRichText">
+             <bool>false</bool>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::TextInteractionFlag::NoTextInteraction</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDialogButtonBox" name="buttonBox">
+            <property name="orientation">
+             <enum>Qt::Orientation::Horizontal</enum>
+            </property>
+            <property name="standardButtons">
+             <set>QDialogButtonBox::StandardButton::Apply|QDialogButtonBox::StandardButton::Close|QDialogButtonBox::StandardButton::Save</set>
+            </property>
+            <property name="centerButtons">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections>

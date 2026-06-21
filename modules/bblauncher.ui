@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1044</width>
-    <height>729</height>
+    <height>735</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -190,7 +190,7 @@
       <widget class="QListWidget" name="ModList">
        <property name="font">
         <font>
-         <pointsize>11</pointsize>
+         <pointsize>9</pointsize>
         </font>
        </property>
        <property name="editTriggers">
@@ -215,18 +215,18 @@
         </font>
        </property>
        <property name="text">
-        <string>Current Settings:</string>
+        <string>Current Patches:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QListWidget" name="SettingList">
+      <widget class="QListWidget" name="PatchesList">
        <property name="enabled">
         <bool>true</bool>
        </property>
        <property name="font">
         <font>
-         <pointsize>11</pointsize>
+         <pointsize>9</pointsize>
         </font>
        </property>
        <property name="editTriggers">
@@ -241,35 +241,20 @@
        <property name="selectionBehavior">
         <enum>QAbstractItemView::SelectionBehavior::SelectItems</enum>
        </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
       </widget>
      </item>
     </layout>
-   </widget>
-   <widget class="QLabel" name="label_3">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>350</y>
-      <width>81</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <bold>true</bold>
-     </font>
-    </property>
-    <property name="text">
-     <string>Log Window</string>
-    </property>
    </widget>
    <widget class="QWidget" name="verticalLayoutWidget_3">
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>370</y>
+      <y>340</y>
       <width>711</width>
-      <height>281</height>
+      <height>311</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="logLayout"/>
@@ -278,71 +263,17 @@
     <property name="geometry">
      <rect>
       <x>550</x>
-      <y>50</y>
+      <y>40</y>
       <width>171</width>
-      <height>91</height>
+      <height>121</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_4">
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QPushButton" name="LaunchButton">
-         <property name="font">
-          <font>
-           <pointsize>16</pointsize>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="StopButton">
-         <property name="font">
-          <font>
-           <pointsize>16</pointsize>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <layout class="QHBoxLayout" name="controlsLayout1"/>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_10">
-       <item>
-        <widget class="QPushButton" name="FullscreenButton">
-         <property name="font">
-          <font>
-           <pointsize>16</pointsize>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="RestartButton">
-         <property name="font">
-          <font>
-           <pointsize>16</pointsize>
-           <bold>true</bold>
-          </font>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <layout class="QHBoxLayout" name="controlsLayout2"/>
      </item>
     </layout>
    </widget>
@@ -436,62 +367,7 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="IconButtonsLayout">
-       <item>
-        <widget class="QPushButton" name="ControllerButton">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>48</width>
-           <height>48</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="KBMButton">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>48</width>
-           <height>48</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="ModFolderButton">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="OpenFoldersButton">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="HelpButton">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="HotkeyButton">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <layout class="QHBoxLayout" name="IconButtonsLayout"/>
      </item>
     </layout>
    </widget>
