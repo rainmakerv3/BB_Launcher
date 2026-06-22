@@ -103,11 +103,6 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
         RefreshLists();
     });
 
-    // promptplus messes with this on Linux
-#ifndef Q_OS_WIN
-    ui->mergeButton->setVisible(false);
-#endif
-
     ModInstallPath = Common::installPath;
     ModInstallPath += "-mods";
     ModBackupPath = ModInstallPath.parent_path() / (Common::game_serial + "-modsBACKUP");

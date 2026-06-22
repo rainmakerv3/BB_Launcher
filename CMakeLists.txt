@@ -167,6 +167,18 @@ set(PROJECT_SOURCES
     modules/ChaliceEditor.h
     modules/ChaliceEditor.ui
     modules/ChaliceInfo.h
+    modules/BBFormats/BBFormats.cpp
+    modules/BBFormats/BBFormats.h
+    modules/BBFormats/Bnd.cpp
+    modules/BBFormats/Bnd.h
+    modules/BBFormats/ConflictHandler.cpp
+    modules/BBFormats/ConflictHandler.h
+    modules/BBFormats/Dcx.cpp
+    modules/BBFormats/Dcx.h
+    modules/BBFormats/Gparam.cpp
+    modules/BBFormats/Gparam.h
+    modules/BBFormats/Tpf.cpp
+    modules/BBFormats/Tpf.h
     modules/ipc/ipc_client.cpp
     modules/ipc/ipc_client.h
     modules/PkgDeps/crypto.cpp
@@ -253,6 +265,7 @@ if (WIN32)
 endif()
 
 target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(BB_Launcher PRIVATE externals/microz/miniz)
 
 target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network Qt6::Quick Qt6::QuickWidgets Qt6::WebView Qt6::WebSockets Qt6::Concurrent)
 target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 nlohmann_json::nlohmann_json pugixml::pugixml SDL3::SDL3 Vulkan::Headers volk_headers)

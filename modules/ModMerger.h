@@ -1,9 +1,12 @@
 // SPDX-FileCopyrightText: Copyright 2026 BBLauncher Project
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#pragma once
+
 #include <QDialog>
+#include <QFuture>
 #include <QListWidget>
-#include <pugixml.hpp>
+#include <QTextBrowser>
 
 #include "modules/Common.h"
 
@@ -15,52 +18,49 @@ class ModMerger : public QDialog {
     Q_OBJECT
 
 signals:
-    void WitchyBndFinished();
+    void CleanUpRequested(bool aborted);
 
 public:
     explicit ModMerger(QWidget* parent = nullptr);
     ~ModMerger();
 
-private:
-    enum class ModPriority { NotSet, Mod1, Mod2 };
-    enum class Format { Yellow, BoldRed, BoldGreen };
+    enum class ModPriority : int { NotSet, Mod1, Mod2 };
+    enum class Format { Default, Yellow, BoldRed, BoldGreen };
 
+    std::string Mod1Name();
+    std::string Mod2Name();
+    ModPriority GetModPriority();
+    void SetModPriority();
+
+    QString FormatTextForBrowser(QString input, Format format);
+    void Log(QString msg, Format = Format::Default);
+    void Log(QString msg, int format);
+
+private:
     void AttemptMerge();
     void GetConflictedFiles();
-    void ExamineConflictedFiles();
+
     void CombineModFiles();
-    void SetModPriority();
-    void SetWitchyPath();
+    bool GetMergeFiles(std::filesystem::path mod1Base, std::filesystem::path mod2Base);
+    std::string GetFileType(const std::vector<char>& filedata);
+    bool ChooseBaseFile(std::filesystem::path targetFile, std::filesystem::path mod1File,
+                        std::filesystem::path mod2File);
 
-    void HandleConflict(std::filesystem::path targetFile, std::filesystem::path file1,
-                        std::filesystem::path file2);
-    bool UnextractrableFileProcessed(std::filesystem::path targetFile,
-                                     std::filesystem::path mod1File,
-                                     std::filesystem::path mod2File);
-
-    void ProcessParamConflicts(pugi::xml_document& baseDoc, pugi::xml_document& mod1Doc,
-                               pugi::xml_document& mod2Doc);
-    void ProcessFmgConflicts(pugi::xml_document& baseDoc, pugi::xml_document& mod1Doc,
-                             pugi::xml_document& mod2Doc);
-
-    void ExtractFile(std::filesystem::path file);
-    void RepackItem(std::filesystem::path itemPath);
-
+    bool IsFolderSupported(std::filesystem::path filePath);
     std::filesystem::path StandardizeBasePath(std::filesystem::path basePath);
     std::filesystem::path GetUpdatedFile(std::filesystem::path relative_path);
-    bool AreFilesIdentical(const std::filesystem::path& path1, const std::filesystem::path& path2);
+
     void EnforceTwoItemLimit();
     void RefreshModList();
-    QString FormatTextForBrowser(QString input, Format format);
 
     Ui::ModMerger* ui;
     QList<QListWidgetItem*> selectedHistory;
     std::vector<std::string> conflictedFiles;
+    QFuture<void> activeMerge;
 
-    std::string mod1Name;
-    std::string mod2Name;
+    std::string mod1Name = "";
+    std::string mod2Name = "";
     ModPriority currentPriority = ModPriority::NotSet;
-    bool abortAttempt = false;
 
     const std::filesystem::path modPath = Common::GetBBLFilesPath() / "Mods";
     const std::filesystem::path baseTempPath =
@@ -69,7 +69,6 @@ private:
         Common::GetBBLFilesPath() / "Temp" / "ModMerge" / "1";
     const std::filesystem::path mod2TempPath =
         Common::GetBBLFilesPath() / "Temp" / "ModMerge" / "2";
-    QString witchyPath;
 
     const std::vector<std::string> BBFolders = {
         "dvdroot_ps4", "action", "adhoc", "chr",    "event", "facegen", "map",      "menu",
