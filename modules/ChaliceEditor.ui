@@ -388,6 +388,18 @@
                </widget>
               </item>
               <item>
+               <widget class="QLabel" name="label">
+                <property name="font">
+                 <font>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Select a dungeon from here - click a button above or search to generate list</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QListWidget" name="dungeonsList">
                 <property name="alternatingRowColors">
                  <bool>true</bool>
