@@ -844,7 +844,10 @@ void ModDownloader::DownloadFileRegular(int fileId, int ModId, QString modName,
                          QByteArray utf8ByteArray = url.toUtf8();
                          QString urlUtf8 = QString::fromUtf8(utf8ByteArray);
 
-                         if (urlUtf8.contains(modFilename)) {
+                         if (urlUtf8.contains(modFilename) ||
+                             (urlUtf8.contains("https://supporter-files.nexus-cdn.com/") &&
+                              urlUtf8.contains("expires") && urlUtf8.contains("md5") &&
+                              urlUtf8.contains("user_id"))) {
                              downloadDialog->close();
                              downloadUrl = url;
                          }
@@ -871,6 +874,7 @@ void ModDownloader::DownloadFileRegular(int fileId, int ModId, QString modName,
     downloadDialog = new QDialog();
     downloadDialog->setModal(true);
     downloadDialog->setWindowTitle("Download Selected Mod");
+
     QMessageBox::information(
         this, "Instructions",
         "Click the Slow Download / Standard Download button to proceed with the download.");
@@ -886,7 +890,7 @@ void ModDownloader::DownloadFileRegular(int fileId, int ModId, QString modName,
     QObject* webViewObject = rootObject->findChild<QObject*>("currentWebView");
     webViewObject->setProperty("url", fileUrl);
 
-    // Check url every .05 second (lol)
+    // Check url every .5 second (lol)
     QTimer* timer = new QTimer(this);
     QObject::connect(timer, &QTimer::timeout, this,
                      [this, modFilename, webViewObject, fileUrl, &redirectUrl]() {
@@ -894,7 +898,10 @@ void ModDownloader::DownloadFileRegular(int fileId, int ModId, QString modName,
                          QByteArray utf8ByteArray = url.toUtf8();
                          QString urlUtf8 = QString::fromUtf8(utf8ByteArray);
 
-                         if (urlUtf8.contains(modFilename)) {
+                         if (urlUtf8.contains(modFilename) ||
+                             (urlUtf8.contains("https://supporter-files.nexus-cdn.com/") &&
+                              urlUtf8.contains("expires") && urlUtf8.contains("md5") &&
+                              urlUtf8.contains("user_id"))) {
                              redirectUrl = url;
                              downloadDialog->close();
                          }
