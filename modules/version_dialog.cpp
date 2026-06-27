@@ -896,13 +896,15 @@ void VersionDialog::showPreReleaseUpdateDialog(const QString& localHash, const Q
 
     QHBoxLayout* headerLayout = new QHBoxLayout();
     QLabel* imageLabel = new QLabel(&dialog);
-    QPixmap pixmap(":/images/shadps4.png");
+    QPixmap pixmap(":BBIcon.png");
     imageLabel->setPixmap(pixmap);
     imageLabel->setScaledContents(true);
     imageLabel->setFixedSize(50, 50);
 
     QLabel* titleLabel = new QLabel("<h2>" + tr("Update Available (Emulator)") + "</h2>", &dialog);
+    titleLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
+    headerLayout->addStretch(1);
     headerLayout->addWidget(imageLabel);
     headerLayout->addWidget(titleLabel);
     headerLayout->addStretch(1);
@@ -916,10 +918,13 @@ void VersionDialog::showPreReleaseUpdateDialog(const QString& localHash, const Q
                             .arg(tr("Current Version"), localHash.left(7), tr("Latest Version"),
                                  latestHash.left(7));
     QLabel* infoLabel = new QLabel(labelText, &dialog);
+    infoLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     mainLayout->addWidget(infoLabel);
 
     QHBoxLayout* btnLayout = new QHBoxLayout();
     QLabel* questionLabel = new QLabel(tr("Do you want to update?"), &dialog);
+    questionLabel->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+
     QPushButton* btnUpdate = new QPushButton(tr("Update"), &dialog);
     QPushButton* btnCancel = new QPushButton(tr("No"), &dialog);
 
@@ -933,8 +938,7 @@ void VersionDialog::showPreReleaseUpdateDialog(const QString& localHash, const Q
     QTextBrowser* changelogView = new QTextBrowser(&dialog);
     changelogView->setReadOnly(true);
     changelogView->setVisible(false);
-    changelogView->setFixedWidth(500);
-    changelogView->setFixedHeight(200);
+    changelogView->setMinimumWidth(500);
     mainLayout->addWidget(changelogView);
 
     QPushButton* toggleButton = new QPushButton(tr("Show Changelog"), &dialog);

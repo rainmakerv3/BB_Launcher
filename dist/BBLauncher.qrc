@@ -20,5 +20,6 @@
         <file>web.qml</file>
 	<file>open.png</file>
         <file>help.png</file>
+        <file>BBIcon.png</file>
     </qresource>
 </RCC>
