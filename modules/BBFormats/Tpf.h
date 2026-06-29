@@ -180,8 +180,9 @@ public:
     };
 
     bool ReadTpf(std::vector<char> data);
-    bool RepackTpf(std::vector<char>& data);
+    bool RepackTpf(std::vector<char>& outputData);
     bool HandleConflict(const std::vector<char>& mod1Data, const std::vector<char>& mod2Data);
+
     std::optional<Tpf::Texture> GetSameTexture(const std::string& name,
                                                const std::vector<Tpf::Texture>);
 

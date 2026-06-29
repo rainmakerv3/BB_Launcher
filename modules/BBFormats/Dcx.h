@@ -21,19 +21,18 @@ private:
         int unk38;
     };
 
+    uint32_t Adler32(const std::vector<char>& data);
+
     std::filesystem::path origPath;
     std::filesystem::path extractedPath;
+    CompressionInfo compInfo;
 
 public:
-    explicit Dcx(std::filesystem::path file, std::vector<char>& output, ModMerger* parent);
+    explicit Dcx(ModMerger* parent);
     ~Dcx() override;
 
     bool UnpackDcx(std::filesystem::path file, std::vector<char>& output);
     bool RepackDcx(std::vector<char> input);
-
-    uint32_t Adler32(const std::vector<char>& data);
-
-    CompressionInfo compInfo;
 };
 
 } // namespace FileHelper

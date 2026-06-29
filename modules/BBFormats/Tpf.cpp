@@ -17,7 +17,7 @@ Tpf::Tpf(std::vector<char> data, ModMerger* parent) : BBFormat(parent) {
 
 bool Tpf::ReadTpf(std::vector<char> data) {
     if (data.empty()) {
-        sendLog("Error: empty tpf input data");
+        sendLog("ERROR: empty tpf input data", LogFormat::BoldRed);
         return false;
     }
 
@@ -31,7 +31,7 @@ bool Tpf::ReadTpf(std::vector<char> data) {
     debugLog("MAGIC: " + strBuffer);
 
     if (!strBuffer.contains("TPF")) {
-        sendLog("Aborting - invalid param header: " + strBuffer);
+        sendLog("ERROR invalid param header: " + strBuffer, LogFormat::BoldRed);
         return false;
     }
 
@@ -43,7 +43,7 @@ bool Tpf::ReadTpf(std::vector<char> data) {
 
     GetByte(intBuffer);
     if (intBuffer != 4) {
-        sendLog("Error: tpf data not for PS4 platform");
+        sendLog("ERROR: tpf data not for PS4 platform", LogFormat::BoldRed);
         return false;
     }
 
@@ -109,7 +109,7 @@ bool Tpf::ReadTpf(std::vector<char> data) {
         tex.header.dxgiFormat = static_cast<DxgiFormat>(intBuffer);
 
         if (hasFloatStruct != 0) {
-            sendLog("ERROR: encountered unexpected texture fstruct");
+            sendLog("ERROR: unexpected texture fstruct", LogFormat::BoldRed);
             // not sure if needed, but just in case
             GetInt32(tex.fstruct.unk00);
             debugLog("tex.fstruct.unk00: " + std::to_string(tex.fstruct.unk00));
@@ -117,7 +117,8 @@ bool Tpf::ReadTpf(std::vector<char> data) {
             int length;
             GetInt32(length);
             if (length < 0 || length % 4 != 0) {
-                sendLog("ERROR fstruct unexpected length: " + std::to_string(length));
+                sendLog("ERROR fstruct unexpected length: " + std::to_string(length),
+                        LogFormat::BoldRed);
                 return false;
             }
 
@@ -134,7 +135,8 @@ bool Tpf::ReadTpf(std::vector<char> data) {
 
         if (tex.Flags1 == 2 || tex.Flags1 == 3) {
             // decompress, should not be encountered in BB
-            sendLog("ERROR unexpected compression flag: " + std::to_string(tex.Flags1));
+            sendLog("ERROR unexpected compression flag: " + std::to_string(tex.Flags1),
+                    LogFormat::BoldRed);
             return false;
         }
 
@@ -145,7 +147,8 @@ bool Tpf::ReadTpf(std::vector<char> data) {
             StepOut(*istream);
         } else if (encoding == 2 || encoding == 3) {
             // should not encounter this in BB, GetShiftJIS(nameOffset);
-            sendLog("ERROR unexpected name encoding: " + std::to_string(encoding));
+            sendLog("ERROR unexpected name encoding: " + std::to_string(encoding),
+                    LogFormat::BoldRed);
             return false;
         }
 
@@ -156,7 +159,7 @@ bool Tpf::ReadTpf(std::vector<char> data) {
     return true;
 }
 
-bool Tpf::RepackTpf(std::vector<char>& data) {
+bool Tpf::RepackTpf(std::vector<char>& outputData) {
     ostream = std::make_unique<std::stringstream>(std::ios_base::out | std::ios_base::binary);
     std::string strBuffer;
 
@@ -197,7 +200,7 @@ bool Tpf::RepackTpf(std::vector<char>& data) {
         WriteInt32(static_cast<int>(textures[i].header.dxgiFormat));
 
         if (fstruct == 1) {
-            sendLog("ERROR: encountered unexpected texture fstruct");
+            sendLog("ERROR: encountered unexpected texture fstruct", LogFormat::BoldRed);
             // just in case
             WriteInt32(textures[i].fstruct.unk00);
             WriteInt32(static_cast<int>(textures[i].fstruct.values.size()));
@@ -216,7 +219,7 @@ bool Tpf::RepackTpf(std::vector<char>& data) {
         if (encoding == 1) {
             WriteUtf16String(textures[i].name);
         } else {
-            sendLog("ERROR: encountered unexpected nonUTF name encoding, aborting...");
+            sendLog("ERROR: encountered unexpected nonUTF name encoding", LogFormat::BoldRed);
             return false;
             // if (encoding == 0 || encoding == 2)
             //     bw.WriteShiftJIS(Name, true);
@@ -237,7 +240,7 @@ bool Tpf::RepackTpf(std::vector<char>& data) {
         FillReservedInt32(strBuffer, static_cast<uint>(ostream->tellp()));
 
         if (textures[i].Flags1 == 2 || textures[i].Flags1 == 3) {
-            sendLog("ERROR: Encountered unexpected compressed texture format, aborting...");
+            sendLog("ERROR: Encountered unexpected compressed texture format", LogFormat::BoldRed);
             return false;
         }
 
@@ -253,7 +256,7 @@ bool Tpf::RepackTpf(std::vector<char>& data) {
 
     auto& stringStream = static_cast<std::stringstream&>(*ostream);
     std::string str = stringStream.str();
-    data = std::vector<char>(str.begin(), str.end());
+    outputData = std::vector<char>(str.begin(), str.end());
 
     /* tests
     std::ofstream outFile("test.tpf", std::ios::out | std::ios::binary);

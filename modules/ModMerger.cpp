@@ -25,7 +25,22 @@ ModMerger::ModMerger(QWidget* parent) : QDialog(parent), ui(new Ui::ModMerger) {
     ui->modList->setSelectionMode(QAbstractItemView::ExtendedSelection);
     connect(ui->modList, &QListWidget::itemSelectionChanged, this, &ModMerger::EnforceTwoItemLimit);
 
+    // ensures thread safety
+    connect(this, &ModMerger::SetModPriority, this, &ModMerger::OpenPriorityDialog,
+            Qt::BlockingQueuedConnection);
+
     connect(ui->mergeButton, &QPushButton::pressed, this, [this]() {
+        QList<QListWidgetItem*> selectedList = ui->modList->selectedItems();
+        if (selectedList.size() != 2) {
+            QMessageBox::warning(this, "Error", "Two Mods Need to Selected");
+            return;
+        }
+
+        mod1Name = selectedList.at(0)->text().toStdString();
+        mod2Name = selectedList.at(1)->text().toStdString();
+        currentPriority = ModPriority::NotSet;
+        conflictedFiles.clear();
+
         ui->waitLabel->setVisible(true);
         ui->mergeStatusText->clear();
         ui->mergeButton->setEnabled(false);
@@ -45,23 +60,16 @@ ModMerger::ModMerger(QWidget* parent) : QDialog(parent), ui(new Ui::ModMerger) {
             Log("Mod merge complete", Format::BoldGreen);
         }
     });
+
+    connect(this, &ModMerger::LogRequested, this, [this](QString msg) {
+        ui->mergeStatusText->append(msg);
+        ui->mergeStatusText->moveCursor(QTextCursor::End);
+    });
 }
 
 void ModMerger::AttemptMerge() {
     if (fs::exists(Common::GetBBLFilesPath() / "Temp" / "ModMerge"))
         fs::remove_all(Common::GetBBLFilesPath() / "Temp" / "ModMerge");
-
-    currentPriority = ModPriority::NotSet;
-    QList<QListWidgetItem*> selectedList = ui->modList->selectedItems();
-    if (selectedList.size() != 2) {
-        QMessageBox::warning(this, "Error", "Two Mods Need to Selected");
-        return;
-    }
-
-    conflictedFiles.clear();
-
-    mod1Name = selectedList.at(0)->text().toStdString();
-    mod2Name = selectedList.at(1)->text().toStdString();
 
     GetConflictedFiles();
     if (conflictedFiles.empty()) {
@@ -74,6 +82,7 @@ void ModMerger::AttemptMerge() {
     fs::path mod2BasePath = StandardizeBasePath(Common::ModPath / mod2Name);
     if (!GetMergeFiles(mod1BasePath, mod2BasePath)) {
         emit CleanUpRequested(true);
+        return;
     }
 
     for (const auto& file : conflictedFiles) {
@@ -91,7 +100,13 @@ void ModMerger::AttemptMerge() {
                        [](unsigned char c) { return std::tolower(c); });
 
         std::vector<char> baseData;
-        Dcx origDcx(basefile, baseData, this);
+
+        Dcx origDcx(this);
+        if (!origDcx.UnpackDcx(basefile, baseData)) {
+            emit CleanUpRequested(true);
+            return;
+        }
+
         std::string filetype;
 
         // todo add other types (fmg bnd gameparam for now)
@@ -100,34 +115,52 @@ void ModMerger::AttemptMerge() {
                 canExtract = false;
             } else {
                 filetype = GetFileType(baseData);
-                canExtract = filetype.contains("TPF");
+                canExtract = filetype.contains("TPF") || filetype.contains("BND4");
             }
         }
 
         if (!canExtract) {
             if (!ChooseBaseFile(basefile, mod1file, mod2file)) {
                 emit CleanUpRequested(true);
+                return;
             }
             continue;
         }
 
         std::vector<char> mod1Data;
         std::vector<char> mod2Data;
-        Dcx mod1Dcx(mod1file, mod1Data, this);
-        Dcx mod2Dcx(mod2file, mod2Data, this);
+
+        Dcx mod1Dcx(this);
+        if (!mod1Dcx.UnpackDcx(mod1file, mod1Data)) {
+            emit CleanUpRequested(true);
+            return;
+        }
+
+        Dcx mod2Dcx(this);
+        if (!mod2Dcx.UnpackDcx(mod2file, mod2Data)) {
+            emit CleanUpRequested(true);
+            return;
+        }
 
         ConflictHandler handler = ConflictHandler(filetype, this);
         if (!filetype.contains("BND4")) {
             if (!handler.HandleItemConflict(baseData, mod1Data, mod2Data)) {
                 emit CleanUpRequested(true);
+                return;
+            } else {
+                origDcx.RepackDcx(baseData);
+            }
+        } else {
+            if (!handler.HandleBinderConflict(baseData, mod1Data, mod2Data)) {
+                emit CleanUpRequested(true);
             } else {
                 origDcx.RepackDcx(baseData);
             }
         }
-
-        CombineModFiles();
-        emit CleanUpRequested(false);
     }
+
+    CombineModFiles();
+    emit CleanUpRequested(false);
 }
 
 bool ModMerger::GetMergeFiles(std::filesystem::path mod1Base, std::filesystem::path mod2Base) {
@@ -185,7 +218,7 @@ bool ModMerger::GetMergeFiles(std::filesystem::path mod1Base, std::filesystem::p
             }
             fs::copy_file(mod2filePathOld, mod2filePath);
 
-            ui->mergeStatusText->append(QString("Copied %1 to temporary folder").arg(file));
+            Log(QString("Copied %1 to temporary folder").arg(file));
         }
     } catch (const std::exception& e) {
         QMessageBox::warning(this, "Filesystem Error",
@@ -214,8 +247,8 @@ bool ModMerger::IsFolderSupported(std::filesystem::path filePath) {
 
     if (std::find(unextractableFolders.begin(), unextractableFolders.end(), firstFolder) !=
         unextractableFolders.end()) {
-        ui->mergeStatusText->append("Unable to process hard conflicts in the folder: " +
-                                    QString::fromStdString(firstFolder));
+        Log("Unable to process hard conflicts in the folder: " +
+            QString::fromStdString(firstFolder));
         return false;
     }
 
@@ -272,8 +305,7 @@ void ModMerger::CombineModFiles() {
 
         fs::rename(baseTempPath, Common::ModPath / newName);
     } catch (std::exception& e) {
-        ui->mergeStatusText->append(FormatTextForBrowser(
-            "Moving mod files to mod folder failed: " + QString(e.what()), Format::BoldRed));
+        Log("Moving mod files to mod folder failed: " + QString(e.what()), Format::BoldRed);
     }
 }
 
@@ -298,8 +330,7 @@ void ModMerger::GetConflictedFiles() {
             for (int i = 0; i < fileListMod1.size(); i++) {
                 if (fileListMod1[i] == relative_path_string) {
                     conflictedFiles.push_back(relative_path_string);
-                    ui->mergeStatusText->append("Conflicted file found: " +
-                                                QString::fromStdString(relative_path_string));
+                    Log("Conflicted file found: " + QString::fromStdString(relative_path_string));
                 }
             }
         }
@@ -326,7 +357,7 @@ bool ModMerger::ChooseBaseFile(fs::path targetFile, fs::path mod1File, fs::path 
     if (currentPriority == ModPriority::NotSet) {
         ModMerger::SetModPriority();
         if (currentPriority == ModPriority::NotSet) {
-            ui->mergeStatusText->append(FormatTextForBrowser("Merge aborted", Format::BoldRed));
+            Log("Merge aborted", Format::BoldRed);
             return false;
         }
     }
@@ -336,23 +367,22 @@ bool ModMerger::ChooseBaseFile(fs::path targetFile, fs::path mod1File, fs::path 
             fs::copy_file(mod1File, targetFile, fs::copy_options::overwrite_existing);
             QString msg = QString("Unresolvable conflict, using file: %1 prioritized mod: %2")
                               .arg(Common::PathToU8(mod1File.filename()), mod1Name);
-            ui->mergeStatusText->append(FormatTextForBrowser(msg, Format::Yellow));
+            Log(msg, Format::Yellow);
         } else if (currentPriority == ModPriority::Mod2) {
             fs::copy_file(mod2File, targetFile, fs::copy_options::overwrite_existing);
             QString msg = QString("Unresolvable conflict, using file: %1 prioritized mod: %2")
                               .arg(Common::PathToU8(mod2File.filename()), mod2Name);
-            ui->mergeStatusText->append(FormatTextForBrowser(msg, Format::Yellow));
+            Log(msg, Format::Yellow);
         }
     } catch (const std::exception& e) {
-        ui->mergeStatusText->append(FormatTextForBrowser(
-            "Filesystem error copying files: " + QString(e.what()), Format::BoldRed));
+        Log("Filesystem error copying files: " + QString(e.what()), Format::BoldRed);
         return false;
     }
 
     return true;
 }
 
-void ModMerger::SetModPriority() {
+void ModMerger::OpenPriorityDialog() {
     QDialog* dialog = new QDialog(this);
     dialog->setWindowTitle("Handle data conflict");
     dialog->setMinimumWidth(500);
@@ -443,24 +473,25 @@ void ModMerger::EnforceTwoItemLimit() {
 }
 
 QString ModMerger::FormatTextForBrowser(QString input, Format format) {
+    QString style;
     if (format == Format::BoldRed) {
-        input = "<span style=\"color: red; font-weight: bold;\">" + input + "</span>";
+        style = "color: red; font-weight: bold;";
     } else if (format == Format::BoldGreen) {
-        input = "<span style=\"color: green; font-weight: bold;\">" + input + "</span>";
+        style = "color: green; font-weight: bold;";
     } else if (format == Format::Yellow) {
-        input = "<span style=\"color: yellow;\">" + input + "</span>";
+        style = "color: yellow;";
+    } else {
+        style = "color: white;";
     }
 
-    return input;
+    return QString("<span style=\"%1\">%2</span>").arg(style, input);
 }
 
 void ModMerger::Log(QString msg, Format format) {
-    if (format != Format::Default) {
-        msg = FormatTextForBrowser(msg, format);
-    }
+    msg = FormatTextForBrowser(msg, format);
 
-    ui->mergeStatusText->append(msg);
-    ui->mergeStatusText->moveCursor(QTextCursor::End);
+    // ensures thread-safe logging from merge thread
+    emit LogRequested(msg);
 }
 
 void ModMerger::Log(QString msg, int logFormat) {

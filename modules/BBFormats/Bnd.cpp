@@ -15,7 +15,7 @@ Bnd::Bnd(std::vector<char> data, ModMerger* parent) : BBFormat(parent) {
 
 bool Bnd::UnpackBnd(std::vector<char> data) {
     if (data.empty()) {
-        sendLog("Error: empty bnd input data");
+        sendLog("ERROR: empty bnd input data", LogFormat::BoldRed);
         return false;
     }
 
@@ -27,7 +27,7 @@ bool Bnd::UnpackBnd(std::vector<char> data) {
     int64_t int64Buffer = 0;
 
     if (!istream) {
-        sendLog("Error: Failed to open BND data buffer");
+        sendLog("ERROR: Failed to open BND data buffer", LogFormat::BoldRed);
         return false;
     }
 
@@ -35,7 +35,7 @@ bool Bnd::UnpackBnd(std::vector<char> data) {
     debugLog("MAGIC: " + strBuffer);
 
     if (!strBuffer.contains("BND4")) {
-        sendLog("ABORTING - Invalid header magic: " + strBuffer);
+        sendLog("ERROR Invalid header magic: " + strBuffer, LogFormat::BoldRed);
         return false;
     }
 
@@ -109,7 +109,7 @@ bool Bnd::UnpackBnd(std::vector<char> data) {
     debugLog("expectedHeaderSize: " + std::to_string(expectedHeaderSize));
 
     if (fileHeaderSize != expectedHeaderSize) {
-        debugLog("Header size mismatch, possible data error");
+        sendLog("ERROR Header size does not match expected value", LogFormat::BoldRed);
         return false;
     }
 
@@ -178,7 +178,7 @@ bool Bnd::UnpackBnd(std::vector<char> data) {
         hasBinderLongOffsets ? StepIn(file.dataOffsetLong, *istream)
                              : StepIn(file.dataOffset, *istream);
         if (fileCompressed) {
-            debugLog("Aborting - unexpected compressed bnd file encountered");
+            sendLog("ERROR unexpected compressed bnd file encountered", LogFormat::BoldRed);
             return false;
         } else {
             file.data.resize(file.compressedSize);
@@ -209,7 +209,7 @@ bool Bnd::UnpackBnd(std::vector<char> data) {
     return true;
 }
 
-bool Bnd::RepackBnd(std::vector<char>& data) {
+bool Bnd::RepackBnd(std::vector<char>& outputData) {
     ostream = std::make_unique<std::stringstream>(std::ios_base::out | std::ios_base::binary);
     std::string strBuffer;
 
@@ -299,7 +299,7 @@ bool Bnd::RepackBnd(std::vector<char>& data) {
         // bw.Pad(0x8);
         // bw.FillInt64("HashTableOffset", bw.Position);
         // BinderHashTable.Write(bw, fileHeaders);
-        sendLog("Unhandled Extended4 binder type encountered, aborting...");
+        sendLog("ERROR Unhandled Extended4 binder type encountered", LogFormat::BoldRed);
         return false;
     } else {
         FillReservedInt64("HashTableOffset", static_cast<uint64_t>(0));
@@ -335,12 +335,12 @@ bool Bnd::RepackBnd(std::vector<char>& data) {
 
     auto& stringStream = static_cast<std::stringstream&>(*ostream);
     std::string str = stringStream.str();
-    data = std::vector<char>(str.begin(), str.end());
+    outputData = std::vector<char>(str.begin(), str.end());
 
     /* tests only
     std::ofstream outFile("test.bnd", std::ios::binary);
     if (outFile.is_open()) {
-        outFile.write(data.data(), data.size());
+        outFile.write(outputData.data(), outputData.size());
         outFile.close();
     }
     */
@@ -512,6 +512,18 @@ std::string Bnd::FindCommonBndRootPath(const std::vector<BinderFile>& files) {
     }
 
     return root;
+}
+
+std::optional<Bnd::BinderFile> Bnd::GetSameFile(
+    const int& id, const std::vector<Bnd::BinderFile> otherBinderFiles) {
+    std::optional<Bnd::BinderFile> bFile = std::nullopt;
+    for (const auto& file : otherBinderFiles) {
+        if (file.id == id) {
+            return bFile.emplace(file);
+        }
+    }
+
+    return bFile;
 }
 
 Bnd::~Bnd() {}

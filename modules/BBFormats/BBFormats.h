@@ -27,7 +27,7 @@ public:
 
 protected:
     enum class ModPriority : int { NotSet, Mod1, Mod2 };
-    enum class LogFormat { Default, Yellow, BoldRed, BoldGreen };
+    enum class LogFormat : int { Default, Yellow, BoldRed, BoldGreen };
 
     void sendLog(const std::string& log, LogFormat format = LogFormat::Default);
     void debugLog(const std::string& log, LogFormat format = LogFormat::Default);

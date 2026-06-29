@@ -17,7 +17,7 @@ GParam::GParam(std::vector<char> data, ModMerger* parent) : BBFormat(parent) {
 
 bool GParam::ReadGParam(std::vector<char> data) {
     if (data.empty()) {
-        sendLog("Error: empty gparam input data");
+        sendLog("ERROR: empty gparam input data", LogFormat::BoldRed);
         return false;
     }
 
@@ -31,7 +31,7 @@ bool GParam::ReadGParam(std::vector<char> data) {
     debugLog("MAGIC: " + strBuffer);
 
     if (!strBuffer.contains("filt")) {
-        sendLog("Aborting - invalid param header: " + strBuffer);
+        sendLog("ERROR invalid param header: " + strBuffer, LogFormat::BoldRed);
         return false;
     }
 
@@ -39,7 +39,7 @@ bool GParam::ReadGParam(std::vector<char> data) {
     debugLog("Game: " + std::to_string(intBuffer));
 
     if (intBuffer != 3) {
-        sendLog("Aborting - invalid game ID: " + std::to_string(intBuffer));
+        sendLog("ERROR invalid game ID: " + std::to_string(intBuffer), LogFormat::BoldRed);
         return false;
     }
 

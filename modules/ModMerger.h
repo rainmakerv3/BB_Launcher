@@ -19,18 +19,20 @@ class ModMerger : public QDialog {
 
 signals:
     void CleanUpRequested(bool aborted);
+    void LogRequested(QString msg);
+    void SetModPriority();
 
 public:
     explicit ModMerger(QWidget* parent = nullptr);
     ~ModMerger();
 
     enum class ModPriority : int { NotSet, Mod1, Mod2 };
-    enum class Format { Default, Yellow, BoldRed, BoldGreen };
+    enum class Format : int { Default, Yellow, BoldRed, BoldGreen };
 
     std::string Mod1Name();
     std::string Mod2Name();
     ModPriority GetModPriority();
-    void SetModPriority();
+    void OpenPriorityDialog();
 
     QString FormatTextForBrowser(QString input, Format format);
     void Log(QString msg, Format = Format::Default);

@@ -175,6 +175,8 @@ set(PROJECT_SOURCES
     modules/BBFormats/ConflictHandler.h
     modules/BBFormats/Dcx.cpp
     modules/BBFormats/Dcx.h
+    modules/BBFormats/Fmg.cpp
+    modules/BBFormats/Fmg.h
     modules/BBFormats/Gparam.cpp
     modules/BBFormats/Gparam.h
     modules/BBFormats/Tpf.cpp

@@ -16,6 +16,8 @@ public:
 
     bool HandleItemConflict(std::vector<char>& origData, const std::vector<char>& mod1Data,
                             const std::vector<char>& mod2Data);
+    bool HandleBinderConflict(std::vector<char>& origData, const std::vector<char>& mod1Data,
+                              const std::vector<char>& mod2Data);
 
 private:
     std::string type;

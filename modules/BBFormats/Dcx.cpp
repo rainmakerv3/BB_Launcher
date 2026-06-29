@@ -10,15 +10,13 @@ namespace fs = std::filesystem;
 
 namespace FileHelper {
 
-Dcx::Dcx(std::filesystem::path file, std::vector<char>& output, ModMerger* parent)
-    : BBFormat(parent) {
+Dcx::Dcx(ModMerger* parent) : BBFormat(parent) {
     bigEndian = true;
-    UnpackDcx(file, output);
 }
 
 bool Dcx::UnpackDcx(std::filesystem::path file, std::vector<char>& output) {
     if (!std::filesystem::exists(file)) {
-        sendLog("File does not exist: " + Common::PathToU8(file));
+        sendLog("ERROR File does not exist: " + Common::PathToU8(file), LogFormat::BoldRed);
         return false;
     }
 
@@ -37,7 +35,7 @@ bool Dcx::UnpackDcx(std::filesystem::path file, std::vector<char>& output) {
     debugLog("MAGIC: " + strBuffer);
 
     if (!strBuffer.contains("DCX")) {
-        sendLog("ABORTING - Invalid header magic: " + strBuffer);
+        sendLog("ERROR Invalid header magic: " + strBuffer, LogFormat::BoldRed);
         return false;
     }
 
@@ -46,7 +44,7 @@ bool Dcx::UnpackDcx(std::filesystem::path file, std::vector<char>& output) {
     debugLog("Format: " + strBuffer);
 
     if (!strBuffer.contains("DFLT")) {
-        sendLog("ABORTING - Invalid compression: " + strBuffer);
+        sendLog("ERROR Invalid compression: " + strBuffer, LogFormat::BoldRed);
         return false;
     }
 
@@ -114,7 +112,7 @@ bool Dcx::UnpackDcx(std::filesystem::path file, std::vector<char>& output) {
     strm.next_in = nullptr;
 
     if (mz_inflateInit2(&strm, 15) != MZ_OK) {
-        debugLog("Aborting - Failed to initialize miniz inflate stream.");
+        debugLog("ERROR: Failed to initialize miniz inflate stream", LogFormat::BoldRed);
         return false;
     }
 
@@ -137,9 +135,9 @@ bool Dcx::UnpackDcx(std::filesystem::path file, std::vector<char>& output) {
 
         if (ret == MZ_NEED_DICT || ret == MZ_DATA_ERROR || ret == MZ_MEM_ERROR) {
             mz_inflateEnd(&strm);
-
-            debugLog("Aborting - extraction failed due to corrupted stream data. Ret: " +
-                     std::to_string(ret));
+            sendLog("ERROR extraction failed due to corrupted stream data. Ret: " +
+                        std::to_string(ret),
+                    LogFormat::BoldRed);
             return false;
         }
 
@@ -171,7 +169,7 @@ bool Dcx::UnpackDcx(std::filesystem::path file, std::vector<char>& output) {
 
 bool Dcx::RepackDcx(std::vector<char> input) {
     if (input.empty()) {
-        sendLog("Error: empty dcx input data");
+        sendLog("ERROR: empty dcx input data", LogFormat::BoldRed);
         return false;
     }
 
@@ -229,8 +227,11 @@ bool Dcx::RepackDcx(std::vector<char> input) {
     memset(&stream, 0, sizeof(stream));
 
     int status = mz_deflateInit2(&stream, 9, MZ_DEFLATED, 15, 9, MZ_DEFAULT_STRATEGY);
-    if (status != MZ_OK)
+    if (status != MZ_OK) {
+        sendLog("ERROR dcx delate stream not initiated: " + std::to_string(status),
+                LogFormat::BoldRed);
         return false;
+    }
 
     unsigned long compressed_bound = mz_deflateBound(&stream, input.size());
     std::vector<uint8_t> outBuffer(compressed_bound);
@@ -243,6 +244,7 @@ bool Dcx::RepackDcx(std::vector<char> input) {
     status = mz_deflate(&stream, MZ_FINISH);
     if (status != MZ_STREAM_END) {
         mz_deflateEnd(&stream);
+        sendLog("ERROR dcx compression failed: " + std::to_string(status), LogFormat::BoldRed);
         return false;
     }
 

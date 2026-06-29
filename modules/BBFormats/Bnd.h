@@ -17,7 +17,7 @@ public:
     ~Bnd() override;
 
     bool UnpackBnd(std::vector<char> data);
-    bool RepackBnd(std::vector<char>& data);
+    bool RepackBnd(std::vector<char>& outputData);
 
     struct BinderFile {
         /// Flags indicating compression, and possibly other things.
@@ -30,6 +30,11 @@ public:
         uint dataOffset;
         std::vector<char> data;
     };
+
+    // original class info
+    std::vector<BinderFile> files;
+    std::optional<BinderFile> GetSameFile(const int& id,
+                                          const std::vector<BinderFile> otherBinderFiles);
 
 private:
     // everything marked Flag** is unknown
@@ -76,7 +81,6 @@ private:
     uint GetBND4FileHeaderSize(int formatInt);
 
     // original class info
-    std::vector<BinderFile> files;
     std::string version;
     int format;
     bool unk04;

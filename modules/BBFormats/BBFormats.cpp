@@ -281,8 +281,10 @@ void BBFormat::FillReservedInt64(const std::string& name, const uint64_t& value)
     std::streamoff reservedOffset = 0;
     auto it = std::find_if(res.begin(), res.end(),
                            [&name](const auto& pair) { return pair.first == name; });
+
     if (it != res.end()) {
         reservedOffset = it->second;
+        res.erase(it);
     } else {
         sendLog("ERROR: reserved offset not found, will likely cause errors. Name: " + name);
     }
@@ -296,8 +298,10 @@ void BBFormat::FillReservedInt32(const std::string& name, const int& value) {
     std::streamoff reservedOffset = 0;
     auto it = std::find_if(res.begin(), res.end(),
                            [&name](const auto& pair) { return pair.first == name; });
+
     if (it != res.end()) {
         reservedOffset = it->second;
+        res.erase(it);
     } else {
         sendLog("ERROR: reserved offset not found, will likely cause errors. Name: " + name);
     }
@@ -311,8 +315,10 @@ void BBFormat::FillReservedInt32(const std::string& name, const uint& value) {
     std::streamoff reservedOffset = 0;
     auto it = std::find_if(res.begin(), res.end(),
                            [&name](const auto& pair) { return pair.first == name; });
+
     if (it != res.end()) {
         reservedOffset = it->second;
+        res.erase(it);
     } else {
         sendLog("ERROR: reserved offset not found, will likely cause errors. Name: " + name);
     }
