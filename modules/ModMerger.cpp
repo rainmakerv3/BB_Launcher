@@ -16,7 +16,6 @@ namespace fs = std::filesystem;
 ModMerger::ModMerger(QWidget* parent) : QDialog(parent), ui(new Ui::ModMerger) {
     ui->setupUi(this);
     ui->waitLabel->setVisible(false);
-
     this->setFixedHeight(this->height());
     this->setFixedWidth(this->width());
 
@@ -109,7 +108,7 @@ void ModMerger::AttemptMerge() {
 
         std::string filetype;
 
-        // todo add other types (fmg bnd gameparam for now)
+        // todo add other types (drawparam? emevd?)
         if (canExtract) {
             if (fileExt != "dcx") {
                 canExtract = false;
@@ -357,7 +356,6 @@ bool ModMerger::ChooseBaseFile(fs::path targetFile, fs::path mod1File, fs::path 
     if (currentPriority == ModPriority::NotSet) {
         ModMerger::SetModPriority();
         if (currentPriority == ModPriority::NotSet) {
-            Log("Merge aborted", Format::BoldRed);
             return false;
         }
     }
@@ -513,7 +511,10 @@ std::string ModMerger::Mod2Name() {
 }
 
 ModMerger::~ModMerger() {
+    if (activeMerge.isRunning()) {
+        activeMerge.cancel();
+        activeMerge.waitForFinished();
+    }
+
     delete ui;
-    activeMerge.cancel();
-    activeMerge.waitForFinished();
 }

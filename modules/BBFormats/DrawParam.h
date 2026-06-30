@@ -7,7 +7,7 @@
 
 namespace FileHelper {
 
-class GParam : public BBFormat {
+class DrawParam : public BBFormat {
     Q_OBJECT
 
 private:
@@ -18,15 +18,11 @@ private:
         BoolA = 5,
         IntB = 7,
         Float = 9,
-        BoolB = 11, // 0x0B
-        /// Two floats and 8 unused bytes.
-        Float2 = 12, // 0x0C
-        /// Three floats and 4 unused bytes.
-        Float3 = 13, // 0x0D
-        /// Four floats.
-        Float4 = 14, // 0x0E
-        /// Four bytes, used for BGRA.
-        Byte4 = 15, // 0x0F
+        BoolB = 11,
+        Float2 = 12, // Two floats and 8 unused bytes.
+        Float3 = 13, // Three floats and 4 unused bytes.
+        Float4 = 14, // Four floats.
+        Byte4 = 15,  // Four bytes, used for BGRA.
     };
 
     struct Offsets {
@@ -76,10 +72,10 @@ private:
     std::vector<Unk3> unk3s;
 
 public:
-    explicit GParam(std::vector<char> data, ModMerger* parent);
-    ~GParam() override;
+    explicit DrawParam(std::vector<char> data, ModMerger* parent);
+    ~DrawParam() override;
 
-    bool ReadGParam(std::vector<char> data);
+    bool ReadDrawParam(std::vector<char> data);
 };
 
 } // namespace FileHelper

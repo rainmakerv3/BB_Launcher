@@ -15,7 +15,7 @@ public:
     ~ConflictHandler() override;
 
     bool HandleItemConflict(std::vector<char>& origData, const std::vector<char>& mod1Data,
-                            const std::vector<char>& mod2Data);
+                            const std::vector<char>& mod2Data, const std::string& filename = "");
     bool HandleBinderConflict(std::vector<char>& origData, const std::vector<char>& mod1Data,
                               const std::vector<char>& mod2Data);
 

@@ -40,19 +40,12 @@ private:
     // everything marked Flag** is unknown
     enum class Format {
         None = 0,
-        /// File is big-endian regardless of the big-endian byte.
-        BigEndian = 0b00000001,
-        /// Files have ID numbers.
-        IDs = 0b00000010,
-        /// Files have name strings; Names2 may or may not be set. Perhaps the distinction is
-        /// related to whether it's a full path or just the filename?
-        Names1 = 0b00000100,
-        /// Files have name strings; Names1 may or may not be set.
-        Names2 = 0b00001000,
-        /// File data offsets are 64-bit.
-        LongOffsets = 0b00010000,
-        /// Files may be compressed.
-        Compression = 0b00100000,
+        BigEndian = 0b00000001,   // File is big-endian regardless of the big-endian byte.
+        IDs = 0b00000010,         // Files have ID numbers.
+        Names1 = 0b00000100,      /// Files have name strings
+        Names2 = 0b00001000,      // Files have name strings; Names1 may or may not be set
+        LongOffsets = 0b00010000, // File data offsets are 64-bit.
+        Compression = 0b00100000, // Files may be compressed.
         Flag6 = 0b01000000,
         Flag7 = 0b10000000,
     };

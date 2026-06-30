@@ -1,23 +1,22 @@
 // SPDX-FileCopyrightText: Copyright 2026 BBLauncher Project
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <variant>
 #include <vector>
 
-#include "Gparam.h"
+#include "DrawParam.h"
 
 namespace fs = std::filesystem;
 
 namespace FileHelper {
 
-GParam::GParam(std::vector<char> data, ModMerger* parent) : BBFormat(parent) {
+DrawParam::DrawParam(std::vector<char> data, ModMerger* parent) : BBFormat(parent) {
     bigEndian = false;
-    ReadGParam(data);
+    ReadDrawParam(data);
 }
 
-bool GParam::ReadGParam(std::vector<char> data) {
+bool DrawParam::ReadDrawParam(std::vector<char> data) {
     if (data.empty()) {
-        sendLog("ERROR: empty gparam input data", LogFormat::BoldRed);
+        sendLog("ERROR: empty drawparam input data", LogFormat::BoldRed);
         return false;
     }
 
@@ -370,10 +369,10 @@ bool GParam::ReadGParam(std::vector<char> data) {
     }
 
     istream.reset();
-    sendLog("Gparam loaded");
+    sendLog("Drawparam loaded");
     return true;
 }
 
-GParam::~GParam() {}
+DrawParam::~DrawParam() {}
 
 } // namespace FileHelper

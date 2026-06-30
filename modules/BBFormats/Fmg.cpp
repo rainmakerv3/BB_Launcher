@@ -117,6 +117,7 @@ bool Fmg::ReadFmg(std::vector<char> data) {
         StepOut(*istream);
     }
 
+    istream.reset();
     return true;
 }
 
@@ -267,7 +268,7 @@ bool Fmg::HandleConflict(const std::vector<char>& mod1Data, const std::vector<ch
         }
     }
 
-    for (const auto& fmg : mod1Fmgs) {
+    for (const auto& fmg : mod2Fmgs) {
         std::optional<FmgEntry> origEntry = GetSameEntry(fmg.id, fmgEntries);
 
         if (!origEntry.has_value()) {

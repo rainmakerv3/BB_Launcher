@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1136</width>
-    <height>599</height>
+    <height>676</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,7 +44,7 @@
         <x>0</x>
         <y>0</y>
         <width>1116</width>
-        <height>422</height>
+        <height>458</height>
        </rect>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -118,12 +118,12 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QLabel" name="waitLabel">
      <property name="font">
       <font>
-       <pointsize>12</pointsize>
+       <pointsize>14</pointsize>
        <bold>true</bold>
       </font>
      </property>
      <property name="text">
-      <string>Merge in progress, please wait...</string>
+      <string>Merge attempt in progress, please wait...</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -147,11 +147,14 @@ li.checked::marker { content: &quot;\2612&quot;; }
     <widget class="QLabel" name="label_3">
      <property name="font">
       <font>
+       <pointsize>10</pointsize>
        <bold>true</bold>
       </font>
      </property>
      <property name="text">
-      <string>Note: This merge tool is in early beta and lacks the ability to resolve certain kinds of conflicts for now. Some mod combinations, particularly when there a lot unresolvable conflicts, may also have hard incompabilities that cannot be resolved programatically. In any case though, this tool will will not touch the original mod files, using only new folders for both working folders and merged output.</string>
+      <string>Note: This merge tool is in early beta and lacks the ability to resolve certain kinds of conflicts, do not expect it to work on complex mods. Additionally, some mods just can't be merged automatically because of hard conflicts. 
+
+Note 2: Original mod files will not be touched by this tool, it will produce a new folder with the merged mod named Mod1 + Mod2</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

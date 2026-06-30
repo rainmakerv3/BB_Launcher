@@ -175,10 +175,12 @@ set(PROJECT_SOURCES
     modules/BBFormats/ConflictHandler.h
     modules/BBFormats/Dcx.cpp
     modules/BBFormats/Dcx.h
+    modules/BBFormats/DrawParam.cpp
+    modules/BBFormats/DrawParam.h
     modules/BBFormats/Fmg.cpp
     modules/BBFormats/Fmg.h
-    modules/BBFormats/Gparam.cpp
-    modules/BBFormats/Gparam.h
+    modules/BBFormats/GameParam.cpp
+    modules/BBFormats/GameParam.h
     modules/BBFormats/Tpf.cpp
     modules/BBFormats/Tpf.h
     modules/ipc/ipc_client.cpp

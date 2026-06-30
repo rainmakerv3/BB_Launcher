@@ -4,6 +4,7 @@
 #include "Bnd.h"
 #include "ConflictHandler.h"
 #include "Fmg.h"
+#include "GameParam.h"
 #include "Tpf.h"
 #include "modules/ModMerger.h"
 
@@ -18,7 +19,8 @@ ConflictHandler::ConflictHandler(const std::string& fileType, ModMerger* merger)
 
 bool ConflictHandler::HandleItemConflict(std::vector<char>& origData,
                                          const std::vector<char>& mod1Data,
-                                         const std::vector<char>& mod2Data) {
+                                         const std::vector<char>& mod2Data,
+                                         const std::string& filename) {
     if (type.contains("TPF") || type.contains("tpf")) {
         Tpf origTpf(origData, merger);
         if (!origTpf.HandleConflict(mod1Data, mod2Data)) {
@@ -36,6 +38,16 @@ bool ConflictHandler::HandleItemConflict(std::vector<char>& origData,
         } else {
             origData.clear();
             origFmg.RepackFmg(origData);
+        }
+    }
+
+    if (type.contains("param")) {
+        GameParam origPrm(origData, filename, merger);
+        if (!origPrm.HandleConflict(mod1Data, mod2Data)) {
+            return false;
+        } else {
+            origData.clear();
+            origPrm.RepackGameParam(origData);
         }
     }
 
@@ -65,13 +77,15 @@ bool ConflictHandler::HandleBinderConflict(std::vector<char>& origData,
         mod2Modified = mod2file && (mod2file->data != file.data);
 
         if (mod1Modified && mod2Modified) {
-            // todo:: add params maybe gparams
-            bool extractable = file.name.ends_with("fmg") || file.name.ends_with("tpf");
+            std::string ext = std::filesystem::path(file.name).extension().string();
+            // todo:: add params maybe drawparams
+            bool extractable = ext == ".fmg" || ext == ".tpf" || ext == ".param";
+
             if (extractable) {
-                std::string ext = std::filesystem::path(file.name).extension().string();
                 ConflictHandler fileHandler = ConflictHandler(ext, merger);
 
-                if (!fileHandler.HandleItemConflict(file.data, mod1file->data, mod2file->data)) {
+                if (!fileHandler.HandleItemConflict(file.data, mod1file->data, mod2file->data,
+                                                    file.name)) {
                     return false;
                 } else {
                     file.compressedSize = file.data.size();
