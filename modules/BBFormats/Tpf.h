@@ -184,7 +184,7 @@ public:
     bool HandleConflict(const std::vector<char>& mod1Data, const std::vector<char>& mod2Data);
 
     std::optional<Tpf::Texture> GetSameTexture(const std::string& name,
-                                               const std::vector<Tpf::Texture>);
+                                               const std::vector<Tpf::Texture>& otherTex);
 
     std::vector<Texture> textures;
     int flag2;

@@ -24,7 +24,7 @@ private:
         std::string text;
     };
 
-    std::optional<FmgEntry> GetSameEntry(const int& id, const std::vector<FmgEntry> otherEntries);
+    std::optional<FmgEntry> GetSameEntry(const int& id, const std::vector<FmgEntry>& otherEntries);
 
     int fmgversion = 2; // should always be 2 for BB
     bool unicode = true;

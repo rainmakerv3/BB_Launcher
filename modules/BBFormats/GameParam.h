@@ -97,7 +97,7 @@ public:
 private:
     std::vector<GameParam::FormatFlags1> GetFormatFlags1(int flagsValue);
     bool IsUnicodeNames(int flags2Value);
-    std::optional<Row> GetSameRow(const int& id, const std::vector<Row> otherRows);
+    std::optional<Row> GetSameRow(const int& id, const std::vector<Row>& otherRows);
 
     // ParamDef def;
     int format2D = 4; // hardcode?

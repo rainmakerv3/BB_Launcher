@@ -342,9 +342,9 @@ bool Tpf::HandleConflict(const std::vector<char>& mod1Data, const std::vector<ch
 }
 
 std::optional<Tpf::Texture> Tpf::GetSameTexture(const std::string& name,
-                                                const std::vector<Tpf::Texture> otherTpf) {
+                                                const std::vector<Tpf::Texture>& otherTextures) {
     std::optional<Tpf::Texture> tex = std::nullopt;
-    for (const auto& texture : otherTpf) {
+    for (const auto& texture : otherTextures) {
         if (texture.name == name) {
             return tex.emplace(texture);
         }

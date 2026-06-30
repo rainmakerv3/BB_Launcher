@@ -364,103 +364,69 @@ bool GameParam::HandleConflict(const std::vector<char>& mod1Data,
     GameParam mod2Prm = GameParam(mod2Data, fileName, merger);
     const std::vector<Row> mod2Rows = mod2Prm.rows;
 
-    size_t numThreads = std::min((size_t)8, rows.size());
-    std::vector<std::thread> threads;
+    for (int i = 0; i < rows.size(); i++) {
+        bool mod1Modified = false;
+        bool mod2Modified = false;
 
-    bool abort = false;
-    std::mutex dialogMutex;
-    std::mutex logMutex;
+        std::optional<Row> mod1entry;
+        std::optional<Row> mod2entry;
 
-    connect(merger, &QDialog::finished, this, [&abort]() { abort = true; });
-    auto processChunk = [&](size_t startIdx, size_t endIdx) {
-        for (size_t i = startIdx; i < endIdx; ++i) {
-            if (abort) {
-                break;
-            }
+        mod1entry = GetSameRow(rows[i].id, mod1Rows);
+        mod2entry = GetSameRow(rows[i].id, mod2Rows);
 
-            bool mod1Modified = false;
-            bool mod2Modified = false;
+        mod1Modified = mod1entry && (mod1entry->data != rows[i].data);
+        mod2Modified = mod2entry && (mod2entry->data != rows[i].data);
 
-            std::optional<Row> mod1entry;
-            std::optional<Row> mod2entry;
-
-            mod1entry = GetSameRow(rows[i].id, mod1Rows);
-            mod2entry = GetSameRow(rows[i].id, mod2Rows);
-
-            mod1Modified = mod1entry && (mod1entry->data != rows[i].data);
-            mod2Modified = mod2entry && (mod2entry->data != rows[i].data);
-
-            if (mod1Modified && mod2Modified) {
-                std::lock_guard<std::mutex> lock(dialogMutex);
+        if (mod1Modified && mod2Modified) {
+            if (merger->GetModPriority() == ModMerger::ModPriority::NotSet) {
+                merger->SetModPriority();
                 if (merger->GetModPriority() == ModMerger::ModPriority::NotSet) {
-                    merger->SetModPriority();
-                    if (merger->GetModPriority() == ModMerger::ModPriority::NotSet) {
-                        abort = true;
-                        break;
-                    }
-                }
-
-                std::lock_guard<std::mutex> logLock(logMutex);
-                if (merger->GetModPriority() == ModMerger::ModPriority::Mod1) {
-                    rows[i].data = mod1entry->data;
-                    sendLog("Unresolvable conflict in row: " + std::to_string(mod1entry->id) +
-                                ", using row data from prioritized mod: " + merger->Mod1Name(),
-                            LogFormat::Yellow);
-                } else if (merger->GetModPriority() == ModMerger::ModPriority::Mod2) {
-                    rows[i].data = mod2entry->data;
-                    sendLog("Unresolvable conflict in row: " + std::to_string(mod2entry->id) +
-                                ", using row data from prioritized mod: " + merger->Mod2Name(),
-                            LogFormat::Yellow);
+                    return false;
                 }
             }
 
-            if (mod1Modified && !mod2Modified) {
+            if (merger->GetModPriority() == ModMerger::ModPriority::Mod1) {
                 rows[i].data = mod1entry->data;
-                std::lock_guard<std::mutex> logLock(logMutex);
-                sendLog("Merging row: " + std::to_string(mod1entry->id) +
-                        " from mod: " + merger->Mod1Name());
-            } else if (mod2Modified && !mod1Modified) {
+                sendLog("Unresolvable conflict in row: " + std::to_string(mod1entry->id) +
+                            ", using row data from prioritized mod: " + merger->Mod1Name(),
+                        LogFormat::Yellow);
+            } else if (merger->GetModPriority() == ModMerger::ModPriority::Mod2) {
                 rows[i].data = mod2entry->data;
-                std::lock_guard<std::mutex> logLock(logMutex);
-                sendLog("Merging row: " + std::to_string(mod2entry->id) +
-                        " from mod: " + merger->Mod2Name());
+                sendLog("Unresolvable conflict in row: " + std::to_string(mod2entry->id) +
+                            ", using row data from prioritized mod: " + merger->Mod2Name(),
+                        LogFormat::Yellow);
             }
         }
-    };
 
-    size_t chunkSize = rows.size() / numThreads;
-    size_t remainder = rows.size() % numThreads;
-
-    size_t start = 0;
-    for (size_t t = 0; t < numThreads; ++t) {
-        size_t currentChunkSize = chunkSize + (t < remainder ? 1 : 0);
-        threads.emplace_back(processChunk, start, start + currentChunkSize);
-        start += currentChunkSize;
+        if (mod1Modified && !mod2Modified) {
+            rows[i].data = mod1entry->data;
+            sendLog("Merging row: " + std::to_string(mod1entry->id) +
+                    " from mod: " + merger->Mod1Name());
+        } else if (mod2Modified && !mod1Modified) {
+            rows[i].data = mod2entry->data;
+            sendLog("Merging row: " + std::to_string(mod2entry->id) +
+                    " from mod: " + merger->Mod2Name());
+        }
     }
-
-    for (auto& t : threads) {
-        t.join();
-    }
-
-    if (abort)
-        return false;
 
     bool rowAdded = false;
-    for (const auto& row : mod1Rows) {
-        std::optional<Row> origEntry = GetSameRow(row.id, rows);
+    std::unordered_set<int> existingIds;
+    for (const auto& row : rows) {
+        existingIds.insert(row.id);
+    }
 
-        if (!origEntry.has_value()) {
+    for (const auto& row : mod1Rows) {
+        if (existingIds.find(row.id) == existingIds.end()) {
             rowAdded = true;
             rows.push_back(row);
+            existingIds.insert(row.id);
             sendLog("New row added id: " + std::to_string(row.id) +
                     " from mod: " + merger->Mod1Name());
         }
     }
 
     for (const auto& row : mod2Rows) {
-        std::optional<Row> origEntry = GetSameRow(row.id, rows);
-
-        if (!origEntry.has_value()) {
+        if (existingIds.find(row.id) == existingIds.end()) {
             rowAdded = true;
             rows.push_back(row);
             sendLog("New row added id: " + std::to_string(row.id) +
@@ -476,7 +442,7 @@ bool GameParam::HandleConflict(const std::vector<char>& mod1Data,
 }
 
 std::optional<GameParam::Row> GameParam::GetSameRow(const int& id,
-                                                    const std::vector<GameParam::Row> otherRows) {
+                                                    const std::vector<GameParam::Row>& otherRows) {
     std::optional<Row> result = std::nullopt;
     for (const auto& otherRow : otherRows) {
         if (otherRow.id == id) {

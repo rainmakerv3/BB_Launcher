@@ -31,7 +31,7 @@
 
 namespace Common {
 
-const char VERSION[] = "Release16.01";
+const char VERSION[] = "Release16.02";
 
 std::string game_serial;
 std::filesystem::path installPath;

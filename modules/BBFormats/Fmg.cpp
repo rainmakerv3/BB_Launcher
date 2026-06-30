@@ -281,7 +281,7 @@ bool Fmg::HandleConflict(const std::vector<char>& mod1Data, const std::vector<ch
 }
 
 std::optional<Fmg::FmgEntry> Fmg::GetSameEntry(const int& id,
-                                               const std::vector<Fmg::FmgEntry> otherEntries) {
+                                               const std::vector<Fmg::FmgEntry>& otherEntries) {
     std::optional<FmgEntry> result = std::nullopt;
     for (const auto& otherEntry : otherEntries) {
         if (otherEntry.id == id) {
