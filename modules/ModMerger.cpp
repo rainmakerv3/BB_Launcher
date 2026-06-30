@@ -108,7 +108,7 @@ void ModMerger::AttemptMerge() {
 
         std::string filetype;
 
-        // todo add other types (drawparam? emevd?)
+        // todo add other types (drawparam? emevd? msb?)
         if (canExtract) {
             if (fileExt != "dcx") {
                 canExtract = false;
@@ -352,7 +352,6 @@ fs::path ModMerger::GetUpdatedFile(fs::path relativePath) {
 }
 
 bool ModMerger::ChooseBaseFile(fs::path targetFile, fs::path mod1File, fs::path mod2File) {
-
     if (currentPriority == ModPriority::NotSet) {
         ModMerger::SetModPriority();
         if (currentPriority == ModPriority::NotSet) {

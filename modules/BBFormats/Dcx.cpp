@@ -119,8 +119,10 @@ bool Dcx::UnpackDcx(std::filesystem::path file, std::vector<char>& output) {
     constexpr size_t bufferSize = 32768;
     std::vector<uint8_t> inBuffer(bufferSize);
     std::vector<uint8_t> outBuffer(bufferSize);
-
+    size_t fileSize = fs::file_size(file);
+    int lastNotifiedPercent = 0;
     int ret;
+
     do {
         if (strm.avail_in == 0 && !istream->eof()) {
             istream->read(reinterpret_cast<char*>(inBuffer.data()), bufferSize);
@@ -145,6 +147,14 @@ bool Dcx::UnpackDcx(std::filesystem::path file, std::vector<char>& output) {
         if (decompressedChunkSize > 0) {
             output.insert(output.end(), outBuffer.begin(),
                           outBuffer.begin() + decompressedChunkSize);
+
+            int currentPercent =
+                static_cast<int>((static_cast<double>(strm.total_in) / fileSize) * 100);
+            if (currentPercent >= lastNotifiedPercent + 10) {
+                lastNotifiedPercent = currentPercent;
+                sendLog("Extraction progress: " + std::to_string(lastNotifiedPercent) + "% done.",
+                        LogFormat::Default);
+            }
         }
 
     } while (ret != MZ_STREAM_END && (strm.avail_in > 0 || !istream->eof() || ret == MZ_OK));
@@ -228,28 +238,56 @@ bool Dcx::RepackDcx(std::vector<char> input) {
 
     int status = mz_deflateInit2(&stream, 9, MZ_DEFLATED, 15, 9, MZ_DEFAULT_STRATEGY);
     if (status != MZ_OK) {
-        sendLog("ERROR dcx delate stream not initiated: " + std::to_string(status),
+        sendLog("ERROR dcx deflate stream not initiated: " + std::to_string(status),
                 LogFormat::BoldRed);
         return false;
     }
 
-    unsigned long compressed_bound = mz_deflateBound(&stream, input.size());
-    std::vector<uint8_t> outBuffer(compressed_bound);
+    constexpr size_t bufferSize = 32768;
+    std::vector<uint8_t> outBuffer(bufferSize);
+    size_t totalInputSize = input.size();
+    size_t bytesProcessed = 0;
+    int lastNotifiedPercent = 0;
 
-    stream.next_in = reinterpret_cast<const uint8_t*>(input.data());
-    stream.avail_in = static_cast<unsigned int>(input.size());
-    stream.next_out = outBuffer.data();
-    stream.avail_out = static_cast<unsigned int>(compressed_bound);
+    while (bytesProcessed < totalInputSize) {
+        size_t currentChunkSize = std::min(bufferSize, totalInputSize - bytesProcessed);
 
-    status = mz_deflate(&stream, MZ_FINISH);
-    if (status != MZ_STREAM_END) {
-        mz_deflateEnd(&stream);
-        sendLog("ERROR dcx compression failed: " + std::to_string(status), LogFormat::BoldRed);
-        return false;
+        stream.next_in = reinterpret_cast<const uint8_t*>(input.data() + bytesProcessed);
+        stream.avail_in = static_cast<unsigned int>(currentChunkSize);
+
+        bool isLastChunk = (bytesProcessed + currentChunkSize == totalInputSize);
+        int flush = isLastChunk ? MZ_FINISH : MZ_NO_FLUSH;
+
+        do {
+            stream.next_out = outBuffer.data();
+            stream.avail_out = static_cast<unsigned int>(bufferSize);
+
+            status = mz_deflate(&stream, flush);
+            if (status != MZ_OK && status != MZ_STREAM_END) {
+                mz_deflateEnd(&stream);
+                sendLog("ERROR dcx compression failed: " + std::to_string(status),
+                        LogFormat::BoldRed);
+                return false;
+            }
+
+            size_t compressedChunkSize = bufferSize - stream.avail_out;
+            if (compressedChunkSize > 0) {
+                ostream->write(reinterpret_cast<const char*>(outBuffer.data()),
+                               compressedChunkSize);
+            }
+        } while (stream.avail_out == 0);
+
+        bytesProcessed += currentChunkSize;
+
+        int currentPercent =
+            static_cast<int>((static_cast<double>(bytesProcessed) / totalInputSize) * 100);
+        if (currentPercent >= lastNotifiedPercent + 10) {
+            lastNotifiedPercent += 10;
+            sendLog("Compression progress: " + std::to_string(lastNotifiedPercent) + "% done.",
+                    LogFormat::Default);
+        }
     }
 
-    size_t dataSize = compressed_bound - stream.avail_out;
-    ostream->write(reinterpret_cast<const char*>(outBuffer.data()), dataSize);
     mz_deflateEnd(&stream);
 
     WriteInt32(Adler32(input));

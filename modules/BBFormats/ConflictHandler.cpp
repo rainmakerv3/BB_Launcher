@@ -78,12 +78,10 @@ bool ConflictHandler::HandleBinderConflict(std::vector<char>& origData,
 
         if (mod1Modified && mod2Modified) {
             std::string ext = std::filesystem::path(file.name).extension().string();
-            // todo:: add params maybe drawparams
             bool extractable = ext == ".fmg" || ext == ".tpf" || ext == ".param";
 
             if (extractable) {
                 ConflictHandler fileHandler = ConflictHandler(ext, merger);
-
                 if (!fileHandler.HandleItemConflict(file.data, mod1file->data, mod2file->data,
                                                     file.name)) {
                     return false;
