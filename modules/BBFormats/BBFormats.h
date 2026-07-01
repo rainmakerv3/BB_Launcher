@@ -16,7 +16,7 @@ class BBFormat : public QObject {
 
 private:
 #ifndef DEBUG
-    bool debugLogEnabled = false;
+    bool debugLogEnabled = true;
 #else
     bool debugLogEnabled = true;
 #endif

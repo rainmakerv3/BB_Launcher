@@ -10,6 +10,9 @@
 #include "modules/BBFormats/Dcx.h"
 #include "ui_ModMerger.h"
 
+// testing
+#include "modules/BBFormats/Esd.h"
+
 using namespace FileHelper;
 namespace fs = std::filesystem;
 
@@ -67,6 +70,12 @@ ModMerger::ModMerger(QWidget* parent) : QDialog(parent), ui(new Ui::ModMerger) {
 }
 
 void ModMerger::AttemptMerge() {
+    std::ifstream file("a.esd", std::ios::binary);
+    std::vector<char> file_data((std::istreambuf_iterator<char>(file)),
+                                std::istreambuf_iterator<char>());
+    Esd e(file_data, this);
+    return;
+
     if (fs::exists(Common::GetBBLFilesPath() / "Temp" / "ModMerge"))
         fs::remove_all(Common::GetBBLFilesPath() / "Temp" / "ModMerge");
 
@@ -108,13 +117,14 @@ void ModMerger::AttemptMerge() {
 
         std::string filetype;
 
-        // todo add other types (drawparam? emevd? msb?)
+        // todo add other types (goals: esd emevd msb maybe drawparam)
         if (canExtract) {
             if (fileExt != "dcx") {
                 canExtract = false;
             } else {
                 filetype = GetFileType(baseData);
-                canExtract = filetype.contains("TPF") || filetype.contains("BND4");
+                canExtract = filetype.contains("TPF") || filetype.contains("BND4") ||
+                             filetype.contains("fsSL");
             }
         }
 
