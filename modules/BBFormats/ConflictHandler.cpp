@@ -91,7 +91,8 @@ bool ConflictHandler::HandleBinderConflict(std::vector<char>& origData,
                 }
             } else {
                 if (merger->GetModPriority() == ModMerger::ModPriority::NotSet) {
-                    merger->SetModPriority();
+                    QMetaObject::invokeMethod(merger, &ModMerger::OpenPriorityDialog,
+                                              Qt::BlockingQueuedConnection);
                     if (merger->GetModPriority() == ModMerger::ModPriority::NotSet) {
                         return false;
                     }

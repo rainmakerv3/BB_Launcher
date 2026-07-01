@@ -24,10 +24,6 @@ ModMerger::ModMerger(QWidget* parent) : QDialog(parent), ui(new Ui::ModMerger) {
     ui->modList->setSelectionMode(QAbstractItemView::ExtendedSelection);
     connect(ui->modList, &QListWidget::itemSelectionChanged, this, &ModMerger::EnforceTwoItemLimit);
 
-    // ensures thread safety
-    connect(this, &ModMerger::SetModPriority, this, &ModMerger::OpenPriorityDialog,
-            Qt::BlockingQueuedConnection);
-
     connect(ui->mergeButton, &QPushButton::pressed, this, [this]() {
         QList<QListWidgetItem*> selectedList = ui->modList->selectedItems();
         if (selectedList.size() != 2) {
@@ -106,21 +102,21 @@ void ModMerger::AttemptMerge() {
         std::vector<char> baseData;
 
         Dcx origDcx(this);
-        if (!origDcx.UnpackDcx(basefile, baseData)) {
-            emit CleanUpRequested(true);
-            return;
+        // first level extration, only dcx (maybe hks later on)
+        if (fileExt == "dcx") {
+            if (!origDcx.UnpackDcx(basefile, baseData)) {
+                emit CleanUpRequested(true);
+                return;
+            } else {
+                canExtract = false;
+            }
         }
 
         std::string filetype;
-
-        // todo add other types (drawparam? emevd? msb?)
+        // what can be extracted after DCX, rn only these, maybe esd/emevd after
         if (canExtract) {
-            if (fileExt != "dcx") {
-                canExtract = false;
-            } else {
-                filetype = GetFileType(baseData);
-                canExtract = filetype.contains("TPF") || filetype.contains("BND4");
-            }
+            filetype = GetFileType(baseData);
+            canExtract = filetype.contains("TPF") || filetype.contains("BND4");
         }
 
         if (!canExtract) {
@@ -252,8 +248,8 @@ bool ModMerger::IsFolderSupported(std::filesystem::path filePath) {
         }
     }
 
-    const std::vector<std::string> unextractableFolders = {"event",    "movie", "facegen", "map",
-                                                           "paramdef", "remo",  "mtd",     "sound"};
+    const std::vector<std::string> unextractableFolders = {"event", "facegen", "shader",
+                                                           "paramdef"};
 
     if (std::find(unextractableFolders.begin(), unextractableFolders.end(), firstFolder) !=
         unextractableFolders.end()) {
@@ -364,7 +360,8 @@ fs::path ModMerger::GetUpdatedFile(fs::path relativePath) {
 
 bool ModMerger::ChooseBaseFile(fs::path targetFile, fs::path mod1File, fs::path mod2File) {
     if (currentPriority == ModPriority::NotSet) {
-        ModMerger::SetModPriority();
+        QMetaObject::invokeMethod(this, &ModMerger::OpenPriorityDialog,
+                                  Qt::BlockingQueuedConnection);
         if (currentPriority == ModPriority::NotSet) {
             return false;
         }
@@ -398,7 +395,7 @@ void ModMerger::OpenPriorityDialog() {
     QLabel* label = new QLabel(
         "The same information is modified for both mods. You can force the merge attempt to "
         "continue by choosing which mod files to prioritize, but the final merged "
-        "mod will likely work correctly when there are multiple unresolvable conflicts",
+        "mod will likely not work correctly when there are unresolvable conflicts",
         dialog);
     label->setWordWrap(true);
 

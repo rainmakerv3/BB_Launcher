@@ -227,7 +227,8 @@ bool Fmg::HandleConflict(const std::vector<char>& mod1Data, const std::vector<ch
 
         if (mod1Modified && mod2Modified) {
             if (merger->GetModPriority() == ModMerger::ModPriority::NotSet) {
-                merger->SetModPriority();
+                QMetaObject::invokeMethod(merger, &ModMerger::OpenPriorityDialog,
+                                          Qt::BlockingQueuedConnection);
                 if (merger->GetModPriority() == ModMerger::ModPriority::NotSet) {
                     return false;
                 }

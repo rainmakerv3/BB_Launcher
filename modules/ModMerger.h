@@ -20,7 +20,6 @@ class ModMerger : public QDialog {
 signals:
     void CleanUpRequested(bool aborted);
     void LogRequested(QString msg);
-    void SetModPriority();
 
 public:
     explicit ModMerger(QWidget* parent = nullptr);
