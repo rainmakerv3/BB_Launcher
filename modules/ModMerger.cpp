@@ -201,7 +201,12 @@ bool ModMerger::GetMergeFiles(std::filesystem::path mod1Base, std::filesystem::p
             if (!fs::exists(origFilePath.parent_path())) {
                 fs::create_directories(origFilePath.parent_path());
             }
-            fs::copy_file(origFilePathOld, origFilePath);
+
+            if (fs::exists(origFilePathOld)) {
+                fs::copy_file(origFilePathOld, origFilePath);
+            } else {
+                continue;
+            }
 
             fs::path mod1filePathOld = StandardizeBasePath(Common::ModPath / mod1Name) / file;
             fs::path mod1filePath = mod1TempPath / file;
@@ -241,8 +246,8 @@ bool ModMerger::IsFolderSupported(std::filesystem::path filePath) {
         }
     }
 
-    const std::vector<std::string> unextractableFolders = {
-        "event", "movie", "facegen", "map", "paramdef", "remo", "mtd", "script", "sound"};
+    const std::vector<std::string> unextractableFolders = {"event",    "movie", "facegen", "map",
+                                                           "paramdef", "remo",  "mtd",     "sound"};
 
     if (std::find(unextractableFolders.begin(), unextractableFolders.end(), firstFolder) !=
         unextractableFolders.end()) {
