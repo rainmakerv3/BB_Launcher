@@ -284,7 +284,7 @@ jobs:
         archive: false
 
   pre-release:
-    if: github.repository == 'rainmakerv3/BB_Launcher' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/master' && github.repository == 'rainmakerv3/BB_Launcher' && github.event_name == 'push'
     needs: [get-info, build-windows, build-windows-noUAC, build-linux, build-linux-downloader, build-macos]
     runs-on: ubuntu-24.04
     steps:
