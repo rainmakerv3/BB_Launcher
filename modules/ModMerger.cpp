@@ -48,7 +48,13 @@ ModMerger::ModMerger(QWidget* parent) : QDialog(parent), ui(new Ui::ModMerger) {
     });
 
     connect(this, &ModMerger::CleanUpRequested, this, [this](bool aborted) {
-        fs::remove_all(Common::GetBBLFilesPath() / "Temp" / "ModMerge");
+        std::error_code ec;
+        fs::remove_all(Common::GetBBLFilesPath() / "Temp" / "ModMerge", ec);
+
+        if (ec) {
+            Log(QString("Cleanup delayed: %1").arg(QString::fromStdString(ec.message())));
+        }
+
         ui->waitLabel->setVisible(false);
         ui->mergeButton->setEnabled(true);
         ui->buttonBox->setEnabled(true);
@@ -72,8 +78,7 @@ void ModMerger::AttemptMerge() {
 
     GetConflictedFiles();
     if (conflictedFiles.empty()) {
-        QMessageBox::information(this, "Merge Unnecessary",
-                                 "No conflicted files, no merge required");
+        Log("No conflicted files found for these two mods, merge is not required", Format::Yellow);
         return;
     }
 
@@ -170,9 +175,9 @@ bool ModMerger::GetMergeFiles(std::filesystem::path mod1Base, std::filesystem::p
             std::string relative_path_string = Common::PathToU8(relative_path);
             if (std::find(BBFolders.begin(), BBFolders.end(), relative_path_string) ==
                 BBFolders.end()) {
-                QMessageBox::warning(this, "Invalid Mod",
-                                     "Folders inside mod folder must include either dvdroot_ps4"
-                                     " or Bloodborne dvdroot_ps4 subfolders (ex. sfx, parts, map)");
+                Log("ERROR: Invalid Mod: Folders inside mod folder must include either dvdroot_ps4"
+                    " or Bloodborne dvdroot_ps4 subfolders (ex. sfx, parts, map)",
+                    Format::BoldRed);
                 return false;
             }
         }
@@ -185,9 +190,9 @@ bool ModMerger::GetMergeFiles(std::filesystem::path mod1Base, std::filesystem::p
             std::string relative_path_string = Common::PathToU8(relative_path);
             if (std::find(BBFolders.begin(), BBFolders.end(), relative_path_string) ==
                 BBFolders.end()) {
-                QMessageBox::warning(this, "Invalid Mod",
-                                     "Folders inside mod folder must include either dvdroot_ps4"
-                                     " or Bloodborne dvdroot_ps4 subfolders (ex. sfx, parts, map)");
+                Log("ERROR: Invalid Mod: Folders inside mod folder must include either dvdroot_ps4"
+                    " or Bloodborne dvdroot_ps4 subfolders (ex. sfx, parts, map)",
+                    Format::BoldRed);
                 return false;
             }
         }
@@ -205,6 +210,8 @@ bool ModMerger::GetMergeFiles(std::filesystem::path mod1Base, std::filesystem::p
             if (fs::exists(origFilePathOld)) {
                 fs::copy_file(origFilePathOld, origFilePath);
             } else {
+                Log("Skipping file not present in original game " + QString::fromStdString(file),
+                    Format::Yellow);
                 continue;
             }
 
@@ -225,8 +232,7 @@ bool ModMerger::GetMergeFiles(std::filesystem::path mod1Base, std::filesystem::p
             Log(QString("Copied %1 to temporary folder").arg(file));
         }
     } catch (const std::exception& e) {
-        QMessageBox::warning(this, "Filesystem Error",
-                             "File operations failed: " + QString(e.what()));
+        Log("ERROR: File operations failed: " + QString(e.what()), Format::BoldRed);
         return false;
     }
 
