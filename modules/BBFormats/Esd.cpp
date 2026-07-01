@@ -1,6 +1,7 @@
 // SPDX-FileCopyrightText: Copyright 2026 BBLauncher Project
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <ranges>
 #include <vector>
 
 #include "Esd.h"
@@ -174,7 +175,7 @@ bool Esd::ReadEsd(std::vector<char> data) {
     }
     debugLog("name: " + name);
 
-    std::unordered_map<int64_t, std::vector<int64_t>> stateGroupOffsetMap(stateGroupCount);
+    std::unordered_map<int64_t, std::vector<int64_t>> stateGroupOffsets(stateGroupCount);
     for (int i = 0; i < stateGroupCount; i++) {
         int64_t id;
         GetInt64(id);
@@ -199,14 +200,14 @@ bool Esd::ReadEsd(std::vector<char> data) {
         // Every state group with more than one state has a dummy state after the end
         // that's identical to the first state original assert it, but I won't
 
-        if (stateGroupOffsetMap.contains(id)) {
+        if (stateGroupOffsets.contains(id)) {
             sendLog("ERROR: duplicate state id");
             return false;
         }
-        stateGroupOffsetMap[id] = offsets;
+        stateGroupOffsets[id] = offsets;
     }
 
-    std::unordered_map<int64_t, State> stateMap(stateCount);
+    std::unordered_map<int64_t, State> states(stateCount);
     for (int i = 0; i < stateCount; i++) {
         State state;
         int64_t offset = static_cast<int64_t>(istream->tellg() - dataStart);
@@ -269,11 +270,10 @@ bool Esd::ReadEsd(std::vector<char> data) {
         }
         StepOut(*istream);
 
-        stateMap[offset] = state;
-        states.push_back(state);
+        states[offset] = state;
     }
 
-    std::unordered_map<int64_t, Condition> conditionMap(conditionCount);
+    std::unordered_map<int64_t, Condition> conditions(conditionCount);
     for (int i = 0; i < conditionCount; i++) {
         Condition cond;
         int64_t offset = static_cast<int64_t>(istream->tellg() - dataStart);
@@ -291,11 +291,11 @@ bool Esd::ReadEsd(std::vector<char> data) {
 
         int64_t conditionOffsetsOffset;
         GetInt64(conditionOffsetsOffset);
-        debugLog("conditionOffsetsOffset: " + std::to_string(conditionOffsetsOffset));
+        debugLog("subconditionOffsetsOffset: " + std::to_string(conditionOffsetsOffset));
 
         int64_t conditionOffsetCount;
         GetInt64(conditionOffsetCount);
-        debugLog("conditionOffsetCount: " + std::to_string(conditionOffsetCount));
+        debugLog("subconditionOffsetCount: " + std::to_string(conditionOffsetCount));
 
         int64_t evaluatorOffset;
         GetInt64(evaluatorOffset);
@@ -316,7 +316,7 @@ bool Esd::ReadEsd(std::vector<char> data) {
             for (int j = 0; j < conditionOffsetCount; j++) {
                 int64_t off;
                 GetInt64(off);
-                debugLog("conditionoffset: " + std::to_string(off));
+                debugLog("subconditionoffset: " + std::to_string(off));
                 cond.conditionOffsets.push_back(off);
             }
 
@@ -325,29 +325,42 @@ bool Esd::ReadEsd(std::vector<char> data) {
             StepOut(*istream);
         }
         StepOut(*istream);
-
-        conditionMap[offset] = cond;
+        conditions[offset] = cond;
     }
 
-    for (auto& state : states) {
-        // getconditions
+    for (auto& pair : states) {
+        State& state = pair.second;
+        for (const auto& offset : state.conditionOffsets) {
+            state.conditions.push_back(conditions[offset]);
+        }
+        state.conditionOffsets.clear();
     }
 
-    /* holy crap T_T
-             StateGroups = new Dictionary<long, Dictionary<long, State>>(stateGroupCount);
-             var groupedStateOffsets = new Dictionary<long, Dictionary<long, long>>();
-             foreach (long stateGroupID in stateGroupOffsets.Keys)
-             {
-                 long[] stateOffsets = stateGroupOffsets[stateGroupID];
-                 Dictionary<long, State> stateGroup = TakeStates(stateSize, stateOffsets, states,
-     out Dictionary<long, long> stateIDs); StateGroups[stateGroupID] = stateGroup;
-                 groupedStateOffsets[stateGroupID] = stateIDs;
+    std::unordered_map<int64_t, std::unordered_map<int64_t, int64_t>> groupedStateOffsets;
+    for (const auto& stateGroupID : std::views::keys(stateGroupOffsets)) {
+        std::vector<int64_t> stateOffsets = stateGroupOffsets[stateGroupID];
+        std::unordered_map<int64_t, int64_t> stateIds;
+        std::unordered_map<int64_t, State> stateGroup;
 
-                  foreach (State state in stateGroup.Values)
-                      foreach (Condition condition in state.Conditions)
-                          condition.GetStateAndConditions(stateIDs, conditions);
-              }
-    */
+        if (!TakeStates(stateSize, stateOffsets, states, stateIds, stateGroup)) {
+            return false;
+        }
+
+        stateGroups[stateGroupID] = stateGroup;
+        groupedStateOffsets[stateGroupID] = stateIds;
+
+        for (State& state : std::views::values(stateGroup)) {
+            for (Condition& cond : state.conditions) {
+                GetStateAndConditions(cond, stateIds, conditions);
+            }
+        }
+    }
+
+    if (states.size() > 0) {
+        sendLog("ERROR: Orphaned state/s left", LogFormat::BoldRed);
+        return false;
+    }
+
     istream.reset();
     return true;
 }
@@ -497,6 +510,65 @@ void Esd::AddCommandCall(std::vector<CommandCall>& callsVector, const uint64_t& 
     StepOut(*istream);
 
     callsVector.push_back(call);
+}
+
+bool Esd::TakeStates(const int64_t& stateSize, std::vector<int64_t>& stateOffsets,
+                     std::unordered_map<int64_t, State>& states,
+                     std::unordered_map<int64_t, int64_t>& stateIds,
+                     std::unordered_map<int64_t, Esd::State>& stateGroup) {
+    stateIds.reserve(stateOffsets.size() + 1);
+    if (stateOffsets.size() > 1) {
+        int64_t weirdStateOffset = stateOffsets[0] + stateSize * stateOffsets.size();
+        if (!states.erase(weirdStateOffset)) {
+            sendLog("ERROR: Weird state not found", LogFormat::BoldRed);
+            return false;
+        }
+    }
+
+    stateGroup.reserve(stateOffsets.size());
+    for (const auto& offset : stateOffsets) {
+        State state = states[offset];
+        if (stateGroup.contains(state.id)) {
+            sendLog("ERROR: Duplicate state id when taking states", LogFormat::BoldRed);
+            return false;
+        }
+
+        stateGroup[state.id] = state;
+        states.erase(offset);
+        stateIds[offset] = state.id;
+    }
+
+    stateOffsets.clear();
+    return true;
+}
+
+bool Esd::GetStateAndConditions(Condition& cond,
+                                const std::unordered_map<int64_t, int64_t>& stateOffsets,
+                                const std::unordered_map<int64_t, Condition>& conditionMap) {
+    if (cond.stateOffset == -2) {
+        debugLog("condition stateoffset already processed");
+        return true;
+    }
+
+    if (cond.stateOffset == -1) {
+        cond.targetStateId = std::nullopt;
+    } else if (stateOffsets.contains(cond.stateOffset)) {
+        cond.targetStateId = stateOffsets.at(cond.stateOffset);
+    } else {
+        sendLog("ERROR: Condition target state not found.", LogFormat::BoldRed);
+        return false;
+    }
+    cond.stateOffset = -2;
+
+    for (const auto& offset : cond.conditionOffsets) {
+        cond.subconditions.push_back(conditionMap.at(offset));
+    }
+    cond.conditionOffsets.clear();
+
+    for (Condition& sub : cond.subconditions) {
+        GetStateAndConditions(sub, stateOffsets, conditionMap);
+    }
+    return true;
 }
 
 Esd::~Esd() {}

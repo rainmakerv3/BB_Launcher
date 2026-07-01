@@ -18,7 +18,7 @@ class Esd : public BBFormat {
 
     struct Condition {
         int64_t stateOffset;
-        std::optional<int64_t> targetState = std::nullopt;
+        std::optional<int64_t> targetStateId = std::nullopt;
         std::vector<char> evaluator;
         std::vector<CommandCall> passCommands;
         std::vector<Condition> subconditions;
@@ -31,6 +31,7 @@ class Esd : public BBFormat {
         std::vector<CommandCall> exitCommands;
         std::vector<CommandCall> whileCommands;
         std::vector<int64_t> conditionOffsets;
+        std::vector<Condition> conditions;
     };
 
 public:
@@ -46,12 +47,19 @@ private:
     // otherEntries);
 
     void AddCommandCall(std::vector<CommandCall>& callsVector, const uint64_t& dataStart);
+    bool TakeStates(const int64_t& stateSize, std::vector<int64_t>& stateOffsets,
+                    std::unordered_map<int64_t, State>& states,
+                    std::unordered_map<int64_t, int64_t>& stateIds,
+                    std::unordered_map<int64_t, Esd::State>& stateGroup);
+    bool GetStateAndConditions(Condition& condition,
+                               const std::unordered_map<int64_t, int64_t>& stateOffsets,
+                               const std::unordered_map<int64_t, Condition>& conditionMap);
 
     bool longFormat;
     int gameNumber = 2;
     int Unk70, Unk74, Unk78, Unk7C;
     std::string name = "";
-    std::vector<State> states;
+    std::unordered_map<int64_t, std::unordered_map<int64_t, State>> stateGroups;
 };
 
 } // namespace FileHelper
