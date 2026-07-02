@@ -74,6 +74,8 @@ void ModMerger::AttemptMerge() {
     std::vector<char> file_data((std::istreambuf_iterator<char>(file)),
                                 std::istreambuf_iterator<char>());
     Esd e(file_data, this);
+    std::vector<char> output;
+    // e.RepackEsd(output);
     return;
 
     if (fs::exists(Common::GetBBLFilesPath() / "Temp" / "ModMerge"))

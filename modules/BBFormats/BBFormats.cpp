@@ -264,7 +264,7 @@ void BBFormat::ReserveBytes(const std::string& name, const int& length) {
     auto it = std::find_if(res.begin(), res.end(),
                            [&name](const auto& pair) { return pair.first == name; });
     if (it != res.end()) {
-        sendLog("ERROR: attemping to reserve already reserved value");
+        sendLog("ERROR: attemping to reserve already reserved value", LogFormat::BoldRed);
     }
 
     std::pair<std::string, std::streamoff> entry;
@@ -286,7 +286,8 @@ void BBFormat::FillReservedInt64(const std::string& name, const uint64_t& value)
         reservedOffset = it->second;
         res.erase(it);
     } else {
-        sendLog("ERROR: reserved offset not found, will likely cause errors. Name: " + name);
+        sendLog("ERROR: reserved offset not found, will likely cause errors. Name: " + name,
+                LogFormat::BoldRed);
     }
 
     StepIn(reservedOffset, *ostream);
@@ -303,7 +304,8 @@ void BBFormat::FillReservedInt32(const std::string& name, const int& value) {
         reservedOffset = it->second;
         res.erase(it);
     } else {
-        sendLog("ERROR: reserved offset not found, will likely cause errors. Name: " + name);
+        sendLog("ERROR: reserved offset not found, will likely cause errors. Name: " + name,
+                LogFormat::BoldRed);
     }
 
     StepIn(reservedOffset, *ostream);
@@ -320,7 +322,8 @@ void BBFormat::FillReservedInt32(const std::string& name, const uint& value) {
         reservedOffset = it->second;
         res.erase(it);
     } else {
-        sendLog("ERROR: reserved offset not found, will likely cause errors. Name: " + name);
+        sendLog("ERROR: reserved offset not found, will likely cause errors. Name: " + name,
+                LogFormat::BoldRed);
     }
 
     StepIn(reservedOffset, *ostream);
@@ -343,6 +346,12 @@ void BBFormat::WriteBytes(const int& buffer, const int& length) {
 void BBFormat::StepIn(std::streamoff offset, std::istream& stream) {
     steps.push_back(stream.tellg());
     stream.seekg(offset, std::ios::beg);
+
+    if (!stream || stream.fail()) { // or if (stream.fail())
+        istream.reset();
+        steps.clear();
+        sendLog("ERROR: Invalid offset during StepIn", LogFormat::BoldRed);
+    }
 }
 
 void BBFormat::StepOut(std::istream& stream) {
@@ -350,12 +359,21 @@ void BBFormat::StepOut(std::istream& stream) {
         std::streampos previous_pos = steps.back();
         steps.pop_back();
         stream.seekg(previous_pos, std::ios::beg);
+    } else {
+        sendLog("No active StepIn for StepOut", LogFormat::BoldRed);
+        ostream.reset();
     }
 }
 
 void BBFormat::StepIn(std::streamoff offset, std::ostream& stream) {
     steps.push_back(stream.tellp());
     stream.seekp(offset, std::ios::beg);
+
+    if (!stream || stream.fail()) { // or if (stream.fail())
+        istream.reset();
+        steps.clear();
+        sendLog("ERROR: Invalid offset during StepIn", LogFormat::BoldRed);
+    }
 }
 
 void BBFormat::StepOut(std::ostream& stream) {
@@ -363,6 +381,9 @@ void BBFormat::StepOut(std::ostream& stream) {
         std::streampos previous_pos = steps.back();
         steps.pop_back();
         stream.seekp(previous_pos, std::ios::beg);
+    } else {
+        sendLog("No active StepIn for StepOut", LogFormat::BoldRed);
+        ostream.reset();
     }
 }
 
