@@ -21,5 +21,14 @@
 	<file>open.png</file>
         <file>help.png</file>
         <file>BBIcon.png</file>
+		<file>mod manager.png</file>
+		<file>downloader.png</file>
+		<file>dungeon.png</file>
+		<file>patch.png</file>
+		<file>pkg.png</file>
+		<file>save.png</file>
+		<file>settings.png</file>
+		<file>shadflat.png</file>
+		<file>trophy.png</file>
     </qresource>
 </RCC>

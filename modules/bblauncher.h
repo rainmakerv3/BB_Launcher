@@ -66,10 +66,21 @@ private:
 
     QPushButton* controllerButton = new QPushButton(this);
     QPushButton* kbmButton = new QPushButton(this);
-    QPushButton* modsFolderButton = new QPushButton(this);
     QPushButton* openFolderButton = new QPushButton(this);
     QPushButton* hotkeysButton = new QPushButton(this);
     QPushButton* helpButton = new QPushButton(this);
+
+    QPushButton* modManagerButton = new QPushButton(this);
+    QPushButton* modDownloaderButton = new QPushButton(this);
+    QPushButton* modsFolderButton = new QPushButton(this);
+    QPushButton* pkgButton = new QPushButton(this);
+    QPushButton* trophyButton = new QPushButton(this);
+
+    QPushButton* saveViewerButton = new QPushButton(this);
+    QPushButton* addChaliceButton = new QPushButton(this);
+    QPushButton* shadSettingsButton = new QPushButton(this);
+    QPushButton* launcherSettingsButton = new QPushButton(this);
+    QPushButton* patchesButton = new QPushButton(this);
 
     QPushButton* launchButton = new QPushButton(this);
     QPushButton* stopButton = new QPushButton(this);
