@@ -164,36 +164,6 @@ void ModMerger::AttemptMerge() {
 }
 
 bool ModMerger::GetMergeFiles(std::filesystem::path mod1Base, std::filesystem::path mod2Base) {
-    fs::path mod1BasePath = StandardizeBasePath(Common::ModPath / mod1Name);
-    for (const auto& entry : fs::directory_iterator(mod1BasePath)) {
-        if (entry.is_directory()) {
-            auto relative_path = fs::relative(entry, mod1BasePath);
-            std::string relative_path_string = Common::PathToU8(relative_path);
-            if (std::find(BBFolders.begin(), BBFolders.end(), relative_path_string) ==
-                BBFolders.end()) {
-                Log("ERROR: Invalid Mod: Folders inside mod folder must include either dvdroot_ps4"
-                    " or Bloodborne dvdroot_ps4 subfolders (ex. sfx, parts, map)",
-                    Format::BoldRed);
-                return false;
-            }
-        }
-    }
-
-    fs::path mod2BasePath = StandardizeBasePath(Common::ModPath / mod2Name);
-    for (const auto& entry : fs::directory_iterator(mod2BasePath)) {
-        if (entry.is_directory()) {
-            auto relative_path = fs::relative(entry, mod2BasePath);
-            std::string relative_path_string = Common::PathToU8(relative_path);
-            if (std::find(BBFolders.begin(), BBFolders.end(), relative_path_string) ==
-                BBFolders.end()) {
-                Log("ERROR: Invalid Mod: Folders inside mod folder must include either dvdroot_ps4"
-                    " or Bloodborne dvdroot_ps4 subfolders (ex. sfx, parts, map)",
-                    Format::BoldRed);
-                return false;
-            }
-        }
-    }
-
     try {
         for (const auto& file : conflictedFiles) {
             fs::path origFilePathOld = GetUpdatedFile(file);
@@ -211,15 +181,19 @@ bool ModMerger::GetMergeFiles(std::filesystem::path mod1Base, std::filesystem::p
                 continue;
             }
 
+            fs::path mod1BasePath = StandardizeBasePath(Common::ModPath / mod1Name);
             fs::path mod1filePathOld = StandardizeBasePath(Common::ModPath / mod1Name) / file;
             fs::path mod1filePath = mod1TempPath / file;
+
             if (!fs::exists(mod1filePath.parent_path())) {
                 fs::create_directories(mod1filePath.parent_path());
             }
             fs::copy_file(mod1filePathOld, mod1filePath);
 
+            fs::path mod2BasePath = StandardizeBasePath(Common::ModPath / mod2Name);
             fs::path mod2filePathOld = StandardizeBasePath(Common::ModPath / mod2Name) / file;
             fs::path mod2filePath = mod2TempPath / file;
+
             if (!fs::exists(mod2filePath.parent_path())) {
                 fs::create_directories(mod2filePath.parent_path());
             }
@@ -369,15 +343,19 @@ bool ModMerger::ChooseBaseFile(fs::path targetFile, fs::path mod1File, fs::path 
 
     try {
         if (currentPriority == ModPriority::Mod1) {
-            fs::copy_file(mod1File, targetFile, fs::copy_options::overwrite_existing);
-            QString msg = QString("Unresolvable conflict, using file: %1 prioritized mod: %2")
-                              .arg(Common::PathToU8(mod1File.filename()), mod1Name);
-            Log(msg, Format::Yellow);
+            if (fs::exists(mod1File)) {
+                fs::copy_file(mod1File, targetFile, fs::copy_options::overwrite_existing);
+                QString msg = QString("Unresolvable conflict, using file: %1 prioritized mod: %2")
+                                  .arg(Common::PathToU8(mod1File.filename()), mod1Name);
+                Log(msg, Format::Yellow);
+            }
         } else if (currentPriority == ModPriority::Mod2) {
-            fs::copy_file(mod2File, targetFile, fs::copy_options::overwrite_existing);
-            QString msg = QString("Unresolvable conflict, using file: %1 prioritized mod: %2")
-                              .arg(Common::PathToU8(mod2File.filename()), mod2Name);
-            Log(msg, Format::Yellow);
+            if (fs::exists(mod2File)) {
+                fs::copy_file(mod2File, targetFile, fs::copy_options::overwrite_existing);
+                QString msg = QString("Unresolvable conflict, using file: %1 prioritized mod: %2")
+                                  .arg(Common::PathToU8(mod2File.filename()), mod2Name);
+                Log(msg, Format::Yellow);
+            }
         }
     } catch (const std::exception& e) {
         Log("Filesystem error copying files: " + QString(e.what()), Format::BoldRed);
