@@ -149,9 +149,6 @@ void CheatsPatches::setupUI() {
     fileListLayout->addWidget(listView_selectFile);
     cheatsLayout->addLayout(fileListLayout, 2);
 
-    // Call the method to fill the list of cheat files
-    populateFileListCheats();
-
     QLabel* repositoryLabel = new QLabel(tr("Repository:"));
     repositoryLabel->setAlignment(Qt::AlignLeft);
     repositoryLabel->setAlignment(Qt::AlignVCenter);
@@ -308,8 +305,8 @@ void CheatsPatches::setupUI() {
     patchesLayout->addLayout(patchesControlLayout);
     patchesTab->setLayout(patchesLayout);
 
-    tabWidget->addTab(cheatsTab, tr("Cheats"));
     tabWidget->addTab(patchesTab, "Patches");
+    tabWidget->addTab(cheatsTab, tr("Cheats"));
 
     connect(tabWidget, &QTabWidget::currentChanged, this, [this](int index) {
         if (index == 1) {
@@ -322,6 +319,10 @@ void CheatsPatches::setupUI() {
 
     mainLayout->addWidget(gameInfoGroupBox, 1);
     mainLayout->addWidget(tabWidget, 3);
+
+    // Call the method to fill the list of patch/cheat files
+    populateFileListPatches();
+    populateFileListCheats();
 
     manager = new QNetworkAccessManager(this);
 

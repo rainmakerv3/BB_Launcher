@@ -42,7 +42,7 @@ QVBoxLayout* BBLauncher::createIconTextButtonLayout(const QString& resourcePath,
                                                     const QString& buttonText,
                                                     QPushButton* button) {
     QVBoxLayout* layout = new QVBoxLayout();
-    layout->setAlignment(Qt::AlignCenter);
+    layout->setAlignment(Qt::AlignTop);
     layout->setSpacing(0);
     layout->setContentsMargins(0, 0, 0, 0);
 
@@ -53,8 +53,10 @@ QVBoxLayout* BBLauncher::createIconTextButtonLayout(const QString& resourcePath,
     QLabel* label = new QLabel(buttonText);
     QFont font = label->font();
     font.setBold(true);
+    font.setPointSize(9);
     label->setFont(font);
     label->setAlignment(Qt::AlignCenter);
+    label->setWordWrap(true);
 
     layout->addWidget(button, 0);
     layout->addWidget(label, 0, Qt::AlignCenter);
@@ -82,17 +84,17 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
                               "border-radius: 4px; color: white; padding: 6px 16px;}");
 
     ui->IconButtonsLayout->addLayout(
-        createIconTextButtonLayout(":gold.png", "Controller", controllerButton));
+        createIconTextButtonLayout(":mod_manager.png", "Mod Manager", modManagerButton));
     ui->IconButtonsLayout->addLayout(
-        createIconTextButtonLayout(":gold.png", "KB & Mouse", kbmButton));
+        createIconTextButtonLayout(":downloader.png", "Mod Downloader", modDownloaderButton));
     ui->IconButtonsLayout->addLayout(
-        createIconTextButtonLayout(":gold.png", "Mods Folder", modsFolderButton));
+        createIconTextButtonLayout(":settings.png", "Launcher Settings", launcherSettingsButton));
     ui->IconButtonsLayout->addLayout(
-        createIconTextButtonLayout(":gold.png", "Open Folders", openFolderButton));
+        createIconTextButtonLayout(":shadflat.png", "shadPS4 Settings", shadSettingsButton));
     ui->IconButtonsLayout->addLayout(
-        createIconTextButtonLayout(":gold.png", "Open Help", helpButton));
+        createIconTextButtonLayout(":patch.png", "Patches & Cheats", patchesButton));
     ui->IconButtonsLayout->addLayout(
-        createIconTextButtonLayout(":gold.png", "Hotkeys", hotkeysButton));
+        createIconTextButtonLayout(":save.png", "Saves & Backups", saveViewerButton));
 
     ui->controlsLayout1->addLayout(
         createIconTextButtonLayout(":play_icon.png", "Launch", launchButton));
@@ -190,12 +192,12 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         Extractor->exec();
     });
 
-    connect(ui->downloaderButton, &QPushButton::pressed, this, [this]() {
+    connect(modDownloaderButton, &QPushButton::pressed, this, [this]() {
         ModDownloader* Downloader = new ModDownloader(this);
         Downloader->exec();
     });
 
-    connect(ui->TrophyButton, &QPushButton::pressed, this, [this]() {
+    connect(ui->trophyButton, &QPushButton::pressed, this, [this]() {
         QString gameTrpPath;
         Common::PathToQString(gameTrpPath, Common::installPath);
 
@@ -209,7 +211,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
                 [TrophyWindow]() { TrophyWindow->deleteLater(); });
     });
 
-    connect(ui->SaveManagerButton, &QPushButton::pressed, this, [this]() {
+    connect(saveViewerButton, &QPushButton::pressed, this, [this]() {
         if (!CheckBBInstall())
             return;
 
@@ -227,7 +229,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         SaveManagerWindow->exec();
     });
 
-    connect(ui->chaliceButton, &QPushButton::pressed, this, [this]() {
+    connect(ui->addChaliceButton, &QPushButton::pressed, this, [this]() {
         if (!CheckBBInstall())
             return;
 
@@ -245,7 +247,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         EditorWindow->exec();
     });
 
-    connect(ui->PatchesButton, &QPushButton::pressed, this, [this]() {
+    connect(patchesButton, &QPushButton::pressed, this, [this]() {
         if (!CheckBBInstall())
             return;
         CheatsPatches* cheatsPatches = new CheatsPatches(m_ipc_client, Config::GameRunning, this);
@@ -255,7 +257,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         UpdatePatchesList();
     });
 
-    connect(ui->ModManagerButton, &QPushButton::pressed, this, [this]() {
+    connect(modManagerButton, &QPushButton::pressed, this, [this]() {
         if (Config::GameRunning) {
             QMessageBox::warning(this, "Error", "Mod Manager cannot be used while game is running");
             return;
@@ -268,7 +270,7 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         UpdateModList();
     });
 
-    connect(ui->shadSettingsButton, &QPushButton::pressed, this, [this]() {
+    connect(shadSettingsButton, &QPushButton::pressed, this, [this]() {
         if (!CheckBBInstall())
             return;
 
@@ -305,24 +307,24 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         ShadSettingsWindow->exec();
     });
 
-    connect(ui->LauncherSettingsButton, &QPushButton::pressed, this, [this]() {
+    connect(launcherSettingsButton, &QPushButton::pressed, this, [this]() {
         LauncherSettings* LauncherSettingsWindow = new LauncherSettings(this);
         LauncherSettingsWindow->exec();
         UpdateIcons();
         LogSettings();
     });
 
-    connect(kbmButton, &QPushButton::clicked, this, [this]() {
+    connect(ui->kbmButton, &QPushButton::clicked, this, [this]() {
         KBMSettings* KBMWindow = new KBMSettings(m_ipc_client, this);
         KBMWindow->exec();
     });
 
-    connect(controllerButton, &QPushButton::clicked, this, [this]() {
+    connect(ui->controllerButton, &QPushButton::clicked, this, [this]() {
         ControlSettings* RemapWindow = new ControlSettings(m_ipc_client, this);
         RemapWindow->exec();
     });
 
-    connect(modsFolderButton, &QPushButton::clicked, this, [this]() {
+    connect(ui->modsFolderButton, &QPushButton::clicked, this, [this]() {
         if (!std::filesystem::exists(Common::ModPath)) {
             std::filesystem::create_directories(Common::ModPath);
         }
@@ -333,15 +335,15 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         QDesktopServices::openUrl(QUrl::fromLocalFile(ModFolder));
     });
 
-    connect(openFolderButton, &QPushButton::pressed, this, &BBLauncher::OpenFolders);
+    connect(ui->otherFoldersButton, &QPushButton::pressed, this, &BBLauncher::OpenFolders);
 
-    connect(helpButton, &QPushButton::clicked, this, [this]() {
+    connect(ui->helpButton, &QPushButton::clicked, this, [this]() {
         QString link =
             "https://docs.google.com/document/d/1UKYSAMz3y9PH3AOCow5KyIIlRHZ0wbjcAxHvjZwtjk0";
         QDesktopServices::openUrl(link);
     });
 
-    connect(hotkeysButton, &QPushButton::clicked, this, [this]() {
+    connect(ui->hotkeysButton, &QPushButton::clicked, this, [this]() {
         Hotkeys* HKWindow = new Hotkeys(m_ipc_client, this);
         HKWindow->exec();
     });
@@ -629,18 +631,18 @@ void BBLauncher::UpdateIcons() {
         label->setStyleSheet(QString("color: %1;").arg(pal.color(QPalette::WindowText).name()));
     }
 
-    controllerButton->setIcon(QIcon(":controller_icon.png"));
-    controllerButton->setIconSize(QSize(48, 48));
-    kbmButton->setIcon(QIcon(":keyboard.png"));
-    kbmButton->setIconSize(QSize(48, 48));
-    modsFolderButton->setIcon(QIcon(":mod_folder.png"));
-    modsFolderButton->setIconSize(QSize(48, 48));
-    openFolderButton->setIcon(QIcon(":open.png"));
-    openFolderButton->setIconSize(QSize(48, 48));
-    helpButton->setIcon(QIcon(":help.png"));
-    helpButton->setIconSize(QSize(48, 48));
-    hotkeysButton->setIcon(QIcon(":hotkey.png"));
-    hotkeysButton->setIconSize(QSize(48, 48));
+    modManagerButton->setIcon(QIcon(":mod_manager.png"));
+    modManagerButton->setIconSize(QSize(48, 48));
+    modDownloaderButton->setIcon(QIcon(":downloader.png"));
+    modDownloaderButton->setIconSize(QSize(48, 48));
+    launcherSettingsButton->setIcon(QIcon(":settings.png"));
+    launcherSettingsButton->setIconSize(QSize(48, 48));
+    shadSettingsButton->setIcon(QIcon(":shadflat.png"));
+    shadSettingsButton->setIconSize(QSize(48, 48));
+    patchesButton->setIcon(QIcon(":patch.png"));
+    patchesButton->setIconSize(QSize(48, 48));
+    saveViewerButton->setIcon(QIcon(":save.png"));
+    saveViewerButton->setIconSize(QSize(48, 48));
 
     launchButton->setIcon(QIcon(":play_icon.png"));
     launchButton->setIconSize(QSize(36, 36));
@@ -652,12 +654,12 @@ void BBLauncher::UpdateIcons() {
     restartButton->setIconSize(QSize(36, 36));
 
     if (Config::theme == "Dark") {
-        controllerButton->setIcon(RecolorIcon(controllerButton->icon(), false));
-        kbmButton->setIcon(RecolorIcon(kbmButton->icon(), false));
-        modsFolderButton->setIcon(RecolorIcon(modsFolderButton->icon(), false));
-        openFolderButton->setIcon(RecolorIcon(openFolderButton->icon(), false));
-        helpButton->setIcon(RecolorIcon(helpButton->icon(), false));
-        hotkeysButton->setIcon(RecolorIcon(hotkeysButton->icon(), false));
+        modManagerButton->setIcon(RecolorIcon(modManagerButton->icon(), false));
+        modDownloaderButton->setIcon(RecolorIcon(modDownloaderButton->icon(), false));
+        launcherSettingsButton->setIcon(RecolorIcon(launcherSettingsButton->icon(), false));
+        shadSettingsButton->setIcon(RecolorIcon(shadSettingsButton->icon(), false));
+        patchesButton->setIcon(RecolorIcon(patchesButton->icon(), false));
+        saveViewerButton->setIcon(RecolorIcon(saveViewerButton->icon(), false));
 
         launchButton->setIcon(RecolorIcon(launchButton->icon(), false));
         stopButton->setIcon(RecolorIcon(stopButton->icon(), false));

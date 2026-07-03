@@ -3,7 +3,6 @@
         <file>BBicon2.ico</file>
         <file>controller_icon.png</file>
         <file>keyboard.png</file>
-        <file>mod_folder.png</file>
         <file>ps4_controller.png</file>
         <file>bronze.png</file>
         <file>gold.png</file>
@@ -12,14 +11,17 @@
         <file>unlocked.png</file>
         <file>locked.png</file>
         <file>KBM.png</file>
-        <file>hotkey.png</file>
         <file>restart_game_icon.png</file>
         <file>play_icon.png</file>
         <file>stop_icon.png</file>
         <file>fullscreen_icon.png</file>
         <file>web.qml</file>
-	<file>open.png</file>
-        <file>help.png</file>
         <file>BBIcon.png</file>
+		<file>mod_manager.png</file>
+		<file>patch.png</file>
+		<file>downloader.png</file>
+		<file>save.png</file>
+		<file>settings.png</file>
+		<file>shadflat.png</file>
     </qresource>
 </RCC>

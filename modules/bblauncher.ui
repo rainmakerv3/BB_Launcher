@@ -292,16 +292,41 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
-          <widget class="QPushButton" name="ModManagerButton">
+          <widget class="QPushButton" name="controllerButton">
            <property name="text">
-            <string>Mod Manager</string>
+            <string>Remap Controller Buttons</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="downloaderButton">
+          <widget class="QPushButton" name="kbmButton">
            <property name="text">
-            <string>Mod Downloader</string>
+            <string>Remap Keyboard and Mouse</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="hotkeysButton">
+           <property name="text">
+            <string>Customize Hotkeys</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QPushButton" name="addChaliceButton">
+           <property name="text">
+            <string>Add Chalices to Save File</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="trophyButton">
+           <property name="text">
+            <string>Trophy Viewer and Unlocker</string>
            </property>
           </widget>
          </item>
@@ -315,50 +340,25 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_9">
-         <item>
-          <widget class="QPushButton" name="LauncherSettingsButton">
-           <property name="text">
-            <string>BB Launcher Settings</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="shadSettingsButton">
-           <property name="text">
-            <string>shadPS4 Settings</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="PatchesButton">
-           <property name="text">
-            <string>Bloodborne Cheats/Patches</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QPushButton" name="chaliceButton">
+          <widget class="QPushButton" name="modsFolderButton">
            <property name="text">
-            <string>Add Chalice Dungeons to Save File</string>
+            <string>Open Mods Folder</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="SaveManagerButton">
+          <widget class="QPushButton" name="otherFoldersButton">
            <property name="text">
-            <string>Save Viewer and Backup Manager</string>
+            <string>Open Other Folders</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="TrophyButton">
+          <widget class="QPushButton" name="helpButton">
            <property name="text">
-            <string>Trophy Viewer and Unlocker</string>
+            <string>Open Help Document</string>
            </property>
           </widget>
          </item>
