@@ -122,17 +122,20 @@ bool ConflictHandler::HandleBinderConflict(std::vector<char>& origData, std::vec
         sendLog("File processed: " + file.name + "\n");
     }
 
+    std::unordered_set<int> existingIds;
+    for (const auto& file : origBnd.files) {
+        existingIds.insert(file.id);
+    }
+
     for (const auto& file : mod1BndFiles) {
-        std::optional<Bnd::BinderFile> origFile = origBnd.GetSameFile(file.id, origBnd.files);
-        if (!origFile.has_value()) {
+        if (existingIds.find(file.id) == existingIds.end()) {
             origBnd.files.push_back(file);
             sendLog("Bnd file added: " + file.name);
         }
     }
 
     for (const auto& file : mod2BndFiles) {
-        std::optional<Bnd::BinderFile> origFile = origBnd.GetSameFile(file.id, origBnd.files);
-        if (!origFile.has_value()) {
+        if (existingIds.find(file.id) == existingIds.end()) {
             origBnd.files.push_back(file);
             sendLog("Bnd file added: " + file.name);
         }

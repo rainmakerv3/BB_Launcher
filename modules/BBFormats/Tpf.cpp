@@ -321,19 +321,20 @@ bool Tpf::HandleConflict(std::vector<char>& mod1Data, std::vector<char>& mod2Dat
         }
     }
 
-    for (const auto& tex : mod1Textures) {
-        std::optional<Tpf::Texture> origTex = GetSameTexture(tex.name, textures);
+    std::unordered_set<std::string> existingNames;
+    for (const auto& tex : textures) {
+        existingNames.insert(tex.name);
+    }
 
-        if (!origTex.has_value()) {
+    for (const auto& tex : mod1Textures) {
+        if (existingNames.find(tex.name) == existingNames.end()) {
             textures.push_back(tex);
             sendLog("Texture data added: " + tex.name);
         }
     }
 
     for (const auto& tex : mod2Textures) {
-        std::optional<Tpf::Texture> origTex = GetSameTexture(tex.name, textures);
-
-        if (!origTex.has_value()) {
+        if (existingNames.find(tex.name) == existingNames.end()) {
             textures.push_back(tex);
             sendLog("Texture data added: " + tex.name);
         }

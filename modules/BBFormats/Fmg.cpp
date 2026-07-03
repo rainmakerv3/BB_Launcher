@@ -260,19 +260,20 @@ bool Fmg::HandleConflict(std::vector<char>& mod1Data, std::vector<char>& mod2Dat
         }
     }
 
-    for (const auto& fmg : mod1Fmgs) {
-        std::optional<FmgEntry> origEntry = GetSameEntry(fmg.id, fmgEntries);
+    std::unordered_set<int> existingIds;
+    for (const auto& entry : fmgEntries) {
+        existingIds.insert(entry.id);
+    }
 
-        if (!origEntry.has_value()) {
+    for (const auto& fmg : mod1Fmgs) {
+        if (existingIds.find(fmg.id) == existingIds.end()) {
             fmgEntries.push_back(fmg);
             sendLog("Fmg data added id: " + std::to_string(fmg.id) + " text: " + fmg.text);
         }
     }
 
     for (const auto& fmg : mod2Fmgs) {
-        std::optional<FmgEntry> origEntry = GetSameEntry(fmg.id, fmgEntries);
-
-        if (!origEntry.has_value()) {
+        if (existingIds.find(fmg.id) == existingIds.end()) {
             fmgEntries.push_back(fmg);
             sendLog("Fmg data added id: " + std::to_string(fmg.id) + " text: " + fmg.text);
         }
