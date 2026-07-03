@@ -10,12 +10,12 @@ namespace fs = std::filesystem;
 
 namespace FileHelper {
 
-Tpf::Tpf(std::vector<char> data, ModMerger* parent) : BBFormat(parent) {
+Tpf::Tpf(std::vector<char>& data, ModMerger* parent) : BBFormat(parent) {
     bigEndian = false;
     ReadTpf(data);
 }
 
-bool Tpf::ReadTpf(std::vector<char> data) {
+bool Tpf::ReadTpf(std::vector<char>& data) {
     if (data.empty()) {
         sendLog("ERROR: empty tpf input data", LogFormat::BoldRed);
         return false;
@@ -271,7 +271,7 @@ bool Tpf::RepackTpf(std::vector<char>& outputData) {
     return true;
 }
 
-bool Tpf::HandleConflict(const std::vector<char>& mod1Data, const std::vector<char>& mod2Data) {
+bool Tpf::HandleConflict(std::vector<char>& mod1Data, std::vector<char>& mod2Data) {
     Tpf mod1Tpf = Tpf(mod1Data, merger);
     const std::vector<Tpf::Texture> mod1Textures = mod1Tpf.textures;
 

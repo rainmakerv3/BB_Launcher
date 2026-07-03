@@ -14,7 +14,7 @@ private:
     int platform = 4; // PS4
 
 public:
-    explicit Tpf(std::vector<char> data, ModMerger* parent);
+    explicit Tpf(std::vector<char>& data, ModMerger* parent);
     ~Tpf() override;
 
     enum class TexType : int { Texture = 0, Cubemap = 1, Volume = 2, TextureArray = 3 };
@@ -179,9 +179,9 @@ public:
         std::vector<char> data = {};
     };
 
-    bool ReadTpf(std::vector<char> data);
+    bool ReadTpf(std::vector<char>& data);
     bool RepackTpf(std::vector<char>& outputData);
-    bool HandleConflict(const std::vector<char>& mod1Data, const std::vector<char>& mod2Data);
+    bool HandleConflict(std::vector<char>& mod1Data, std::vector<char>& mod2Data);
 
     std::optional<Tpf::Texture> GetSameTexture(const std::string& name,
                                                const std::vector<Tpf::Texture>& otherTex);

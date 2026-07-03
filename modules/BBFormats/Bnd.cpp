@@ -7,13 +7,13 @@ namespace fs = std::filesystem;
 
 namespace FileHelper {
 
-Bnd::Bnd(std::vector<char> data, ModMerger* parent) : BBFormat(parent) {
+Bnd::Bnd(std::vector<char>& data, ModMerger* parent) : BBFormat(parent) {
     bigEndian = false;
     version = DateToBinderTimestamp();
     UnpackBnd(data);
 }
 
-bool Bnd::UnpackBnd(std::vector<char> data) {
+bool Bnd::UnpackBnd(std::vector<char>& data) {
     if (data.empty()) {
         sendLog("ERROR: empty bnd input data", LogFormat::BoldRed);
         return false;

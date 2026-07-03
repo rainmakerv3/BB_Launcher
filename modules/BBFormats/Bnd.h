@@ -13,10 +13,10 @@ class Bnd : public BBFormat {
     Q_OBJECT
 
 public:
-    explicit Bnd(std::vector<char> data, ModMerger* parent);
+    explicit Bnd(std::vector<char>& data, ModMerger* parent);
     ~Bnd() override;
 
-    bool UnpackBnd(std::vector<char> data);
+    bool UnpackBnd(std::vector<char>& data);
     bool RepackBnd(std::vector<char>& outputData);
 
     struct BinderFile {

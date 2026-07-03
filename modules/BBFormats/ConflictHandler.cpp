@@ -17,10 +17,8 @@ ConflictHandler::ConflictHandler(const std::string& fileType, ModMerger* merger)
     type = fileType;
 }
 
-bool ConflictHandler::HandleItemConflict(std::vector<char>& origData,
-                                         const std::vector<char>& mod1Data,
-                                         const std::vector<char>& mod2Data,
-                                         const std::string& filename) {
+bool ConflictHandler::HandleItemConflict(std::vector<char>& origData, std::vector<char>& mod1Data,
+                                         std::vector<char>& mod2Data, const std::string& filename) {
     if (type.contains("TPF") || type.contains("tpf")) {
         Tpf origTpf(origData, merger);
         if (!origTpf.HandleConflict(mod1Data, mod2Data)) {
@@ -54,9 +52,8 @@ bool ConflictHandler::HandleItemConflict(std::vector<char>& origData,
     return true;
 }
 
-bool ConflictHandler::HandleBinderConflict(std::vector<char>& origData,
-                                           const std::vector<char>& mod1Data,
-                                           const std::vector<char>& mod2Data) {
+bool ConflictHandler::HandleBinderConflict(std::vector<char>& origData, std::vector<char>& mod1Data,
+                                           std::vector<char>& mod2Data) {
     Bnd origBnd = Bnd(origData, merger);
     const Bnd mod1Bnd = Bnd(mod1Data, merger);
     const std::vector<Bnd::BinderFile> mod1BndFiles = mod1Bnd.files;

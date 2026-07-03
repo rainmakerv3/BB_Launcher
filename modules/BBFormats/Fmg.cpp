@@ -10,12 +10,12 @@ namespace fs = std::filesystem;
 
 namespace FileHelper {
 
-Fmg::Fmg(std::vector<char> data, ModMerger* parent) : BBFormat(parent) {
+Fmg::Fmg(std::vector<char>& data, ModMerger* parent) : BBFormat(parent) {
     bigEndian = false;
     ReadFmg(data);
 }
 
-bool Fmg::ReadFmg(std::vector<char> data) {
+bool Fmg::ReadFmg(std::vector<char>& data) {
     if (data.empty()) {
         sendLog("ERROR: empty fmg input data", LogFormat::BoldRed);
         return false;
@@ -208,7 +208,7 @@ bool Fmg::RepackFmg(std::vector<char>& outputData) {
     return true;
 }
 
-bool Fmg::HandleConflict(const std::vector<char>& mod1Data, const std::vector<char>& mod2Data) {
+bool Fmg::HandleConflict(std::vector<char>& mod1Data, std::vector<char>& mod2Data) {
     Fmg mod1Fmg = Fmg(mod1Data, merger);
     const std::vector<FmgEntry> mod1Fmgs = mod1Fmg.fmgEntries;
 

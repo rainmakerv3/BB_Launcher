@@ -72,10 +72,10 @@ private:
     std::vector<Unk3> unk3s;
 
 public:
-    explicit DrawParam(std::vector<char> data, ModMerger* parent);
+    explicit DrawParam(std::vector<char>& data, ModMerger* parent);
     ~DrawParam() override;
 
-    bool ReadDrawParam(std::vector<char> data);
+    bool ReadDrawParam(std::vector<char>& data);
 };
 
 } // namespace FileHelper

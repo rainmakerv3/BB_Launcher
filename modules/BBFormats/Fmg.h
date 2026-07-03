@@ -11,12 +11,12 @@ class Fmg : public BBFormat {
     Q_OBJECT
 
 public:
-    explicit Fmg(std::vector<char> data, ModMerger* parent);
+    explicit Fmg(std::vector<char>& data, ModMerger* parent);
     ~Fmg() override;
 
-    bool ReadFmg(std::vector<char> data);
+    bool ReadFmg(std::vector<char>& data);
     bool RepackFmg(std::vector<char>& outputData);
-    bool HandleConflict(const std::vector<char>& mod1Data, const std::vector<char>& mod2Data);
+    bool HandleConflict(std::vector<char>& mod1Data, std::vector<char>& mod2Data);
 
 private:
     struct FmgEntry {

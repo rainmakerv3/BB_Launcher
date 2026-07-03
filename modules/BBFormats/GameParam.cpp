@@ -10,13 +10,13 @@ namespace fs = std::filesystem;
 
 namespace FileHelper {
 
-GameParam::GameParam(std::vector<char> data, const std::string& name, ModMerger* parent)
+GameParam::GameParam(std::vector<char>& data, const std::string& name, ModMerger* parent)
     : fileName(name), BBFormat(parent) {
     bigEndian = false;
     ReadGameParam(data);
 }
 
-bool GameParam::ReadGameParam(std::vector<char> data) {
+bool GameParam::ReadGameParam(std::vector<char>& data) {
     if (data.empty()) {
         sendLog("ERROR: empty fmg input data", LogFormat::BoldRed);
         return false;
@@ -356,8 +356,7 @@ bool GameParam::RepackGameParam(std::vector<char>& outputData) {
     return true;
 }
 
-bool GameParam::HandleConflict(const std::vector<char>& mod1Data,
-                               const std::vector<char>& mod2Data) {
+bool GameParam::HandleConflict(std::vector<char>& mod1Data, std::vector<char>& mod2Data) {
     GameParam mod1Prm = GameParam(mod1Data, fileName, merger);
     const std::vector<Row> mod1Rows = mod1Prm.rows;
 

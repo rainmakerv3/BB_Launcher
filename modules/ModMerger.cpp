@@ -107,9 +107,9 @@ void ModMerger::AttemptMerge() {
             if (!origDcx.UnpackDcx(basefile, baseData)) {
                 emit CleanUpRequested(true);
                 return;
-            } else {
-                canExtract = false;
             }
+        } else {
+            canExtract = false;
         }
 
         std::string filetype;

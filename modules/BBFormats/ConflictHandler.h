@@ -14,10 +14,10 @@ public:
     explicit ConflictHandler(const std::string& type, ModMerger* merger);
     ~ConflictHandler() override;
 
-    bool HandleItemConflict(std::vector<char>& origData, const std::vector<char>& mod1Data,
-                            const std::vector<char>& mod2Data, const std::string& filename = "");
-    bool HandleBinderConflict(std::vector<char>& origData, const std::vector<char>& mod1Data,
-                              const std::vector<char>& mod2Data);
+    bool HandleItemConflict(std::vector<char>& origData, std::vector<char>& mod1Data,
+                            std::vector<char>& mod2Data, const std::string& filename = "");
+    bool HandleBinderConflict(std::vector<char>& origData, std::vector<char>& mod1Data,
+                              std::vector<char>& mod2Data);
 
 private:
     std::string type;

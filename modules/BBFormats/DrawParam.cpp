@@ -9,12 +9,12 @@ namespace fs = std::filesystem;
 
 namespace FileHelper {
 
-DrawParam::DrawParam(std::vector<char> data, ModMerger* parent) : BBFormat(parent) {
+DrawParam::DrawParam(std::vector<char>& data, ModMerger* parent) : BBFormat(parent) {
     bigEndian = false;
     ReadDrawParam(data);
 }
 
-bool DrawParam::ReadDrawParam(std::vector<char> data) {
+bool DrawParam::ReadDrawParam(std::vector<char>& data) {
     if (data.empty()) {
         sendLog("ERROR: empty drawparam input data", LogFormat::BoldRed);
         return false;

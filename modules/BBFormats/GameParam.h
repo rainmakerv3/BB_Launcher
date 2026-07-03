@@ -86,13 +86,13 @@ class GameParam : public BBFormat {
     };
 
 public:
-    explicit GameParam(std::vector<char> data, const std::string& fileName, ModMerger* parent);
+    explicit GameParam(std::vector<char>& data, const std::string& fileName, ModMerger* parent);
     ~GameParam() override;
 
     // ParamDef GetParamDef(const std::string& filename); // GameParamDef.cpp, big hardcodes
-    bool ReadGameParam(std::vector<char> data);
+    bool ReadGameParam(std::vector<char>& data);
     bool RepackGameParam(std::vector<char>& outputData);
-    bool HandleConflict(const std::vector<char>& mod1Data, const std::vector<char>& mod2Data);
+    bool HandleConflict(std::vector<char>& mod1Data, std::vector<char>& mod2Data);
 
 private:
     std::vector<GameParam::FormatFlags1> GetFormatFlags1(int flagsValue);
