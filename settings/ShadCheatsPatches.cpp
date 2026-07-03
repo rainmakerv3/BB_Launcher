@@ -42,7 +42,7 @@ CheatsPatches::CheatsPatches(std::shared_ptr<IpcClient> client, bool game_runnin
     this->setModal(true);
     setupUI();
     resize(500, 400);
-    setWindowTitle("Enable/Disable Patches for Bloodborne");
+    setWindowTitle("Bloodborne Patches and Cheats");
 }
 
 void CheatsPatches::setupUI() {
@@ -63,8 +63,6 @@ void CheatsPatches::setupUI() {
     gameVersion = "01.09";
 
     qserial = QString::fromStdString(Common::game_serial);
-    defaultTextEdit = defaultTextEditMSG;
-    defaultTextEdit.replace("\\n", "\n");
 
     QString CHEATS_DIR_QString;
     Common::PathToQString(CHEATS_DIR_QString, Common::GetShadUserDir() / "cheats");
@@ -104,7 +102,7 @@ void CheatsPatches::setupUI() {
 
     auto labelFont = font();
     labelFont.setBold(true);
-    gameVersionLabel = new QLabel(cheatsLabelText);
+    gameVersionLabel = new QLabel(patchesLabelText);
 
     gameVersionLabel->setAlignment(Qt::AlignLeft);
     gameVersionLabel->setFont(labelFont);
@@ -112,7 +110,7 @@ void CheatsPatches::setupUI() {
 
     // Add a text area for instructions and 'Patch' descriptions
     instructionsTextEdit = new QTextEdit();
-    instructionsTextEdit->setText(defaultTextEdit);
+    instructionsTextEdit->setText(defaultTextEditMsg);
     instructionsTextEdit->setReadOnly(true);
     instructionsTextEdit->setFixedHeight(290);
     gameInfoLayout->addWidget(instructionsTextEdit);
@@ -311,9 +309,9 @@ void CheatsPatches::setupUI() {
     connect(tabWidget, &QTabWidget::currentChanged, this, [this](int index) {
         if (index == 1) {
             populateFileListPatches();
-            gameVersionLabel->setText(gameVersionLabelText);
-        } else {
             gameVersionLabel->setText(cheatsLabelText);
+        } else {
+            gameVersionLabel->setText(patchesLabelText);
         }
     });
 
@@ -1020,7 +1018,7 @@ void CheatsPatches::onPatchCheckBoxHovered(QCheckBox* checkBox, bool hovered) {
             updateNoteTextEdit(patchName.toString());
         }
     } else {
-        instructionsTextEdit->setText(defaultTextEdit);
+        instructionsTextEdit->setText(defaultTextEditMsg);
     }
 }
 

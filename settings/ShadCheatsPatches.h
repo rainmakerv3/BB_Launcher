@@ -110,8 +110,7 @@ private:
     QMap<QString, Cheat> m_cheats;
     QVector<QCheckBox*> m_cheatCheckBoxes;
     QString m_cheatFilePath;
-    QString defaultTextEdit;
-    QString defaultTextEditMSG =
+    QString defaultTextEditMsg =
         "Cheats/Patches are experimental.\nUse with caution.\n\nDownload cheats individually by "
         "selecting the repository and clicking the download button.\nIn the Patches tab, you can "
         "download all patches at once, choose which ones you want to use, and save your "
@@ -129,7 +128,6 @@ private:
 
     QString cheatsLabelText = "IMPORTANT: Cheats only work with the latest\nshadPS4 SDL version "
                               "(not Qt) only. Also, some\ncheats may not work or may crash.";
-    QString gameVersionLabelText =
-        "IMPORTANT: Patches only work properly with\nversion 1.09, please "
-        "update to version 1.09\nif you have not before using patches.";
+    QString patchesLabelText = "IMPORTANT: Patches only work properly with\nversion 1.09, please "
+                               "update to version 1.09\nif you have not before using patches.";
 };
