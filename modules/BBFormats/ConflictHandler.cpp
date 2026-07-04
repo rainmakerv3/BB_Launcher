@@ -3,6 +3,7 @@
 
 #include "Bnd.h"
 #include "ConflictHandler.h"
+#include "Emevd.h"
 #include "Fmg.h"
 #include "GameParam.h"
 #include "Msb.h"
@@ -57,6 +58,16 @@ bool ConflictHandler::HandleItemConflict(std::vector<char>& origData, std::vecto
         } else {
             origData.clear();
             origMsb.RepackMsb(origData);
+        }
+    }
+    
+    if (type.contains("EVD")) {
+        Emevd origEvd(origData, merger);
+        if (!origEvd.HandleConflict(mod1Data, mod2Data)) {
+            return false;
+        } else {
+            origData.clear();
+            origEvd.RepackEmevd(origData);
         }
     }
 

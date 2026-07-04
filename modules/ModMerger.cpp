@@ -10,8 +10,6 @@
 #include "modules/BBFormats/Dcx.h"
 #include "ui_ModMerger.h"
 
-#include "modules/BBFormats/Msb.h"
-
 using namespace FileHelper;
 namespace fs = std::filesystem;
 
@@ -118,11 +116,12 @@ void ModMerger::AttemptMerge() {
         }
 
         std::string filetype;
-        // what can be extracted after DCX, rn only these, maybe esd/emevd after
+        // what can be extracted after DCX, maybe esd/emevd after
         if (canExtract) {
             filetype = GetFileType(baseData);
             canExtract =
                 filetype.contains("TPF") || filetype.contains("BND4") || filetype.contains("MSB");
+            // || filetype.contains("EVD"); not yet ready
         }
 
         if (!canExtract) {

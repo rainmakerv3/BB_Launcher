@@ -31,7 +31,7 @@ bool Tpf::ReadTpf(std::vector<char>& data) {
     debugLog("MAGIC: " + strBuffer);
 
     if (!strBuffer.contains("TPF")) {
-        sendLog("ERROR invalid param header: " + strBuffer, LogFormat::BoldRed);
+        sendLog("ERROR invalid tpf header: " + strBuffer, LogFormat::BoldRed);
         return false;
     }
 
