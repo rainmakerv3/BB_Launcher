@@ -95,6 +95,12 @@ void ModMerger::AttemptMerge() {
         fs::path mod1file = mod1TempPath / file;
         fs::path mod2file = mod2TempPath / file;
 
+        if (!fs::exists(basefile)) {
+            Log("Skipping file not present in original game " + QString::fromStdString(file),
+                Format::Yellow);
+            continue;
+        }
+
         std::string fileExt = file.substr(file.length() - 3);
         std::transform(fileExt.begin(), fileExt.end(), fileExt.begin(),
                        [](unsigned char c) { return std::tolower(c); });
