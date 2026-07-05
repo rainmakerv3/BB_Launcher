@@ -5,211 +5,13 @@
 #include <fstream>
 #include <iomanip>
 #include <map>
-#include <QFile>
-#include <QMessageBox>
-#include <QXmlStreamReader>
 
 #include "modules/Common.h"
 #include "modules/Log.h"
-#include "settings/emulator_settings.h"
 #include "settings/updater/BuildInfo.h"
 #include "user_settings.h"
 
-namespace fs = std::filesystem;
 using json = nlohmann::json;
-
-enum class TransferOption : s32 {
-    Copy = 0,
-    Move,
-    MoveAndLinkBack,
-    Nothing,
-    SdlCancelled = -1,
-};
-
-TransferOption AskMigrationOption(QWidget* parent = nullptr) {
-    QMessageBox msgbox(parent);
-
-    // clang-format off
-    msgbox.setWindowTitle("Save/Trophy Migration");
-#ifdef _WIN32
-    msgbox.setText("The shadPS4 save and trophy locations have been updated, and save/trophy files have been detected in the old location.\nDo you wish to copy them over, move them over, or continue without doing anything?");
-#else
-    msgbox.setText("The shadPS4 save and trophy locations have been updated, and save/trophy files have been detected in the old location.\nDo you wish to copy them over, move them over, move and link back to the original location, or continue without doing anything?");
-#endif
-    // clang-format on
-
-    auto* copy_btn = (QAbstractButton*)msgbox.addButton("Copy", QMessageBox::AcceptRole);
-    auto* move_btn = (QAbstractButton*)msgbox.addButton("Move", QMessageBox::AcceptRole);
-
-#ifndef _WIN32
-    auto* link_btn =
-        (QAbstractButton*)msgbox.addButton("Move and link back", QMessageBox::AcceptRole);
-#endif
-
-    auto* nothing_btn = (QAbstractButton*)msgbox.addButton("Do nothing", QMessageBox::RejectRole);
-
-    msgbox.exec();
-
-    auto* clicked = msgbox.clickedButton();
-
-    if (clicked == copy_btn)
-        return TransferOption::Copy;
-
-    if (clicked == move_btn)
-        return TransferOption::Move;
-
-#ifndef _WIN32
-    if (clicked == link_btn)
-        return TransferOption::MoveAndLinkBack;
-#endif
-
-    return TransferOption::Nothing;
-}
-
-static void MovePath(fs::path const& _from, fs::path const& _to) {
-    try {
-        fs::rename(_from, _to);
-    } catch (...) {
-        fs::copy(_from, _to, fs::copy_options::recursive | fs::copy_options::skip_existing);
-        // no delete to avoid data loss
-    }
-}
-
-static void CheckAndMigrateSaves(TransferOption option) {
-    auto const new_save_root = EmulatorSettings.GetHomeDir() / "1000" / "savedata";
-    auto const old_save_root = Common::GetShadUserDir() / "savedata" / "1";
-    try {
-        for (const auto& entry : fs::directory_iterator(old_save_root)) {
-            if (!entry.is_directory()) {
-                continue;
-            }
-            const auto old_game_dir = entry.path();
-            const auto new_game_dir = new_save_root / old_game_dir.filename();
-            const bool already_exists = fs::exists(new_game_dir);
-
-            switch (option) {
-            case TransferOption::Copy:
-                if (!already_exists) {
-                    fs::copy(old_game_dir, new_game_dir, fs::copy_options::recursive);
-                }
-                break;
-            case TransferOption::Move:
-                if (!already_exists) {
-                    MovePath(old_game_dir, new_game_dir);
-                }
-                break;
-            case TransferOption::MoveAndLinkBack:
-                if (!already_exists) {
-                    MovePath(old_game_dir, new_game_dir);
-                    fs::create_directory_symlink(new_game_dir, old_game_dir);
-                }
-                break;
-            case TransferOption::Nothing:
-            case TransferOption::SdlCancelled:
-                return;
-            default:
-                // UNREACHABLE();
-                break;
-            }
-        }
-    } catch (std::exception const& e) {
-        // UNREACHABLE_MSG("Error while migrating saves: {}", e.what());
-    }
-}
-
-static void CheckAndMigrateTrophies(TransferOption option) {
-    const auto user_dir = EmulatorSettings.GetHomeDir() / "1000";
-    const auto old_trophy_base_dir = Common::GetShadUserDir() / "game_data";
-    const auto new_trophy_global_dir = Common::GetShadUserDir() / "trophy";
-    if (!fs::exists(old_trophy_base_dir)) {
-        return;
-    }
-
-    for (const auto& entry : fs::directory_iterator(old_trophy_base_dir)) {
-        if (!entry.is_directory()) {
-            continue;
-        }
-
-        const auto trophy_files_dir = entry.path() / "TrophyFiles";
-        if (!fs::exists(trophy_files_dir)) {
-            continue;
-        }
-
-        for (const auto& subentry : fs::directory_iterator(trophy_files_dir)) {
-            if (!subentry.is_directory()) {
-                continue;
-            }
-
-            const auto old_trophy_dir = subentry.path();
-            const auto xml_path = old_trophy_dir / "Xml" / "TROP.XML";
-            if (!fs::exists(xml_path)) {
-                continue;
-            }
-
-            QFile file(QString::fromStdString(xml_path.string()));
-            if (!file.open(QIODevice::ReadOnly)) {
-                continue;
-            }
-
-            QXmlStreamReader xml(&file);
-            std::string npcommid;
-            while (!xml.atEnd()) {
-                xml.readNext();
-                if (xml.isStartElement() && xml.name() == u"npcommid") {
-                    npcommid = xml.readElementText().toStdString();
-                    break;
-                }
-            }
-
-            if (xml.hasError() || npcommid.empty()) {
-                continue;
-            }
-
-            const auto new_trophy_file = user_dir / "trophy" / (npcommid + ".xml");
-            if (fs::exists(new_trophy_file)) {
-                continue;
-            }
-
-            const auto new_trophy_dir = new_trophy_global_dir / npcommid;
-            if (!fs::exists(new_trophy_dir)) {
-                fs::copy(old_trophy_dir, new_trophy_dir, fs::copy_options::recursive);
-            }
-
-            switch (option) {
-            case TransferOption::Copy:
-                fs::copy_file(xml_path, new_trophy_file);
-                break;
-            case TransferOption::Move:
-                MovePath(xml_path, new_trophy_file);
-                break;
-            case TransferOption::MoveAndLinkBack:
-                MovePath(xml_path, new_trophy_file);
-                fs::create_symlink(new_trophy_file, xml_path);
-                break;
-            case TransferOption::Nothing:
-            case TransferOption::SdlCancelled:
-                return;
-            default:
-                // UNREACHABLE();
-                break;
-            }
-        }
-    }
-}
-
-void CheckSaveAndTrophyMigration() {
-    auto const migration_done_path =
-        EmulatorSettings.GetHomeDir() / "1000" / "savedata" / ".data_transfer.complete";
-    auto const old_save_dir = Common::GetShadUserDir() / "savedata" / "1";
-    if (fs::exists(old_save_dir) && !fs::is_empty(old_save_dir) &&
-        !fs::exists(migration_done_path)) {
-        TransferOption user_choice = AskMigrationOption();
-        CheckAndMigrateSaves(user_choice);
-        CheckAndMigrateTrophies(user_choice);
-        std::ofstream ofs(migration_done_path);
-        ofs << "";
-    }
-}
 
 // Singleton storage
 std::shared_ptr<UserSettingsImpl> UserSettingsImpl::s_instance = nullptr;
@@ -219,7 +21,8 @@ std::mutex UserSettingsImpl::s_mutex;
 UserSettingsImpl::UserSettingsImpl() = default;
 
 UserSettingsImpl::~UserSettingsImpl() {
-    Save();
+    if (m_loaded)
+        Save();
 }
 
 std::shared_ptr<UserSettingsImpl> UserSettingsImpl::GetInstance() {
@@ -241,17 +44,29 @@ bool UserSettingsImpl::Save() const {
         j["Users"] = m_userManager.GetUsers();
         j["Users"]["commit_hash"] = std::string(Build::Rev);
 
+        json existing = json::object();
+        if (std::ifstream existingIn{path}; existingIn.good()) {
+            try {
+                existingIn >> existing;
+            } catch (...) {
+                existing = json::object();
+            }
+        }
+
+        if (existing.contains("Users") && existing["Users"].is_object())
+            existing["Users"].update(j["Users"]);
+        else
+            existing["Users"] = j["Users"];
+
         std::ofstream out(path);
         if (!out) {
             LogError("Failed to open user settings for writing: " + path.string());
             return false;
         }
-        out << std::setw(2) << j;
+        out << std::setw(2) << existing;
         return !out.fail();
     } catch (const std::exception& e) {
-        std::string msg = "Error saving user settings: ";
-        msg += e.what();
-        LogError(msg);
+        LogError("Error saving user settings: " + std::string(e.what()));
         return false;
     }
 }
@@ -260,33 +75,26 @@ bool UserSettingsImpl::Load() {
     const auto path = Common::GetShadUserDir() / "users.json";
     try {
         if (!std::filesystem::exists(path)) {
-            // LOG_DEBUG(EmuSettings, "User settings file not found: {}", path.string());
-            // Create default user if no file exists
-            if (m_userManager.GetUsers().user.empty()) {
+            if (m_userManager.GetUsers().user.empty())
                 m_userManager.GetUsers() = m_userManager.CreateDefaultUsers();
-            }
-            Save(); // Save default users
-            CheckSaveAndTrophyMigration();
+            m_loaded = true;
+            Save();
             return false;
         }
 
         std::ifstream in(path);
         if (!in) {
-            LogError("Failed to open user settings: " + path.string());
+            LogError("Failed to open user settings " + path.string());
             return false;
         }
 
         json j;
         in >> j;
 
-        // Create a default Users object
         auto default_users = m_userManager.CreateDefaultUsers();
-
-        // Convert default_users to json for merging
         json default_json;
         default_json["Users"] = default_users;
 
-        // Merge the loaded json with defaults (preserves existing data, adds missing fields)
         if (j.contains("Users")) {
             json current = default_json["Users"];
             current.update(j["Users"]);
@@ -295,23 +103,15 @@ bool UserSettingsImpl::Load() {
             m_userManager.GetUsers() = default_users;
         }
 
-        if (m_userManager.GetUsers().commit_hash != Build::Rev) {
+        m_loaded = true;
+        if (m_userManager.GetUsers().commit_hash != Build::Rev)
             Save();
-        }
 
-        // LOG_DEBUG(EmuSettings, "User settings loaded successfully");
-        CheckSaveAndTrophyMigration();
         return true;
     } catch (const std::exception& e) {
-        std::string msg = "Error loading user settings: ";
-        msg += e.what();
-        LogError(msg);
-
-        // Fall back to defaults
-        if (m_userManager.GetUsers().user.empty()) {
+        LogError("Error loading user settings: " + std::string(e.what()));
+        if (m_userManager.GetUsers().user.empty())
             m_userManager.GetUsers() = m_userManager.CreateDefaultUsers();
-        }
-        CheckSaveAndTrophyMigration();
         return false;
     }
 }

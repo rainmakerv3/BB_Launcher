@@ -1,10 +1,14 @@
-// SPDX-FileCopyrightText: Copyright 2025-2026 shadPS4 Emulator Project
+// SPDX-FileCopyrightText: Copyright 2026 shadPS4 Emulator Project
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #include <filesystem>
+#include <iostream>
+#include <SDL3/SDL_messagebox.h>
+#include <pugixml.hpp>
 
 #include "emulator_settings.h"
 #include "modules/Common.h"
+#include "modules/Log.h"
 #include "user_manager.h"
 #include "user_settings.h"
 
@@ -23,10 +27,10 @@ bool UserManager::AddUser(const User& user) {
 
     std::error_code ec;
     if (!std::filesystem::exists(user_dir)) {
-        std::filesystem::create_directories(user_dir, ec);
-        std::filesystem::create_directories(user_dir / "savedata", ec);
-        std::filesystem::create_directories(user_dir / "trophy", ec);
-        std::filesystem::create_directories(user_dir / "inputs", ec);
+        std::filesystem::create_directory(user_dir, ec);
+        std::filesystem::create_directory(user_dir / "savedata", ec);
+        std::filesystem::create_directory(user_dir / "trophy", ec);
+        std::filesystem::create_directory(user_dir / "inputs", ec);
     }
 
     Save();
@@ -86,6 +90,153 @@ const std::vector<User>& UserManager::GetAllUsers() const {
     return m_users.user;
 }
 
+enum class TransferOption : s32 {
+    Copy = 0,
+    Move,
+    MoveAndLinkBack,
+    Nothing,
+    SdlCancelled = -1,
+};
+TransferOption AskMigrationOption() {
+    TransferOption user_choice = TransferOption::Nothing;
+#ifndef _WIN32
+    SDL_MessageBoxButtonData btns[4]
+#else
+    SDL_MessageBoxButtonData btns[3]
+#endif
+        {
+            {0, 0, "Copy"},
+            {0, 1, "Move"},
+#ifndef _WIN32
+            {0, 2, "Move and link back"},
+#endif
+            {0, 3, "Do nothing"},
+        };
+    SDL_MessageBoxData msg_box{
+        0,
+        nullptr,
+        "Save Migration",
+        "The shadPS4 save and trophy locations have been updated, and save/trophy "
+        "files have been detected  in the old location.\n"
+        "Do you wish to copy them over, move them over, "
+#ifndef _WIN32
+        "move and link back to the original the original location, "
+#endif
+        "or continue without doing anything?",
+
+#ifndef _WIN32
+        4,
+#else
+        3,
+#endif
+        btns,
+        nullptr,
+    };
+    SDL_ShowMessageBox(&msg_box, reinterpret_cast<s32*>(&user_choice));
+    return user_choice;
+}
+
+static void MoveFolder(fs::path const& _from, fs::path const& _to) {
+    try {
+        fs::rename(_from, _to);
+    } catch (...) {
+        fs::copy(_from, _to, fs::copy_options::recursive);
+        fs::remove_all(_from);
+    }
+}
+
+static void CheckAndMigrateSaves(TransferOption option) {
+    auto const new_save_dir = EmulatorSettings.GetHomeDir() / "1000" / "savedata";
+    auto const old_save_dir = Common::GetShadUserDir() / "savedata" / "1";
+    if (fs::exists(old_save_dir) && !fs::is_empty(old_save_dir)) {
+        try {
+            switch (option) {
+            case TransferOption::Copy:
+                fs::copy(old_save_dir, new_save_dir, fs::copy_options::recursive);
+                break;
+            case TransferOption::Move:
+                MoveFolder(old_save_dir, new_save_dir);
+                break;
+            case TransferOption::MoveAndLinkBack:
+                MoveFolder(old_save_dir, new_save_dir);
+                fs::create_directory_symlink(new_save_dir, old_save_dir);
+                break;
+            case TransferOption::SdlCancelled:
+            case TransferOption::Nothing:
+                break;
+            default:
+                break;
+            }
+        } catch (std::exception const& e) {
+            LogError("Error while migrating saves: " + std::string(e.what()));
+        }
+    }
+}
+
+static void CheckAndMigrateTrophies(TransferOption option) {
+    auto const user_dir = EmulatorSettings.GetHomeDir() / "1000";
+    auto const old_trophy_base_dir = Common::GetShadUserDir() / "game_data";
+    auto const new_trophy_global_dir = Common::GetShadUserDir() / "trophy";
+    try {
+        for (auto const& entry : fs::directory_iterator(old_trophy_base_dir)) {
+            if (!entry.is_directory()) {
+                continue;
+            }
+            if (!fs::exists(entry.path() / "TrophyFiles")) {
+                continue;
+            }
+            for (auto const& subentry : fs::directory_iterator(entry.path() / "TrophyFiles")) {
+                if (!subentry.is_directory()) {
+                    continue;
+                }
+                auto const old_trophy_dir = subentry.path();
+                if (fs::exists(old_trophy_dir / "Xml")) {
+                    pugi::xml_document doc;
+                    pugi::xml_parse_result result =
+                        doc.load_file((old_trophy_dir / "Xml" / "TROP.XML").native().c_str());
+                    if (!result) {
+                        continue;
+                    }
+                    std::string npcommid =
+                        doc.child("trophyconf").child("npcommid").text().as_string();
+                    if (npcommid.empty()) {
+                        continue;
+                    }
+                    if (fs::exists(user_dir / "trophy" / (npcommid + ".xml"))) {
+                        continue;
+                    }
+                    if (!fs::exists(new_trophy_global_dir / npcommid)) {
+                        fs::create_directories(new_trophy_global_dir / npcommid);
+                        fs::copy(old_trophy_dir, new_trophy_global_dir / npcommid,
+                                 fs::copy_options::recursive);
+                    }
+                    auto const old_trophy_file = old_trophy_dir / "Xml" / "TROP.XML";
+                    auto const new_trophy_file = user_dir / "trophy" / (npcommid + ".xml");
+                    switch (option) {
+                    case TransferOption::Copy:
+                        fs::copy_file(old_trophy_file, new_trophy_file);
+                        break;
+                    case TransferOption::Move:
+                        MoveFolder(old_trophy_file, new_trophy_file);
+                        break;
+                    case TransferOption::MoveAndLinkBack:
+                        MoveFolder(old_trophy_file, new_trophy_file);
+                        fs::create_symlink(new_trophy_file, old_trophy_file);
+                        break;
+                    case TransferOption::Nothing:
+                    case TransferOption::SdlCancelled:
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
+        }
+    } catch (std::exception const& e) {
+        LogError("Error while migrating trophies: " + std::string(e.what()));
+    }
+}
+
 Users UserManager::CreateDefaultUsers() {
     Users default_users;
     default_users.user = {
@@ -94,24 +245,44 @@ Users UserManager::CreateDefaultUsers() {
             .user_name = "shadPS4",
             .user_color = 1,
             .player_index = 1,
+            .shadnet_npid = "",
+            .shadnet_password = "",
+            .shadnet_token = "",
+            .shadnet_email = "",
+            .shadnet_enabled = false,
         },
         {
             .user_id = 1001,
             .user_name = "shadPS4-2",
             .user_color = 2,
             .player_index = 2,
+            .shadnet_npid = "",
+            .shadnet_password = "",
+            .shadnet_token = "",
+            .shadnet_email = "",
+            .shadnet_enabled = false,
         },
         {
             .user_id = 1002,
             .user_name = "shadPS4-3",
             .user_color = 3,
             .player_index = 3,
+            .shadnet_npid = "",
+            .shadnet_password = "",
+            .shadnet_token = "",
+            .shadnet_email = "",
+            .shadnet_enabled = false,
         },
         {
             .user_id = 1003,
             .user_name = "shadPS4-4",
             .user_color = 4,
             .player_index = 4,
+            .shadnet_npid = "",
+            .shadnet_password = "",
+            .shadnet_token = "",
+            .shadnet_email = "",
+            .shadnet_enabled = false,
         },
     };
 
@@ -119,10 +290,15 @@ Users UserManager::CreateDefaultUsers() {
         const auto user_dir = EmulatorSettings.GetHomeDir() / std::to_string(u.user_id);
 
         if (!std::filesystem::exists(user_dir)) {
-            std::filesystem::create_directories(user_dir);
-            std::filesystem::create_directories(user_dir / "savedata");
-            std::filesystem::create_directories(user_dir / "trophy");
-            std::filesystem::create_directories(user_dir / "inputs");
+            std::filesystem::create_directory(user_dir);
+            std::filesystem::create_directory(user_dir / "savedata");
+            std::filesystem::create_directory(user_dir / "trophy");
+            std::filesystem::create_directory(user_dir / "inputs");
+            if (u.user_id == 1000) {
+                TransferOption user_choice = AskMigrationOption();
+                CheckAndMigrateSaves(user_choice);
+                CheckAndMigrateTrophies(user_choice);
+            }
         }
     }
 
