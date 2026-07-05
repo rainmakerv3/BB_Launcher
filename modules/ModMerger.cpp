@@ -36,6 +36,13 @@ ModMerger::ModMerger(QWidget* parent) : QDialog(parent), ui(new Ui::ModMerger) {
         currentPriority = ModPriority::NotSet;
         conflictedFiles.clear();
 
+        GetConflictedFiles();
+        if (conflictedFiles.empty()) {
+            Log("No conflicted files found for these two mods, merge is not required",
+                Format::Yellow);
+            return;
+        }
+
         ui->waitLabel->setVisible(true);
         ui->mergeStatusText->clear();
         ui->mergeButton->setEnabled(false);
@@ -71,12 +78,6 @@ ModMerger::ModMerger(QWidget* parent) : QDialog(parent), ui(new Ui::ModMerger) {
 void ModMerger::AttemptMerge() {
     if (fs::exists(Common::GetBBLFilesPath() / "Temp" / "ModMerge"))
         fs::remove_all(Common::GetBBLFilesPath() / "Temp" / "ModMerge");
-
-    GetConflictedFiles();
-    if (conflictedFiles.empty()) {
-        Log("No conflicted files found for these two mods, merge is not required", Format::Yellow);
-        return;
-    }
 
     fs::path mod1BasePath = StandardizeBasePath(Common::ModPath / mod1Name);
     fs::path mod2BasePath = StandardizeBasePath(Common::ModPath / mod2Name);
