@@ -88,10 +88,6 @@ void ModMerger::AttemptMerge() {
 
     for (const auto& file : conflictedFiles) {
         bool canExtract = true;
-        if (!IsFolderSupported(file)) {
-            canExtract = false;
-        }
-
         fs::path basefile = baseTempPath / file;
         fs::path mod1file = mod1TempPath / file;
         fs::path mod2file = mod2TempPath / file;
@@ -210,32 +206,6 @@ bool ModMerger::GetMergeFiles(std::filesystem::path mod1Base, std::filesystem::p
         }
     } catch (const std::exception& e) {
         Log("ERROR: File operations failed: " + QString(e.what()), Format::BoldRed);
-        return false;
-    }
-
-    return true;
-}
-
-bool ModMerger::IsFolderSupported(std::filesystem::path filePath) {
-    std::string firstFolder;
-    auto it = filePath.begin();
-    if (it != filePath.end()) {
-        if (it->empty() || *it == "/") {
-            ++it;
-        }
-
-        if (it != filePath.end()) {
-            firstFolder = it->string();
-        }
-    }
-
-    const std::vector<std::string> unextractableFolders = {"event", "facegen", "shader",
-                                                           "paramdef"};
-
-    if (std::find(unextractableFolders.begin(), unextractableFolders.end(), firstFolder) !=
-        unextractableFolders.end()) {
-        Log("Unable to process hard conflicts in the folder: " +
-            QString::fromStdString(firstFolder));
         return false;
     }
 

@@ -47,7 +47,6 @@ private:
     bool ChooseBaseFile(std::filesystem::path targetFile, std::filesystem::path mod1File,
                         std::filesystem::path mod2File);
 
-    bool IsFolderSupported(std::filesystem::path filePath);
     std::filesystem::path StandardizeBasePath(std::filesystem::path basePath);
     std::filesystem::path GetUpdatedFile(std::filesystem::path relative_path);
 
