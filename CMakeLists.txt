@@ -181,6 +181,8 @@ set(PROJECT_SOURCES
     modules/BBFormats/Fmg.h
     modules/BBFormats/GameParam.cpp
     modules/BBFormats/GameParam.h
+    modules/BBFormats/Msb.cpp
+    modules/BBFormats/Msb.h
     modules/BBFormats/Tpf.cpp
     modules/BBFormats/Tpf.h
     modules/ipc/ipc_client.cpp

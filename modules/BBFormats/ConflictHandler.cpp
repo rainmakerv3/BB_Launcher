@@ -5,6 +5,7 @@
 #include "ConflictHandler.h"
 #include "Fmg.h"
 #include "GameParam.h"
+#include "Msb.h"
 #include "Tpf.h"
 #include "modules/ModMerger.h"
 
@@ -46,6 +47,16 @@ bool ConflictHandler::HandleItemConflict(std::vector<char>& origData, std::vecto
         } else {
             origData.clear();
             origPrm.RepackGameParam(origData);
+        }
+    }
+
+    if (type.contains("MSB")) {
+        Msb origMsb(origData, merger);
+        if (!origMsb.HandleConflict(mod1Data, mod2Data)) {
+            return false;
+        } else {
+            origData.clear();
+            origMsb.RepackMsb(origData);
         }
     }
 

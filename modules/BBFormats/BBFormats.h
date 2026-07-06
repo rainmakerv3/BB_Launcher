@@ -14,20 +14,29 @@ namespace FileHelper {
 class BBFormat : public QObject {
     Q_OBJECT
 
-private:
+public:
+    explicit BBFormat(ModMerger* parent = nullptr);
+    ~BBFormat();
+
+protected:
 #ifndef DEBUG
     bool debugLogEnabled = false;
 #else
     bool debugLogEnabled = true;
 #endif
 
-public:
-    explicit BBFormat(ModMerger* parent = nullptr);
-    ~BBFormat();
-
-protected:
     enum class ModPriority : int { NotSet, Mod1, Mod2 };
     enum class LogFormat : int { Default, Yellow, BoldRed, BoldGreen };
+
+    struct Vector3 {
+        float x, y, z;
+
+        bool operator==(const Vector3& other) const {
+            const float diff = 0.0001f; // tolerance
+            return std::abs(x - other.x) < diff && std::abs(y - other.y) < diff &&
+                   std::abs(z - other.z) < diff;
+        }
+    };
 
     void sendLog(const std::string& log, LogFormat format = LogFormat::Default);
     void debugLog(const std::string& log, LogFormat format = LogFormat::Default);
@@ -55,6 +64,7 @@ protected:
     void WriteInt16(int buffer);
 
     void GetFloat(float& buffer);
+    void WriteFloat(float value);
     void GetBytes(std::vector<char>& buffer, int length);
 
     void GetByte(int& buffer);
@@ -63,6 +73,9 @@ protected:
     void WriteByte(const int& buffer);
     void WriteByte(const bool& buffer);
     void WriteBytes(const int& buffer, const int& length);
+
+    void GetVector3(Vector3& vec3);
+    void WriteVector3(Vector3& vec3);
 
     void ReserveBytes(const std::string& name, const int& length);
     void FillReservedInt64(const std::string& name, const uint64_t& value);

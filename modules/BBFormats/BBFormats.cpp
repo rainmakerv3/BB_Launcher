@@ -240,6 +240,28 @@ void BBFormat::GetFloat(float& buffer) {
     buffer = std::bit_cast<float>(intBuf);
 }
 
+void BBFormat::WriteFloat(float value) {
+    int intBuf = std::bit_cast<int>(value);
+
+    if (bigEndian) {
+        intBuf = std::byteswap(intBuf);
+    }
+
+    ostream->write(reinterpret_cast<const char*>(&intBuf), 4);
+}
+
+void BBFormat::GetVector3(Vector3& vec3) {
+    GetFloat(vec3.x);
+    GetFloat(vec3.y);
+    GetFloat(vec3.z);
+}
+
+void BBFormat::WriteVector3(Vector3& vec3) {
+    WriteFloat(vec3.x);
+    WriteFloat(vec3.y);
+    WriteFloat(vec3.z);
+}
+
 void BBFormat::GetBytes(std::vector<char>& buffer, int length) {
     buffer.resize(length);
     istream->read(reinterpret_cast<char*>(buffer.data()), buffer.size());
