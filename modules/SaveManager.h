@@ -29,8 +29,8 @@ private slots:
     void DisableStatsEditing();
 
 private:
-    void UpdateGameSaveValues();
-    void UpdateBackupSaveValues();
+    bool UpdateGameSaveValues();
+    bool UpdateBackupSaveValues();
     void PopulateBackupSlots();
 
     std::filesystem::path ExactSaveDir;

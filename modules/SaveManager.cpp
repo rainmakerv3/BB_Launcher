@@ -164,9 +164,9 @@ void SaveManager::PopulateGameSaveSlots() {
     }
 }
 
-void SaveManager::UpdateGameSaveValues() {
+bool SaveManager::UpdateGameSaveValues() {
     if (saveslot == "") {
-        return;
+        return false;
     }
 
     Savefile = ExactSaveDir / saveslot;
@@ -254,11 +254,24 @@ void SaveManager::UpdateGameSaveValues() {
 
     file.close();
     currentOffset = offset;
+
+    std::vector<uint> numbers = {str, vit, end, arc, btg, skl};
+    const int threshold = 1000;
+    bool numbersTooBig = std::any_of(numbers.begin(), numbers.end(),
+                                     [threshold](int num) { return num > threshold; });
+
+    if (name.empty() || numbersTooBig) {
+        QMessageBox::warning(this, "Invalid Game Save Data",
+                             "Game save data cannot be properly read, it is likely corrupted");
+        return false;
+    }
+
+    return true;
 }
 
-void SaveManager::UpdateBackupSaveValues() {
+bool SaveManager::UpdateBackupSaveValues() {
     if (backupsaveslot == "" || ui->SelectSaveComboBox->currentText().isEmpty()) {
-        return;
+        return false;
     }
 
     if (ui->SelectSaveComboBox->currentText() == "MANUAL") {
@@ -349,6 +362,19 @@ void SaveManager::UpdateBackupSaveValues() {
     file.read(reinterpret_cast<char*>(&NGnum), 4);
     ui->BackupNGValueLabel->setText(QString::number(NGnum));
     file.close();
+
+    std::vector<uint> numbers = {str, vit, end, arc, btg, skl};
+    const int threshold = 1000;
+    bool numbersTooBig = std::any_of(numbers.begin(), numbers.end(),
+                                     [threshold](int num) { return num > threshold; });
+
+    if (name.empty() || numbersTooBig) {
+        QMessageBox::warning(this, "Invalid Backup Save Data",
+                             "Backup save data cannot be properly read, it is likely corrupted");
+        return false;
+    }
+
+    return true;
 }
 
 void SaveManager::OnGameSaveSlotChanged() {
@@ -365,7 +391,18 @@ void SaveManager::OnGameSaveSlotChanged() {
         ui->LevelValueLabel->setText("-----");
         ui->NGValueLabel->setText("-----");
     } else {
-        UpdateGameSaveValues();
+        if (!UpdateGameSaveValues()) {
+            ui->NameLineEdit->setText("-");
+            ui->TimeLineEdit->setText("-");
+            ui->StrValSpinBox->setValue(0);
+            ui->SklValSpinBox->setValue(0);
+            ui->VitValSpinBox->setValue(0);
+            ui->EndValSpinBox->setValue(0);
+            ui->BTValSpinBox->setValue(0);
+            ui->ArcValSpinBox->setValue(0);
+            ui->LevelValueLabel->setText("-----");
+            ui->NGValueLabel->setText("-----");
+        }
     }
 }
 
@@ -383,7 +420,18 @@ void SaveManager::OnBackupSaveSlotChanged() {
         ui->BackupLevelValueLabel->setText("-----");
         ui->BackupNGValueLabel->setText("-----");
     } else {
-        UpdateBackupSaveValues();
+        if (!UpdateBackupSaveValues()) {
+            ui->NameLineEdit->setText("-");
+            ui->TimeLineEdit->setText("-");
+            ui->StrValSpinBox->setValue(0);
+            ui->SklValSpinBox->setValue(0);
+            ui->VitValSpinBox->setValue(0);
+            ui->EndValSpinBox->setValue(0);
+            ui->BTValSpinBox->setValue(0);
+            ui->ArcValSpinBox->setValue(0);
+            ui->LevelValueLabel->setText("-----");
+            ui->NGValueLabel->setText("-----");
+        }
     }
 }
 
