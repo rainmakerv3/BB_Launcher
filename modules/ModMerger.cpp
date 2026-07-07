@@ -119,9 +119,8 @@ void ModMerger::AttemptMerge() {
         // what can be extracted after DCX, maybe esd/emevd after
         if (canExtract) {
             filetype = GetFileType(baseData);
-            canExtract =
-                filetype.contains("TPF") || filetype.contains("BND4") || filetype.contains("MSB");
-            // || filetype.contains("EVD"); not yet ready
+            canExtract = filetype.contains("TPF") || filetype.contains("BND4");
+            // || filetype.contains("EVD")  || filetype.contains("MSB"); not yet ready
         }
 
         if (!canExtract) {
