@@ -179,6 +179,8 @@ set(PROJECT_SOURCES
     modules/BBFormats/DrawParam.h
     modules/BBFormats/Emevd.cpp
     modules/BBFormats/Emevd.h
+    modules/BBFormats/Esd.cpp
+    modules/BBFormats/Esd.h
     modules/BBFormats/Fmg.cpp
     modules/BBFormats/Fmg.h
     modules/BBFormats/GameParam.cpp

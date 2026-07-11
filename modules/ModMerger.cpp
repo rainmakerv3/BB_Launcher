@@ -120,7 +120,8 @@ void ModMerger::AttemptMerge() {
         if (canExtract) {
             filetype = GetFileType(baseData);
             canExtract = filetype.contains("TPF") || filetype.contains("BND4");
-            // || filetype.contains("EVD")  || filetype.contains("MSB"); not yet ready
+            // not yet ready
+            // || filetype.contains("EVD")  || filetype.contains("MSB") || filetype.contains("ESD");
         }
 
         if (!canExtract) {

@@ -4,6 +4,7 @@
 #include "Bnd.h"
 #include "ConflictHandler.h"
 #include "Emevd.h"
+#include "Esd.h"
 #include "Fmg.h"
 #include "GameParam.h"
 #include "Msb.h"
@@ -68,6 +69,16 @@ bool ConflictHandler::HandleItemConflict(std::vector<char>& origData, std::vecto
         } else {
             origData.clear();
             origEvd.RepackEmevd(origData);
+        }
+    }
+    
+    if (type.contains("fsSL") || type.contains("esd")) {
+        Esd origEsd(origData, merger);
+        if (!origEsd.HandleConflict(mod1Data, mod2Data)) {
+            return false;
+        } else {
+            origData.clear();
+            origEsd.RepackEsd(origData);
         }
     }
 
