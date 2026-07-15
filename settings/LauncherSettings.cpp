@@ -213,6 +213,11 @@ void LauncherSettings::CreateShortcut() {
         return;
     }
 
+    if (!std::filesystem::exists(Common::installPath) || Common::installPath.empty()) {
+        QMessageBox::critical(this, "Error", "Set valid Bloodborne install path first.");
+        return;
+    }
+
     // Path to shortcut/link
     QString linkPath;
 
@@ -284,6 +289,7 @@ bool LauncherSettings::convertPngToIco(const QString& pngFilePath, const QString
     // Load the PNG image
     QImage image(pngFilePath);
     if (image.isNull()) {
+        QMessageBox::critical(nullptr, "Error", "Icon not found in Bloodborne Folder");
         return false;
     }
 
