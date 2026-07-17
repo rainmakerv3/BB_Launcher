@@ -6,6 +6,7 @@
 
 #include "modules/ipc/ipc_client.h"
 #include "settings/emulator_settings.h"
+#include "user_manager.h"
 
 namespace Ui {
 class ShadSettings;
@@ -27,22 +28,16 @@ private:
     void SetDefaults();
     void UpdateDialog();
     void getPhysicalDevices();
-
-    bool IsSettingOverrideable(const char* setting_key, const QString& setting_group) const;
-    void MapUIControls();
+    void RefreshHostOverrideFileStatus();
 
     std::unique_ptr<Ui::ShadSettings> ui;
     std::shared_ptr<IpcClient> m_ipc_client;
 
     EmulatorSettingsImpl gs_settings;
-    // GameInfo m_current_game;   // Add current game info
-    // std::string m_game_serial; // Game serial number
+    User* user;
 
     QString defaultTextEdit;
     int initialHeight;
-
-    // Map UI controls to their setting keys
-    QMap<QObject*, std::pair<const char*, QString>> m_uiSettingMap;
 
     const QMap<QString, QString> presentModeMap = {{tr("Mailbox (Vsync)"), "Mailbox"},
                                                    {tr("Fifo (Vsync)"), "Fifo"},

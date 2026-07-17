@@ -250,8 +250,8 @@ set(PROJECT_SOURCES
     settings/table_item_delegate.cpp
     settings/user_manager.h
     settings/user_manager.cpp
-    settings/user_manager_dialog.h
-    settings/user_manager_dialog.cpp
+    # settings/user_manager_dialog.h
+    # settings/user_manager_dialog.cpp
     settings/user_settings.h
     settings/user_settings.cpp
     dist/BBIcon.icns

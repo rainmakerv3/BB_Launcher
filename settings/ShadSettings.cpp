@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <fstream>
+#include <QDesktopServices>
 #include <QFileDialog>
 #include <QHoverEvent>
 #include <QJsonDocument>
@@ -15,7 +17,7 @@
 #include "config.h"
 #include "modules/Common.h"
 #include "settings/ui_ShadSettings.h"
-#include "user_manager_dialog.h"
+#include "user_settings.h"
 
 static std::vector<QString> m_physical_devices;
 
@@ -87,12 +89,10 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* paren
     }
 
     gs_settings.Load(Common::game_serial);
-    MapUIControls();
-
-    ui->networkGroupBox->setVisible(false);
-    ui->userGroupBox->setVisible(false);
-
+    user = UserSettings.GetUserManager().GetUserByID(
+        UserSettings.GetUserManager().GetDefaultUser().user_id);
     LoadValuesFromConfig();
+    RefreshHostOverrideFileStatus();
 
     defaultTextEdit = "Point your mouse at an option to display its description.";
     ui->descriptionText->setText(defaultTextEdit);
@@ -204,10 +204,46 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* paren
         }
     });
 
-    connect(ui->usersButton, &QPushButton::clicked, this, [this]() {
-        UserManagerDialog* userManager = new UserManagerDialog(this);
-        userManager->exec();
+    connect(ui->hostOverrideButton, &QPushButton::clicked, this, [this]() {
+        std::string text =
+            R"({
+"https://ss4.scej-network.jp:20443" : "http://thehuntersdream.com"
+})";
+
+        std::filesystem::path filePath = Common::GetShadUserDir() / "host_overrides.json";
+
+        if (std::filesystem::exists(filePath)) {
+            if (QMessageBox::No == QMessageBox::question(this, "Confirm Overwrite",
+                                                         "Host override file already exists. Do "
+                                                         "you want to overwrite the existing file?",
+                                                         QMessageBox::Yes | QMessageBox::No)) {
+                return;
+            }
+        }
+
+        std::ofstream file(filePath);
+        if (file.is_open()) {
+            file << text;
+            file.close();
+            QMessageBox::information(this, "File created",
+                                     "Host override file successfully created");
+        } else {
+            QMessageBox::warning(this, "Error", "Could not create host override file");
+        }
+
+        RefreshHostOverrideFileStatus();
     });
+
+    connect(ui->shadnetRegButton, &QPushButton::clicked, this, [this]() {
+        QString link = "https://shadps4.net/shadnet/register/";
+        QDesktopServices::openUrl(QUrl(link));
+    });
+
+    connect(ui->showShadNetPasswordCheckBox, &QCheckBox::checkStateChanged, this,
+            [this](bool checked) {
+                checked ? ui->shadnetPasswordLineEdit->setEchoMode(QLineEdit::Normal)
+                        : ui->shadnetPasswordLineEdit->setEchoMode(QLineEdit::Password);
+            });
 
     if (Config::GameRunning) {
         connect(ui->RCASSlider, &QSlider::valueChanged, this,
@@ -299,8 +335,6 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->popUpPosComboBox->setCurrentText(
         QString::fromStdString(gs_settings.GetTrophyNotificationSide()));
     ui->popUpDurationSpinBox->setValue(gs_settings.GetTrophyNotificationDuration());
-    ui->psnSignInCheckBox->setChecked(gs_settings.IsPSNSignedIn());
-    ui->networkConnectedCheckBox->setChecked(gs_settings.IsConnectedToNetwork());
 
     ui->showSplashCheckBox->setChecked(gs_settings.IsShowSplash());
     ui->dmemSpinBox->setValue(gs_settings.GetExtraDmemInMBytes());
@@ -327,6 +361,19 @@ void ShadSettings::LoadValuesFromConfig() {
 
     ui->trophyKeyLineEdit->setText(QString::fromStdString(Config::TrophyKey));
     ui->trophyKeyLineEdit->setEchoMode(QLineEdit::Password);
+
+    // Network Settings
+    ui->shadnetCheckBox->setChecked(gs_settings.IsShadNetEnabled());
+    ui->networkConnectedCheckBox->setChecked(gs_settings.IsConnectedToNetwork());
+    ui->serverLineEdit->setText(QString::fromStdString(gs_settings.GetShadNetServer()));
+    ui->servWebApiLineEdit->setText(QString::fromStdString(gs_settings.GetShadnetWebapiServer()));
+    ui->upnpCheckBox->setChecked(gs_settings.IsUPnPEnabled());
+
+    // User Settings
+    ui->usernameLineEdit->setText(QString::fromStdString(user->user_name));
+    ui->enableShadnetUserCheckBox->setChecked(user->shadnet_enabled);
+    ui->shadnetIdLineEdit->setText(QString::fromStdString(user->shadnet_npid));
+    ui->shadnetPasswordLineEdit->setText(QString::fromStdString(user->shadnet_password));
 }
 
 void ShadSettings::OnCursorStateChanged(int index) {
@@ -458,12 +505,17 @@ void ShadSettings::SaveSettings() {
     gs_settings.SetCopyGpuBuffers(ui->GPUBufferCheckBox->isChecked(), true);
 
     gs_settings.SetReadbacksMode(ui->readbacksModeComboBox->currentIndex(), true);
-    gs_settings.SetPSNSignedIn(ui->psnSignInCheckBox->isChecked(), true);
-    gs_settings.SetConnectedToNetwork(ui->networkConnectedCheckBox->isChecked(), true);
     gs_settings.SetPipelineCacheEnabled(ui->pipelineCacheCheckBox->isChecked(), true);
     gs_settings.SetExtraDmemInMBytes(ui->dmemSpinBox->value(), true);
     gs_settings.SetDirectMemoryAccessEnabled(ui->DMACheckBox->isChecked(), true);
     gs_settings.SetVblankFrequency(ui->vblankSpinBox->value(), true);
+
+    // Network Settings
+    gs_settings.SetShadNetEnabled(ui->shadnetCheckBox->isChecked(), true);
+    gs_settings.SetConnectedToNetwork(ui->networkConnectedCheckBox->isChecked(), true);
+    gs_settings.SetShadNetServer(ui->serverLineEdit->text().toStdString(), true);
+    gs_settings.SetShadnetWebapiServer(ui->servWebApiLineEdit->text().toStdString(), true);
+    gs_settings.SetUPnPEnabled(ui->upnpCheckBox->isChecked(), true);
 
     // Global Settings - use EmulatorSettings
     EmulatorSettings.SetDiscordRPCEnabled(ui->discordRPCCheckbox->isChecked());
@@ -503,6 +555,13 @@ void ShadSettings::SaveSettings() {
         QMessageBox::information(this, "Error", "Unable to save settings");
         return;
     }
+
+    // User settings
+    user->user_name = ui->usernameLineEdit->text().toStdString();
+    user->shadnet_enabled = ui->enableShadnetUserCheckBox->isChecked();
+    user->shadnet_npid = ui->shadnetIdLineEdit->text().toStdString();
+    user->shadnet_password = ui->shadnetPasswordLineEdit->text().toStdString();
+    UserSettings.GetUserManager().Save();
 }
 
 void ShadSettings::SetDefaults() {
@@ -534,11 +593,14 @@ void ShadSettings::SetDefaults() {
     ui->readbacksModeComboBox->setCurrentIndex(0);
     ui->DMACheckBox->setChecked(false);
     ui->dmemSpinBox->setValue(0);
-    ui->networkConnectedCheckBox->setChecked(false);
-    ui->psnSignInCheckBox->setChecked(false);
-    ui->httpHostOverrideEdit->setText("thehuntersdream.com");
 
     ui->discordRPCCheckbox->setChecked(true);
+
+    ui->shadnetCheckBox->setChecked(false);
+    ui->networkConnectedCheckBox->setChecked(false);
+    ui->serverLineEdit->setText("srv.shadps4.net:31313");
+    ui->servWebApiLineEdit->setText("http://srv.shadps4.net:31315");
+    ui->upnpCheckBox->setChecked(true);
 }
 
 void ShadSettings::getPhysicalDevices() {
@@ -591,94 +653,17 @@ void ShadSettings::getPhysicalDevices() {
     vkDestroyInstance(instance, nullptr);
 }
 
+void ShadSettings::RefreshHostOverrideFileStatus() {
+    if (std::filesystem::exists(Common::GetShadUserDir() / "host_overrides.json")) {
+        ui->hostFileStatusLabel->setText("Host override file has been created");
+        ui->hostFileStatusLabel->setStyleSheet("font-weight: bold; color: green;");
+    } else {
+        ui->hostFileStatusLabel->setText("Host override file does not exist");
+        ui->hostFileStatusLabel->setStyleSheet("font-weight: bold; color: red;");
+    }
+}
+
 ShadSettings::~ShadSettings() {
     // Clean up game-specific settings when dialog closes
     EmulatorSettings.Load();
-}
-
-bool ShadSettings::IsSettingOverrideable(const char* setting_key,
-                                         const QString& setting_group) const {
-    // Check if the setting is in the overrideable list for the given group
-    if (setting_group == "General") {
-        for (const auto& item : EmulatorSettings.GetGeneralOverrideableFields()) {
-            if (std::string(item.key) == setting_key) {
-                return true;
-            }
-        }
-    } else if (setting_group == "Debug") {
-        for (const auto& item : EmulatorSettings.GetDebugOverrideableFields()) {
-            if (std::string(item.key) == setting_key) {
-                return true;
-            }
-        }
-    } else if (setting_group == "Input") {
-        for (const auto& item : EmulatorSettings.GetInputOverrideableFields()) {
-            if (std::string(item.key) == setting_key) {
-                return true;
-            }
-        }
-    } else if (setting_group == "Audio") {
-        for (const auto& item : EmulatorSettings.GetAudioOverrideableFields()) {
-            if (std::string(item.key) == setting_key) {
-                return true;
-            }
-        }
-    } else if (setting_group == "GPU") {
-        for (const auto& item : EmulatorSettings.GetGPUOverrideableFields()) {
-            if (std::string(item.key) == setting_key) {
-                return true;
-            }
-        }
-    } else if (setting_group == "Vulkan") {
-        for (const auto& item : EmulatorSettings.GetVulkanOverrideableFields()) {
-            if (std::string(item.key) == setting_key) {
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
-void ShadSettings::MapUIControls() {
-    // General Settings
-    m_uiSettingMap[ui->showSplashCheckBox] = {"show_splash", "General"};
-    m_uiSettingMap[ui->volumeSlider] = {"volume_slider", "General"};
-    m_uiSettingMap[ui->disableTrophycheckBox] = {"trophy_popup_disabled", "General"};
-    m_uiSettingMap[ui->popUpDurationSpinBox] = {"trophy_notification_duration", "General"};
-    m_uiSettingMap[ui->popUpPosComboBox] = {"trophy_notification_side", "General"};
-    m_uiSettingMap[ui->discordRPCCheckbox] = {"discord_rpc_enabled", "General"};
-    m_uiSettingMap[ui->consoleLanguageComboBox] = {"console_language", "General"};
-
-    // GPU Settings
-    m_uiSettingMap[ui->graphicsAdapterBox] = {"gpu_id", "Vulkan"}; // Note: This is in Vulkan group
-    m_uiSettingMap[ui->heightSpinBox] = {"window_height", "GPU"};
-    m_uiSettingMap[ui->widthSpinBox] = {"window_width", "GPU"};
-    m_uiSettingMap[ui->FSRCheckBox] = {"fsr_enabled", "GPU"};
-    m_uiSettingMap[ui->RCASCheckBox] = {"rcas_enabled", "GPU"};
-    m_uiSettingMap[ui->RCASSlider] = {"rcas_attenuation", "GPU"};
-    m_uiSettingMap[ui->GPUBufferCheckBox] = {"copy_gpu_buffers", "GPU"};
-    m_uiSettingMap[ui->fullscreenModeComboBox] = {"full_screen_mode", "GPU"};
-    m_uiSettingMap[ui->presentModeComboBox] = {"present_mode", "GPU"};
-
-    // Input Settings
-    m_uiSettingMap[ui->hideCursorComboBox] = {"cursor_state", "Input"};
-    m_uiSettingMap[ui->idleTimeoutSpinBox] = {"cursor_hide_timeout", "Input"};
-    m_uiSettingMap[ui->motionControlsCheckBox] = {"motion_controls_enabled", "Input"};
-    m_uiSettingMap[ui->backgroundControllerCheckBox] = {"background_controller_input", "Input"};
-
-    // Debug Settings
-    m_uiSettingMap[ui->logFilterLineEdit] = {"log_filter", "General"};
-    m_uiSettingMap[ui->logTypeComboBox] = {"log_type", "General"};
-
-    // Vulkan Settings
-    m_uiSettingMap[ui->pipelineCacheCheckBox] = {"pipeline_cache_enabled", "Vulkan"};
-
-    // Experimental/Other Settings
-    m_uiSettingMap[ui->psnSignInCheckBox] = {"psn_signed_in", "General"};
-    m_uiSettingMap[ui->networkConnectedCheckBox] = {"connected_to_network", "General"};
-    m_uiSettingMap[ui->dmemSpinBox] = {"extra_dmem_in_mbytes", "General"};
-    m_uiSettingMap[ui->vblankSpinBox] = {"vblank_frequency", "GPU"};
-    m_uiSettingMap[ui->DMACheckBox] = {"direct_memory_access_enabled", "GPU"};
-    m_uiSettingMap[ui->readbacksModeComboBox] = {"readbacks_mode", "GPU"};
 }
