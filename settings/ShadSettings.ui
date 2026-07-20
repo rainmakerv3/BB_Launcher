@@ -674,32 +674,10 @@
                 </widget>
                </item>
                <item>
-                <widget class="QGroupBox" name="logTypeGroupBox">
-                 <property name="font">
-                  <font>
-                   <pointsize>9</pointsize>
-                   <bold>false</bold>
-                  </font>
+                <widget class="QCheckBox" name="logTypeCheckBox">
+                 <property name="text">
+                  <string>Log Sync</string>
                  </property>
-                 <property name="title">
-                  <string notr="true">Log Type</string>
-                 </property>
-                 <layout class="QVBoxLayout" name="logTypeBoxLayout">
-                  <item>
-                   <widget class="QComboBox" name="logTypeComboBox">
-                    <item>
-                     <property name="text">
-                      <string>async</string>
-                     </property>
-                    </item>
-                    <item>
-                     <property name="text">
-                      <string>sync</string>
-                     </property>
-                    </item>
-                   </widget>
-                  </item>
-                 </layout>
                 </widget>
                </item>
               </layout>

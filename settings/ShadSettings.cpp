@@ -263,7 +263,6 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* paren
         ui->GPUBufferCheckBox->installEventFilter(this);
         ui->discordRPCCheckbox->installEventFilter(this);
         ui->trophyKeyLineEdit->installEventFilter(this);
-        ui->logTypeGroupBox->installEventFilter(this);
         ui->logFilter->installEventFilter(this);
         ui->disableTrophycheckBox->installEventFilter(this);
 
@@ -338,7 +337,7 @@ void ShadSettings::LoadValuesFromConfig() {
 
     ui->showSplashCheckBox->setChecked(gs_settings.IsShowSplash());
     ui->dmemSpinBox->setValue(gs_settings.GetExtraDmemInMBytes());
-    ui->logTypeComboBox->setCurrentText(QString::fromStdString(gs_settings.GetLogType()));
+    ui->logTypeCheckBox->setChecked(gs_settings.IsLogSync());
     ui->logFilterLineEdit->setText(QString::fromStdString(gs_settings.GetLogFilter()));
 
     ui->FSRCheckBox->setChecked(gs_settings.IsFsrEnabled());
@@ -499,7 +498,7 @@ void ShadSettings::SaveSettings() {
 
     // ------------------ Log tab --------------------------------------------------------
     gs_settings.SetLogFilter(ui->logFilterLineEdit->text().toStdString(), true);
-    gs_settings.SetLogType(ui->logTypeComboBox->currentText().toStdString(), true);
+    gs_settings.SetLogSync(ui->logTypeCheckBox->isChecked(), true);
 
     // ------------------ Debug tab --------------------------------------------------------
     gs_settings.SetCopyGpuBuffers(ui->GPUBufferCheckBox->isChecked(), true);
@@ -575,7 +574,7 @@ void ShadSettings::SetDefaults() {
     ui->popUpDurationSpinBox->setValue(6.0);
     ui->discordRPCCheckbox->setChecked(false);
     ui->GPUBufferCheckBox->setChecked(false);
-    ui->logTypeComboBox->setCurrentText("sync");
+    ui->logTypeCheckBox->setChecked(true);
     ui->logFilterLineEdit->setText("");
     ui->motionControlsCheckBox->setChecked(false);
     ui->backgroundControllerCheckBox->setChecked(false);
