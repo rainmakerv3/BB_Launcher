@@ -235,7 +235,7 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* paren
     });
 
     connect(ui->shadnetRegButton, &QPushButton::clicked, this, [this]() {
-        QString link = "https://shadps4.net/shadnet/register/";
+        QString link = "https://shadps4.net/shadNet/register/";
         QDesktopServices::openUrl(QUrl(link));
     });
 
