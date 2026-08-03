@@ -8,6 +8,7 @@
 #include "SaveManager.h"
 #include "modules/ui_SaveManager.h"
 #include "settings/PSF/psf.h"
+#include "settings/config.h"
 
 SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveManager) {
     ui->setupUi(this);
@@ -538,6 +539,12 @@ void SaveManager::DeleteManualBackupPressed() {
 }
 
 void SaveManager::RestoreBackupPressed() {
+    if (Config::GameRunning) {
+        QMessageBox::warning(this, "Error",
+                             "Restoring backups cannot be done while game is running");
+        return;
+    }
+
     std::string overwriteslot = ui->OverwriteSlotComboBox->currentText().toStdString();
     if (QMessageBox::Yes ==
         QMessageBox::question(this, "Overwrite Save Confirmation",
@@ -564,6 +571,12 @@ void SaveManager::RestoreBackupPressed() {
 }
 
 void SaveManager::RestoreBackupFolderPressed() {
+    if (Config::GameRunning) {
+        QMessageBox::warning(this, "Error",
+                             "Restoring backups cannot be done while game is running");
+        return;
+    }
+
     std::string selectedsave = ui->SelectSaveComboBox->currentText().toStdString();
     if (QMessageBox::Yes ==
         QMessageBox::question(this, "Overwrite Save Confirmation",
@@ -584,6 +597,11 @@ void SaveManager::RestoreBackupFolderPressed() {
 }
 
 void SaveManager::SaveStats() {
+    if (Config::GameRunning) {
+        QMessageBox::warning(this, "Error", "Saving stats cannot be done while game is running");
+        return;
+    }
+
     if (QMessageBox::No ==
         QMessageBox::question(
             this, "Confirm Save",

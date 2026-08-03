@@ -230,6 +230,12 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->addChaliceButton, &QPushButton::pressed, this, [this]() {
+        if (Config::GameRunning) {
+            QMessageBox::warning(this, "Error",
+                                 "Adding Chalices cannot be done while game is running");
+            return;
+        }
+
         if (!CheckBBInstall())
             return;
 
