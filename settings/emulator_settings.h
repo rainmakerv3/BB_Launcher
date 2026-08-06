@@ -7,6 +7,7 @@
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <ostream>
 #include <sstream>
 #include <string>
 #include <vector>
@@ -46,6 +47,21 @@ enum AudioBackend : int {
     OpenAL,
     // Add more backends as needed
 };
+
+enum class WindowsGuestRedZoneProtectionMode : u32 {
+    Disabled,
+    StaticPatching,
+};
+
+// Windows static guest red-zone protection
+NLOHMANN_JSON_SERIALIZE_ENUM(WindowsGuestRedZoneProtectionMode,
+                             {{WindowsGuestRedZoneProtectionMode::Disabled, "Disabled"},
+                              {WindowsGuestRedZoneProtectionMode::StaticPatching,
+                               "StaticPatching"}})
+
+inline std::ostream& operator<<(std::ostream& output, WindowsGuestRedZoneProtectionMode mode) {
+    return output << nlohmann::json(mode).get<std::string>();
+}
 
 template <typename T>
 struct Setting {
@@ -349,6 +365,21 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AudioSettings, audio_backend, sdl_mic_device,
                                    openal_mic_device, openal_main_output_device,
                                    openal_padSpk_output_device)
 
+// Windows static guest red-zone protection
+struct WindowsGuestRedZoneProtectionSettings {
+    Setting<WindowsGuestRedZoneProtectionMode> windows_guest_red_zone_protection_mode{
+        WindowsGuestRedZoneProtectionMode::Disabled};
+
+    std::vector<OverrideItem> GetOverrideableFields() const {
+        return std::vector<OverrideItem>{make_override<WindowsGuestRedZoneProtectionSettings>(
+            "windows_guest_red_zone_protection_mode",
+            &WindowsGuestRedZoneProtectionSettings::windows_guest_red_zone_protection_mode)};
+    }
+};
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(WindowsGuestRedZoneProtectionSettings,
+                                   windows_guest_red_zone_protection_mode)
+
 // -------------------------------
 // GPU settings
 // -------------------------------
@@ -505,6 +536,8 @@ private:
     DebugSettings m_debug{};
     InputSettings m_input{};
     AudioSettings m_audio{};
+    // Windows static guest red-zone protection
+    WindowsGuestRedZoneProtectionSettings m_windows_guest_red_zone_protection{};
     GPUSettings m_gpu{};
     VulkanSettings m_vulkan{};
     ConfigMode m_configMode{ConfigMode::Default};
@@ -552,6 +585,10 @@ public:
     }
     std::vector<OverrideItem> GetAudioOverrideableFields() const {
         return m_audio.GetOverrideableFields();
+    }
+    // Windows static guest red-zone protection
+    std::vector<OverrideItem> GetWindowsGuestRedZoneProtectionOverrideableFields() const {
+        return m_windows_guest_red_zone_protection.GetOverrideableFields();
     }
     std::vector<OverrideItem> GetGPUOverrideableFields() const {
         return m_gpu.GetOverrideableFields();
@@ -622,6 +659,10 @@ public:
     SETTING_FORWARD(m_audio, OpenALMicDevice, openal_mic_device)
     SETTING_FORWARD(m_audio, OpenALMainOutputDevice, openal_main_output_device)
     SETTING_FORWARD(m_audio, OpenALPadSpkOutputDevice, openal_padSpk_output_device)
+
+    // Windows static guest red-zone protection
+    SETTING_FORWARD(m_windows_guest_red_zone_protection, WindowsGuestRedZoneProtectionMode,
+                    windows_guest_red_zone_protection_mode)
 
     // Debug settings
     SETTING_FORWARD_BOOL(m_debug, DebugDump, debug_dump)

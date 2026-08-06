@@ -170,8 +170,9 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
         logDisplay->appendHtml(
             "<span style=\"color: gray; font-weight: bold;\">REMINDER: CPU E-cores detected, you "
             "may be using an Intel 12th Gen - 14th Gen CPU. To avoid crashes playing Bloodborne on "
-            "Intel 12-14th Gen CPUs, you can use either the Intel 12th Gen+ SFX workaround patch "
-            "(recommended) or install the Sfx Fix Mod</span>");
+            "Intel 12-14th Gen CPUs, enable windows red zone protection-static patching in shadps4 "
+            "settings-experimental settings (requires latest shadPS4 pre-release) or you can use "
+            "the Intel 12th Gen+ SFX workaround patch");
         logDisplay->appendHtml("");
     }
 #endif

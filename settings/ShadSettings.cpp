@@ -282,6 +282,10 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* paren
         ui->RCASSlider->installEventFilter(this);
         ui->presentModeGroupBox->installEventFilter(this);
     }
+
+#ifndef Q_OS_WIN
+    ui->winRedZoneGroupBox->setVisible(false);
+#endif
 }
 
 void ShadSettings::LoadValuesFromConfig() {
@@ -348,6 +352,8 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->volumeValue->setText(QString::number(ui->volumeSlider->value()) + "%");
     ui->graphicsAdapterBox->setCurrentIndex(gs_settings.GetGpuId() + 1);
     ui->pipelineCacheCheckBox->setChecked(gs_settings.IsPipelineCacheEnabled());
+    ui->winRedZoneComboBox->setCurrentIndex(
+        static_cast<int>(gs_settings.GetWindowsGuestRedZoneProtectionMode()));
 
     QString translatedText_PresentMode =
         presentModeMap.key(QString::fromStdString(gs_settings.GetPresentMode()));
@@ -508,6 +514,10 @@ void ShadSettings::SaveSettings() {
     gs_settings.SetExtraDmemInMBytes(ui->dmemSpinBox->value(), true);
     gs_settings.SetDirectMemoryAccessEnabled(ui->DMACheckBox->isChecked(), true);
     gs_settings.SetVblankFrequency(ui->vblankSpinBox->value(), true);
+
+    gs_settings.SetWindowsGuestRedZoneProtectionMode(
+        static_cast<WindowsGuestRedZoneProtectionMode>(ui->winRedZoneComboBox->currentIndex()),
+        true);
 
     // Network Settings
     gs_settings.SetShadNetEnabled(ui->shadnetCheckBox->isChecked(), true);
