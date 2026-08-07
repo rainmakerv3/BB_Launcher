@@ -6,6 +6,7 @@
 #include <QMessageBox>
 
 #include "SaveManager.h"
+#include "modules/Zar/game_backend.h"
 #include "modules/ui_SaveManager.h"
 #include "settings/PSF/psf.h"
 #include "settings/config.h"
@@ -21,7 +22,7 @@ SaveManager::SaveManager(QWidget* parent) : QDialog(parent), ui(new Ui::SaveMana
         }
     }
 
-    // Releases older than 0.9.0 will need to use the game serial as save folder
+    // resolves zar as well
     std::string savePath = PSFdata::getSavePath(Common::installPath);
     ExactSaveDir = Common::GetSaveDir() / savePath / "SPRJ0005";
 

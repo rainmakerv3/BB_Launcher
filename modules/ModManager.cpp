@@ -99,12 +99,6 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
     connect(this, &ModManager::progressChanged, ui->progressBar, &QProgressBar::setValue);
 
     connect(ui->mergeButton, &QPushButton::pressed, this, [this]() {
-        if (Core::FileSys::IsZArchiveFile(Common::installPath)) {
-            QMessageBox::warning(this, "Unsupported action",
-                                 "Mod merger currently not usable when BB is in Zar format");
-            return;
-        }
-
         ModMerger* MergeWindow = new ModMerger(this);
         MergeWindow->exec();
         RefreshLists();

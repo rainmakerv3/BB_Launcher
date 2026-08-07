@@ -8,6 +8,7 @@
 #include "modules/BBFormats/BBFormats.h"
 #include "modules/BBFormats/ConflictHandler.h"
 #include "modules/BBFormats/Dcx.h"
+#include "modules/Zar/game_backend.h"
 #include "ui_ModMerger.h"
 
 using namespace FileHelper;
@@ -297,6 +298,19 @@ void ModMerger::GetConflictedFiles() {
 }
 
 fs::path ModMerger::GetUpdatedFile(fs::path relativePath) {
+    if (Core::FileSys::IsZArchiveFile(Common::installPath)) {
+        std::string relString = "dvdroot_ps4/" + relativePath.string();
+
+        if (std::filesystem::exists(Common::installUpdatePath)) {
+            if (const auto resolved =
+                    Core::FileSys::ResolveGameFilePath(Common::installUpdatePath, relString)) {
+                return *resolved;
+            }
+        }
+
+        return Core::FileSys::ResolveGameFilePath(Common::installPath, relString).value();
+    }
+
     std::string patchString = Common::game_serial + "-patch";
     std::string updateString = Common::game_serial + "-UPDATE";
 

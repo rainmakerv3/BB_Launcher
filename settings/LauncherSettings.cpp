@@ -11,6 +11,7 @@
 #include "config.h"
 #include "formatting.h"
 #include "modules/Common.h"
+#include "modules/Zar/game_backend.h"
 #include "settings/ui_LauncherSettings.h"
 #include "settings/updater/CheckUpdate.h"
 
@@ -228,7 +229,14 @@ void LauncherSettings::CreateShortcut() {
 
     // Get the full path to the icon
     QString iconPath;
-    Common::PathToQString(iconPath, Common::installPath / "sce_sys" / "icon0.png");
+
+    if (Core::FileSys::IsZArchiveFile(Common::installPath)) {
+        Common::PathToQString(
+            iconPath,
+            Core::FileSys::ResolveGameFilePath(Common::installPath, "sce_sys/icon0.png").value());
+    } else {
+        Common::PathToQString(iconPath, Common::installPath / "sce_sys" / "icon0.png");
+    }
 
     QFileInfo iconFileInfo(iconPath);
     QString icoPath = iconFileInfo.absolutePath() + "/" + iconFileInfo.baseName() + ".ico";

@@ -31,6 +31,7 @@ ChaliceEditor::ChaliceEditor(QWidget* parent) : QDialog(parent), ui(new Ui::Chal
         {3, ui->DescLabel4}, {4, ui->DescLabel5}, {5, ui->DescLabel6},
     };
 
+    // resolves zar as well
     std::string savePath = PSFdata::getSavePath(Common::installPath);
     ExactSaveDir = Common::GetSaveDir() / savePath / "SPRJ0005";
 

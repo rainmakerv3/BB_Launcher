@@ -30,6 +30,7 @@
 
 #include "ShadCheatsPatches.h"
 #include "modules/Common.h"
+#include "modules/Zar/game_backend.h"
 #include "settings/PSF/psf.h"
 #include "settings/config.h"
 
@@ -46,7 +47,14 @@ CheatsPatches::CheatsPatches(std::shared_ptr<IpcClient> client, bool game_runnin
 }
 
 void CheatsPatches::setupUI() {
-    std::filesystem::path icon_path = Common::installPath / "sce_sys" / "icon0.png";
+    std::filesystem::path icon_path;
+    if (Core::FileSys::IsZArchiveFile(Common::installPath)) {
+        icon_path =
+            Core::FileSys::ResolveGameFilePath(Common::installPath, "sce_sys/icon0.png").value();
+    } else {
+        icon_path = Common::installPath / "sce_sys" / "icon0.png";
+    }
+
     QString iconpath;
     Common::PathToQString(iconpath, icon_path);
     icon = QImage(iconpath);
@@ -1371,16 +1379,24 @@ void CheatsPatches::uncheckAllCheatCheckBoxes() {
 }
 
 std::string CheatsPatches::getGameVersion() {
-    std::filesystem::path gamePath = Common::installPath;
-    std::filesystem::path filePath = gamePath;
-    std::filesystem::path param_sfo_path;
-    std::filesystem::path game_update_path = filePath;
-    game_update_path += "-UPDATE";
-    std::filesystem::path game_patch_path = filePath;
-    game_patch_path += "-patch";
-    PSFdata::SceUpdateChecker("param.sfo", param_sfo_path, game_update_path, game_patch_path,
-                              gamePath);
     std::string version;
+    std::filesystem::path param_sfo_path;
+
+    if (Core::FileSys::IsZArchiveFile(Common::installPath)) {
+        std::filesystem::path gamePath = std::filesystem::exists(Common::installUpdatePath)
+                                             ? Common::installUpdatePath
+                                             : Common::installPath;
+        param_sfo_path = Core::FileSys::ResolveGameFilePath(gamePath, "sce_sys/param.sfo").value();
+    } else {
+        std::filesystem::path gamePath = Common::installPath;
+        std::filesystem::path filePath = gamePath;
+        std::filesystem::path game_update_path = filePath;
+        game_update_path += "-UPDATE";
+        std::filesystem::path game_patch_path = filePath;
+        game_patch_path += "-patch";
+        PSFdata::SceUpdateChecker("param.sfo", param_sfo_path, game_update_path, game_patch_path,
+                                  gamePath);
+    }
 
     PSF psf;
     if (psf.Open(param_sfo_path)) {

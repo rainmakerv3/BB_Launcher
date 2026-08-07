@@ -8,6 +8,7 @@
 #include "Common.h"
 #include "Log.h"
 #include "TrophyManager.h"
+#include "modules/Zar/game_backend.h"
 #include "modules/ui_TrophyManager.h"
 #include "settings/config.h"
 #include "settings/emulator_settings.h"
@@ -72,7 +73,15 @@ TrophyViewer::TrophyViewer(QString gameTrpPath) : QMainWindow(), ui(new Ui::Trop
 
     gameTrpPath_ = gameTrpPath;
     auto basepath = Common::PathFromQString(gameTrpPath_);
-    std::filesystem::path npbindPath = basepath / "sce_sys" / "npbind.dat";
+
+    std::filesystem::path npbindPath;
+    if (Core::FileSys::IsZArchiveFile(Common::installPath)) {
+        npbindPath =
+            Core::FileSys::ResolveGameFilePath(Common::installPath, "sce_sys/npbind.dat").value();
+    } else {
+        npbindPath = basepath / "sce_sys" / "npbind.dat";
+    }
+
     NPBindFile npbind;
     if (!npbind.Load(npbindPath.string())) {
         std::string msg = "Failed to load npbind.dat file";

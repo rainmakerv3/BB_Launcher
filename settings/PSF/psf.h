@@ -12,6 +12,7 @@
 #include <vector>
 
 #include "modules/Common.h"
+#include "modules/Zar/game_backend.h"
 
 constexpr u32 PSF_MAGIC = 0x00505346;
 constexpr u32 PSF_VERSION_1_1 = 0x00000101;
@@ -120,11 +121,18 @@ inline void SceUpdateChecker(const std::string sceItem, std::filesystem::path& g
 
 inline std::string getSavePath(std::filesystem::path gamePath) {
     std::filesystem::path param_sfo_path;
-    std::filesystem::path game_update_path = gamePath;
-    game_update_path += "-UPDATE";
-    std::filesystem::path game_patch_path = gamePath;
-    game_patch_path += "-patch";
-    SceUpdateChecker("param.sfo", param_sfo_path, game_update_path, game_patch_path, gamePath);
+    if (!Core::FileSys::IsZArchiveFile(gamePath)) {
+        std::filesystem::path game_update_path = gamePath;
+        game_update_path += "-UPDATE";
+        std::filesystem::path game_patch_path = gamePath;
+        game_patch_path += "-patch";
+        SceUpdateChecker("param.sfo", param_sfo_path, game_update_path, game_patch_path, gamePath);
+    } else {
+        std::filesystem::path gamePath = std::filesystem::exists(Common::installUpdatePath)
+                                             ? Common::installUpdatePath
+                                             : Common::installPath;
+        param_sfo_path = Core::FileSys::ResolveGameFilePath(gamePath, "sce_sys/param.sfo").value();
+    }
 
     PSF psf;
     if (psf.Open(param_sfo_path)) {
