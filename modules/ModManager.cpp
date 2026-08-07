@@ -7,6 +7,7 @@
 
 #include "ModManager.h"
 #include "ModMerger.h"
+#include "modules/Zar/game_backend.h"
 #include "modules/ui_ModManager.h"
 #include "settings/config.h"
 
@@ -98,12 +99,22 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
     connect(this, &ModManager::progressChanged, ui->progressBar, &QProgressBar::setValue);
 
     connect(ui->mergeButton, &QPushButton::pressed, this, [this]() {
+        if (Core::FileSys::IsZArchiveFile(Common::installPath)) {
+            QMessageBox::warning(this, "Unsupported action",
+                                 "Mod merger currently not usable when BB is in Zar format");
+            return;
+        }
+
         ModMerger* MergeWindow = new ModMerger(this);
         MergeWindow->exec();
         RefreshLists();
     });
 
     ModInstallPath = Common::installPath;
+    if (Core::FileSys::IsZArchiveFile(ModInstallPath)) {
+        ModInstallPath = ModInstallPath.parent_path() / Common::game_serial;
+    }
+
     ModInstallPath += "-mods";
     ModBackupPath = ModInstallPath.parent_path() / (Common::game_serial + "-modsBACKUP");
 

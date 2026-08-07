@@ -103,23 +103,41 @@ void LoadSettings() {
         CustomUserFolder = toml::find_fs_path_or(launcher, "CustomUserFolder", {});
     }
 
+    QString installPathString;
     if (std::filesystem::exists(Common::installPath)) {
-        QString installPathString;
         Common::PathToQString(installPathString, Common::installPath);
-        Common::game_serial = installPathString.last(9).toStdString();
+        if (installPathString.right(3).toLower() == "zar") {
+            QString filename = installPathString.right(13);
+            Common::game_serial = filename.left(9).toStdString();
+        } else {
+            Common::game_serial = installPathString.last(9).toStdString();
+        }
     } else {
         Common::installPath = "";
     }
 
-    if (std::filesystem::exists(Common::installPath.parent_path() /
-                                (Common::game_serial + "-UPDATE"))) {
+    if (installPathString.right(3).toLower() == "zar") {
+        if (std::filesystem::exists(Common::installPath.parent_path() /
+                                    (Common::game_serial + "-UPDATE.zar"))) {
 
-        Common::installUpdatePath =
-            Common::installPath.parent_path() / (Common::game_serial + "-UPDATE");
-    } else if (std::filesystem::exists(Common::installPath.parent_path() /
-                                       (Common::game_serial + "-patch"))) {
-        Common::installUpdatePath =
-            Common::installPath.parent_path() / (Common::game_serial + "-patch");
+            Common::installUpdatePath =
+                Common::installPath.parent_path() / (Common::game_serial + "-UPDATE.zar");
+        } else if (std::filesystem::exists(Common::installPath.parent_path() /
+                                           (Common::game_serial + "-patch.zar"))) {
+            Common::installUpdatePath =
+                Common::installPath.parent_path() / (Common::game_serial + "-patch.zar");
+        }
+    } else {
+        if (std::filesystem::exists(Common::installPath.parent_path() /
+                                    (Common::game_serial + "-UPDATE"))) {
+
+            Common::installUpdatePath =
+                Common::installPath.parent_path() / (Common::game_serial + "-UPDATE");
+        } else if (std::filesystem::exists(Common::installPath.parent_path() /
+                                           (Common::game_serial + "-patch"))) {
+            Common::installUpdatePath =
+                Common::installPath.parent_path() / (Common::game_serial + "-patch");
+        }
     }
 
     // My to do: delete when no longer needed

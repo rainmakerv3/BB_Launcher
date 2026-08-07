@@ -47,3 +47,9 @@
 [submodule "externals/libarchive"]
 	path = externals/libarchive
 	url = https://github.com/libarchive/libarchive.git
+[submodule "externals/zstd"]
+	path = externals/zstd
+	url = https://github.com/shadexternals/zstd.git
+[submodule "externals/zarchive"]
+	path = externals/zarchive
+	url = https://github.com/shadexternals/ZArchive.git

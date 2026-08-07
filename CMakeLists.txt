@@ -213,6 +213,12 @@ set(PROJECT_SOURCES
     modules/TrophyDeps/npbind.h
     modules/TrophyDeps/trp.cpp
     modules/TrophyDeps/trp.h
+    modules/Zar/game_backend.cpp
+    modules/Zar/game_backend.h
+    modules/Zar/host_directory_backend.cpp
+    modules/Zar/host_directory_backend.h
+    modules/Zar/zarchive_backend.cpp
+    modules/Zar/zarchive_backend.h
     settings/PSF/psf.cpp
     settings/PSF/psf.h
     settings/updater/BuildInfo.h
@@ -278,7 +284,7 @@ target_include_directories(BB_Launcher PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(BB_Launcher PRIVATE externals/microz/miniz)
 
 target_link_libraries(BB_Launcher PRIVATE Qt6::Widgets Qt6::Network Qt6::Quick Qt6::QuickWidgets Qt6::WebView Qt6::WebSockets Qt6::Concurrent)
-target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 nlohmann_json::nlohmann_json pugixml::pugixml SDL3::SDL3 Vulkan::Headers volk_headers)
+target_link_libraries(BB_Launcher PRIVATE fmt::fmt toml11::toml11 nlohmann_json::nlohmann_json pugixml::pugixml SDL3::SDL3 Vulkan::Headers volk_headers ZArchive::zarchive)
 target_link_libraries(BB_Launcher PRIVATE qmicroz cryptopp::cryptopp liblzma archive_static)
 
 if (CMAKE_SYSTEM_NAME STREQUAL "Linux" AND USE_WEBENGINE)

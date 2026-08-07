@@ -20,6 +20,7 @@
 #include "modules/PkgExtractor.h"
 #include "modules/SaveManager.h"
 #include "modules/TrophyManager.h"
+#include "modules/Zar/game_backend.h"
 #include "modules/ui_bblauncher.h"
 #include "settings/LauncherSettings.h"
 #include "settings/PSF/psf.h"
@@ -382,10 +383,30 @@ void BBLauncher::PrintLog(QString entry) {
 
 void BBLauncher::BBSelectButton_isPressed() {
     QString QBBInstallLoc = "";
-    QBBInstallLoc = QFileDialog::getExistingDirectory(
-        this, "Select Bloodborne install location (ex. CUSA03173, CUSA00900", QDir::currentPath());
+
+    QFileDialog dialog;
+    dialog.setOption(QFileDialog::DontUseNativeDialog, true);
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setNameFilter("Zar archives (*.zar)");
+
+    QAbstractItemView* view = dialog.findChild<QAbstractItemView*>();
+    if (view) {
+        view->setSelectionMode(QAbstractItemView::SingleSelection);
+    }
+
+    if (dialog.exec()) {
+        QStringList list = dialog.selectedFiles();
+        QBBInstallLoc = list.first();
+    }
+
     if (QBBInstallLoc != "") {
-        Common::game_serial = QBBInstallLoc.last(9).toStdString();
+        if (QBBInstallLoc.right(3).toLower() == "zar") {
+            QString filename = QBBInstallLoc.right(13);
+            Common::game_serial = filename.left(9).toStdString();
+        } else {
+            Common::game_serial = QBBInstallLoc.last(9).toStdString();
+        }
+
         if (std::find(BBSerialList.begin(), BBSerialList.end(), Common::game_serial) !=
             BBSerialList.end()) {
             ui->ExeLabel->setText(QBBInstallLoc);
@@ -394,7 +415,8 @@ void BBLauncher::BBSelectButton_isPressed() {
         } else {
             QMessageBox::warning(
                 this, "Install Location not valid",
-                "Select valid BB Install folder starting with CUSA (ex: CUSA03173, CUSA00900)");
+                "Select valid BB Install folder starting with CUSA (ex: CUSA03173, CUSA00900) or "
+                "Zar archive with the serial as the name (ex: CUSA03173.zar)");
         }
     }
 }
@@ -878,7 +900,13 @@ std::vector<MemoryPatcher::PendingPatch> BBLauncher::readPatches(std::string gam
 }
 
 void BBLauncher::StartGameWithArgs(QStringList args) {
-    const std::filesystem::path EbootPath = Common::installPath / "eboot.bin";
+    std::filesystem::path EbootPath = Common::installPath / "eboot.bin";
+
+    const bool eboot_present =
+        Core::FileSys::IsZArchiveFile(Common::installPath)
+            ? Core::FileSys::ReadGameFile(Common::installPath, "eboot.bin").has_value()
+            : std::filesystem::exists(EbootPath);
+
     if (Common::installPath == "") {
         QMessageBox::warning(this, "No Bloodborne Install folder",
                              "Set-up Bloodborne Install folder before launching");
@@ -887,9 +915,8 @@ void BBLauncher::StartGameWithArgs(QStringList args) {
         } else {
             return;
         }
-    } else if (!std::filesystem::exists(EbootPath)) {
-        QMessageBox::warning(this, "Bloodborne eboot.bin not found",
-                             QString::fromStdString(EbootPath.string()) + " not found");
+    } else if (!eboot_present) {
+        QMessageBox::warning(this, "Error", "eboot.bin not found");
         if (noGUIset) {
             QApplication::quit();
         } else {
@@ -942,13 +969,10 @@ void BBLauncher::StartEmulator(std::filesystem::path path, QStringList args) {
     }
 
     QStringList gameArgs{"--game", QString::fromStdWString(path.wstring())};
-    QStringList final_args;
-
-    final_args.append(args);
-    final_args.append(gameArgs);
+    args = gameArgs + args;
 
     QString workDir = fileInfo.absolutePath();
-    m_ipc_client->startEmulator(fileInfo, final_args, workDir);
+    m_ipc_client->startEmulator(fileInfo, args, workDir);
 
     Config::GameRunning = true;
 }

@@ -50,7 +50,7 @@
           </font>
          </property>
          <property name="title">
-          <string>Bloodborne Install Folder</string>
+          <string>Bloodborne Install Folder / Zar</string>
          </property>
          <layout class="QHBoxLayout" name="horizontalLayout_5">
           <item>
