@@ -68,7 +68,20 @@
              </font>
             </property>
             <property name="text">
-             <string>Browse</string>
+             <string>Browse (Zar)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="BBSelectFolderButton">
+            <property name="font">
+             <font>
+              <pointsize>9</pointsize>
+              <bold>false</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>Browse (Folder)</string>
             </property>
            </widget>
           </item>

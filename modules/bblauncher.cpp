@@ -179,7 +179,6 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
 #endif
 
     connect(m_ipc_client.get(), &IpcClient::LogEntrySent, this, &BBLauncher::PrintLog);
-    connect(ui->BBSelectButton, &QPushButton::pressed, this, &BBLauncher::BBSelectButton_isPressed);
     connect(ui->ShadSelectButton, &QPushButton::pressed, this,
             &BBLauncher::ShadSelectButton_isPressed);
     connect(launchButton, &QPushButton::pressed, this,
@@ -188,6 +187,47 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     connect(restartButton, &QPushButton::clicked, this, &BBLauncher::RestartEmulator);
     connect(fullscreenButton, &QPushButton::clicked, this,
             [this]() { m_ipc_client->toggleFullscreen(); });
+
+    connect(ui->BBSelectFolderButton, &QPushButton::pressed, this, [this]() {
+        QString QBBInstallLoc = "";
+        QBBInstallLoc = QFileDialog::getExistingDirectory(
+            this, "Select Bloodborne install location (ex. CUSA03173, CUSA00900",
+            QDir::currentPath());
+
+        if (QBBInstallLoc != "") {
+            Common::game_serial = QBBInstallLoc.last(9).toStdString();
+
+            if (std::find(BBSerialList.begin(), BBSerialList.end(), Common::game_serial) !=
+                BBSerialList.end()) {
+                ui->ExeLabel->setText(QBBInstallLoc);
+            } else {
+                QMessageBox::warning(this, "Install Location not valid",
+                                     "Select valid BB Install folder starting with CUSA (ex: "
+                                     "CUSA03173, CUSA00900)");
+            }
+        }
+    });
+
+    connect(ui->BBSelectButton, &QPushButton::pressed, this, [this]() {
+        QString QBBInstallLoc = "";
+        QBBInstallLoc = QFileDialog::getOpenFileName(
+            this, "Select Bloodborne install location (ex. CUSA03173, CUSA00900",
+            QDir::currentPath(), "Zar Archives (*.zar)");
+
+        if (QBBInstallLoc != "") {
+            QString filename = QBBInstallLoc.right(13);
+            Common::game_serial = filename.left(9).toStdString();
+
+            if (std::find(BBSerialList.begin(), BBSerialList.end(), Common::game_serial) !=
+                BBSerialList.end()) {
+                ui->ExeLabel->setText(QBBInstallLoc);
+            } else {
+                QMessageBox::warning(
+                    this, "Install Location not valid",
+                    "Select valid BB Zar archive with the serial as the name (ex: CUSA03173.zar)");
+            }
+        }
+    });
 
     connect(ui->pkgButton, &QPushButton::pressed, this, [this]() {
         PkgExtractor* Extractor = new PkgExtractor(this);
@@ -379,46 +419,6 @@ void BBLauncher::PrintLog(QString entry) {
     logDisplay->appendAnsiText(entry);
     QScrollBar* sb = logDisplay->verticalScrollBar();
     sb->setValue(sb->maximum());
-}
-
-void BBLauncher::BBSelectButton_isPressed() {
-    QString QBBInstallLoc = "";
-
-    QFileDialog dialog;
-    dialog.setOption(QFileDialog::DontUseNativeDialog, true);
-    dialog.setFileMode(QFileDialog::AnyFile);
-    dialog.setNameFilter("Zar archives (*.zar)");
-
-    QAbstractItemView* view = dialog.findChild<QAbstractItemView*>();
-    if (view) {
-        view->setSelectionMode(QAbstractItemView::SingleSelection);
-    }
-
-    if (dialog.exec()) {
-        QStringList list = dialog.selectedFiles();
-        QBBInstallLoc = list.first();
-    }
-
-    if (QBBInstallLoc != "") {
-        if (QBBInstallLoc.right(3).toLower() == "zar") {
-            QString filename = QBBInstallLoc.right(13);
-            Common::game_serial = filename.left(9).toStdString();
-        } else {
-            Common::game_serial = QBBInstallLoc.last(9).toStdString();
-        }
-
-        if (std::find(BBSerialList.begin(), BBSerialList.end(), Common::game_serial) !=
-            BBSerialList.end()) {
-            ui->ExeLabel->setText(QBBInstallLoc);
-            Common::installPath = Common::PathFromQString(QBBInstallLoc);
-            Config::SaveLauncherSettings();
-        } else {
-            QMessageBox::warning(
-                this, "Install Location not valid",
-                "Select valid BB Install folder starting with CUSA (ex: CUSA03173, CUSA00900) or "
-                "Zar archive with the serial as the name (ex: CUSA03173.zar)");
-        }
-    }
 }
 
 void BBLauncher::ShadSelectButton_isPressed() {

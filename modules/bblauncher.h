@@ -29,7 +29,6 @@ public:
 public slots:
 
 private slots:
-    void BBSelectButton_isPressed();
     void ShadSelectButton_isPressed();
     void onGameClosed();
     void PrintLog(QString entry);
