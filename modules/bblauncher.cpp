@@ -195,17 +195,18 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             QDir::currentPath());
 
         if (QBBInstallLoc != "") {
-            Common::game_serial = QBBInstallLoc.last(9).toStdString();
+            std::string serial = QBBInstallLoc.last(9).toStdString();
 
-            if (std::find(BBSerialList.begin(), BBSerialList.end(), Common::game_serial) !=
-                BBSerialList.end()) {
+            if (std::find(BBSerialList.begin(), BBSerialList.end(), serial) != BBSerialList.end()) {
                 ui->ExeLabel->setText(QBBInstallLoc);
+                Common::game_serial = serial;
                 Common::installPath = Common::PathFromQString(QBBInstallLoc);
                 Config::SaveLauncherSettings();
             } else {
                 QMessageBox::warning(this, "Install Location not valid",
                                      "Select valid BB Install folder starting with CUSA (ex: "
                                      "CUSA03173, CUSA00900)");
+                Common::game_serial = "";
             }
         }
     });
@@ -218,11 +219,11 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
 
         if (QBBInstallLoc != "") {
             QString filename = QBBInstallLoc.right(13);
-            Common::game_serial = filename.left(9).toStdString();
+            std::string serial = filename.left(9).toStdString();
 
-            if (std::find(BBSerialList.begin(), BBSerialList.end(), Common::game_serial) !=
-                BBSerialList.end()) {
+            if (std::find(BBSerialList.begin(), BBSerialList.end(), serial) != BBSerialList.end()) {
                 ui->ExeLabel->setText(QBBInstallLoc);
+                Common::game_serial = serial;
                 Common::installPath = Common::PathFromQString(QBBInstallLoc);
                 Config::SaveLauncherSettings();
             } else {
