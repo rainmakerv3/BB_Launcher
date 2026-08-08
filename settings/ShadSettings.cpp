@@ -260,7 +260,6 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* paren
     {
         ui->FullscreenModeGroupBox->installEventFilter(this);
         ui->readbacksModeComboBox->installEventFilter(this);
-        ui->GPUBufferCheckBox->installEventFilter(this);
         ui->discordRPCCheckbox->installEventFilter(this);
         ui->trophyKeyLineEdit->installEventFilter(this);
         ui->logFilter->installEventFilter(this);
@@ -333,7 +332,6 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->vblankSpinBox->setValue(gs_settings.GetVblankFrequency());
     ui->readbacksModeComboBox->setCurrentIndex(gs_settings.GetReadbacksMode());
     ui->DMACheckBox->setChecked(gs_settings.IsDirectMemoryAccessEnabled());
-    ui->GPUBufferCheckBox->setChecked(gs_settings.IsCopyGpuBuffers());
     ui->disableTrophycheckBox->setChecked(gs_settings.IsTrophyPopupDisabled());
     ui->popUpPosComboBox->setCurrentText(
         QString::fromStdString(gs_settings.GetTrophyNotificationSide()));
@@ -350,6 +348,7 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->RCASValue->setText(QString::number(ui->RCASSlider->value() / 1000.0, 'f', 3));
     ui->volumeSlider->setValue(gs_settings.GetVolumeSlider());
     ui->volumeValue->setText(QString::number(ui->volumeSlider->value()) + "%");
+    ui->audioBackendComboBox->setCurrentIndex(gs_settings.GetAudioBackend());
     ui->graphicsAdapterBox->setCurrentIndex(gs_settings.GetGpuId() + 1);
     ui->pipelineCacheCheckBox->setChecked(gs_settings.IsPipelineCacheEnabled());
     ui->winRedZoneComboBox->setCurrentIndex(
@@ -472,6 +471,7 @@ void ShadSettings::SaveSettings() {
     // Other Settings - use gs_settings
     gs_settings.SetShowSplash(ui->showSplashCheckBox->isChecked(), true);
     gs_settings.SetVolumeSlider(ui->volumeSlider->value(), true);
+    gs_settings.SetAudioBackend(ui->audioBackendComboBox->currentIndex(), true);
     gs_settings.SetTrophyPopupDisabled(ui->disableTrophycheckBox->isChecked(), true);
     gs_settings.SetTrophyNotificationDuration(ui->popUpDurationSpinBox->value(), true);
 
@@ -507,8 +507,6 @@ void ShadSettings::SaveSettings() {
     gs_settings.SetLogSync(ui->logTypeCheckBox->isChecked(), true);
 
     // ------------------ Debug tab --------------------------------------------------------
-    gs_settings.SetCopyGpuBuffers(ui->GPUBufferCheckBox->isChecked(), true);
-
     gs_settings.SetReadbacksMode(ui->readbacksModeComboBox->currentIndex(), true);
     gs_settings.SetPipelineCacheEnabled(ui->pipelineCacheCheckBox->isChecked(), true);
     gs_settings.SetExtraDmemInMBytes(ui->dmemSpinBox->value(), true);
@@ -583,7 +581,7 @@ void ShadSettings::SetDefaults() {
     ui->popUpPosComboBox->setCurrentText("right");
     ui->popUpDurationSpinBox->setValue(6.0);
     ui->discordRPCCheckbox->setChecked(false);
-    ui->GPUBufferCheckBox->setChecked(false);
+    ui->audioBackendComboBox->setCurrentIndex(0);
     ui->logTypeCheckBox->setChecked(true);
     ui->logFilterLineEdit->setText("");
     ui->motionControlsCheckBox->setChecked(false);

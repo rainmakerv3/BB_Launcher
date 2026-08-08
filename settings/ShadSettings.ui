@@ -83,7 +83,7 @@
                </font>
               </property>
               <property name="title">
-               <string notr="true">System</string>
+               <string notr="true">Audio</string>
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_9">
                <item>
@@ -127,23 +127,26 @@
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="pipelineCacheCheckBox">
-                 <property name="font">
-                  <font>
-                   <pointsize>9</pointsize>
-                   <bold>true</bold>
-                  </font>
+                <widget class="QGroupBox" name="groupBox_11">
+                 <property name="title">
+                  <string>Audio Backend</string>
                  </property>
-                 <property name="text">
-                  <string>Enable Shader Cache</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="deleteCacheButton">
-                 <property name="text">
-                  <string>Delete BB Shader Cache</string>
-                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_28">
+                  <item>
+                   <widget class="QComboBox" name="audioBackendComboBox">
+                    <item>
+                     <property name="text">
+                      <string>SDL</string>
+                     </property>
+                    </item>
+                    <item>
+                     <property name="text">
+                      <string>OpenAL</string>
+                     </property>
+                    </item>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
               </layout>
@@ -297,9 +300,22 @@
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="GPUBufferCheckBox">
+                <widget class="QCheckBox" name="pipelineCacheCheckBox">
+                 <property name="font">
+                  <font>
+                   <pointsize>9</pointsize>
+                   <bold>true</bold>
+                  </font>
+                 </property>
                  <property name="text">
-                  <string>Copy GPU Buffers (may fix PM4 crashes)</string>
+                  <string>Enable Shader Cache</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="deleteCacheButton">
+                 <property name="text">
+                  <string>Delete BB Shader Cache</string>
                  </property>
                 </widget>
                </item>
