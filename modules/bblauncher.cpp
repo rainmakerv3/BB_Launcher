@@ -200,6 +200,8 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             if (std::find(BBSerialList.begin(), BBSerialList.end(), Common::game_serial) !=
                 BBSerialList.end()) {
                 ui->ExeLabel->setText(QBBInstallLoc);
+                Common::installPath = Common::PathFromQString(QBBInstallLoc);
+                Config::SaveLauncherSettings();
             } else {
                 QMessageBox::warning(this, "Install Location not valid",
                                      "Select valid BB Install folder starting with CUSA (ex: "
@@ -221,6 +223,8 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
             if (std::find(BBSerialList.begin(), BBSerialList.end(), Common::game_serial) !=
                 BBSerialList.end()) {
                 ui->ExeLabel->setText(QBBInstallLoc);
+                Common::installPath = Common::PathFromQString(QBBInstallLoc);
+                Config::SaveLauncherSettings();
             } else {
                 QMessageBox::warning(
                     this, "Install Location not valid",
