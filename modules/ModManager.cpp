@@ -105,12 +105,19 @@ ModManager::ModManager(QWidget* parent) : QDialog(parent), ui(new Ui::ModManager
     });
 
     ModInstallPath = Common::installPath;
+    std::string filename;
     if (Core::FileSys::IsZArchiveFile(ModInstallPath)) {
-        ModInstallPath = ModInstallPath.parent_path() / Common::game_serial;
+        filename = Core::FileSys::StripZArchiveExtension(ModInstallPath).filename().string();
+    } else {
+        filename = ModInstallPath.filename().string();
+    }
+
+    if (Core::FileSys::IsZArchiveFile(ModInstallPath)) {
+        ModInstallPath = ModInstallPath.parent_path() / filename;
     }
 
     ModInstallPath += "-mods";
-    ModBackupPath = ModInstallPath.parent_path() / (Common::game_serial + "-modsBACKUP");
+    ModBackupPath = ModInstallPath.parent_path() / (filename + "-modsBACKUP");
 
     if (!std::filesystem::exists(ModInstallPath / "dvdroot_ps4"))
         std::filesystem::create_directories(ModInstallPath / "dvdroot_ps4");

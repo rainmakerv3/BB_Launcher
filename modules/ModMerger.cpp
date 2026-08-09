@@ -311,18 +311,11 @@ fs::path ModMerger::GetUpdatedFile(fs::path relativePath) {
         return Core::FileSys::ResolveGameFilePath(Common::installPath, relString).value();
     }
 
-    std::string patchString = Common::game_serial + "-patch";
-    std::string updateString = Common::game_serial + "-UPDATE";
-
-    if (fs::exists(Common::installPath.parent_path() / patchString / "dvdroot_ps4" /
-                   relativePath)) {
-        return Common::installPath.parent_path() / patchString / "dvdroot_ps4" / relativePath;
-    } else if (fs::exists(Common::installPath.parent_path() / updateString / "dvdroot_ps4" /
-                          relativePath)) {
-        return Common::installPath.parent_path() / updateString / "dvdroot_ps4" / relativePath;
+    if (fs::exists(Common::installUpdatePath)) {
+        return Common::installUpdatePath / "dvdroot_ps4" / relativePath;
     }
 
-    return (Common::installPath.parent_path() / Common::game_serial / "dvdroot_ps4" / relativePath);
+    return (Common::installPath / "dvdroot_ps4" / relativePath);
 }
 
 bool ModMerger::ChooseBaseFile(fs::path targetFile, fs::path mod1File, fs::path mod2File) {

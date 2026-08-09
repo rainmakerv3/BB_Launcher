@@ -190,46 +190,59 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
 
     connect(ui->BBSelectFolderButton, &QPushButton::pressed, this, [this]() {
         QString QBBInstallLoc = "";
-        QBBInstallLoc = QFileDialog::getExistingDirectory(
-            this, "Select Bloodborne install location (ex. CUSA03173, CUSA00900",
-            QDir::currentPath());
+        QBBInstallLoc = QFileDialog::getExistingDirectory(this, "Select Bloodborne install folder",
+                                                          QDir::currentPath());
 
         if (QBBInstallLoc != "") {
-            std::string serial = QBBInstallLoc.last(9).toStdString();
+            if (QBBInstallLoc.endsWith("-UPDATE") || QBBInstallLoc.endsWith("-patch")) {
+                QMessageBox::information(
+                    this, "Cannot select update folder",
+                    "Cannot use update folder as location, choose base game folder instead");
+                return;
+            }
+
+            std::filesystem::path path = Common::PathFromQString(QBBInstallLoc);
+            std::string serial = Common::GetGameSerial(path);
 
             if (std::find(BBSerialList.begin(), BBSerialList.end(), serial) != BBSerialList.end()) {
                 ui->ExeLabel->setText(QBBInstallLoc);
                 Common::game_serial = serial;
-                Common::installPath = Common::PathFromQString(QBBInstallLoc);
+                Common::installPath = path;
+                Common::installUpdatePath = Common::GetUpdatePath(Common::installPath);
                 Config::SaveLauncherSettings();
             } else {
-                QMessageBox::warning(this, "Install Location not valid",
-                                     "Select valid BB Install folder starting with CUSA (ex: "
-                                     "CUSA03173, CUSA00900)");
-                Common::game_serial = "";
+                QMessageBox::warning(
+                    this, "Install Location not valid",
+                    "Install folder invalid or does not contain required Bloodborne files");
             }
         }
     });
 
     connect(ui->BBSelectButton, &QPushButton::pressed, this, [this]() {
         QString QBBInstallLoc = "";
-        QBBInstallLoc = QFileDialog::getOpenFileName(
-            this, "Select Bloodborne install location (ex. CUSA03173, CUSA00900",
-            QDir::currentPath(), "Zar Archives (*.zar)");
+        QBBInstallLoc = QFileDialog::getOpenFileName(this, "Select Bloodborne game zar",
+                                                     QDir::currentPath(), "Zar Archives (*.zar)");
 
         if (QBBInstallLoc != "") {
-            QString filename = QBBInstallLoc.right(13);
-            std::string serial = filename.left(9).toStdString();
+            if (QBBInstallLoc.endsWith("-UPDATE.zar") || QBBInstallLoc.endsWith("-patch.zar")) {
+                QMessageBox::information(this, "Cannot select update zar",
+                                         "Cannot use update zar, choose base game zar instead");
+                return;
+            }
+
+            std::filesystem::path path = Common::PathFromQString(QBBInstallLoc);
+            std::string serial = Common::GetGameSerial(path);
 
             if (std::find(BBSerialList.begin(), BBSerialList.end(), serial) != BBSerialList.end()) {
                 ui->ExeLabel->setText(QBBInstallLoc);
                 Common::game_serial = serial;
-                Common::installPath = Common::PathFromQString(QBBInstallLoc);
+                Common::installPath = path;
+                Common::installUpdatePath = Common::GetUpdatePath(Common::installPath);
                 Config::SaveLauncherSettings();
             } else {
                 QMessageBox::warning(
                     this, "Install Location not valid",
-                    "Select valid BB Zar archive with the serial as the name (ex: CUSA03173.zar)");
+                    "Zar archive invalid or does not contain required Bloodborne files");
             }
         }
     });

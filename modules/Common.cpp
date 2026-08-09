@@ -6,7 +6,9 @@
 
 #include "Common.h"
 #include "Log.h"
+#include "modules/Zar/game_backend.h"
 #include "scope_exit.h"
+#include "settings/PSF/psf.h"
 #include "settings/config.h"
 #include "settings/emulator_settings.h"
 #include "settings/user_settings.h"
@@ -165,6 +167,53 @@ std::filesystem::path GetTrophyDir() {
         std::filesystem::create_directories(path);
 
     return path;
+}
+
+std::filesystem::path GetUpdatePath(std::filesystem::path basePath) {
+    std::filesystem::path updatePath = "";
+    if (Core::FileSys::IsZArchiveFile(basePath)) {
+        std::string fileName =
+            Core::FileSys::StripZArchiveExtension(Common::installPath).filename().string();
+
+        if (std::filesystem::exists(Common::installPath.parent_path() /
+                                    (fileName + "-UPDATE.zar"))) {
+            updatePath = Common::installPath.parent_path() / (fileName + "-UPDATE.zar");
+        } else if (std::filesystem::exists(Common::installPath.parent_path() /
+                                           (fileName + "-patch.zar"))) {
+            updatePath = Common::installPath.parent_path() / (fileName + "-patch.zar");
+        }
+    } else {
+        std::string fileName = Common::installPath.filename().string();
+        if (std::filesystem::exists(Common::installPath.parent_path() / (fileName + "-UPDATE"))) {
+
+            updatePath = Common::installPath.parent_path() / (fileName + "-UPDATE");
+        } else if (std::filesystem::exists(Common::installPath.parent_path() /
+                                           (fileName + "-patch"))) {
+            updatePath = Common::installPath.parent_path() / (fileName + "-patch");
+        }
+    }
+
+    return updatePath;
+}
+
+std::string GetGameSerial(std::filesystem::path installPath) {
+    std::string serial = "";
+    std::filesystem::path sfoPath;
+
+    if (Core::FileSys::IsZArchiveFile(installPath)) {
+        sfoPath = Core::FileSys::ResolveGameFilePath(installPath, "sce_sys/param.sfo").value();
+    } else {
+        sfoPath = installPath / "sce_sys" / "param.sfo";
+    }
+
+    PSF psf;
+    if (std::filesystem::exists(sfoPath) && psf.Open(sfoPath)) {
+        if (const auto title_id = psf.GetString("TITLE_ID"); title_id.has_value()) {
+            serial = *title_id;
+        }
+    }
+
+    return serial;
 }
 
 void PathToQString(QString& result, const std::filesystem::path& path) {

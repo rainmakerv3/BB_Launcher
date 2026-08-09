@@ -28,6 +28,8 @@ std::filesystem::path GetBBLFilesPath();
 std::filesystem::path GetSaveDir();
 std::filesystem::path GetDlcDir();
 std::filesystem::path GetTrophyDir();
+std::filesystem::path GetUpdatePath(std::filesystem::path installPath);
+std::string GetGameSerial(std::filesystem::path installPath);
 
 extern std::string game_serial;
 extern std::filesystem::path installPath;
