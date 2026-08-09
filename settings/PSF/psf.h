@@ -128,9 +128,9 @@ inline std::string getSavePath(std::filesystem::path gamePath) {
         game_patch_path += "-patch";
         SceUpdateChecker("param.sfo", param_sfo_path, game_update_path, game_patch_path, gamePath);
     } else {
-        std::filesystem::path gamePath = std::filesystem::exists(Common::installUpdatePath)
-                                             ? Common::installUpdatePath
-                                             : Common::installPath;
+        std::filesystem::path installUpdatePath = Common::GetUpdatePath(gamePath);
+        std::filesystem::path gamePath =
+            std::filesystem::exists(installUpdatePath) ? installUpdatePath : Common::installPath;
         param_sfo_path = Core::FileSys::ResolveGameFilePath(gamePath, "sce_sys/param.sfo").value();
     }
 

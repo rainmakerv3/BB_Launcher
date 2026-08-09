@@ -208,7 +208,6 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
                 ui->ExeLabel->setText(QBBInstallLoc);
                 Common::game_serial = serial;
                 Common::installPath = path;
-                Common::installUpdatePath = Common::GetUpdatePath(Common::installPath);
                 Config::SaveLauncherSettings();
             } else {
                 QMessageBox::warning(
@@ -237,7 +236,6 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
                 ui->ExeLabel->setText(QBBInstallLoc);
                 Common::game_serial = serial;
                 Common::installPath = path;
-                Common::installUpdatePath = Common::GetUpdatePath(Common::installPath);
                 Config::SaveLauncherSettings();
             } else {
                 QMessageBox::warning(
@@ -258,11 +256,15 @@ BBLauncher::BBLauncher(bool noGUI, bool noInstanceRunning, QWidget* parent)
     });
 
     connect(ui->trophyButton, &QPushButton::pressed, this, [this]() {
+        if (!CheckBBInstall())
+            return;
+
         QString gameTrpPath;
         Common::PathToQString(gameTrpPath, Common::installPath);
 
-        if (std::filesystem::exists(Common::installUpdatePath)) {
-            Common::PathToQString(gameTrpPath, Common::installUpdatePath);
+        std::filesystem::path installUpdatePath = Common::GetUpdatePath(Common::installPath);
+        if (std::filesystem::exists(installUpdatePath)) {
+            Common::PathToQString(gameTrpPath, installUpdatePath);
         }
 
         TrophyViewer* TrophyWindow = new TrophyViewer(gameTrpPath);

@@ -33,7 +33,6 @@ std::string GetGameSerial(std::filesystem::path installPath);
 
 extern std::string game_serial;
 extern std::filesystem::path installPath;
-extern std::filesystem::path installUpdatePath;
 extern std::filesystem::path shadPs4Executable;
 
 extern const char VERSION[];

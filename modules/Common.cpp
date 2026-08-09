@@ -37,7 +37,6 @@ const char VERSION[] = "Release16.10";
 
 std::string game_serial;
 std::filesystem::path installPath;
-std::filesystem::path installUpdatePath;
 std::filesystem::path shadPs4Executable;
 
 std::filesystem::path GetCurrentPath(bool getLinuxFileName) {

@@ -1381,11 +1381,11 @@ void CheatsPatches::uncheckAllCheatCheckBoxes() {
 std::string CheatsPatches::getGameVersion() {
     std::string version;
     std::filesystem::path param_sfo_path;
+    std::filesystem::path installUpdatePath = Common::GetUpdatePath(Common::installPath);
 
     if (Core::FileSys::IsZArchiveFile(Common::installPath)) {
-        std::filesystem::path gamePath = std::filesystem::exists(Common::installUpdatePath)
-                                             ? Common::installUpdatePath
-                                             : Common::installPath;
+        std::filesystem::path gamePath =
+            std::filesystem::exists(installUpdatePath) ? installUpdatePath : Common::installPath;
         param_sfo_path = Core::FileSys::ResolveGameFilePath(gamePath, "sce_sys/param.sfo").value();
     } else {
         std::filesystem::path gamePath = Common::installPath;

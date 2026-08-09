@@ -106,7 +106,6 @@ void LoadSettings() {
 
     if (std::filesystem::exists(Common::installPath)) {
         Common::game_serial = Common::GetGameSerial(Common::installPath);
-        Common::installUpdatePath = Common::GetUpdatePath(Common::installPath);
     } else {
         Common::installPath = "";
         Common::game_serial = "";
