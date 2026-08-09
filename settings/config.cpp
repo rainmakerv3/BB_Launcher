@@ -11,7 +11,6 @@
 #include "config.h"
 #include "emulator_settings.h"
 #include "formatting.h"
-#include "modules/Zar/game_backend.h"
 
 #if __APPLE__
 #include <date/date.h>

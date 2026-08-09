@@ -168,28 +168,25 @@ std::filesystem::path GetTrophyDir() {
     return path;
 }
 
-std::filesystem::path GetUpdatePath(std::filesystem::path basePath) {
+std::filesystem::path GetUpdatePath(std::filesystem::path gamePath) {
     std::filesystem::path updatePath = "";
-    if (Core::FileSys::IsZArchiveFile(basePath)) {
-        std::string fileName =
-            Core::FileSys::StripZArchiveExtension(Common::installPath).filename().string();
+    std::filesystem::path basePath = gamePath.parent_path();
+    std::string fileName;
 
-        if (std::filesystem::exists(Common::installPath.parent_path() /
-                                    (fileName + "-UPDATE.zar"))) {
-            updatePath = Common::installPath.parent_path() / (fileName + "-UPDATE.zar");
-        } else if (std::filesystem::exists(Common::installPath.parent_path() /
-                                           (fileName + "-patch.zar"))) {
-            updatePath = Common::installPath.parent_path() / (fileName + "-patch.zar");
-        }
+    if (Core::FileSys::IsZArchiveFile(gamePath)) {
+        fileName = Core::FileSys::StripZArchiveExtension(gamePath).filename().string();
     } else {
-        std::string fileName = Common::installPath.filename().string();
-        if (std::filesystem::exists(Common::installPath.parent_path() / (fileName + "-UPDATE"))) {
+        fileName = gamePath.filename().string();
+    }
 
-            updatePath = Common::installPath.parent_path() / (fileName + "-UPDATE");
-        } else if (std::filesystem::exists(Common::installPath.parent_path() /
-                                           (fileName + "-patch"))) {
-            updatePath = Common::installPath.parent_path() / (fileName + "-patch");
-        }
+    if (std::filesystem::exists(basePath / (fileName + "-UPDATE"))) {
+        updatePath = basePath / (fileName + "-UPDATE");
+    } else if (std::filesystem::exists(basePath / (fileName + "-UPDATE.zar"))) {
+        updatePath = basePath / (fileName + "-UPDATE.zar");
+    } else if (std::filesystem::exists(basePath / (fileName + "-patch"))) {
+        updatePath = basePath / (fileName + "-patch");
+    } else if (std::filesystem::exists(basePath / (fileName + "-patch.zar"))) {
+        updatePath = basePath / (fileName + "-patch.zar");
     }
 
     return updatePath;
