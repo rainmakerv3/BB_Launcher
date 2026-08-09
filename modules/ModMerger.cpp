@@ -299,24 +299,22 @@ void ModMerger::GetConflictedFiles() {
 
 fs::path ModMerger::GetUpdatedFile(fs::path relativePath) {
     std::filesystem::path installUpdatePath = Common::GetUpdatePath(Common::installPath);
-    if (Core::FileSys::IsZArchiveFile(Common::installPath)) {
-        std::string relString = "dvdroot_ps4/" + relativePath.string();
-
-        if (std::filesystem::exists(installUpdatePath)) {
-            if (const auto resolved =
-                    Core::FileSys::ResolveGameFilePath(installUpdatePath, relString)) {
-                return *resolved;
-            }
-        }
-
-        return Core::FileSys::ResolveGameFilePath(Common::installPath, relString).value();
-    }
+    std::string relString = "dvdroot_ps4/" + relativePath.string();
 
     if (fs::exists(installUpdatePath)) {
-        return installUpdatePath / "dvdroot_ps4" / relativePath;
+        std::optional<fs::path> updatedPath =
+            Core::FileSys::ResolveGameFilePath(installUpdatePath, relString);
+        if (updatedPath.has_value()) {
+            return updatedPath.value();
+        }
     }
 
-    return (Common::installPath / "dvdroot_ps4" / relativePath);
+    fs::path path = "";
+    if (const auto resolved = Core::FileSys::ResolveGameFilePath(Common::installPath, relString)) {
+        path = *resolved;
+    }
+
+    return path;
 }
 
 bool ModMerger::ChooseBaseFile(fs::path targetFile, fs::path mod1File, fs::path mod2File) {

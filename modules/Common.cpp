@@ -194,13 +194,8 @@ std::filesystem::path GetUpdatePath(std::filesystem::path gamePath) {
 
 std::string GetGameSerial(std::filesystem::path installPath) {
     std::string serial = "";
-    std::filesystem::path sfoPath;
-
-    if (Core::FileSys::IsZArchiveFile(installPath)) {
-        sfoPath = Core::FileSys::ResolveGameFilePath(installPath, "sce_sys/param.sfo").value();
-    } else {
-        sfoPath = installPath / "sce_sys" / "param.sfo";
-    }
+    std::filesystem::path sfoPath =
+        Core::FileSys::ResolveGameFilePath(installPath, "sce_sys/param.sfo").value();
 
     PSF psf;
     if (std::filesystem::exists(sfoPath) && psf.Open(sfoPath)) {

@@ -121,22 +121,13 @@ inline void SceUpdateChecker(const std::string sceItem, std::filesystem::path& g
 
 inline std::string getSavePath(std::filesystem::path gamePath) {
     std::filesystem::path param_sfo_path;
-    if (!Core::FileSys::IsZArchiveFile(gamePath)) {
-        std::filesystem::path game_update_path = gamePath;
-        game_update_path += "-UPDATE";
-        std::filesystem::path game_patch_path = gamePath;
-        game_patch_path += "-patch";
-        SceUpdateChecker("param.sfo", param_sfo_path, game_update_path, game_patch_path, gamePath);
-    } else {
-        std::filesystem::path installUpdatePath = Common::GetUpdatePath(gamePath);
-        std::filesystem::path gamePath =
-            std::filesystem::exists(installUpdatePath) ? installUpdatePath : Common::installPath;
-        param_sfo_path = Core::FileSys::ResolveGameFilePath(gamePath, "sce_sys/param.sfo").value();
-    }
+    std::filesystem::path installUpdatePath = Common::GetUpdatePath(gamePath);
+    std::filesystem::path path =
+        std::filesystem::exists(installUpdatePath) ? installUpdatePath : Common::installPath;
+    param_sfo_path = Core::FileSys::ResolveGameFilePath(path, "sce_sys/param.sfo").value();
 
     PSF psf;
     if (psf.Open(param_sfo_path)) {
-
         if (const auto save_dir = psf.GetString("INSTALL_DIR_SAVEDATA"); save_dir.has_value()) {
             return std::string{save_dir->begin(), save_dir->end()};
         }

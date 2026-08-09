@@ -73,14 +73,8 @@ TrophyViewer::TrophyViewer(QString gameTrpPath) : QMainWindow(), ui(new Ui::Trop
 
     gameTrpPath_ = gameTrpPath;
     auto basepath = Common::PathFromQString(gameTrpPath_);
-
-    std::filesystem::path npbindPath;
-    if (Core::FileSys::IsZArchiveFile(Common::installPath)) {
-        npbindPath =
-            Core::FileSys::ResolveGameFilePath(Common::installPath, "sce_sys/npbind.dat").value();
-    } else {
-        npbindPath = basepath / "sce_sys" / "npbind.dat";
-    }
+    std::filesystem::path npbindPath =
+        Core::FileSys::ResolveGameFilePath(basepath, "sce_sys/npbind.dat").value();
 
     NPBindFile npbind;
     if (!npbind.Load(npbindPath.string())) {

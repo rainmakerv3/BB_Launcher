@@ -47,13 +47,12 @@ CheatsPatches::CheatsPatches(std::shared_ptr<IpcClient> client, bool game_runnin
 }
 
 void CheatsPatches::setupUI() {
+    std::optional<std::filesystem::path> ipath =
+        Core::FileSys::ResolveGameFilePath(Common::installPath, "sce_sys/icon0.png");
+
     std::filesystem::path icon_path;
-    if (Core::FileSys::IsZArchiveFile(Common::installPath)) {
-        icon_path =
-            Core::FileSys::ResolveGameFilePath(Common::installPath, "sce_sys/icon0.png").value();
-    } else {
-        icon_path = Common::installPath / "sce_sys" / "icon0.png";
-    }
+    if (ipath.has_value())
+        icon_path = ipath.value();
 
     QString iconpath;
     Common::PathToQString(iconpath, icon_path);
@@ -1379,31 +1378,25 @@ void CheatsPatches::uncheckAllCheatCheckBoxes() {
 }
 
 std::string CheatsPatches::getGameVersion() {
-    std::string version;
+    std::string version = "01.09";
     std::filesystem::path param_sfo_path;
     std::filesystem::path installUpdatePath = Common::GetUpdatePath(Common::installPath);
 
-    if (Core::FileSys::IsZArchiveFile(Common::installPath)) {
-        std::filesystem::path gamePath =
-            std::filesystem::exists(installUpdatePath) ? installUpdatePath : Common::installPath;
-        param_sfo_path = Core::FileSys::ResolveGameFilePath(gamePath, "sce_sys/param.sfo").value();
-    } else {
-        std::filesystem::path gamePath = Common::installPath;
-        std::filesystem::path filePath = gamePath;
-        std::filesystem::path game_update_path = filePath;
-        game_update_path += "-UPDATE";
-        std::filesystem::path game_patch_path = filePath;
-        game_patch_path += "-patch";
-        PSFdata::SceUpdateChecker("param.sfo", param_sfo_path, game_update_path, game_patch_path,
-                                  gamePath);
-    }
+    std::filesystem::path gamePath =
+        std::filesystem::exists(installUpdatePath) ? installUpdatePath : Common::installPath;
+    param_sfo_path = Core::FileSys::ResolveGameFilePath(gamePath, "sce_sys/param.sfo").value();
 
     PSF psf;
     if (psf.Open(param_sfo_path)) {
         if (auto app_ver = psf.GetString("APP_VER"); app_ver.has_value()) {
             version = *app_ver;
         }
+    } else {
+        QMessageBox::information(this, "Error",
+                                 "Could not automatically detect game version. There could be "
+                                 "issues with the game or update files");
     }
+
     return version;
 }
 

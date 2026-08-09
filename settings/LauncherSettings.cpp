@@ -222,20 +222,15 @@ void LauncherSettings::CreateShortcut() {
     // Path to shortcut/link
     QString linkPath;
 
-    // Eboot path
-    QString targetPath;
-    Common::PathToQString(targetPath, Common::installPath);
-    QString ebootPath = targetPath + "/eboot.bin";
-
     // Get the full path to the icon
     QString iconPath;
-
-    if (Core::FileSys::IsZArchiveFile(Common::installPath)) {
-        Common::PathToQString(
-            iconPath,
-            Core::FileSys::ResolveGameFilePath(Common::installPath, "sce_sys/icon0.png").value());
+    std::optional<std::filesystem::path> ipath =
+        Core::FileSys::ResolveGameFilePath(Common::installPath, "sce_sys/icon0.png");
+    if (ipath.has_value()) {
+        Common::PathToQString(iconPath, ipath.value());
     } else {
-        Common::PathToQString(iconPath, Common::installPath / "sce_sys" / "icon0.png");
+        QMessageBox::information(this, "Error", "Could not find valid icon file. Aborting...");
+        return;
     }
 
     QFileInfo iconFileInfo(iconPath);
