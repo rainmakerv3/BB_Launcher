@@ -172,6 +172,7 @@ void CheckUpdate::CheckForUpdates(const bool showMessage) {
         } else {
             QMessageBox::warning(this, tr(" BBLauncher Update Error"), tr("No releases found."));
             reply->deleteLater();
+            reject();
             return;
         }
 
@@ -208,6 +209,7 @@ void CheckUpdate::CheckForUpdates(const bool showMessage) {
             QMessageBox::warning(this, tr("BBLauncher Update Error"),
                                  tr("No download URL found for the specified asset."));
             reply->deleteLater();
+            reject();
             return;
         }
 
