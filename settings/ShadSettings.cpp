@@ -286,7 +286,7 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* paren
     }
 
 #ifndef Q_OS_WIN
-    ui->winRedZoneGroupBox->setVisible(false);
+    ui->redZoneCheckBox->setVisible(false);
 #endif
 }
 
