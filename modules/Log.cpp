@@ -7,17 +7,18 @@
 #include "Common.h"
 #include "Log.h"
 
-namespace Log {
+namespace LauncherLog {
 
 const std::filesystem::path logFile = Common::GetBBLFilesPath() / "log.txt";
-const std::map<Log::Type, std::string> typeMap = {
-    {Log::Type::Information, "Information"},
-    {Log::Type::Warning, "Warning"},
-    {Log::Type::Error, "Error"},
-    {Log::Type::Critical, "Critical"},
+const std::map<LauncherLog::Type, std::string> typeMap = {
+    {LauncherLog::Type::Information, "Information"},
+    {LauncherLog::Type::Warning, "Warning"},
+    {LauncherLog::Type::Error, "Error"},
+    {LauncherLog::Type::Critical, "Critical"},
 };
 
-void LogMsg(Log::Type type, const std::string& logMsg, const std::source_location location) {
+void LogMsg(LauncherLog::Type type, const std::string& logMsg,
+            const std::source_location location) {
     std::string_view name = location.file_name();
     size_t last_slash = name.find_last_of("/\\"); // Handle both Unix and Windows separators
     if (last_slash != std::string_view::npos) {
@@ -30,4 +31,4 @@ void LogMsg(Log::Type type, const std::string& logMsg, const std::source_locatio
     ofs.close();
 }
 
-}; // namespace Log
+}; // namespace LauncherLog

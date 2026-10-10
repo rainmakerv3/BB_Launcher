@@ -1,18 +1,18 @@
-﻿// SPDX-FileCopyrightText: Copyright 2025-2026 shadPS4 Emulator Project
+// SPDX-FileCopyrightText: Copyright 2025-2026 shadPS4 Emulator Project
 // SPDX-License-Identifier: GPL-2.0-or-later
 
 #pragma once
 
+#include <atomic>
 #include <filesystem>
 #include <functional>
 #include <memory>
 #include <mutex>
-#include <ostream>
 #include <sstream>
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
-
+#include "modules/Log.h"
 #include "modules/PkgDeps/types.h"
 
 #define EmulatorSettings (*EmulatorSettingsImpl::GetInstance())
@@ -48,20 +48,19 @@ enum AudioBackend : int {
     // Add more backends as needed
 };
 
-enum class WindowsGuestRedZoneProtectionMode : u32 {
-    Disabled,
-    StaticPatching,
+enum OpenALHrtfMode : int {
+    HrtfAuto, // Let OpenAL Soft decide (on for headphone-like stereo outputs)
+    HrtfOn,   // Force HRTF binaural rendering
+    HrtfOff,  // Never use HRTF
 };
 
-// Windows static guest red-zone protection
-NLOHMANN_JSON_SERIALIZE_ENUM(WindowsGuestRedZoneProtectionMode,
-                             {{WindowsGuestRedZoneProtectionMode::Disabled, "Disabled"},
-                              {WindowsGuestRedZoneProtectionMode::StaticPatching,
-                               "StaticPatching"}})
-
-inline std::ostream& operator<<(std::ostream& output, WindowsGuestRedZoneProtectionMode mode) {
-    return output << nlohmann::json(mode).get<std::string>();
-}
+enum OpenALOutputMode : int {
+    OutputAuto,       // Let OpenAL Soft negotiate with the device
+    OutputStereo,     // Force stereo output
+    OutputQuad,       // Force quadraphonic output
+    OutputSurround51, // Force 5.1 surround output
+    OutputSurround71, // Force 7.1 surround output
+};
 
 template <typename T>
 struct Setting {
@@ -87,6 +86,7 @@ struct Setting {
         return value;
     }
 
+    /// Write v to the base layer.
     /// Set proper value as base or game_specific
     void set(const T& v, bool game_specific = false) {
         if (game_specific) {
@@ -131,26 +131,20 @@ inline OverrideItem make_override(const char* key, Setting<T> Struct::* member) 
     return OverrideItem{
         key,
         [member, key](void* base, const nlohmann::json& entry, std::vector<std::string>& changed) {
-            // LOG_DEBUG(EmuSettings, "[make_override] Processing key: {}", key);
-            // LOG_DEBUG(EmuSettings, "[make_override] Entry JSON: {}", entry.dump());
             Struct* obj = reinterpret_cast<Struct*>(base);
             Setting<T>& dst = obj->*member;
             try {
                 T newValue = entry.get<T>();
-                // LOG_DEBUG(EmuSettings, "[make_override] Parsed value: {}", newValue);
-                // LOG_DEBUG(EmuSettings, "[make_override] Current value: {}", dst.value);
                 if (dst.value != newValue) {
                     std::ostringstream oss;
-                    oss << key << " ( " << dst.value << " → " << newValue << " )";
+                    oss << key << " ( " << dst.value << " -> " << newValue << " )";
                     changed.push_back(oss.str());
-                    // LOG_DEBUG(EmuSettings, "[make_override] Recorded change: {}", oss.str());
                 }
                 dst.game_specific_value = newValue;
-                // LOG_DEBUG(EmuSettings, "[make_override] Successfully updated {}", key);
             } catch (const std::exception& e) {
-                // LOG_ERROR(EmuSettings, "[make_override] ERROR parsing {}: {}", key, e.what());
-                // LOG_ERROR(EmuSettings, "[make_override] Entry was: {}", entry.dump());
-                // LOG_ERROR(EmuSettings, "[make_override] Type name: {}", entry.type_name());
+                LogError("[make_override] error parsing " + std::string(key) + e.what());
+                LogError("[make_override] Entry was: " + entry.dump());
+                LogError("[make_override] Type name: " + std::string(entry.type_name()));
             }
         },
 
@@ -194,21 +188,17 @@ struct GeneralSettings {
     Setting<bool> neo_mode{false};
     Setting<bool> dev_kit_mode{false};
     Setting<int> extra_dmem_in_mbytes{0};
-    Setting<bool> shad_net_enabled{false};
-    Setting<std::string> shadnet_server{"srv.shadps4.net:31313"};
-    Setting<std::string> signaling_info{""};
-    Setting<std::string> shadnet_webapi_server{"http://srv.shadps4.net:31315"};
-    Setting<bool> enable_upnp{true};
+    Setting<int> extra_fmem_in_mbytes{0};
     Setting<bool> trophy_popup_disabled{false};
     Setting<double> trophy_notification_duration{6.0};
     Setting<std::string> trophy_notification_side{"right"};
     Setting<bool> show_splash{false};
-    Setting<bool> identical_log_grouped{true};
-    Setting<bool> connected_to_network{false};
     Setting<bool> discord_rpc_enabled{false};
     Setting<bool> show_fps_counter{false};
     Setting<int> console_language{1};
-
+    Setting<int> big_picture_scale{1000};
+    Setting<int> big_picture_folder_depth{2};
+    Setting<bool> redzone_patches{false};
     // return a vector of override descriptors (runtime, but tiny)
     std::vector<OverrideItem> GetOverrideableFields() const {
         return std::vector<OverrideItem>{
@@ -217,7 +207,8 @@ struct GeneralSettings {
             make_override<GeneralSettings>("dev_kit_mode", &GeneralSettings::dev_kit_mode),
             make_override<GeneralSettings>("extra_dmem_in_mbytes",
                                            &GeneralSettings::extra_dmem_in_mbytes),
-            make_override<GeneralSettings>("shad_net_enabled", &GeneralSettings::shad_net_enabled),
+            make_override<GeneralSettings>("extra_fmem_in_mbytes",
+                                           &GeneralSettings::extra_fmem_in_mbytes),
             make_override<GeneralSettings>("trophy_popup_disabled",
                                            &GeneralSettings::trophy_popup_disabled),
             make_override<GeneralSettings>("trophy_notification_duration",
@@ -225,22 +216,51 @@ struct GeneralSettings {
             make_override<GeneralSettings>("show_splash", &GeneralSettings::show_splash),
             make_override<GeneralSettings>("trophy_notification_side",
                                            &GeneralSettings::trophy_notification_side),
-            make_override<GeneralSettings>("connected_to_network",
-                                           &GeneralSettings::connected_to_network),
-            make_override<GeneralSettings>("shadnet_server", &GeneralSettings::shadnet_server),
-            make_override<GeneralSettings>("signaling_info", &GeneralSettings::signaling_info),
-            make_override<GeneralSettings>("shadnet_webapi_server",
-                                           &GeneralSettings::shadnet_webapi_server),
-            make_override<GeneralSettings>("enable_upnp", &GeneralSettings::enable_upnp)};
+            make_override<GeneralSettings>("console_language", &GeneralSettings::console_language),
+            make_override<GeneralSettings>("redzone_patches", &GeneralSettings::redzone_patches)};
     }
 };
+
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GeneralSettings, install_dirs, addon_install_dir, home_dir,
                                    sys_modules_dir, font_dir, volume_slider, neo_mode, dev_kit_mode,
-                                   extra_dmem_in_mbytes, shad_net_enabled, trophy_popup_disabled,
-                                   trophy_notification_duration, show_splash, enable_upnp,
-                                   trophy_notification_side, connected_to_network,
-                                   discord_rpc_enabled, show_fps_counter, console_language,
-                                   shadnet_server, signaling_info, shadnet_webapi_server)
+                                   extra_dmem_in_mbytes, extra_fmem_in_mbytes,
+                                   trophy_popup_disabled, trophy_notification_duration, show_splash,
+                                   trophy_notification_side, discord_rpc_enabled, show_fps_counter,
+                                   console_language, big_picture_scale, big_picture_folder_depth,
+                                   redzone_patches)
+
+// -------------------------------
+// Network settings
+// -------------------------------
+struct NetworkSettings {
+    Setting<bool> connected_to_network{false};
+    Setting<bool> shad_net_enabled{false};
+    Setting<std::string> shadnet_server{"srv.shadps4.net:31313"};
+    Setting<std::string> shadnet_webapi_server{"http://srv.shadps4.net:31315"};
+    Setting<std::string> signaling_info{};
+    Setting<bool> enable_upnp{true};
+    Setting<int> p2p_port{3658}; // 0 is any free port, 3658 is the default PS4 port. With UPnP
+                                 // enabled it is forwarded on the router.
+    Setting<bool> disable_https{false};
+
+    std::vector<OverrideItem> GetOverrideableFields() const {
+        return std::vector<OverrideItem>{
+            make_override<NetworkSettings>("connected_to_network",
+                                           &NetworkSettings::connected_to_network),
+            make_override<NetworkSettings>("shad_net_enabled", &NetworkSettings::shad_net_enabled),
+            make_override<NetworkSettings>("shadnet_server", &NetworkSettings::shadnet_server),
+            make_override<NetworkSettings>("shadnet_webapi_server",
+                                           &NetworkSettings::shadnet_webapi_server),
+            make_override<NetworkSettings>("signaling_info", &NetworkSettings::signaling_info),
+            make_override<NetworkSettings>("enable_upnp", &NetworkSettings::enable_upnp),
+            make_override<NetworkSettings>("p2p_port", &NetworkSettings::p2p_port),
+            make_override<NetworkSettings>("disable_https", &NetworkSettings::disable_https)};
+    }
+};
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(NetworkSettings, connected_to_network, shad_net_enabled,
+                                   shadnet_server, shadnet_webapi_server, signaling_info,
+                                   enable_upnp, p2p_port, disable_https)
 
 // -------------------------------
 // Log settings
@@ -249,6 +269,7 @@ struct LogSettings {
     Setting<bool> append{false}; // specific
     Setting<bool> enable{true};  // specific
     Setting<std::string> filter{""};
+    Setting<std::string> flush_level{""};
     Setting<u32> max_skip_duration{5'000};
     Setting<bool> separate{false}; // specific
     Setting<unsigned long long> size_limit{100_MB};
@@ -264,6 +285,7 @@ struct LogSettings {
             make_override<LogSettings>("append", &LogSettings::append),
             make_override<LogSettings>("enable", &LogSettings::enable),
             make_override<LogSettings>("filter", &LogSettings::filter),
+            make_override<LogSettings>("flush_level", &LogSettings::flush_level),
             make_override<LogSettings>("max_skip_duration", &LogSettings::max_skip_duration),
             make_override<LogSettings>("separate", &LogSettings::separate),
             make_override<LogSettings>("size_limit", &LogSettings::size_limit),
@@ -276,20 +298,21 @@ struct LogSettings {
     }
 };
 #ifdef _WIN32
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(LogSettings, append, enable, filter, max_skip_duration, separate,
-                                   size_limit, skip_duplicate, sync, type)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(LogSettings, append, enable, filter, flush_level,
+                                   max_skip_duration, separate, size_limit, skip_duplicate, sync,
+                                   type)
 #else
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(LogSettings, append, enable, filter, max_skip_duration, separate,
-                                   size_limit, skip_duplicate, sync)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(LogSettings, append, enable, filter, flush_level,
+                                   max_skip_duration, separate, size_limit, skip_duplicate, sync)
 #endif
 
 // -------------------------------
 // Debug settings
 // -------------------------------
 struct DebugSettings {
-    Setting<bool> debug_dump{false};               // specific
-    Setting<bool> shader_collect{false};           // specific
-    Setting<std::string> config_version{""};       // specific
+    Setting<bool> debug_dump{false};         // specific
+    Setting<bool> shader_collect{false};     // specific
+    Setting<std::string> config_version{""}; // specific
 
     std::vector<OverrideItem> GetOverrideableFields() const {
         return std::vector<OverrideItem>{
@@ -313,7 +336,12 @@ struct InputSettings {
     Setting<bool> use_unified_input_config{true};
     Setting<std::string> default_controller_id{""};
     Setting<bool> background_controller_input{false}; // specific
+    Setting<bool> ime_accessibility_enabled{false};   // specific
+    Setting<bool> ime_url_mail_short_panel{false};    // specific
+    Setting<bool> is_circle_enter{false};             // specific
     Setting<s32> camera_id{-1};
+    Setting<bool> use_mice_as_mice{false};
+    Setting<bool> use_keyboard_as_keyboard{false};
 
     std::vector<OverrideItem> GetOverrideableFields() const {
         return std::vector<OverrideItem>{
@@ -325,13 +353,23 @@ struct InputSettings {
                                          &InputSettings::motion_controls_enabled),
             make_override<InputSettings>("background_controller_input",
                                          &InputSettings::background_controller_input),
-            make_override<InputSettings>("camera_id", &InputSettings::camera_id)};
+            make_override<InputSettings>("ime_accessibility_enabled",
+                                         &InputSettings::ime_accessibility_enabled),
+            make_override<InputSettings>("ime_url_mail_short_panel",
+                                         &InputSettings::ime_url_mail_short_panel),
+            make_override<InputSettings>("is_circle_enter", &InputSettings::is_circle_enter),
+            make_override<InputSettings>("camera_id", &InputSettings::camera_id),
+            make_override<InputSettings>("use_mice_as_mice", &InputSettings::use_mice_as_mice),
+            make_override<InputSettings>("use_keyboard_as_keyboard",
+                                         &InputSettings::use_keyboard_as_keyboard)};
     }
 };
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(InputSettings, cursor_state, cursor_hide_timeout,
                                    usb_device_backend, use_special_pad, special_pad_class,
                                    motion_controls_enabled, use_unified_input_config,
-                                   default_controller_id, background_controller_input, camera_id)
+                                   default_controller_id, background_controller_input,
+                                   ime_accessibility_enabled, ime_url_mail_short_panel, camera_id,
+                                   is_circle_enter, use_mice_as_mice, use_keyboard_as_keyboard)
 // -------------------------------
 // Audio settings
 // -------------------------------
@@ -343,6 +381,8 @@ struct AudioSettings {
     Setting<std::string> openal_mic_device{"Default Device"};
     Setting<std::string> openal_main_output_device{"Default Device"};
     Setting<std::string> openal_padSpk_output_device{"Default Device"};
+    Setting<u32> openal_hrtf{OpenALHrtfMode::HrtfAuto};
+    Setting<u32> openal_output_mode{OpenALOutputMode::OutputAuto};
 
     std::vector<OverrideItem> GetOverrideableFields() const {
         return std::vector<OverrideItem>{
@@ -356,29 +396,16 @@ struct AudioSettings {
             make_override<AudioSettings>("openal_main_output_device",
                                          &AudioSettings::openal_main_output_device),
             make_override<AudioSettings>("openal_padSpk_output_device",
-                                         &AudioSettings::openal_padSpk_output_device)};
+                                         &AudioSettings::openal_padSpk_output_device),
+            make_override<AudioSettings>("openal_hrtf", &AudioSettings::openal_hrtf),
+            make_override<AudioSettings>("openal_output_mode", &AudioSettings::openal_output_mode)};
     }
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(AudioSettings, audio_backend, sdl_mic_device,
                                    sdl_main_output_device, sdl_padSpk_output_device,
                                    openal_mic_device, openal_main_output_device,
-                                   openal_padSpk_output_device)
-
-// Windows static guest red-zone protection
-struct WindowsGuestRedZoneProtectionSettings {
-    Setting<WindowsGuestRedZoneProtectionMode> windows_guest_red_zone_protection_mode{
-        WindowsGuestRedZoneProtectionMode::Disabled};
-
-    std::vector<OverrideItem> GetOverrideableFields() const {
-        return std::vector<OverrideItem>{make_override<WindowsGuestRedZoneProtectionSettings>(
-            "windows_guest_red_zone_protection_mode",
-            &WindowsGuestRedZoneProtectionSettings::windows_guest_red_zone_protection_mode)};
-    }
-};
-
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(WindowsGuestRedZoneProtectionSettings,
-                                   windows_guest_red_zone_protection_mode)
+                                   openal_padSpk_output_device, openal_hrtf, openal_output_mode)
 
 // -------------------------------
 // GPU settings
@@ -403,7 +430,9 @@ struct GPUSettings {
     Setting<bool> fsr_enabled{false};
     Setting<bool> rcas_enabled{true};
     Setting<int> rcas_attenuation{250};
-    // TODO add overrides
+    Setting<bool> userfaultfd{false};
+    Setting<bool> inline_fetch_shader{false};
+
     std::vector<OverrideItem> GetOverrideableFields() const {
         return std::vector<OverrideItem>{
             make_override<GPUSettings>("null_gpu", &GPUSettings::null_gpu),
@@ -425,6 +454,8 @@ struct GPUSettings {
             make_override<GPUSettings>("direct_memory_access_enabled",
                                        &GPUSettings::direct_memory_access_enabled),
             make_override<GPUSettings>("vblank_frequency", &GPUSettings::vblank_frequency),
+            make_override<GPUSettings>("userfaultfd", &GPUSettings::userfaultfd),
+            make_override<GPUSettings>("inline_fetch_shader", &GPUSettings::inline_fetch_shader),
         };
     }
 };
@@ -433,7 +464,9 @@ NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(GPUSettings, window_width, window_height, int
                                    readbacks_mode, readback_linear_images_enabled,
                                    direct_memory_access_enabled, dump_shaders, patch_shaders,
                                    vblank_frequency, full_screen, full_screen_mode, present_mode,
-                                   hdr_allowed, fsr_enabled, rcas_enabled, rcas_attenuation)
+                                   hdr_allowed, fsr_enabled, rcas_enabled, rcas_attenuation,
+                                   userfaultfd, inline_fetch_shader)
+
 // -------------------------------
 // Vulkan settings
 // -------------------------------
@@ -449,6 +482,7 @@ struct VulkanSettings {
     Setting<bool> vkguest_markers{false};
     Setting<bool> pipeline_cache_enabled{false};
     Setting<bool> pipeline_cache_archived{false};
+
     std::vector<OverrideItem> GetOverrideableFields() const {
         return std::vector<OverrideItem>{
             make_override<VulkanSettings>("gpu_id", &VulkanSettings::gpu_id),
@@ -508,9 +542,6 @@ public:
     /// the emulator reverts to global settings.
     void ClearGameSpecificOverrides();
 
-    /// Reset a single field's game-specific override by its JSON ke
-    void ResetGameSpecificValue(const std::string& key);
-
     // general accessors
     bool AddGameInstallDir(const std::filesystem::path& dir, bool enabled = true);
     std::vector<std::filesystem::path> GetGameInstallDirs() const;
@@ -532,15 +563,18 @@ public:
 
 private:
     GeneralSettings m_general{};
+    NetworkSettings m_network{};
     LogSettings m_log{};
     DebugSettings m_debug{};
     InputSettings m_input{};
     AudioSettings m_audio{};
-    // Windows static guest red-zone protection
-    WindowsGuestRedZoneProtectionSettings m_windows_guest_red_zone_protection{};
     GPUSettings m_gpu{};
     VulkanSettings m_vulkan{};
     ConfigMode m_configMode{ConfigMode::Default};
+
+    // Runtime-only override: when true, IsShadNetEnabled() reports false for the
+    // rest of this run regardless of the persisted setting
+    std::atomic<bool> m_shadnet_session_disabled{false};
 
     static std::shared_ptr<EmulatorSettingsImpl> s_instance;
     static std::mutex s_mutex;
@@ -571,11 +605,15 @@ private:
     }
 
     static void PrintChangedSummary(const std::vector<std::string>& changed);
+    void MigrateNetworkKeys(const nlohmann::json& general, const nlohmann::json& network);
 
 public:
     // Add these getters to access overrideable fields
     std::vector<OverrideItem> GetGeneralOverrideableFields() const {
         return m_general.GetOverrideableFields();
+    }
+    std::vector<OverrideItem> GetNetworkOverrideableFields() const {
+        return m_network.GetOverrideableFields();
     }
     std::vector<OverrideItem> GetDebugOverrideableFields() const {
         return m_debug.GetOverrideableFields();
@@ -585,10 +623,6 @@ public:
     }
     std::vector<OverrideItem> GetAudioOverrideableFields() const {
         return m_audio.GetOverrideableFields();
-    }
-    // Windows static guest red-zone protection
-    std::vector<OverrideItem> GetWindowsGuestRedZoneProtectionOverrideableFields() const {
-        return m_windows_guest_red_zone_protection.GetOverrideableFields();
     }
     std::vector<OverrideItem> GetGPUOverrideableFields() const {
         return m_gpu.GetOverrideableFields();
@@ -612,7 +646,6 @@ public:
     void Set##Name(bool v, bool specific = false) {                                                \
         (group).field.set(v, specific);                                                            \
     }
-
 #define SETTING_FORWARD_BOOL_READONLY(group, Name, field)                                          \
     bool Is##Name() const {                                                                        \
         return (group).field.get(m_configMode);                                                    \
@@ -623,25 +656,48 @@ public:
     SETTING_FORWARD_BOOL(m_general, Neo, neo_mode)
     SETTING_FORWARD_BOOL(m_general, DevKit, dev_kit_mode)
     SETTING_FORWARD(m_general, ExtraDmemInMBytes, extra_dmem_in_mbytes)
-    SETTING_FORWARD_BOOL(m_general, ShadNetEnabled, shad_net_enabled)
+    SETTING_FORWARD(m_general, ExtraFmemInMBytes, extra_fmem_in_mbytes)
+    bool IsShadNetEnabled() const {
+        return m_network.shad_net_enabled.get(m_configMode) &&
+               !m_shadnet_session_disabled.load(std::memory_order_relaxed);
+    }
+    void SetShadNetEnabled(bool v, bool specific = false) {
+        m_network.shad_net_enabled.set(v, specific);
+    }
+    bool IsShadNetEnabledSetting() const {
+        return m_network.shad_net_enabled.get(m_configMode);
+    }
+    void SetShadNetSessionDisabled(bool v) {
+        m_shadnet_session_disabled.store(v, std::memory_order_relaxed);
+    }
+    bool IsShadNetSessionDisabled() const {
+        return m_shadnet_session_disabled.load(std::memory_order_relaxed);
+    }
     SETTING_FORWARD_BOOL(m_general, TrophyPopupDisabled, trophy_popup_disabled)
     SETTING_FORWARD(m_general, TrophyNotificationDuration, trophy_notification_duration)
     SETTING_FORWARD(m_general, TrophyNotificationSide, trophy_notification_side)
     SETTING_FORWARD_BOOL(m_general, ShowSplash, show_splash)
-    SETTING_FORWARD_BOOL(m_general, IdenticalLogGrouped, identical_log_grouped)
-    SETTING_FORWARD_BOOL(m_general, ConnectedToNetwork, connected_to_network)
-    SETTING_FORWARD(m_general, ShadNetServer, shadnet_server)
-    SETTING_FORWARD(m_general, SignalingInfo, signaling_info)
-    SETTING_FORWARD(m_general, ShadnetWebapiServer, shadnet_webapi_server)
-    SETTING_FORWARD_BOOL(m_general, UPnPEnabled, enable_upnp)
     SETTING_FORWARD_BOOL(m_general, DiscordRPCEnabled, discord_rpc_enabled)
     SETTING_FORWARD_BOOL(m_general, ShowFpsCounter, show_fps_counter)
     SETTING_FORWARD(m_general, ConsoleLanguage, console_language)
+    SETTING_FORWARD(m_general, BigPictureScale, big_picture_scale)
+    SETTING_FORWARD(m_general, BigPictureFolderDepth, big_picture_folder_depth)
+    SETTING_FORWARD_BOOL(m_general, RedZonePatchingEnabled, redzone_patches)
+
+    // Network settings
+    SETTING_FORWARD_BOOL(m_network, ConnectedToNetwork, connected_to_network)
+    SETTING_FORWARD(m_network, ShadNetServer, shadnet_server)
+    SETTING_FORWARD(m_network, ShadNetWebApiServer, shadnet_webapi_server)
+    SETTING_FORWARD(m_network, SignalingInfo, signaling_info)
+    SETTING_FORWARD_BOOL(m_network, UPnPEnabled, enable_upnp)
+    SETTING_FORWARD(m_network, P2PPort, p2p_port)
+    SETTING_FORWARD_BOOL(m_network, ForcedHttpsDisabled, disable_https)
 
     // Log settings
     SETTING_FORWARD_BOOL(m_log, LogAppend, append)
     SETTING_FORWARD_BOOL(m_log, LogEnable, enable)
     SETTING_FORWARD(m_log, LogFilter, filter)
+    SETTING_FORWARD(m_log, LogFlushLevel, flush_level)
     SETTING_FORWARD(m_log, LogMaxSkipDuration, max_skip_duration)
     SETTING_FORWARD_BOOL(m_log, LogSeparate, separate)
     SETTING_FORWARD(m_log, LogSizeLimit, size_limit)
@@ -659,10 +715,8 @@ public:
     SETTING_FORWARD(m_audio, OpenALMicDevice, openal_mic_device)
     SETTING_FORWARD(m_audio, OpenALMainOutputDevice, openal_main_output_device)
     SETTING_FORWARD(m_audio, OpenALPadSpkOutputDevice, openal_padSpk_output_device)
-
-    // Windows static guest red-zone protection
-    SETTING_FORWARD(m_windows_guest_red_zone_protection, WindowsGuestRedZoneProtectionMode,
-                    windows_guest_red_zone_protection_mode)
+    SETTING_FORWARD(m_audio, OpenALHrtf, openal_hrtf)
+    SETTING_FORWARD(m_audio, OpenALOutputMode, openal_output_mode)
 
     // Debug settings
     SETTING_FORWARD_BOOL(m_debug, DebugDump, debug_dump)
@@ -688,6 +742,8 @@ public:
     SETTING_FORWARD_BOOL(m_gpu, ReadbackLinearImagesEnabled, readback_linear_images_enabled)
     SETTING_FORWARD_BOOL(m_gpu, DirectMemoryAccessEnabled, direct_memory_access_enabled)
     SETTING_FORWARD_BOOL_READONLY(m_gpu, PatchShaders, patch_shaders)
+    SETTING_FORWARD_BOOL(m_gpu, UserfaultfdTracking, userfaultfd)
+    SETTING_FORWARD_BOOL_READONLY(m_gpu, InlineFetchShader, inline_fetch_shader)
 
     u32 GetVblankFrequency() {
         if (m_gpu.vblank_frequency.value < 30) {
@@ -710,11 +766,16 @@ public:
     SETTING_FORWARD(m_input, UsbDeviceBackend, usb_device_backend)
     SETTING_FORWARD_BOOL(m_input, MotionControlsEnabled, motion_controls_enabled)
     SETTING_FORWARD_BOOL(m_input, BackgroundControllerInput, background_controller_input)
+    SETTING_FORWARD_BOOL(m_input, ImeAccessibilityEnabled, ime_accessibility_enabled)
+    SETTING_FORWARD_BOOL(m_input, ImeUrlMailShortPanel, ime_url_mail_short_panel)
     SETTING_FORWARD(m_input, DefaultControllerId, default_controller_id)
     SETTING_FORWARD_BOOL(m_input, UsingSpecialPad, use_special_pad)
     SETTING_FORWARD(m_input, SpecialPadClass, special_pad_class)
     SETTING_FORWARD_BOOL(m_input, UseUnifiedInputConfig, use_unified_input_config)
     SETTING_FORWARD(m_input, CameraId, camera_id)
+    SETTING_FORWARD_BOOL(m_input, CircleEnter, is_circle_enter)
+    SETTING_FORWARD_BOOL(m_input, MiceUsedAsMice, use_mice_as_mice)
+    SETTING_FORWARD_BOOL(m_input, KeyboardUsedAsKeyboard, use_keyboard_as_keyboard)
 
     // Vulkan settings
     SETTING_FORWARD(m_vulkan, GpuId, gpu_id)

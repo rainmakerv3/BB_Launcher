@@ -1,19 +1,21 @@
 // SPDX-FileCopyrightText: Copyright 2024 BBLauncher Project
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#pragma once
+
 #include <source_location>
 #include <string>
 
-namespace Log {
+namespace LauncherLog {
 
 enum Type : int { Information, Warning, Error, Critical };
 
-void LogMsg(Log::Type type, const std::string& logMsg,
+void LogMsg(LauncherLog::Type type, const std::string& logMsg,
             const std::source_location location = std::source_location::current());
 
-#define LogInfo(...) Log::LogMsg(Log::Type::Information, __VA_ARGS__)
-#define LogWarning(...) Log::LogMsg(Log::Type::Warning, __VA_ARGS__)
-#define LogError(...) Log::LogMsg(Log::Type::Error, __VA_ARGS__)
-#define LogCritical(...) Log::LogMsg(Log::Type::Critical, __VA_ARGS__)
+#define LogInfo(...) LauncherLog::LogMsg(LauncherLog::Type::Information, __VA_ARGS__)
+#define LogWarning(...) LauncherLog::LogMsg(LauncherLog::Type::Warning, __VA_ARGS__)
+#define LogError(...) LauncherLog::LogMsg(LauncherLog::Type::Error, __VA_ARGS__)
+#define LogCritical(...) LauncherLog::LogMsg(LauncherLog::Type::Critical, __VA_ARGS__)
 
-}; // namespace Log
+}; // namespace LauncherLog

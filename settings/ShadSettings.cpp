@@ -207,7 +207,10 @@ ShadSettings::ShadSettings(std::shared_ptr<IpcClient> ipc_client, QWidget* paren
     connect(ui->hostOverrideButton, &QPushButton::clicked, this, [this]() {
         std::string text =
             R"({
-"https://ss4.scej-network.jp:20443" : "http://thehuntersdream.com"
+  "https://ss4.scej-network.jp:20443": "https://thehuntersdream.com:20443",
+  "ss4.scej-network.jp": "https://thehuntersdream.com:20443",
+  "bb-playlog-test.s3.amazonaws.com": "https://thehuntersdream.com:20443",
+  "bb-playlog-prod.s3.amazonaws.com": "https://thehuntersdream.com:20443"
 })";
 
         std::filesystem::path filePath = Common::GetShadUserDir() / "host_overrides.json";
@@ -298,7 +301,7 @@ void ShadSettings::LoadValuesFromConfig() {
         return;
     }
 
-    // global settings - use Emulator Settings
+    /////// global settings - use Emulator Settings
     QString selected_locale = "American English (United States)";
     for (const QString& code : language_ids.keys()) {
         const QLocale locale(code);
@@ -323,7 +326,7 @@ void ShadSettings::LoadValuesFromConfig() {
 
     ui->discordRPCCheckbox->setChecked(EmulatorSettings.IsDiscordRPCEnabled());
 
-    // Other settings - gs_settings
+    ///// Other settings - gs_settings
     ui->hideCursorComboBox->setCurrentIndex(gs_settings.GetCursorState());
     OnCursorStateChanged(ui->hideCursorComboBox->currentIndex());
     ui->idleTimeoutSpinBox->setValue(gs_settings.GetCursorHideTimeout());
@@ -351,8 +354,7 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->audioBackendComboBox->setCurrentIndex(gs_settings.GetAudioBackend());
     ui->graphicsAdapterBox->setCurrentIndex(gs_settings.GetGpuId() + 1);
     ui->pipelineCacheCheckBox->setChecked(gs_settings.IsPipelineCacheEnabled());
-    ui->winRedZoneComboBox->setCurrentIndex(
-        static_cast<int>(gs_settings.GetWindowsGuestRedZoneProtectionMode()));
+    ui->redZoneCheckBox->setChecked(gs_settings.IsRedZonePatchingEnabled());
 
     QString translatedText_PresentMode =
         presentModeMap.key(QString::fromStdString(gs_settings.GetPresentMode()));
@@ -370,8 +372,9 @@ void ShadSettings::LoadValuesFromConfig() {
     ui->shadnetCheckBox->setChecked(gs_settings.IsShadNetEnabled());
     ui->networkConnectedCheckBox->setChecked(gs_settings.IsConnectedToNetwork());
     ui->serverLineEdit->setText(QString::fromStdString(gs_settings.GetShadNetServer()));
-    ui->servWebApiLineEdit->setText(QString::fromStdString(gs_settings.GetShadnetWebapiServer()));
+    ui->servWebApiLineEdit->setText(QString::fromStdString(gs_settings.GetShadNetWebApiServer()));
     ui->upnpCheckBox->setChecked(gs_settings.IsUPnPEnabled());
+    ui->p2pPortSpinBox->setValue(gs_settings.GetP2PPort());
 
     // User Settings
     ui->usernameLineEdit->setText(QString::fromStdString(user->user_name));
@@ -468,7 +471,8 @@ bool ShadSettings::eventFilter(QObject* obj, QEvent* event) {
 }
 
 void ShadSettings::SaveSettings() {
-    // Other Settings - use gs_settings
+    ///// Other Settings - use gs_settings
+    gs_settings.SetRedZonePatchingEnabled(ui->redZoneCheckBox->isChecked(), true);
     gs_settings.SetShowSplash(ui->showSplashCheckBox->isChecked(), true);
     gs_settings.SetVolumeSlider(ui->volumeSlider->value(), true);
     gs_settings.SetAudioBackend(ui->audioBackendComboBox->currentIndex(), true);
@@ -513,18 +517,15 @@ void ShadSettings::SaveSettings() {
     gs_settings.SetDirectMemoryAccessEnabled(ui->DMACheckBox->isChecked(), true);
     gs_settings.SetVblankFrequency(ui->vblankSpinBox->value(), true);
 
-    gs_settings.SetWindowsGuestRedZoneProtectionMode(
-        static_cast<WindowsGuestRedZoneProtectionMode>(ui->winRedZoneComboBox->currentIndex()),
-        true);
-
     // Network Settings
     gs_settings.SetShadNetEnabled(ui->shadnetCheckBox->isChecked(), true);
     gs_settings.SetConnectedToNetwork(ui->networkConnectedCheckBox->isChecked(), true);
     gs_settings.SetShadNetServer(ui->serverLineEdit->text().toStdString(), true);
-    gs_settings.SetShadnetWebapiServer(ui->servWebApiLineEdit->text().toStdString(), true);
+    gs_settings.SetShadNetWebApiServer(ui->servWebApiLineEdit->text().toStdString(), true);
     gs_settings.SetUPnPEnabled(ui->upnpCheckBox->isChecked(), true);
+    gs_settings.SetP2PPort(ui->p2pPortSpinBox->value(), true);
 
-    // Global Settings - use EmulatorSettings
+    ///// Global Settings - use EmulatorSettings
     EmulatorSettings.SetDiscordRPCEnabled(ui->discordRPCCheckbox->isChecked());
     EmulatorSettings.SetHomeDir(ui->HomePathLineEdit->text().toStdString());
     EmulatorSettings.SetAddonInstallDir(ui->DLCPathLineEdit->text().toStdString());
