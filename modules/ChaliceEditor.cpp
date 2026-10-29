@@ -8,6 +8,7 @@
 #include "ChaliceEditor.h"
 #include "ChaliceInfo.h"
 #include "settings/PSF/psf.h"
+#include "settings/config.h"
 #include "ui_ChaliceEditor.h"
 
 using json = nlohmann::json;
@@ -59,6 +60,8 @@ ChaliceEditor::ChaliceEditor(QWidget* parent) : QDialog(parent), ui(new Ui::Chal
     ui->altarComboBox->addItem("Fifth Ritual Altar");
     ui->altarComboBox->addItem("Final Ritual Altar");
 
+    ui->saveSlotComboBox->setCurrentIndex(Config::DefaultChaliceSlot);
+    ui->defaultSlotLabel->setText("Default Slot: " + ui->saveSlotComboBox->currentText());
     LoadChalicesFromSave();
 
     connect(ui->saveSlotComboBox, &QComboBox::currentIndexChanged, this,
@@ -87,6 +90,12 @@ ChaliceEditor::ChaliceEditor(QWidget* parent) : QDialog(parent), ui(new Ui::Chal
 
     connect(ui->backupButton, &QPushButton::clicked, this, &ChaliceEditor::CreateManualBackup);
     connect(ui->saveButton, &QPushButton::clicked, this, &ChaliceEditor::SaveDungeon);
+
+    connect(ui->defaultButton, &QPushButton::clicked, this, [this]() {
+        ui->defaultSlotLabel->setText("Default Slot: " + ui->saveSlotComboBox->currentText());
+        Config::DefaultChaliceSlot = ui->saveSlotComboBox->currentIndex();
+        Config::SaveLauncherSettings();
+    });
 }
 
 void ChaliceEditor::LoadChalicesFromSave() {
@@ -255,6 +264,11 @@ void ChaliceEditor::CreateManualBackup() {
 }
 
 void ChaliceEditor::SaveDungeon() {
+    if (Config::GameRunning) {
+        QMessageBox::warning(this, "Error", "Cannot save Chalices while game is running");
+        return;
+    }
+
     int altarIndex = ui->altarComboBox->currentIndex();
     if (!GlyphLabelMap[altarIndex]->text().contains("No Chalice Placed")) {
         QMessageBox::warning(this, "Cannot Save", "Please select an empty chalice slot to save");

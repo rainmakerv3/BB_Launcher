@@ -15,25 +15,6 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_14">
    <item>
-    <widget class="QLabel" name="GameSaveLabel">
-     <property name="font">
-      <font>
-       <pointsize>16</pointsize>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="frameShape">
-      <enum>QFrame::Shape::Box</enum>
-     </property>
-     <property name="text">
-      <string>Add Chalice Dungeons to Save File</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignmentFlag::AlignCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item>
     <widget class="QScrollArea" name="scrollArea">
      <property name="frameShape">
       <enum>QFrame::Shape::NoFrame</enum>
@@ -47,7 +28,7 @@
         <x>0</x>
         <y>0</y>
         <width>1012</width>
-        <height>712</height>
+        <height>748</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_13">
@@ -77,9 +58,28 @@
                <widget class="QComboBox" name="saveSlotComboBox"/>
               </item>
               <item>
+               <widget class="QLabel" name="defaultSlotLabel">
+                <property name="font">
+                 <font>
+                  <bold>true</bold>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>Default Slot: No default selected</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="defaultButton">
+                <property name="text">
+                 <string>Set Current Slot as Default</string>
+                </property>
+               </widget>
+              </item>
+              <item>
                <widget class="QPushButton" name="backupButton">
                 <property name="text">
-                 <string>Create Backup Save</string>
+                 <string>Backup Current Slot</string>
                 </property>
                </widget>
               </item>
@@ -100,6 +100,12 @@
              <layout class="QVBoxLayout" name="verticalLayout_3">
               <item>
                <widget class="QLabel" name="NameLabel">
+                <property name="font">
+                 <font>
+                  <pointsize>11</pointsize>
+                  <bold>true</bold>
+                 </font>
+                </property>
                 <property name="text">
                  <string>Character Name: unknown</string>
                 </property>

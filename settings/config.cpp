@@ -33,6 +33,8 @@ bool Config::ShowEarnedTrophy = true;
 bool Config::ShowNotEarnedTrophy = true;
 bool Config::ShowHiddenTrophy = false;
 
+int Config::DefaultChaliceSlot = 0;
+
 bool Config::ClearCacheAfterUpdate = false;
 bool Config::AutoUpdateVersionsEnabled = true;
 bool Config::AutoUpdateShadEnabled = false;
@@ -78,6 +80,8 @@ void LoadSettings() {
     UserFolderLocation = static_cast<FolderLocation>(
         toml::find_or<int>(data, "Launcher", "UserFolderLocation",
                            static_cast<int>(FolderLocation::BuildFolder)));
+
+    DefaultChaliceSlot = toml::find_or<int>(data, "Launcher", "DefaultChaliceSlot", 0);
 
     BackupSaveEnabled = toml::find_or<bool>(data, "Backups", "BackupSaveEnabled", true);
     BackupInterval = toml::find_or<int>(data, "Backups", "BackupInterval", 10);
@@ -215,6 +219,7 @@ void CreateSettingsFile() {
     data["Launcher"]["UserFolderLocation"] = 0;
     data["Launcher"]["CustomUserFolder"] = "";
     data["Launcher"]["ApiKey"] = "";
+    data["Launcher"]["DefaultChaliceSlot"] = 0;
 
     data["Backups"]["BackupSaveEnabled"] = true;
     data["Backups"]["BackupInterval"] = 10;
@@ -258,6 +263,8 @@ void SaveLauncherSettings() {
     data["Launcher"]["Theme"] = theme;
     data["Launcher"]["SoundFixEnabled"] = SoundFixEnabled;
     data["Launcher"]["AutoUpdateEnabled"] = AutoUpdateEnabled;
+    data["Launcher"]["DefaultChaliceSlot"] = DefaultChaliceSlot;
+
     data["Launcher"]["installPath"] = std::string{fmt::UTF(Common::installPath.u8string()).data};
     data["Launcher"]["shadPath-New"] =
         std::string{fmt::UTF(Common::shadPs4Executable.u8string()).data};

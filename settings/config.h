@@ -46,6 +46,9 @@ extern bool BackupSaveEnabled;
 extern int BackupInterval;
 extern int BackupNumber;
 extern bool AutoUpdateEnabled;
+
+extern int DefaultChaliceSlot;
+
 extern std::string ApiKey;
 
 extern bool ShowEarnedTrophy;
